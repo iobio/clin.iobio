@@ -144,7 +144,7 @@
                 </div>
               </div>
 
-              <div class="tasks-panel">
+              <div class="tasks-panel" v-if="step.tasks">
                 <div>
                   <span class="task-checkbox-header1">Complete</span>
                   <span class="task-checkbox-header2">Passed</span>
@@ -169,22 +169,37 @@
 
 
     </v-card>
+
     <v-card style="padding: 2px">
-      <div id="bam-iframe" v-show="currentStep == 1">
-        <iframe  src="http://nv-dev-new.iobio.io/vue.bam.iobio/" style="width:100%;height:100%" frameBorder="0">
+
+      <v-card light style="min-height:600px"
+        v-show="currentStep == 1"
+      >
+        <intro
+        :workflow="workflow"
+        :steps="steps">
+        </intro>
+      </v-card>
+
+      <div id="bam-iframe" v-show="currentStep == 2">
+        <iframe  :src="bamUrl" style="width:100%;height:100%" frameBorder="0">
         </iframe>
       </div>
 
 
-      <div id="gene-panel-iframe" v-show="currentStep == 2">
-        <iframe  src="http://localhost:4024" style="width:100%;height:100%" frameBorder="0">
+      <div id="gene-panel-iframe" v-show="currentStep == 3">
+        <iframe  :src="panelUrl" style="width:100%;height:100%" frameBorder="0">
         </iframe>
       </div>
 
-      <div id="gene-iframe" v-show="currentStep == 3">
-        <iframe  src="http://localhost:4026" style="width:100%;height:100%" frameBorder="0">
+      <div id="gene-iframe" v-show="currentStep == 4">
+        <iframe  :src="geneUrl" style="width:100%;height:100%" frameBorder="0">
         </iframe>
       </div>
+
+      <v-card light style="min-height:600px" v-show="currentStep == 5" id="reporting-card">
+        Reporting
+      </v-card>
 
     </v-card>
   </div>
@@ -195,12 +210,13 @@
 
 <script>
 
-
+import Intro from '../viz/Intro.vue'
 
 
 export default {
   name: 'home',
   components: {
+    Intro
   },
   props: {
     paramIdProject:  null,
@@ -209,17 +225,31 @@ export default {
   data() {
     return {
       greeting: 'clin.iobio.vue',
-      currentStep: null,
+
+      geneUrl: 'http://localhost:4026',
+      panelUrl: 'http://localhost:4024',
+      //geneUrl: 'http://nv-dev-new.iobio.io/vue.gene.iobio/',
+      //panelUrl: 'http://nv-dev-new.iobio.io/genepanel.iobio/',
+      bamUrl: 'http://nv-dev-new.iobio.io/vue.bam.iobio/',
+
+      currentStep: 0,
       showDashboard: true,
       workflow: {
         title: 'De novo variant analysis',
-        summary: 'Look for de novo variants in whole exome or genome sequencing research project.  Perform basic quality control.'
+        summary: 'Look for de novo variants in whole exome or genome sequencing research project.  Perform basic quality control.',
+        description: 'The de novo report is used to search for de novo variants in a proband, when sequencing data is present for the proband and both parents.  This report is comprised of the following steps:'
       },
       steps: [
 
         { number: 1,
+          title: 'Start',
+          summary: 'Intro',
+          isIntro: true
+        },
+        { number: 2,
           title: 'Data QC',
           summary: 'Check quality of sequence alignments for the proband.',
+          description: 'Check the quality of the underlying sequencing data for the proband. Using the BAM.IOBIO app, areas of missing coverage or unexpected statistics potentially suggesting contamination are investigated.',
           complete: false,
           tasks: [
             { name: 'Genomic wide coverage', complete: false, pass: false },
@@ -228,9 +258,10 @@ export default {
             { name: 'Duplicate rate',        complete: false, pass: false }
           ]
         },
-        { number: 2,
+        { number: 3,
           title: 'Gene lists',
           summary: 'Generate list of candidate genes.',
+          description: "The PANEL.IOBIO app is used to identify genes that are most likely associated with the proband's phenotypes.",
           complete: false,
           tasks: [
             { name: 'Panel genes',             complete: false, pass: false },
@@ -238,9 +269,10 @@ export default {
             { name: 'Export genes',            complete: false, pass: false }
           ]
         },
-        { number: 3,
+        { number: 4,
           title: 'De novo variants',
           summary: 'Interrogate proband for known pathogenic or de novo variants and check for areas of insufficient coverage in genes.',
+          description: 'The GENE.IOBIO app is used to interrogate proband variants in the identified gene list that could be candidates for causative variants.',
           complete: false,
           tasks: [
             { name: 'Pathogenic variants',     complete: false, pass: false },
@@ -249,13 +281,11 @@ export default {
             { name: 'Expand gene list',        complete: false, pass: false }
           ]
         },
-        { number: 4,
+        { number: 5,
           title: 'Report',
           summary: 'Generate report for analysis results.',
-          complete: false,
-          tasks: [
-            { name: 'Review',                complete: false, pass: false }
-          ]
+          description: 'Results from this full analysis are summarized in the report, which can be updated or amended.',
+          complete: false
         }
 
       ]
@@ -300,7 +330,7 @@ export default {
 
     receiveAppMessage: function(event) {
       // Do we trust the sender of this message?
-      if (event.origin !== "http://localhost:4026" &&  event.origin !== "http://localhost:4024") {
+      if (event.origin !== this.geneUrl &&  event.origin !== this.panelUrl) {
         if (this.paramDebug) {
           console.log("parentWindow received message frum untrusted sender. Event.origin is " + event.origin );
         }

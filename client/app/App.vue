@@ -54,7 +54,7 @@ button
 
   <div id="app">
 
-    <v-app light>
+    <v-app dark>
       <router-view></router-view>
     </v-app>
 
