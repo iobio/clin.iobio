@@ -226,11 +226,11 @@ export default {
     return {
       greeting: 'clin.iobio.vue',
 
-      geneUrl: 'http://localhost:4026',
-      panelUrl: 'http://localhost:4024',
-      //geneUrl: 'http://nv-dev-new.iobio.io/vue.gene.iobio/',
-      //panelUrl: 'http://nv-dev-new.iobio.io/genepanel.iobio/',
-      bamUrl: 'http://nv-dev-new.iobio.io/vue.bam.iobio/',
+      //geneUrl: 'http://localhost:4026',
+      //panelUrl: 'http://localhost:4024',
+      geneUrl: 'http://nv-dev-new.iobio.io/vue.gene.iobio',
+      panelUrl: 'http://nv-dev-new.iobio.io/genepanel.iobio',
+      bamUrl: 'http://nv-dev-new.iobio.io/vue.bam.iobio',
 
       currentStep: 0,
       showDashboard: true,
