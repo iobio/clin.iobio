@@ -15,7 +15,7 @@
 
   .vertical-divider
     border-left: 1px solid $divider-color
-    height: 115px
+    height: 125px
     float: left
     margin-top: 5px
     margin-bottom: 5px
@@ -101,7 +101,13 @@
 <template>
 
   <div>
-    <v-card class="dashboard-card">
+    <login
+      v-show="!isAuthenticated"
+      :userSession="userSession"
+      @authenticated="onAuthenticated">
+    </login>
+
+    <v-card v-if="isAuthenticated" dark class="dashboard-card">
 
           <v-btn v-show="false"flat fab small style="float:right"
            v-if="!showDashboard"
@@ -170,9 +176,9 @@
 
     </v-card>
 
-    <v-card style="padding: 2px">
+    <v-card v-if="isAuthenticated" style="padding: 2px">
 
-      <v-card light style="min-height:600px"
+      <v-card  light style="min-height:600px"
         v-show="currentStep == 1"
       >
         <intro
@@ -211,12 +217,17 @@
 <script>
 
 import Intro from '../viz/Intro.vue'
+import Login from '../partials/Login.vue'
+
+import ProjectModel from  '../../models/ProjectModel.js'
+import UserSession  from  '../../models/UserSession.js'
 
 
 export default {
   name: 'home',
   components: {
-    Intro
+    Intro,
+    Login
   },
   props: {
     paramIdProject:  null,
@@ -225,6 +236,11 @@ export default {
   data() {
     return {
       greeting: 'clin.iobio.vue',
+
+      isAuthenticated: false,
+      userSession:  null,
+
+      projectModel: null,
 
       //geneUrl: 'http://localhost:4026',
       //panelUrl: 'http://localhost:4024',
@@ -242,8 +258,8 @@ export default {
       steps: [
 
         { number: 1,
-          title: 'Start',
-          summary: 'Intro',
+          title: 'Overview',
+          summary: 'Get an overview of the steps for of de novo variant analysis',
           isIntro: true
         },
         { number: 2,
@@ -315,7 +331,42 @@ export default {
 
     init: function() {
       let self = this;
+      self.userSession = new UserSession();
       window.addEventListener("message", self.receiveAppMessage, false);
+    },
+
+    onAuthenticated: function() {
+      let self = this;
+      this.isAuthenticated = true;
+      this.projectModel = new ProjectModel(this.userSession);
+      this.projectModel.promiseGetProject('501')
+      .then( function(project) {
+        console.log("Project");
+        console.log(project);
+
+        project.genes = ['MTHFR', 'AIRE', 'RAI1', 'BRCA1', 'BRCA2', 'MYLK2'];
+        self.projectModel.promiseUpdateGenes(project);
+
+        /*
+        var newProject = {
+          idProject: '501',
+          genes: ['MTHFR', 'AIRE', 'RAI1', 'BRCA1', 'BRCA2'],
+          phenotypes: ['lacticacidosis'],
+          variants: [],
+          workflow: {
+            steps: self.steps
+          }
+        };
+
+        self.projectModel.promiseAddProject(newProject)
+        .then(function() {
+          console.log('project successfully added');
+        })
+        .catch(function(err) {
+          console.log("project failed to be added")
+        })
+        */
+      });
     },
 
     sendMessageToGene: function(obj) {

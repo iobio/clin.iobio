@@ -10,6 +10,7 @@ import App                  from './App.vue'
 import Home                 from './components/pages/Home.vue'
 
 
+
 import bootstrap            from 'bootstrap/dist/css/bootstrap.css'
 
 import Vuetify              from 'vuetify'
@@ -21,6 +22,7 @@ Vue.use(Vuetify)
 import VTooltip from 'v-tooltip'
 import                           '../assets/css/v-tooltip.css'
 Vue.use(VTooltip)
+
 
 
 
