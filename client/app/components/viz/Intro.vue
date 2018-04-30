@@ -33,7 +33,7 @@
     <h4>Summary</h4>
     <v-card light>
       <div>
-        {{ workflow.description }}
+        {{ project.workflow.description }}
       </div>
 
       <div class="mt-2 step-entry"  v-for="step in filteredSteps" :key="step.number">
@@ -65,7 +65,7 @@ export default {
   components: {
   },
   props: {
-    workflow: null
+    project: null
   },
   data() {
     return {
@@ -74,8 +74,8 @@ export default {
   computed: {
     filteredSteps: function() {
       let self = this;
-      if (self.workflow && self.workflow.steps) {
-        return self.workflow.steps.filter(function(step) {
+      if (self.project.workflow && self.project.workflow.steps) {
+        return self.project.workflow.steps.filter(function(step) {
           return !step.isIntro;
         })
       } else {

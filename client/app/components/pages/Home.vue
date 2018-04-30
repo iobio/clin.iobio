@@ -182,7 +182,7 @@
         v-show="currentStep == 1"
       >
         <intro
-        :workflow="project.workflow">
+        :project="project">
         </intro>
       </v-card>
 
@@ -202,8 +202,12 @@
         </iframe>
       </div>
 
-      <v-card light style="min-height:600px" v-show="currentStep == 5" id="reporting-card">
-        Reporting
+      <v-card   style="min-height:600px"
+        v-show="currentStep == 5"
+      >
+        <report
+        :project="project">
+        </report>
       </v-card>
 
     </v-card>
@@ -215,8 +219,9 @@
 
 <script>
 
-import Intro from '../viz/Intro.vue'
-import Login from '../partials/Login.vue'
+import Intro from  '../viz/Intro.vue'
+import Report from '../viz/Report.vue'
+import Login from  '../partials/Login.vue'
 
 import ProjectModel from  '../../models/ProjectModel.js'
 import UserSession  from  '../../models/UserSession.js'
@@ -227,7 +232,8 @@ export default {
   name: 'home',
   components: {
     Intro,
-    Login
+    Login,
+    Report
   },
   props: {
     paramDebug:  null,
