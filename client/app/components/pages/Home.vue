@@ -107,7 +107,7 @@
       @authenticated="onAuthenticated">
     </login>
 
-    <v-card v-if="isAuthenticated" dark class="dashboard-card">
+    <v-card v-show="isAuthenticated" dark class="dashboard-card">
 
           <v-btn v-show="false"flat fab small style="float:right"
            v-if="!showDashboard"
@@ -119,9 +119,9 @@
       <v-stepper v-model="currentStep" non-linear>
         <div class="workflow-summary-panel">
           <div>
-            <h5> {{ workflow.title }} </h5>
+            <h5> {{ project.workflow.title }} </h5>
             <div>
-              {{ workflow.summary}}
+              {{ project.workflow.summary}}
             </div>
           </div>
         </div>
@@ -129,18 +129,18 @@
         <div class="vertical-divider"></div>
 
         <v-stepper-header>
-          <template v-for="step in steps">
+          <template v-for="step in project.workflow.steps">
             <v-stepper-step :key="step.number" editable :step="step.number" :complete="step.complete">
               {{ step.title }}
             </v-stepper-step>
-            <v-divider v-show="step.number != steps.length"></v-divider>
+            <v-divider v-show="step.number != project.workflow.steps.length"></v-divider>
           </template>
         </v-stepper-header>
 
         <div class="vertical-divider"></div>
 
         <v-stepper-items v-show="showDashboard">
-          <template v-for="step in steps">
+          <template v-for="step in project.workflow.steps">
 
             <v-stepper-content :key="step.number" :step="step.number">
               <div class="step-summary-panel">
@@ -176,14 +176,13 @@
 
     </v-card>
 
-    <v-card v-if="isAuthenticated" style="padding: 2px">
+    <v-card v-show="isAuthenticated" style="padding: 2px">
 
       <v-card  light style="min-height:600px"
         v-show="currentStep == 1"
       >
         <intro
-        :workflow="workflow"
-        :steps="steps">
+        :workflow="project.workflow">
         </intro>
       </v-card>
 
@@ -223,6 +222,7 @@ import ProjectModel from  '../../models/ProjectModel.js'
 import UserSession  from  '../../models/UserSession.js'
 
 
+
 export default {
   name: 'home',
   components: {
@@ -230,10 +230,15 @@ export default {
     Login
   },
   props: {
-    paramIdProject:  null,
-    paramDebug:  null
+    paramDebug:  null,
+
+    paramProjectId:   null,
+    paramTokenType:   null,
+    paramToken:       null,
+    paramSource:      null
   },
   data() {
+    let self = this;
     return {
       greeting: 'clin.iobio.vue',
 
@@ -242,69 +247,80 @@ export default {
 
       projectModel: null,
 
-      //geneUrl: 'http://localhost:4026',
-      //panelUrl: 'http://localhost:4024',
-      geneUrl: 'http://nv-dev-new.iobio.io/vue.gene.iobio',
-      panelUrl: 'http://nv-dev-new.iobio.io/genepanel.iobio',
+      modelInfos: null,
+
+      geneUrl: 'http://localhost:4026',
+      panelUrl: 'http://localhost:4024',
+      //geneUrl: 'http://nv-dev-new.iobio.io/vue.gene.iobio',
+      //panelUrl: 'http://nv-dev-new.iobio.io/genepanel.iobio',
       bamUrl: 'http://nv-dev-new.iobio.io/vue.bam.iobio',
 
       currentStep: 0,
       showDashboard: true,
-      workflow: {
-        title: 'De novo variant analysis',
-        summary: 'Look for de novo variants in whole exome or genome sequencing research project.  Perform basic quality control.',
-        description: 'The de novo report is used to search for de novo variants in a proband, when sequencing data is present for the proband and both parents.  This report is comprised of the following steps:'
-      },
-      steps: [
 
-        { number: 1,
-          title: 'Overview',
-          summary: 'Get an overview of the steps for of de novo variant analysis',
-          isIntro: true
-        },
-        { number: 2,
-          title: 'Data QC',
-          summary: 'Check quality of sequence alignments for the proband.',
-          description: 'Check the quality of the underlying sequencing data for the proband. Using the BAM.IOBIO app, areas of missing coverage or unexpected statistics potentially suggesting contamination are investigated.',
-          complete: false,
-          tasks: [
-            { name: 'Genomic wide coverage', complete: false, pass: false },
-            { name: 'Median coverage',       complete: false, pass: false },
-            { name: 'Mapped reads',          complete: false, pass: false },
-            { name: 'Duplicate rate',        complete: false, pass: false }
+
+      hubEnpoint: null,
+
+      project: {
+
+        workflow: {
+          title: 'De novo variant analysis',
+          summary: 'Look for de novo variants in whole exome or genome sequencing research project.  Perform basic quality control.',
+          description: 'The de novo report is used to search for de novo variants in a proband, when sequencing data is present for the proband and both parents.  This report is comprised of the following steps:',
+          steps: [
+
+            { number: 1,
+              title: 'Overview',
+              summary: 'Get an overview of the steps for of de novo variant analysis',
+              isIntro: true
+            },
+            { number: 2,
+              title: 'Data QC',
+              summary: 'Check quality of sequence alignments for the proband.',
+              description: 'Check the quality of the underlying sequencing data for the proband. Using the BAM.IOBIO app, areas of missing coverage or unexpected statistics potentially suggesting contamination are investigated.',
+              complete: false,
+              tasks: [
+                { name: 'Genomic wide coverage', complete: false, pass: false },
+                { name: 'Median coverage',       complete: false, pass: false },
+                { name: 'Mapped reads',          complete: false, pass: false },
+                { name: 'Duplicate rate',        complete: false, pass: false }
+              ]
+            },
+            { number: 3,
+              title: 'Gene lists',
+              summary: 'Generate list of candidate genes.',
+              description: "The PANEL.IOBIO app is used to identify genes that are most likely associated with the proband's phenotypes.",
+              complete: false,
+              tasks: [
+                { name: 'Panel genes',             complete: false, pass: false },
+                { name: 'Phenotype driven genes',  complete: false, pass: false },
+                { name: 'Export genes',        complete: false, pass: false }
+              ]
+            },
+            { number: 4,
+              title: 'De novo variants',
+              summary: 'Interrogate proband for known pathogenic or de novo variants and check for areas of insufficient coverage in genes.',
+              description: 'The GENE.IOBIO app is used to interrogate proband variants in the identified gene list that could be candidates for causative variants.',
+              complete: false,
+              tasks: [
+                { name: 'Pathogenic variants',     complete: false, pass: false },
+                { name: 'De novo variants',        complete: false, pass: false },
+                { name: 'Insufficient coverage',   complete: false, pass: false },
+                { name: 'Expand gene list',        complete: false, pass: false }
+              ]
+            },
+            { number: 5,
+              title: 'Report',
+              summary: 'Generate report for analysis results.',
+              description: 'Results from this full analysis are summarized in the report, which can be updated or amended.',
+              complete: false
+            }
+
           ]
-        },
-        { number: 3,
-          title: 'Gene lists',
-          summary: 'Generate list of candidate genes.',
-          description: "The PANEL.IOBIO app is used to identify genes that are most likely associated with the proband's phenotypes.",
-          complete: false,
-          tasks: [
-            { name: 'Panel genes',             complete: false, pass: false },
-            { name: 'Phenotype driven genes',  complete: false, pass: false },
-            { name: 'Export genes',            complete: false, pass: false }
-          ]
-        },
-        { number: 4,
-          title: 'De novo variants',
-          summary: 'Interrogate proband for known pathogenic or de novo variants and check for areas of insufficient coverage in genes.',
-          description: 'The GENE.IOBIO app is used to interrogate proband variants in the identified gene list that could be candidates for causative variants.',
-          complete: false,
-          tasks: [
-            { name: 'Pathogenic variants',     complete: false, pass: false },
-            { name: 'De novo variants',        complete: false, pass: false },
-            { name: 'Insufficient coverage',   complete: false, pass: false },
-            { name: 'Expand gene list',        complete: false, pass: false }
-          ]
-        },
-        { number: 5,
-          title: 'Report',
-          summary: 'Generate report for analysis results.',
-          description: 'Results from this full analysis are summarized in the report, which can be updated or amended.',
-          complete: false
+
         }
+      }
 
-      ]
 
     }
   },
@@ -325,6 +341,11 @@ export default {
   },
 
   watch: {
+    currentStep: function() {
+      if (this.isAuthenticated && this.project && this.currentStep) {
+        this.promiseUpdateWorkflow();
+      }
+    }
   },
 
   methods: {
@@ -333,40 +354,25 @@ export default {
       let self = this;
       self.userSession = new UserSession();
       window.addEventListener("message", self.receiveAppMessage, false);
+
+
+      if (this.paramSource && this.paramSource != '' && this.paramToken && this.paramToken.length > 0) {
+        this.promiseInitHub();
+      }
+
     },
 
     onAuthenticated: function() {
       let self = this;
       this.isAuthenticated = true;
       this.projectModel = new ProjectModel(this.userSession);
-      this.projectModel.promiseGetProject('501')
-      .then( function(project) {
-        console.log("Project");
-        console.log(project);
-
-        project.genes = ['MTHFR', 'AIRE', 'RAI1', 'BRCA1', 'BRCA2', 'MYLK2'];
-        self.projectModel.promiseUpdateGenes(project);
-
-        /*
-        var newProject = {
-          idProject: '501',
-          genes: ['MTHFR', 'AIRE', 'RAI1', 'BRCA1', 'BRCA2'],
-          phenotypes: ['lacticacidosis'],
-          variants: [],
-          workflow: {
-            steps: self.steps
-          }
-        };
-
-        self.projectModel.promiseAddProject(newProject)
+      if (this.paramProjectId && this.paramProjectId.length > 0) {
+        this.promiseGetProject(this.paramProjectId, true)
         .then(function() {
-          console.log('project successfully added');
+            var msgObject = {type: 'set-data', sender: 'clin.iobio', 'modelInfos': self.modelInfos};
+            self.sendMessageToGene(msgObject);
         })
-        .catch(function(err) {
-          console.log("project failed to be added")
-        })
-        */
-      });
+      }
     },
 
     sendMessageToGene: function(obj) {
@@ -395,10 +401,218 @@ export default {
         console.log(messageObject);
       }
 
+
+
+
       if (messageObject.type == "apply-genes") {
-        this.sendMessageToGene(messageObject)
+        var taskMap = {
+          'gtr':              'Panel genes',
+          'phenotype-driven': 'Phenotype driven genes',
+          'all':              'Export genes'
+        }
+        this.promiseUpdateGenes(messageObject.genes);
+        this.promiseUpdatePhenotypes(messageObject.searchTerms);
+        this.promiseCompleteStepTask('Gene lists', taskMap[messageObject.source]);
+        this.sendMessageToGene(messageObject);
+      } else if (messageObject.type == "save-variants") {
+        this.promiseUpdateVariants(messageObject.variants);
+        this.promiseCompleteStepTask('De novo variants', 'De novo variants');
+        this.promiseCompleteStepTask('De novo variants', 'Pathogenic variants');
       }
+
+    },
+
+    promiseGetProject: function(idProject, createIfEmpty) {
+      let self = this;
+      return new Promise(function(resolve, reject) {
+        self.projectModel.promiseGetProject(idProject)
+        .then( function(theProject) {
+
+          if (theProject == null && createIfEmpty) {
+            self.project.idProject = idProject;
+            self.project.genes = [];
+            self.project.phenotypes = [];
+            self.project.variants = [];
+            self.projectModel.promiseAddProject(self.project)
+            .then(function() {
+              resolve();
+            })
+
+          } else {
+            self.project = theProject;
+            resolve();
+          }
+
+        })
+        .catch(function(err) {
+          reject(err);
+        })
+      });
+    },
+
+    promiseUpdateGenes: function(genes) {
+      let self = this;
+      self.project.genes = genes;
+      return self.projectModel.promiseUpdateGenes(self.project);
+    },
+
+    promiseUpdatePhenotypes: function(phenotypes) {
+      let self = this;
+      self.project.phenotypes = phenotypes;
+      return self.projectModel.promiseUpdatePhenotypes(self.project);
+    },
+
+    promiseUpdateVariants: function(variants) {
+      let self = this;
+      self.project.variants = variants;
+      return self.projectModel.promiseUpdateVariants(self.project);
+    },
+
+    promiseUpdateWorkflow: function() {
+      let self = this;
+      return self.projectModel.promiseUpdateWorkflow(self.project);
+    },
+
+    promiseCompleteStepTask: function(stepTitle, taskName) {
+      var filteredStep = this.project.workflow.steps.filter(function(step) {
+        return step.title == stepTitle;
+      })
+      if (filteredStep.length > 0) {
+        var filteredTask = filteredStep[0].tasks.filter(function(task) {
+          return task.name == taskName;
+        })
+        if (filteredTask.length > 0) {
+          filteredTask[0].complete = true;
+        }
+      }
+      return this.promiseUpdateWorkflow();
+    },
+
+
+    promiseInitHub: function() {
+      let self = this;
+
+      localStorage.setItem('hub-iobio-tkn', self.paramTokenType + ' ' + self.paramToken);
+      self.hubEndpoint = new HubEndpoint(this.paramSource);
+
+      self.hubEndpoint.getSamplesForProject(self.paramProjectId, null)
+      .done(data => {
+          var sampleMap = {};
+          data.forEach(function(sampleInfo) {
+            sampleMap[sampleInfo.uuid] = sampleInfo;
+          })
+
+          self.hubEndpoint.getFilesForProject(self.paramProjectId)
+          .done(data => {
+            var trioMap = {};
+
+            var vcfInfos = data.data.filter(f => f.type == 'vcf');
+            var vcfMap = {};
+
+            // Find proband
+            vcfInfos.forEach(function(vcfInfo) {
+              vcfMap[vcfInfo.sample_uuid] = vcfInfo;
+              var sampleInfo = sampleMap[vcfInfo.sample_uuid];
+              if (sampleInfo.pedigree) {
+                if (sampleInfo.pedigree.paternal_id != null
+                    && sampleInfo.pedigree.maternal_id != null
+                    && sampleInfo.pedigree.affection_status == 1) {
+                  trioMap['proband'] = { 'vcfInfo': vcfInfo, 'sampleInfo': sampleInfo, 'pedigree': sampleInfo.pedigree };
+                }
+              }
+            })
+
+            if (trioMap.proband && trioMap.proband.pedigree) {
+              var maternal_id = trioMap.proband.pedigree.maternal_id;
+              var paternal_id = trioMap.proband.pedigree.paternal_id;
+
+              trioMap['mother'] = {
+                'vcfInfo': vcfMap[maternal_id],
+                'sampleInfo': sampleMap[maternal_id],
+                'pedigree': sampleMap[maternal_id].pedigree };
+
+              trioMap['father'] = {
+                'vcfInfo': vcfMap[paternal_id],
+                'sampleInfo': sampleMap[paternal_id],
+                'pedigree': sampleMap[paternal_id].pedigree };
+            }
+
+            self.modelInfos = [];
+            for (var rel in trioMap) {
+              var modelInfo = {
+                'relationship':   rel,
+                'affectedStatus': trioMap[rel].pedigree.affection_status,
+                'name':           trioMap[rel].sampleInfo.id,
+                'sample':         trioMap[rel].sampleInfo.id,
+                'vcf':            trioMap[rel].vcfInfo.uri,
+                'tbi':            null,
+                'bam':            null,
+                'bai':            null };
+              self.modelInfos.push(modelInfo);
+            }
+
+          });
+        });
+
+    },
+
+
+
+    promiseGetUrlsFromHub: function(idProject) {
+      let self = this;
+
+      return new Promise(function(resolve, reject) {
+
+        var vcf = null,
+            tbi = null;
+        self.hubEndpoint.getFilesForProject(idProject).done(data => {
+
+          var vcfInfos = data.data.filter(f => f.type == 'vcf');
+          var vcfUrls = [];
+          vcfInfos.forEach(function(vcfInfo) {
+            vcfUrls.push({'vcfUrl' : vcfInfo.uri, 'tbiUrl' : null});
+          })
+          resolve(vcfUrls);
+
+
+          /*
+          vcfs = data.data.filter(f => f.type == 'vcf')
+          tbis = data.data.filter(f => f.type == 'tbi');
+          self.hubEndpoint.getSignedUrlForFile(vcf).done(urlData => {
+            var vcfUrl = '',
+            tbiUrl = '';
+            vcfUrl = urlData.url;
+            if (vcfUrl == null || vcfUrl.length == 0) {
+              reject("Empty vcf url returned from hub.");
+            }
+            self.hubEndpoint.getSignedUrlForFile(tbi).done(urlData => {
+              tbiUrl = urlData.url;
+              if (tbiUrl == null || tbiUrl.length == 0) {
+                reject("Empty tbi url returned from hub.");
+              }
+              else {
+                resolve({'vcfUrl' : vcfUrl, 'tbiUrl' : tbiUrl});
+              }
+            })
+          })*/
+        })
+
+      });
+    },
+
+    promiseGetSampleIdsFromHub: function(idProject, phenoFilters) {
+      let self = this;
+
+      return new Promise(function(resolve, reject) {
+        self.hubEndpoint.getSamplesForProject(projectId, phenoFilters)
+            .done(data => {
+              console.log(data);
+              resolve(data);
+            })
+      })
     }
+
+
   }
 }
 </script>

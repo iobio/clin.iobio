@@ -34,8 +34,14 @@ const routes = [
     path: '/',
     component: Home,
     props: (route) => ({
-        paramIdProject:        route.query.idProject,
-        paramDebug:            route.query.debug
+        //paramIdProject:        route.query.idProject,
+
+        paramDebug:            route.query.debug,
+
+        paramProjectId:             route.query.project_uuid,
+        paramTokenType:             route.query.token_type,
+        paramToken:                 route.query.access_token,
+        paramSource:                route.query.source
     })
   }
 ]

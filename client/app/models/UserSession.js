@@ -53,7 +53,7 @@ export default class UserSession {
         AWS.config.update({
           region: self.region
         });
-        self.dynamodb = new AWS.DynamoDB.DocumentClient();
+        self.dynamodb = new AWS.DynamoDB.DocumentClient({convertEmptyValues: true});
         callback(true);
       },
 

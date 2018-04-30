@@ -65,8 +65,7 @@ export default {
   components: {
   },
   props: {
-    workflow: null,
-    steps: null
+    workflow: null
   },
   data() {
     return {
@@ -75,10 +74,12 @@ export default {
   computed: {
     filteredSteps: function() {
       let self = this;
-      if (self.steps) {
-        return self.steps.filter(function(step) {
+      if (self.workflow && self.workflow.steps) {
+        return self.workflow.steps.filter(function(step) {
           return !step.isIntro;
         })
+      } else {
+        return [];
       }
     }
   }
