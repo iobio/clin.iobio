@@ -37,8 +37,8 @@
       </div>
 
       <div class="mt-2 step-entry"  v-for="step in filteredSteps" :key="step.number">
-              <span class="step-number stepper__step__step primary"> {{ step.number - 1 }}</span>
-              <div class="step-description">{{ step.title }}. {{ step.description }}</div>
+        <span class="step-number stepper__step__step "> {{ step.number - 1 }}</span>
+        <div class="step-description">{{ step.title }}. {{ step.description }}</div>
       </div>
     </v-card>
 

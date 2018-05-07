@@ -142,7 +142,7 @@
 </style>
 
 <template>
-  <div id="intro-card" >
+  <div style="overflow:auto;padding-bottom:10px" >
 
 <!--
     <h4>Summary</h4>
@@ -163,8 +163,8 @@
       </div>
       <div style="float: left;height:100%;width:30%;margin-left:30px">
         <h4 class="mt-4">Genes</h4>
-        <v-card >
-          {{ project.genes }}
+        <v-card style="word-break: break-word;" >
+          {{ project.genes ? project.genes.join(" ")  : '' }}
         </v-card>
       </div>
 

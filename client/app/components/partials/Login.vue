@@ -18,7 +18,7 @@
 
     <v-layout row wrap class="mt-5" justify-center>
        <v-flex xs4 >
-        <v-toolbar dark>
+        <v-toolbar dark  color="cyan darken-2">
           <v-toolbar-title>Login to clin.iobio</v-toolbar-title>
         </v-toolbar>
         <v-card >

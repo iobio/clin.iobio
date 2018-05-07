@@ -32,12 +32,6 @@ button
     font-size: 12px
     height: 20px
 
-.progress-linear__background.primary
-  background-color: $amber-lighten-4 !important
-.progress-linear__bar__indeterminate--active
-  .progress-linear__bar__indeterminate
-    background-color: $amber-lighten-3 !important
-
 
 .toolbar
   .input-group__details
@@ -47,6 +41,42 @@ button
       .progress-linear__bar__indeterminate
         background-color: $amber-lighten-2 !important
 
+
+.stepper__step__step
+  background-color: $default-badge-color !important
+  color: white !important
+
+.stepper__step--active
+  .stepper__step__step
+    background-color: $app-color !important
+    color: white !important
+
+.stepper__label
+  color: $text-color
+
+.theme--light
+  .stepper
+    .stepper__step--active
+      .stepper__label
+        text-shadow: none
+        color: $app-color !important
+
+.application
+  .theme--light
+    .stepper
+      .stepper__step--active
+        .stepper__label
+          text-shadow: none
+          color: $app-color !important
+
+.task-switch
+  &.accent--text
+    color:  $app-color !important
+
+button
+  &.primary
+    background-color: $app-color !important
+    border-color: $app-color !important
 
 </style>
 

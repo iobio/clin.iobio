@@ -107,7 +107,7 @@
       @authenticated="onAuthenticated">
     </login>
 
-    <v-card v-show="isAuthenticated" dark class="dashboard-card">
+    <v-card v-show="isAuthenticated" light class="dashboard-card">
 
           <v-btn v-show="false"flat fab small style="float:right"
            v-if="!showDashboard"
@@ -130,7 +130,7 @@
 
         <v-stepper-header>
           <template v-for="step in project.workflow.steps">
-            <v-stepper-step :key="step.number" editable :step="step.number" :complete="step.complete">
+            <v-stepper-step  :key="step.number" editable :step="step.number" :complete="step.complete">
               {{ step.title }}
             </v-stepper-step>
             <v-divider v-show="step.number != project.workflow.steps.length"></v-divider>
@@ -255,11 +255,21 @@ export default {
 
       modelInfos: null,
 
-      geneUrl: 'http://localhost:4026',
-      panelUrl: 'http://localhost:4024',
-      //geneUrl: 'http://nv-dev-new.iobio.io/vue.gene.iobio',
-      //panelUrl: 'http://nv-dev-new.iobio.io/genepanel.iobio',
-      bamUrl: 'http://nv-dev-new.iobio.io/vue.bam.iobio',
+      appUrls: {
+        'localhost': {
+            geneUrl:  'http://localhost:4026',
+            panelUrl: 'http://localhost:4024',
+            bamUrl:   'http://localhost:4027'
+        },
+        'dev': {
+            geneUrl:  'http:/newgene.iobio.io',
+            panelUrl: 'http://panel.iobio.io',
+            bamUrl:   'http://newbam.iobio.io'
+        },
+      },
+      geneUrl: null,
+      panelUrl: null,
+      bamUrl: null,
 
       currentStep: 0,
       showDashboard: true,
@@ -362,6 +372,16 @@ export default {
       window.addEventListener("message", self.receiveAppMessage, false);
 
 
+      var appTarget = null;
+      if (self.$route.fullPath.indexOf("localhost") > 0) {
+        appTarget = "localhost";
+      } else {
+        appTarget = "dev";
+      }
+      self.geneUrl  = self.appUrls[appTarget].geneUrl;
+      self.panelUrl = self.appUrls[appTarget].panelUrl;
+      self.bamUrl   = self.appUrls[appTarget].bamUrl;
+
       if (this.paramSource && this.paramSource != '' && this.paramToken && this.paramToken.length > 0) {
         this.promiseInitHub();
       }
@@ -377,6 +397,15 @@ export default {
         .then(function() {
             var msgObject = {type: 'set-data', sender: 'clin.iobio', 'modelInfos': self.modelInfos};
             self.sendMessageToGene(msgObject);
+
+            var probandModelInfo = self.modelInfos.filter(function(modelInfo) {
+              return modelInfo.relationship == 'proband';
+            });
+            if (probandModelInfo.length > 0) {
+              msgObject = {type: 'set-data', sender: 'clin.iobio', 'modelInfo': probandModelInfo[0]};
+              self.sendMessageToBam(msgObject);
+            }
+
         })
       }
     },
@@ -389,6 +418,10 @@ export default {
     sendMessageToGenePanel: function(obj) {
       var theObject = obj ? obj : {type: 'start-analysis', sender: 'clin.iobio'};
       $("#gene-panel-iframe iframe")[0].contentWindow.postMessage(JSON.stringify(theObject), '*');
+    },
+
+    sendMessageToBam: function(obj) {
+      $("#bam-iframe iframe")[0].contentWindow.postMessage(JSON.stringify(obj), '*');
     },
 
     receiveAppMessage: function(event) {
@@ -512,10 +545,15 @@ export default {
           .done(data => {
             var trioMap = {};
 
-            var vcfInfos = data.data.filter(f => f.type == 'vcf');
-            var vcfMap = {};
 
-            // Find proband
+            var vcfInfos = data.data.filter(f => f.type == 'vcf');
+            var bamInfos = data.data.filter(f => f.type == 'bam');
+            var vcfMap = {};
+            var bamMap = {};
+
+            bamInfos.forEach(function(bamInfo) {
+              bamMap[bamInfo.sample_uuid] = bamInfo;
+            });
             vcfInfos.forEach(function(vcfInfo) {
               vcfMap[vcfInfo.sample_uuid] = vcfInfo;
               var sampleInfo = sampleMap[vcfInfo.sample_uuid];
@@ -523,7 +561,7 @@ export default {
                 if (sampleInfo.pedigree.paternal_id != null
                     && sampleInfo.pedigree.maternal_id != null
                     && sampleInfo.pedigree.affection_status == 1) {
-                  trioMap['proband'] = { 'vcfInfo': vcfInfo, 'sampleInfo': sampleInfo, 'pedigree': sampleInfo.pedigree };
+                  trioMap['proband'] = { 'vcfInfo': vcfInfo, 'bamInfo': bamMap[vcfInfo.sample_uuid], 'sampleInfo': sampleInfo, 'pedigree': sampleInfo.pedigree };
                 }
               }
             })
@@ -534,11 +572,13 @@ export default {
 
               trioMap['mother'] = {
                 'vcfInfo': vcfMap[maternal_id],
+                'bamInfo': bamMap[maternal_id],
                 'sampleInfo': sampleMap[maternal_id],
                 'pedigree': sampleMap[maternal_id].pedigree };
 
               trioMap['father'] = {
                 'vcfInfo': vcfMap[paternal_id],
+                'bamInfo': bamMap[paternal_id],
                 'sampleInfo': sampleMap[paternal_id],
                 'pedigree': sampleMap[paternal_id].pedigree };
             }
@@ -552,7 +592,7 @@ export default {
                 'sample':         trioMap[rel].sampleInfo.id,
                 'vcf':            trioMap[rel].vcfInfo.uri,
                 'tbi':            null,
-                'bam':            null,
+                'bam':            trioMap[rel].bamInfo ? trioMap[rel].bamInfo.uri : null,
                 'bai':            null };
               self.modelInfos.push(modelInfo);
             }
@@ -564,47 +604,7 @@ export default {
 
 
 
-    promiseGetUrlsFromHub: function(idProject) {
-      let self = this;
 
-      return new Promise(function(resolve, reject) {
-
-        var vcf = null,
-            tbi = null;
-        self.hubEndpoint.getFilesForProject(idProject).done(data => {
-
-          var vcfInfos = data.data.filter(f => f.type == 'vcf');
-          var vcfUrls = [];
-          vcfInfos.forEach(function(vcfInfo) {
-            vcfUrls.push({'vcfUrl' : vcfInfo.uri, 'tbiUrl' : null});
-          })
-          resolve(vcfUrls);
-
-
-          /*
-          vcfs = data.data.filter(f => f.type == 'vcf')
-          tbis = data.data.filter(f => f.type == 'tbi');
-          self.hubEndpoint.getSignedUrlForFile(vcf).done(urlData => {
-            var vcfUrl = '',
-            tbiUrl = '';
-            vcfUrl = urlData.url;
-            if (vcfUrl == null || vcfUrl.length == 0) {
-              reject("Empty vcf url returned from hub.");
-            }
-            self.hubEndpoint.getSignedUrlForFile(tbi).done(urlData => {
-              tbiUrl = urlData.url;
-              if (tbiUrl == null || tbiUrl.length == 0) {
-                reject("Empty tbi url returned from hub.");
-              }
-              else {
-                resolve({'vcfUrl' : vcfUrl, 'tbiUrl' : tbiUrl});
-              }
-            })
-          })*/
-        })
-
-      });
-    },
 
     promiseGetSampleIdsFromHub: function(idProject, phenoFilters) {
       let self = this;
