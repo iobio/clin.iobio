@@ -262,7 +262,7 @@ export default {
             bamUrl:   'http://localhost:4027'
         },
         'dev': {
-            geneUrl:  'http:/newgene.iobio.io',
+            geneUrl:  'http://newgene.iobio.io',
             panelUrl: 'http://panel.iobio.io',
             bamUrl:   'http://newbam.iobio.io'
         },
