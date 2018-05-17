@@ -253,6 +253,7 @@ export default {
       isAuthenticated: false,
       userSession:  null,
 
+      idProject: null,
       projectModel: null,
 
       modelInfos: null,
@@ -371,6 +372,10 @@ export default {
 
     init: function() {
       let self = this;
+
+      // WOLRKAROUND - until project id can be passed in from hub
+      self.idProject = "501";
+
       self.userSession = new UserSession();
       window.addEventListener("message", self.receiveAppMessage, false);
 
@@ -404,8 +409,9 @@ export default {
       this.isAuthenticated = true;
       this.projectModel = new ProjectModel(this.userSession);
 
-      if (this.paramProjectId && this.paramProjectId.length > 0) {
-        this.promiseGetProject(this.paramProjectId, true)
+
+      if (this.idProject) {
+        this.promiseGetProject(this.idProject, true)
         .then(function() {
             var msgObject = {type: 'set-data', sender: 'clin.iobio', 'modelInfos': self.modelInfos};
             self.sendMessageToGene(msgObject);

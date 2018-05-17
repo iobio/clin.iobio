@@ -62,10 +62,7 @@ const routes = [
 
         paramDebug:                 route.query.debug,
 
-        // TEMPORARY WORKAROUND UNTIL PROJECT ID CAN BE PASSED FROM HUB
-        //paramProjectId:             route.query.project_uuid,
-        paramProjectId:             "501",
-
+        paramProjectId:             route.query.project_uuid,
 
         paramSampleId:              route.query.sample_uuid,
         paramTokenType:             route.query.token_type,
