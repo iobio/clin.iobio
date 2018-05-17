@@ -225,6 +225,7 @@ import Login from  '../partials/Login.vue'
 
 import ProjectModel from  '../../models/ProjectModel.js'
 import UserSession  from  '../../models/UserSession.js'
+import HubSession  from  '../../models/HubSession.js'
 
 
 
@@ -275,7 +276,8 @@ export default {
       showDashboard: true,
 
 
-      hubEnpoint: null,
+      //hubEnpoint: null,
+      hubSession: null,
 
       project: {
 
@@ -382,9 +384,14 @@ export default {
       self.panelUrl = self.appUrls[appTarget].panelUrl;
       self.bamUrl   = self.appUrls[appTarget].bamUrl;
 
-      if (this.paramSource && this.paramSource != '' && this.paramToken && this.paramToken.length > 0) {
-        this.promiseInitHub();
+
+      if (window.location.hash.length > 0) {
+
+        self.hubSession = new HubSession();
+        self.hubSession.init();
+
       }
+
 
     },
 
@@ -528,7 +535,7 @@ export default {
     },
 
 
-    promiseInitHub: function() {
+    promiseInitHubOld: function() {
       let self = this;
 
       localStorage.setItem('hub-iobio-tkn', self.paramTokenType + ' ' + self.paramToken);
