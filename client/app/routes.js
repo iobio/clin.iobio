@@ -58,11 +58,15 @@ const routes = [
     },
     component: Home,
     props: (route) => ({
-        //paramIdProject:        route.query.idProject,
 
-        paramDebug:            route.query.debug,
 
-        paramProjectId:             route.query.project_uuid,
+        paramDebug:                 route.query.debug,
+
+        // TEMPORARY WORKAROUND UNTIL PROJECT ID CAN BE PASSED FROM HUB
+        //paramProjectId:             route.query.project_uuid,
+        paramProjectId:             "501",
+
+
         paramSampleId:              route.query.sample_uuid,
         paramTokenType:             route.query.token_type,
         paramToken:                 route.query.access_token,

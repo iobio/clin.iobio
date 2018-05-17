@@ -391,9 +391,6 @@ export default {
         self.hubSession = new HubSession();
         self.hubSession.promiseInit(self.paramSampleId, self.paramSource)
         .then(modelInfos => {
-          // TEMPORARY WORKAROUND
-          // Until we have a project id from hub, just fill it in with a dummy project id
-          self.paramProjectId = "501";
           self.modelInfos = modelInfos;
         })
 
