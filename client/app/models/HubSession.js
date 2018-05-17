@@ -1,10 +1,10 @@
-const api = source + '/apiv1';
 
 export default class HubSession {
   constructor() {
     this.vcf = null;
     this.samples = null;
     this.url = null;
+    this.apiVersion =  '/apiv1';
   }
 
   init() {
@@ -12,6 +12,7 @@ export default class HubSession {
     let queryParams = Qs.parse(window.location.hash.substr(1));
     let { access_token, filter, sample_uuid, token_type, source } = queryParams;
     localStorage.setItem('hub-iobio-tkn', token_type + ' ' + access_token);
+    this.api = source + apiVersion;
 
     // Get pedigree for sample
     self.getPedigreeForSample(sample_uuid).done(data => {
