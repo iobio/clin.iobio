@@ -40,6 +40,7 @@ const routes = [
         paramDebug:            route.query.debug,
 
         paramProjectId:             route.query.project_uuid,
+        paramSampleId:              route.query.sample_uuid,
         paramTokenType:             route.query.token_type,
         paramToken:                 route.query.access_token,
         paramSource:                route.query.source
@@ -50,10 +51,10 @@ const routes = [
     path: '/access_token*',
     beforeEnter: (to, from, next) => {
             // remove initial slash from path and parse
-      let queryParams = qs.parse(to.path.substring(1));
+      let queryParams = Qs.parse(to.path.substring(1));
       let { access_token, expires_in, token_type, ...otherQueryParams } = queryParams;
       localStorage.setItem('hub-iobio-tkn', token_type + ' ' + access_token);
-      next('/' + qs.stringify(otherQueryParams, { addQueryPrefix: true, arrayFormat: 'brackets' }));
+      next('/' + Qs.stringify(otherQueryParams, { addQueryPrefix: true, arrayFormat: 'brackets' }));
     },
     component: Home,
     props: (route) => ({
@@ -62,6 +63,7 @@ const routes = [
         paramDebug:            route.query.debug,
 
         paramProjectId:             route.query.project_uuid,
+        paramSampleId:              route.query.sample_uuid,
         paramTokenType:             route.query.token_type,
         paramToken:                 route.query.access_token,
         paramSource:                route.query.source

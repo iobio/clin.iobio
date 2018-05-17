@@ -240,6 +240,7 @@ export default {
     paramDebug:  null,
 
     paramProjectId:   null,
+    paramSampleId:    null,
     paramTokenType:   null,
     paramToken:       null,
     paramSource:      null
@@ -385,10 +386,16 @@ export default {
       self.bamUrl   = self.appUrls[appTarget].bamUrl;
 
 
-      if (window.location.hash.length > 0) {
+      if (localStorage.getItem('hub-iobio-tkn') && localStorage.getItem('hub-iobio-tkn').length > 0) {
 
         self.hubSession = new HubSession();
-        self.hubSession.init();
+        self.hubSession.promiseInit(self.paramSampleId, self.paramSource)
+        .then(modelInfos => {
+          // TEMPORARY WORKAROUND
+          // Until we have a project id from hub, just fill it in with a dummy project id
+          self.paramProjectId = "501";
+          self.modelInfos = modelInfos;
+        })
 
       }
 
@@ -399,6 +406,7 @@ export default {
       let self = this;
       this.isAuthenticated = true;
       this.projectModel = new ProjectModel(this.userSession);
+
       if (this.paramProjectId && this.paramProjectId.length > 0) {
         this.promiseGetProject(this.paramProjectId, true)
         .then(function() {
@@ -532,99 +540,7 @@ export default {
         }
       }
       return this.promiseUpdateWorkflow();
-    },
-
-
-    promiseInitHubOld: function() {
-      let self = this;
-
-      localStorage.setItem('hub-iobio-tkn', self.paramTokenType + ' ' + self.paramToken);
-      self.hubEndpoint = new HubEndpoint(this.paramSource);
-
-      self.hubEndpoint.getSamplesForProject(self.paramProjectId, null)
-      .done(data => {
-          var sampleMap = {};
-          data.forEach(function(sampleInfo) {
-            sampleMap[sampleInfo.uuid] = sampleInfo;
-          })
-
-          self.hubEndpoint.getFilesForProject(self.paramProjectId)
-          .done(data => {
-            var trioMap = {};
-
-
-            var vcfInfos = data.data.filter(f => f.type == 'vcf');
-            var bamInfos = data.data.filter(f => f.type == 'bam');
-            var vcfMap = {};
-            var bamMap = {};
-
-            bamInfos.forEach(function(bamInfo) {
-              bamMap[bamInfo.sample_uuid] = bamInfo;
-            });
-            vcfInfos.forEach(function(vcfInfo) {
-              vcfMap[vcfInfo.sample_uuid] = vcfInfo;
-              var sampleInfo = sampleMap[vcfInfo.sample_uuid];
-              if (sampleInfo.pedigree) {
-                if (sampleInfo.pedigree.paternal_id != null
-                    && sampleInfo.pedigree.maternal_id != null
-                    && sampleInfo.pedigree.affection_status == 1) {
-                  trioMap['proband'] = { 'vcfInfo': vcfInfo, 'bamInfo': bamMap[vcfInfo.sample_uuid], 'sampleInfo': sampleInfo, 'pedigree': sampleInfo.pedigree };
-                }
-              }
-            })
-
-            if (trioMap.proband && trioMap.proband.pedigree) {
-              var maternal_id = trioMap.proband.pedigree.maternal_id;
-              var paternal_id = trioMap.proband.pedigree.paternal_id;
-
-              trioMap['mother'] = {
-                'vcfInfo': vcfMap[maternal_id],
-                'bamInfo': bamMap[maternal_id],
-                'sampleInfo': sampleMap[maternal_id],
-                'pedigree': sampleMap[maternal_id].pedigree };
-
-              trioMap['father'] = {
-                'vcfInfo': vcfMap[paternal_id],
-                'bamInfo': bamMap[paternal_id],
-                'sampleInfo': sampleMap[paternal_id],
-                'pedigree': sampleMap[paternal_id].pedigree };
-            }
-
-            self.modelInfos = [];
-            for (var rel in trioMap) {
-              var modelInfo = {
-                'relationship':   rel,
-                'affectedStatus': trioMap[rel].pedigree.affection_status,
-                'name':           trioMap[rel].sampleInfo.id,
-                'sample':         trioMap[rel].sampleInfo.id,
-                'vcf':            trioMap[rel].vcfInfo.uri,
-                'tbi':            null,
-                'bam':            trioMap[rel].bamInfo ? trioMap[rel].bamInfo.uri : null,
-                'bai':            null };
-              self.modelInfos.push(modelInfo);
-            }
-
-          });
-        });
-
-    },
-
-
-
-
-
-    promiseGetSampleIdsFromHub: function(idProject, phenoFilters) {
-      let self = this;
-
-      return new Promise(function(resolve, reject) {
-        self.hubEndpoint.getSamplesForProject(projectId, phenoFilters)
-            .done(data => {
-              console.log(data);
-              resolve(data);
-            })
-      })
     }
-
 
   }
 }

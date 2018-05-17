@@ -7,38 +7,59 @@ export default class HubSession {
     this.apiVersion =  '/apiv1';
   }
 
-  init() {
+  promiseInit(sampleId, source) {
     let self = this;
-    let queryParams = Qs.parse(window.location.hash.substr(1));
-    let { access_token, filter, sample_uuid, token_type, source } = queryParams;
-    localStorage.setItem('hub-iobio-tkn', token_type + ' ' + access_token);
-    this.api = source + apiVersion;
+    self.api = source + self.apiVersion;
 
-    // Get pedigree for sample
-    self.getPedigreeForSample(sample_uuid).done(data => {
-      let pedigree = self.parsePedigree(data);
 
-      var promises = [];
-      for (var rel in pedigree) {
-        let samples = [];
-        if (Array.isArray(pedigree[rel])) {
-          samples = pedigree[rel];
-        } else {
-          samples = [pedigree[rel]];
-        }
-        samples.forEach(s => {
-          p =  self.promiseGetFileMapForSample(s).then(fileMap => {
-            s.files = fileMap;
+    return new Promise((resolve, reject) => {
+      let modelInfos = [];
+
+      // Get pedigree for sample
+      self.getPedigreeForSample(sampleId).done(data => {
+        let pedigree = self.parsePedigree(data);
+
+        let promises = [];
+        for (var rel in pedigree) {
+          let samples = [];
+          if (Array.isArray(pedigree[rel])) {
+            samples = pedigree[rel];
+          } else {
+            samples = [pedigree[rel]];
+          }
+          samples.forEach(s => {
+            let p =  self.promiseGetFileMapForSample(s, rel).then(data => {
+              let theSample = data.sample;
+              theSample.files = data.fileMap;
+              var modelInfo = {
+                'relationship':   data.relationship,
+                'affectedStatus': theSample.pedigree.affection_status == 1 || theSample.pedigree.affection_status == 2 ? 'affected' : 'unaffected',
+                'name':           theSample.id,
+                'sample':         theSample.id,
+                'vcf':            theSample.files.vcf,
+                'tbi':            theSample.files.tbi.indexOf(theSample.files.vcf) == 0 ? null : theSample.files.tbi,
+                'bam':            theSample.files.bam,
+                'bai':            theSample.files.bai.indexOf(theSample.files.bam) == 0 ? null : theSample.files.bai };
+              modelInfos.push(modelInfo);
+            })
+            promises.push(p);
           })
-          promises.push(p);
+
+        }
+
+        Promise.all(promises).then(response => {
+          console.log(pedigree);
+          resolve(modelInfos);
         })
-
-      }
-
-      Promise.all(promises).then(response => {
-        console.log(pedigree);
+        .catch(error => {
+          reject(error);
+        })
       })
     })
+
+
+
+
   }
 
   parsePedigree(raw_pedigree) {
@@ -78,8 +99,9 @@ export default class HubSession {
   }
 
   getPedigreeForSample(sample_uuid) {
+    let self = this;
     return $.ajax({
-      url: api + '/samples/' + sample_uuid + '/pedigree',
+      url: self.api + '/samples/' + sample_uuid + '/pedigree',
       type: 'GET',
       contentType: 'application/json',
       headers: {
@@ -89,7 +111,7 @@ export default class HubSession {
   }
 
 
-  promiseGetFileMapForSample(sample) {
+  promiseGetFileMapForSample(sample, relationship) {
     let self = this;
     return new Promise((resolve,reject) => {
       var promises = [];
@@ -106,7 +128,7 @@ export default class HubSession {
         })
         Promise.all(promises)
         .then(response => {
-          resolve(fileMap);
+          resolve({'sample': sample, 'relationship': relationship, 'fileMap': fileMap});
         })
         .catch(error => {
           reject(error);
@@ -135,7 +157,7 @@ export default class HubSession {
   getFilesForSample(sample_uuid) {
     let self = this;
     return $.ajax({
-      url: api + '/samples/' + sample_uuid + '/files',
+      url: self.api + '/samples/' + sample_uuid + '/files',
       type: 'GET',
       contentType: 'application/json',
       headers: {
@@ -160,7 +182,7 @@ export default class HubSession {
   getSignedUrlForFile (file) {
     let self = this;
     return $.ajax({
-      url: api + '/files/' + file.uuid + '/url',
+      url: self.api + '/files/' + file.uuid + '/url',
       type: 'GET',
       contentType: 'application/json',
       headers: {
@@ -168,6 +190,15 @@ export default class HubSession {
       }
     });
   }
+
+
+
+
+
+
+
+
+
 
 
 }
