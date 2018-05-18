@@ -413,7 +413,12 @@ export default {
       if (this.idProject) {
         this.promiseGetProject(this.idProject, true)
         .then(function() {
-            var msgObject = {type: 'set-data', sender: 'clin.iobio', 'modelInfos': self.modelInfos};
+            var msgObject = {
+              type: 'set-data',
+              sender: 'clin.iobio',
+              'modelInfos': self.modelInfos,
+              'variants': self.project.variants
+            };
             self.sendMessageToGene(msgObject);
 
             self.sendMessageToGenePanel();
