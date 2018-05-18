@@ -417,6 +417,7 @@ export default {
               type: 'set-data',
               sender: 'clin.iobio',
               'modelInfos': self.modelInfos,
+              'genes': self.project.genes,
               'variants': self.project.variants
             };
             self.sendMessageToGene(msgObject);
