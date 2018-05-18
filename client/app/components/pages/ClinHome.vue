@@ -417,6 +417,7 @@ export default {
               type: 'set-data',
               sender: 'clin.iobio',
               'modelInfos': self.modelInfos,
+              'phenotypes': self.project.phenotypes,
               'genes': self.project.genes,
               'variants': self.project.variants
             };
