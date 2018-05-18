@@ -37,7 +37,7 @@ export default class HubSession {
                 theSample.id = theSample.id.substr(0,theSample.id.indexOf(".exome"));
               }
               var modelInfo = {
-                'relationship':   data.relationship,
+                'relationship':   data.relationship == 'siblings' ? 'sibling' : data.relationship,
                 'affectedStatus': theSample.pedigree.affection_status == 1 || theSample.pedigree.affection_status == 2 ? 'affected' : 'unaffected',
                 'name':           theSample.id,
                 'sample':         theSample.id,
