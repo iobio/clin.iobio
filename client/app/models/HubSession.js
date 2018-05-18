@@ -31,6 +31,11 @@ export default class HubSession {
             let p =  self.promiseGetFileMapForSample(s, rel).then(data => {
               let theSample = data.sample;
               theSample.files = data.fileMap;
+
+              // TEMPORARY WORKAROUND - get rid of .exome from sample id
+              if (theSample.id.indexOf(".exome") > 0) {
+                theSample.id = theSample.id.substr(0,theSample.id.indexOf(".exome"));
+              }
               var modelInfo = {
                 'relationship':   data.relationship,
                 'affectedStatus': theSample.pedigree.affection_status == 1 || theSample.pedigree.affection_status == 2 ? 'affected' : 'unaffected',
