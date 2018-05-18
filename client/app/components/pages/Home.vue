@@ -416,6 +416,8 @@ export default {
             var msgObject = {type: 'set-data', sender: 'clin.iobio', 'modelInfos': self.modelInfos};
             self.sendMessageToGene(msgObject);
 
+            self.sendMessageToGenePanel();
+
             var probandModelInfo = self.modelInfos.filter(function(modelInfo) {
               return modelInfo.relationship == 'proband';
             });
