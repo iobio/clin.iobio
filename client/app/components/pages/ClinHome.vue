@@ -70,6 +70,7 @@
   display: inline-block
   vertical-align: top
   width: 160px
+  cursor: pointer
 
 .task-switch
   float: left
@@ -156,8 +157,13 @@
                   <span class="task-checkbox-header2">Passed</span>
 
                 </div>
-                <div class="task-entry" v-for="task in step.tasks" :key="task.name">
-                  <span class="task-name">{{ task.name }}</span>
+                <div class="task-entry"
+                 v-for="task in step.tasks"
+                 :key="task.name"
+                 v-tooltip.top="task.name"
+                 @mouseover="onMouseOverTask(step, task)"
+                 @mouseleave="onMouseLeaveTask(step, task)">
+                  <span class="task-name" >{{ task.name }}</span>
                   <v-checkbox class="task-switch"
                     v-model="task.complete"
                   ></v-checkbox>
@@ -296,37 +302,40 @@ export default {
             },
             { number: 2,
               title: 'Data QC',
+              app: 'bam.iobio',
               summary: 'Check quality of sequence alignments for the proband.',
               description: 'Check the quality of the underlying sequencing data for the proband. Using the BAM.IOBIO app, areas of missing coverage or unexpected statistics potentially suggesting contamination are investigated.',
               complete: false,
               tasks: [
-                { name: 'Genomic wide coverage', complete: false, pass: false },
-                { name: 'Median coverage',       complete: false, pass: false },
-                { name: 'Mapped reads',          complete: false, pass: false },
-                { name: 'Duplicate rate',        complete: false, pass: false }
+                { name: 'Genomic wide coverage', key: 'genomic-coverage', complete: false, pass: false },
+                { name: 'Median coverage',       key: 'median-coverage',  complete: false, pass: false },
+                { name: 'Mapped reads',          key: 'mapped-reads',     complete: false, pass: false },
+                { name: 'Duplicate rate',        key: 'duplicate-rate',   complete: false, pass: false }
               ]
             },
             { number: 3,
               title: 'Gene lists',
+              app: 'genepanel.iobio',
               summary: 'Generate list of candidate genes.',
               description: "The PANEL.IOBIO app is used to identify genes that are most likely associated with the proband's phenotypes.",
               complete: false,
               tasks: [
-                { name: 'Panel genes',             complete: false, pass: false },
-                { name: 'Phenotype driven genes',  complete: false, pass: false },
-                { name: 'Export genes',        complete: false, pass: false }
+                { name: 'Panel genes',             key: 'gtr-genes',       complete: false, pass: false },
+                { name: 'Phenotype driven genes',  key: 'phenotype-genes', complete: false, pass: false },
+                { name: 'Export genes',            key: 'export-genes',    complete: false, pass: false }
               ]
             },
             { number: 4,
               title: 'De novo variants',
+              app: 'gene.iobio',
               summary: 'Interrogate proband for known pathogenic or de novo variants and check for areas of insufficient coverage in genes.',
               description: 'The GENE.IOBIO app is used to interrogate proband variants in the identified gene list that could be candidates for causative variants.',
               complete: false,
               tasks: [
-                { name: 'Pathogenic variants',     complete: false, pass: false },
-                { name: 'De novo variants',        complete: false, pass: false },
-                { name: 'Insufficient coverage',   complete: false, pass: false },
-                { name: 'Expand gene list',        complete: false, pass: false }
+                { name: 'Pathogenic variants',     key: 'pathogenic',     tooltip: 'After genes are analyzed, this badge will show you the number of genes with pathogenic variants, which are variants with a 5% allele frequency or less and a pathogenic/likely pathogenic designation from ClinVar', complete: false, pass: false },
+                { name: 'De novo variants',        key: 'denovo',         tooltip: 'After genes are analyzed, this badge will show you the number of genes with de novo variants, which are variants with a 5% allele frequency or less and a de novo inheritance mode', complete: false, pass: false },
+                { name: 'Insufficient coverage',   key: 'coverage',       tooltip: 'After genes are analyzed, this badge will show you the number of genes insufficient coverage.', complete: false, pass: false },
+                { name: 'Expand gene list',        key: 'genes-menu',     tooltip: 'Enter a new gene name or click on the + button to expand the gene list', complete: false, pass: false }
               ]
             },
             { number: 5,
@@ -374,14 +383,14 @@ export default {
       let self = this;
 
       // WOLRKAROUND - until project id can be passed in from hub
-      self.idProject = "501";
+      self.idProject = self.paramProjectId && self.paramProjectId.length > 0 ? self.paramProjectId : "505";
 
       self.userSession = new UserSession();
       window.addEventListener("message", self.receiveAppMessage, false);
 
 
       var appTarget = null;
-      if (self.$route.fullPath.indexOf("localhost") > 0) {
+      if (window.document.URL.indexOf("localhost") > 0) {
         appTarget = "localhost";
       } else {
         appTarget = "dev";
@@ -391,7 +400,8 @@ export default {
       self.bamUrl   = self.appUrls[appTarget].bamUrl;
 
 
-      if (localStorage.getItem('hub-iobio-tkn') && localStorage.getItem('hub-iobio-tkn').length > 0) {
+      if (localStorage.getItem('hub-iobio-tkn') && localStorage.getItem('hub-iobio-tkn').length > 0
+          && self.paramSampleId && self.paramSource) {
 
         self.hubSession = new HubSession();
         self.hubSession.promiseInit(self.paramSampleId, self.paramSource)
@@ -399,6 +409,18 @@ export default {
           self.modelInfos = modelInfos;
         })
 
+      } else {
+        let demoVcf = "https://s3.amazonaws.com/iobio/samples/vcf/platinum-exome.vcf.gz";
+        let demoBams = {
+            'proband': 'https://s3.amazonaws.com/iobio/samples/bam/NA12878.exome.bam',
+            'mother':  'https://s3.amazonaws.com/iobio/samples/bam/NA12892.exome.bam',
+            'father':  'https://s3.amazonaws.com/iobio/samples/bam/NA12891.exome.bam'
+        };
+        self.modelInfos = [
+          {relationship: 'proband', affectedStatus: 'affected',   name: 'NA12878', 'sample': 'NA12878', 'vcf': demoVcf, 'tbi': null, 'bam': demoBams['proband'], 'bai': null },
+          {relationship: 'mother',  affectedStatus: 'unaffected', name: 'NA12892', 'sample': 'NA12892', 'vcf': demoVcf, 'tbi': null, 'bam': demoBams['mother'], 'bai': null  },
+          {relationship: 'father',  affectedStatus: 'unaffected', name: 'NA12891', 'sample': 'NA12891', 'vcf': demoVcf, 'tbi': null, 'bam': demoBams['father'], 'bai': null  }
+        ];
       }
 
 
@@ -552,6 +574,38 @@ export default {
         }
       }
       return this.promiseUpdateWorkflow();
+    },
+
+    onMouseOverTask: function(step, task) {
+      let self = this;
+      let msgObject = {
+        'type':   'show-tooltip',
+        'sender': 'clin.iobio',
+        'task':   task
+      };
+      if (step.app == 'gene.iobio') {
+        self.sendMessageToGene( msgObject )
+      } else if (step.app == 'bam.iobio') {
+        self.sendMessageToBam( msgObject );
+      } else if (step.app == 'genepanel.iobio') {
+        self.sendMessageToGenePanel( msgObject );
+      }
+    },
+
+    onMouseLeaveTask: function(step, task) {
+      let self = this;
+      let msgObject = {
+        'type':   'hide-tooltip',
+        'sender': 'clin.iobio',
+        'task':   task
+      };
+      if (step.app == 'gene.iobio') {
+        self.sendMessageToGene( msgObject )
+      } else if (step.app == 'bam.iobio') {
+        self.sendMessageToBam( msgObject );
+      } else if (step.app == 'genepanel.iobio') {
+        self.sendMessageToGenePanel( msgObject );
+      }
     }
 
   }
