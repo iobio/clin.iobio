@@ -193,18 +193,18 @@
       </v-card>
 
       <div id="bam-iframe" v-show="currentStep == 2">
-        <iframe  :src="bamUrl" style="width:100%;height:100%" frameBorder="0">
+        <iframe  :src="apps.bam.url" style="width:100%;height:100%" frameBorder="0">
         </iframe>
       </div>
 
 
       <div id="gene-panel-iframe" v-show="currentStep == 3">
-        <iframe  :src="panelUrl" style="width:100%;height:100%" frameBorder="0">
+        <iframe  :src="apps.genepanel.url" style="width:100%;height:100%" frameBorder="0">
         </iframe>
       </div>
 
       <div id="gene-iframe" v-show="currentStep == 4">
-        <iframe  :src="geneUrl" style="width:100%;height:100%" frameBorder="0">
+        <iframe  :src="apps.gene.url" style="width:100%;height:100%" frameBorder="0">
         </iframe>
       </div>
 
@@ -266,19 +266,22 @@ export default {
 
       appUrls: {
         'localhost': {
-            geneUrl:  'http://localhost:4026',
-            panelUrl: 'http://localhost:4024',
-            bamUrl:   'http://localhost:4027'
+            'gene':      'http://localhost:4026',
+            'genepanel': 'http://localhost:4024',
+            'bam':       'http://localhost:4027'
         },
         'dev': {
-            geneUrl:  'http://newgene.iobio.io',
-            panelUrl: 'http://panel.iobio.io',
-            bamUrl:   'http://newbam.iobio.io'
+            'gene':      'http://newgene.iobio.io',
+            'genepanel': 'http://panel.iobio.io',
+            'bam':       'http://newbam.iobio.io'
         },
       },
-      geneUrl: null,
-      panelUrl: null,
-      bamUrl: null,
+
+      apps: {
+        'bam':       {url: null, isLoaded: false, step: 2, iframeSelector: '#bam-iframe iframe'},
+        'genepanel': {url: null, isLoaded: false, step: 3, iframeSelector: '#gene-panel-iframe iframe'},
+        'gene':      {url: null, isLoaded: false, step: 4, iframeSelector: '#gene-iframe iframe'}
+      },
 
       currentStep: 0,
       showDashboard: true,
@@ -302,7 +305,7 @@ export default {
             },
             { number: 2,
               title: 'Data QC',
-              app: 'bam.iobio',
+              app: 'bam',
               summary: 'Check quality of sequence alignments for the proband.',
               description: 'Check the quality of the underlying sequencing data for the proband. Using the BAM.IOBIO app, areas of missing coverage or unexpected statistics potentially suggesting contamination are investigated.',
               complete: false,
@@ -315,7 +318,7 @@ export default {
             },
             { number: 3,
               title: 'Gene lists',
-              app: 'genepanel.iobio',
+              app: 'genepanel',
               summary: 'Generate list of candidate genes.',
               description: "The PANEL.IOBIO app is used to identify genes that are most likely associated with the proband's phenotypes.",
               complete: false,
@@ -327,7 +330,7 @@ export default {
             },
             { number: 4,
               title: 'De novo variants',
-              app: 'gene.iobio',
+              app: 'gene',
               summary: 'Interrogate proband for known pathogenic or de novo variants and check for areas of insufficient coverage in genes.',
               description: 'The GENE.IOBIO app is used to interrogate proband variants in the identified gene list that could be candidates for causative variants.',
               complete: false,
@@ -371,8 +374,23 @@ export default {
 
   watch: {
     currentStep: function() {
-      if (this.isAuthenticated && this.project && this.currentStep) {
-        this.promiseUpdateWorkflow();
+      let self = this;
+      if (self.isAuthenticated && self.project && self.currentStep) {
+        var theApp = null;
+
+        // If this is the first time we have loaded the app, send
+        // message to set the data
+        for (var appName in self.apps) {
+          let app = self.apps[appName];
+          if (app.step == self.currentStep && !app.isLoaded) {
+              self.setData(appName, 10);
+              app.isLoaded = true;
+          }
+        }
+
+
+        // We have moved to a new step.  Save the workflow step.
+        self.promiseUpdateWorkflow();
       }
     }
   },
@@ -382,7 +400,7 @@ export default {
     init: function() {
       let self = this;
 
-      // WOLRKAROUND - until project id can be passed in from hub
+      // WORKAROUND - until project id can be passed in from hub
       self.idProject = self.paramProjectId && self.paramProjectId.length > 0 ? self.paramProjectId : "505";
 
       self.userSession = new UserSession();
@@ -395,9 +413,9 @@ export default {
       } else {
         appTarget = "dev";
       }
-      self.geneUrl  = self.appUrls[appTarget].geneUrl;
-      self.panelUrl = self.appUrls[appTarget].panelUrl;
-      self.bamUrl   = self.appUrls[appTarget].bamUrl;
+      self.apps.bam.url       = self.appUrls[appTarget].bam;
+      self.apps.genepanel.url = self.appUrls[appTarget].genepanel;
+      self.apps.gene.url      = self.appUrls[appTarget].gene;
 
 
       if (localStorage.getItem('hub-iobio-tkn') && localStorage.getItem('hub-iobio-tkn').length > 0
@@ -435,47 +453,50 @@ export default {
       if (this.idProject) {
         this.promiseGetProject(this.idProject, true)
         .then(function() {
-            var msgObject = {
-              type: 'set-data',
-              sender: 'clin.iobio',
-              'modelInfos': self.modelInfos,
-              'phenotypes': self.project.phenotypes,
-              'genes': self.project.genes,
-              'variants': self.project.variants
-            };
-            self.sendMessageToGene(msgObject);
 
-            self.sendMessageToGenePanel();
-
-            var probandModelInfo = self.modelInfos.filter(function(modelInfo) {
-              return modelInfo.relationship == 'proband';
-            });
-            if (probandModelInfo.length > 0) {
-              msgObject = {type: 'set-data', sender: 'clin.iobio', 'modelInfo': probandModelInfo[0]};
-              self.sendMessageToBam(msgObject);
-            }
 
         })
       }
     },
 
-    sendMessageToGene: function(obj) {
-      var theObject = obj ? obj : {type: 'start-analysis', sender: 'clin.iobio'};
-      $("#gene-iframe iframe")[0].contentWindow.postMessage(JSON.stringify(theObject), '*');
+    setData: function(appName, pauseMillisec=0) {
+      let self = this;
+
+      setTimeout( () => {
+        var probandModelInfo = self.modelInfos.filter(function(modelInfo) {
+          return modelInfo.relationship == 'proband';
+        });
+        if (probandModelInfo.length == 0) {
+          console.log("Unable to locate proband model info");
+          return;
+        }
+
+        var msgObject = {
+            type: 'set-data',
+            sender: 'clin.iobio',
+            'modelInfo': probandModelInfo[0],
+            'modelInfos': self.modelInfos,
+            'phenotypes': self.project.phenotypes,
+            'genes': self.project.genes,
+            'variants': self.project.variants
+        };
+
+        self.sendAppMessage(appName, msgObject);
+      }, pauseMillisec);
+
     },
 
-    sendMessageToGenePanel: function(obj) {
+    sendAppMessage: function(appName, obj) {
+      let self = this;
       var theObject = obj ? obj : {type: 'start-analysis', sender: 'clin.iobio'};
-      $("#gene-panel-iframe iframe")[0].contentWindow.postMessage(JSON.stringify(theObject), '*');
+      var iframeSelector = self.apps[appName].iframeSelector;
+      $(iframeSelector)[0].contentWindow.postMessage(JSON.stringify(theObject), '*');
     },
 
-    sendMessageToBam: function(obj) {
-      $("#bam-iframe iframe")[0].contentWindow.postMessage(JSON.stringify(obj), '*');
-    },
 
     receiveAppMessage: function(event) {
       // Do we trust the sender of this message?
-      if (event.origin !== this.geneUrl &&  event.origin !== this.panelUrl) {
+      if (event.origin !== this.apps.bam.url &&  event.origin !== this.apps.gene.url &&  event.origin !== this.apps.genepanel.url) {
         if (this.paramDebug) {
           console.log("parentWindow received message frum untrusted sender. Event.origin is " + event.origin );
         }
@@ -501,7 +522,7 @@ export default {
         this.promiseUpdateGenes(messageObject.genes);
         this.promiseUpdatePhenotypes(messageObject.searchTerms);
         this.promiseCompleteStepTask('Gene lists', taskMap[messageObject.source]);
-        this.sendMessageToGene(messageObject);
+        this.sendAppMessage('gene', messageObject);
       } else if (messageObject.type == "save-variants") {
         this.promiseUpdateVariants(messageObject.variants);
         this.promiseCompleteStepTask('De novo variants', 'De novo variants');
@@ -583,13 +604,7 @@ export default {
         'sender': 'clin.iobio',
         'task':   task
       };
-      if (step.app == 'gene.iobio') {
-        self.sendMessageToGene( msgObject )
-      } else if (step.app == 'bam.iobio') {
-        self.sendMessageToBam( msgObject );
-      } else if (step.app == 'genepanel.iobio') {
-        self.sendMessageToGenePanel( msgObject );
-      }
+      self.sendAppMessage(step.app, msgObject);
     },
 
     onMouseLeaveTask: function(step, task) {
@@ -599,13 +614,7 @@ export default {
         'sender': 'clin.iobio',
         'task':   task
       };
-      if (step.app == 'gene.iobio') {
-        self.sendMessageToGene( msgObject )
-      } else if (step.app == 'bam.iobio') {
-        self.sendMessageToBam( msgObject );
-      } else if (step.app == 'genepanel.iobio') {
-        self.sendMessageToGenePanel( msgObject );
-      }
+      self.sendAppMessage(step.app, msgObject);
     }
 
   }
