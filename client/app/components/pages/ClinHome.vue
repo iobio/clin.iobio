@@ -314,10 +314,10 @@ export default {
               description: 'Check the quality of the underlying sequencing data for the proband. Using the BAM.IOBIO app, areas of missing coverage or unexpected statistics potentially suggesting contamination are investigated.',
               complete: false,
               tasks: [
-                { name: 'Genomic wide coverage', key: 'genomic-coverage', complete: false, pass: false },
-                { name: 'Median coverage',       key: 'median-coverage',  complete: false, pass: false },
-                { name: 'Mapped reads',          key: 'mapped-reads',     complete: false, pass: false },
-                { name: 'Duplicate rate',        key: 'duplicate-rate',   complete: false, pass: false }
+                { name: 'Genome wide coverage',  key: 'genome_wide_coverage', tooltip: 'Some instruction here about how to determine if coverage across entire genome is okay', complete: false, pass: false },
+                { name: 'Median coverage',       key: 'median_coverage',  tooltip: 'Instructions here about median coverage', complete: false, pass: false },
+                { name: 'Mapped reads',          key: 'mapped_reads',     tooltip: 'Instructions here about mapped reads', complete: false, pass: false },
+                { name: 'Duplicate rate',        key: 'duplicate_rate',   tooltip: 'Instructions here about duplicate rate', complete: false, pass: false }
               ]
             },
             { number: 3,
