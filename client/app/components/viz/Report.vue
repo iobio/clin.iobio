@@ -144,27 +144,18 @@
 <template>
   <div style="overflow:auto;padding-bottom:10px" >
 
-<!--
-    <h4>Summary</h4>
-    <v-card>
-      <div class="mt-2 step-entry"  v-for="step in filteredSteps" :key="step.number">
-        <span class="step-number stepper__step__step primary"> {{ step.number - 1 }}</span>
-        <div class="step-description">{{ step.title }}</div>
-      </div>
-    </v-card>
--->
 
     <div style="height: 100%">
       <div style style="float:left;height:100%;width:30%">
         <h4 class="mt-4">Phenotypes</h4>
         <v-card >
-          {{ project.phenotypes ? project.phenotypes.join(", ") : '' }}
+          {{ phenotypes ? phenotypes.join(", ") : '' }}
         </v-card>
       </div>
       <div style="float: left;height:100%;width:30%;margin-left:30px">
         <h4 class="mt-4">Genes</h4>
         <v-card style="word-break: break-word;" >
-          {{ project.genes ? project.genes.join(" ")  : '' }}
+          {{ genes ? genes.join(" ")  : '' }}
         </v-card>
       </div>
 
@@ -172,7 +163,7 @@
         <h4 class="mt-4">Variants</h4>
         <v-card>
           <v-list three-line>
-            <template v-for="(variant, index) in project.variants">
+            <template v-for="(variant, index) in variants">
 
               <v-list-tile
               :key="variant.start + ' ' + variant.ref + ' ' + variant.alt"
@@ -274,7 +265,9 @@ export default {
     VariantIcon
   },
   props: {
-    project: null
+    phenotypes: null,
+    genes: null,
+    variants: null
   },
   data() {
     return {
@@ -355,16 +348,6 @@ export default {
     }
   },
   computed: {
-    filteredSteps: function() {
-      let self = this;
-      if (self.project && self.project.workflow && self.project.workflow.steps) {
-        return self.project.workflow.steps.filter(function(step) {
-          return !step.isIntro && step.title != 'Report';
-        })
-      } else {
-        return [];
-      }
-    }
   }
 }
 </script>

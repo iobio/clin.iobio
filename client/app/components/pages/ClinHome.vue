@@ -212,7 +212,9 @@
         v-show="currentStep == 5"
       >
         <report
-        :project="project">
+        :phenotypes="project.phenotypes"
+        :genes="project.genes"
+        :variants="project.variants">
         </report>
       </v-card>
 
@@ -290,7 +292,9 @@ export default {
       //hubEnpoint: null,
       hubSession: null,
 
-      project: {
+      project: null,
+
+      projectTemplate: {
 
         workflow: {
           title: 'De novo variant analysis',
@@ -383,7 +387,7 @@ export default {
         for (var appName in self.apps) {
           let app = self.apps[appName];
           if (app.step == self.currentStep && !app.isLoaded) {
-              self.setData(appName, 10);
+              self.setData(appName, 500);
               app.isLoaded = true;
           }
         }
@@ -400,8 +404,10 @@ export default {
     init: function() {
       let self = this;
 
+      self.project = self.projectTemplate;
+
       // WORKAROUND - until project id can be passed in from hub
-      self.idProject = self.paramProjectId && self.paramProjectId.length > 0 ? self.paramProjectId : "505";
+      self.idProject = self.paramProjectId && self.paramProjectId.length > 0 ? self.paramProjectId : "test";
 
       self.userSession = new UserSession();
       window.addEventListener("message", self.receiveAppMessage, false);
@@ -490,7 +496,12 @@ export default {
       let self = this;
       var theObject = obj ? obj : {type: 'start-analysis', sender: 'clin.iobio'};
       var iframeSelector = self.apps[appName].iframeSelector;
-      $(iframeSelector)[0].contentWindow.postMessage(JSON.stringify(theObject), '*');
+      if (iframeSelector && iframeSelector.length > 0) {
+        $(iframeSelector)[0].contentWindow.postMessage(JSON.stringify(theObject), '*');
+      } else {
+        console.log("Unable to send clin message to " + appName + " because iframe not present ");
+        console.log(theObject);
+      }
     },
 
 
@@ -538,6 +549,7 @@ export default {
         .then( function(theProject) {
 
           if (theProject == null && createIfEmpty) {
+            self.project = $.extend({}, self.projectTemplate);
             self.project.idProject = idProject;
             self.project.genes = [];
             self.project.phenotypes = [];
