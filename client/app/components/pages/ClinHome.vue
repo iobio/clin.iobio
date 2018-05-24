@@ -23,6 +23,11 @@
     padding: 24px 5px 24px 5px
   .stepper__items
     width: calc(100% - 290px)
+  .stepper-btn
+    min-width: 40px
+  .stepper-btn .btn__content
+      max-width: 40px
+
   .tasks-panel
     padding-top: 13px
     width: 100%
@@ -38,19 +43,6 @@
     float: left
     width: 40px !important
     margin-left: 0px
-  .stepper-btn
-    color: $app-color
-    display: inline-block
-    margin: 0px
-    margin-top: 12px
-    padding: 0px
-    min-width: 40px
-    height: 30px
-  .stepper-btn .btn__content
-      max-width: 40px
-      padding: 0px
-      margin: 0px
-      height: 30px
 
 .dashboard-card
   padding: 0px
@@ -61,6 +53,25 @@
   .stepper.stepper--non-linear
     height: 160px
 
+  .stepper-btn-panel
+    width: 100%
+    text-align: center
+
+  .stepper-btn
+    color: $app-color
+    display: inline-block
+    margin: 0px
+    margin-top: 12px
+    padding: 0px
+    min-width: 110px
+    height: 30px
+
+  .stepper-btn .btn__content
+      max-width: 110px
+      padding: 0px
+      margin: 0px
+      height: 30px
+
 
   h5
     font-weight: bold
@@ -68,7 +79,7 @@
 
   .vertical-divider
     border-left: 1px solid $divider-color
-    height: 125px
+    height: 135px
     float: left
     margin-top: 5px
     margin-bottom: 5px
@@ -91,6 +102,8 @@
     box-shadow: none
     width: calc(100% - 700px)
     float: left
+
+
 
   .stepper__items
     float: left
@@ -157,7 +170,7 @@
 
 .dashboard-card
   .expansion-btn
-    bottom: 15px
+    bottom: 5px
     right: 5px
     position: absolute
     margin: 0px
@@ -176,6 +189,10 @@
         color: $app-color
         height: 30px
         width: 40px
+
+  .stepper__step--active
+    .stepper__label
+      font-weight: 600
 </style>
 
 
@@ -207,7 +224,7 @@
           <div class="vertical-divider" v-show="!isMinimized"></div>
 
           <v-stepper-header>
-            <v-btn v-show="isMinimized && currentStep > 1" class="stepper-btn" flat small @click="currentStep = currentStep - 1">
+            <v-btn v-show="isMinimized" :disabled="currentStep == 1" class="stepper-btn" flat small @click="currentStep = currentStep - 1">
               <v-icon>chevron_left</v-icon>
             </v-btn>
             <template v-for="step in project.workflow.steps">
@@ -216,9 +233,19 @@
               </v-stepper-step>
               <v-divider v-show="step.number != project.workflow.steps.length  && !isMinimized "></v-divider>
             </template>
-            <v-btn v-show="isMinimized && currentStep < 5" class="stepper-btn" flat small @click="currentStep = currentStep + 1">
+            <v-btn v-show="isMinimized" :disabled="currentStep == 5" class="stepper-btn" flat small @click="currentStep = currentStep + 1">
               <v-icon>chevron_right</v-icon>
             </v-btn>
+            <div v-show="!isMinimized" class="stepper-btn-panel">
+              <v-btn :disabled="currentStep == 1" class="stepper-btn" flat  @click="currentStep = currentStep - 1">
+              <v-icon>chevron_left</v-icon>
+              Previous
+              </v-btn>
+              <v-btn :disabled="currentStep == 5" class="stepper-btn" flat  @click="currentStep = currentStep + 1">
+                <v-icon>chevron_right</v-icon>
+                Next
+              </v-btn>
+            </div>
           </v-stepper-header>
 
 
@@ -229,7 +256,7 @@
 
               <v-stepper-content :key="step.number" :step="step.number">
                 <div class="step-summary-panel" v-if="!isMinimized">
-                  <h5>Step {{ step.number }}. {{ step.title }}</h5>
+                  <h5>{{ step.title }}</h5>
                   <div>
                       {{ step.summary }}
                   </div>
