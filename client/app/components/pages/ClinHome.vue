@@ -6,8 +6,61 @@
 
 @import ../../../assets/sass/variables
 
+.app-content
+  margin-top: 160px
+
+.app-content.minimized
+    margin-top: 50px
+
+.dashboard-card.minimized
+  .stepper.stepper--non-linear
+    height: 50px
+  .stepper__header
+    height: 50px
+    width: 260px
+    margin-right: 10px
+  .stepper__step
+    padding: 24px 5px 24px 5px
+  .stepper__items
+    width: calc(100% - 290px)
+  .tasks-panel
+    padding-top: 13px
+    width: 100%
+  .task-name
+    width: initial
+    padding-top: 3px
+    padding-right: 5px
+  .task-entry
+    display: inline-block
+    clear: initial
+    margin-right: 30px
+  .task-switch
+    float: left
+    width: 40px !important
+    margin-left: 0px
+  .stepper-btn
+    color: $app-color
+    display: inline-block
+    margin: 0px
+    margin-top: 12px
+    padding: 0px
+    min-width: 40px
+    height: 30px
+  .stepper-btn .btn__content
+      max-width: 40px
+      padding: 0px
+      margin: 0px
+      height: 30px
+
 .dashboard-card
-  padding: 3px
+  padding: 0px
+  margin: 0px
+  width: 100%
+  color: $text-color
+
+  .stepper.stepper--non-linear
+    height: 160px
+
 
   h5
     font-weight: bold
@@ -22,79 +75,107 @@
     margin-left: 3px
     margin-right: 3px
 
-.workflow-summary-panel
-  width: 200px
-  float: left
-  display: inline-block
-  padding: 5px 5px 5px 10px
-  overflow-y: scroll
-  font-size: 12px
+  .workflow-summary-panel
+    width: 200px
+    float: left
+    display: inline-block
+    padding: 5px 5px 5px 10px
+    overflow-y: scroll
+    font-size: 12px
 
-.stepper__content
-  padding: 0px 0px 0px 0px
+  .stepper__content
+    padding: 0px 0px 0px 0px
 
-.stepper__header
-  -webkit-box-shadow: none
-  box-shadow: none
-  width: calc(100% - 700px)
-  float: left
-  height: 135px
+  .stepper__header
+    -webkit-box-shadow: none
+    box-shadow: none
+    width: calc(100% - 700px)
+    float: left
 
-.stepper__items
-  float: left
-  display: inline-block
-  margin-left: 5px
-  width: 480px
+  .stepper__items
+    float: left
+    display: inline-block
+    margin-left: 5px
+    width: 480px
 
-.step-summary-panel
-  height: 135px
-  width: 200px
-  float: left
-  display: inline-block
-  padding: 5px 15px 5px 5px
-  overflow-y: scroll
-  font-size: 12px
+  .step-summary-panel
+    width: 200px
+    float: left
+    display: inline-block
+    padding: 5px 15px 5px 5px
+    overflow-y: scroll
+    font-size: 12px
 
-.tasks-panel
-  width: 280px
-  float: left
-  display: inline-block
-  padding-top: 0px
+  .tasks-panel
+    width: 280px
+    float: left
+    display: inline-block
+    padding-top: 0px
 
-.task-entry
-  clear: both
-  overflow: auto
+  .task-entry
+    clear: both
+    overflow: auto
 
-.task-name
-  float: left
-  display: inline-block
-  vertical-align: top
-  width: 160px
-  cursor: pointer
+  .task-name
+    float: left
+    display: inline-block
+    vertical-align: top
+    width: 160px
+    cursor: pointer
 
-.task-switch
-  float: left
-  display: inline-block !important
-  width: 24px !important
-  height: 30px
-  margin-left: 20px
-  margin-right: 0px
-  margin-bottom: 0px
-  vertical-align: top
-  margin-top: 0px !important
+  .task-switch
+    float: left
+    display: inline-block !important
+    width: 24px !important
+    height: 30px
+    margin-left: 20px
+    margin-right: 0px
+    margin-bottom: 0px
+    vertical-align: top
+    margin-top: 0px !important
 
 
-.task-checkbox-header1
-  margin-left: 150px
-  display: inline-block
-  float: left
-  width: 74px
+  .task-checkbox-header1
+    margin-left: 150px
+    display: inline-block
+    float: left
+    width: 74px
+    margin-top: 5px
 
-.task-checkbox-header2
-  display: inline-block
-  float: left
+  .task-checkbox-header2
+    display: inline-block
+    float: left
+    margin-top: 5px
 
 
+</style>
+
+<style lang="sass"  >
+
+
+@import ../../../assets/sass/variables
+
+.dashboard-card
+  .expansion-btn
+    bottom: 15px
+    right: 5px
+    position: absolute
+    margin: 0px
+    padding: 0px
+    min-width: 40px
+    height: 30px
+
+    .btn__content
+      max-width: 40px
+      padding: 0px
+      margin: 0px
+      height: 30px
+
+      .material-icons
+        font-size: 4em
+        color: $app-color
+        height: 30px
+        width: 40px
 </style>
 
 
@@ -108,81 +189,96 @@
       @authenticated="onAuthenticated">
     </login>
 
-    <v-card v-show="isAuthenticated" light class="dashboard-card">
-
-          <v-btn v-show="false"flat fab small style="float:right"
-           v-if="!showDashboard"
-           @click="showDashboard = true">
-            <v-icon color="grey darken-1" style="font-size:32px">expand_more</v-icon>
-          </v-btn>
+    <v-toolbar v-show="isAuthenticated"   fixed  app :height="isMinimized ? 50 : 160">
+      <div v-show="isAuthenticated" light :class="{'dashboard-card': true, 'minimized': isMinimized}">
 
 
-      <v-stepper v-model="currentStep" non-linear>
-        <div class="workflow-summary-panel">
-          <div>
-            <h5> {{ project.workflow.title }} </h5>
+
+        <v-stepper v-model="currentStep"  non-linear>
+          <div class="workflow-summary-panel" v-show="!isMinimized">
             <div>
-              {{ project.workflow.summary}}
+              <h5> {{ project.workflow.title }} </h5>
+              <div>
+                {{ project.workflow.summary}}
+              </div>
             </div>
           </div>
-        </div>
 
-        <div class="vertical-divider"></div>
+          <div class="vertical-divider" v-show="!isMinimized"></div>
 
-        <v-stepper-header>
-          <template v-for="step in project.workflow.steps">
-            <v-stepper-step  :key="step.number" editable :step="step.number" :complete="step.complete">
-              {{ step.title }}
-            </v-stepper-step>
-            <v-divider v-show="step.number != project.workflow.steps.length"></v-divider>
-          </template>
-        </v-stepper-header>
+          <v-stepper-header>
+            <v-btn v-show="isMinimized && currentStep > 1" class="stepper-btn" flat small @click="currentStep = currentStep - 1">
+              <v-icon>chevron_left</v-icon>
+            </v-btn>
+            <template v-for="step in project.workflow.steps">
+              <v-stepper-step v-show="!isMinimized || step.number == currentStep" :key="step.number" editable :step="step.number" :complete="step.complete">
+                {{ step.title }}
+              </v-stepper-step>
+              <v-divider v-show="step.number != project.workflow.steps.length  && !isMinimized "></v-divider>
+            </template>
+            <v-btn v-show="isMinimized && currentStep < 5" class="stepper-btn" flat small @click="currentStep = currentStep + 1">
+              <v-icon>chevron_right</v-icon>
+            </v-btn>
+          </v-stepper-header>
 
-        <div class="vertical-divider"></div>
 
-        <v-stepper-items v-show="showDashboard">
-          <template v-for="step in project.workflow.steps">
+          <div class="vertical-divider" ></div>
 
-            <v-stepper-content :key="step.number" :step="step.number">
-              <div class="step-summary-panel">
-                <h5>Step {{ step.number }}. {{ step.title }}</h5>
-                <div>
-                    {{ step.summary }}
-                </div>
-              </div>
+          <v-stepper-items>
+            <template v-for="step in project.workflow.steps">
 
-              <div class="tasks-panel" v-if="step.tasks">
-                <div>
-                  <span class="task-checkbox-header1">Complete</span>
-                  <span class="task-checkbox-header2">Passed</span>
-
-                </div>
-                <div class="task-entry"
-                 v-for="task in step.tasks"
-                 :key="task.name"
-                 v-tooltip.top="task.name"
-                 @mouseover="onMouseOverTask(step, task)"
-                 @mouseleave="onMouseLeaveTask(step, task)">
-                  <span class="task-name" >{{ task.name }}</span>
-                  <v-checkbox class="task-switch"
-                    v-model="task.complete"
-                  ></v-checkbox>
-                  <v-switch small class="task-switch"
-                    v-if="task.complete"
-                    v-model="task.pass"
-                  ></v-switch>
+              <v-stepper-content :key="step.number" :step="step.number">
+                <div class="step-summary-panel" v-if="!isMinimized">
+                  <h5>Step {{ step.number }}. {{ step.title }}</h5>
+                  <div>
+                      {{ step.summary }}
+                  </div>
                 </div>
 
-              </div>
-            </v-stepper-content>
-          </template>
-        </v-stepper-items>
-      </v-stepper>
+                <div class="tasks-panel" v-if="step.tasks">
+                  <div  v-show="!isMinimized">
+                    <span class="task-checkbox-header1">Complete</span>
+                    <span class="task-checkbox-header2">Passed</span>
 
+                  </div>
+                  <div class="task-entry"
+                   v-for="task in step.tasks"
+                   :key="task.name"
+                   >
+                    <span class="task-name"
+                    v-tooltip.left="task.name"
+                    @mouseover="onMouseOverTask(step, task)"
+                    @mouseleave="onMouseLeaveTask(step, task)">
+                    {{ task.name }}
+                    </span>
+                    <v-checkbox class="task-switch"
+                      v-model="task.complete"
+                      v-tooltip.right="`Completed`"
+                    ></v-checkbox>
+                    <v-switch small class="task-switch"
+                      v-if="task.complete"
+                      v-model="task.pass"
+                      v-tooltip.right="`Passed`"
+                    ></v-switch>
+                  </div>
 
-    </v-card>
+                </div>
+              </v-stepper-content>
+            </template>
+          </v-stepper-items>
+        </v-stepper>
 
-    <v-card v-show="isAuthenticated" style="padding: 2px">
+        <v-btn class="expansion-btn" flat fav small v-show="!isMinimized" @click="isMinimized = true">
+         <v-icon>expand_less</v-icon>
+        </v-btn>
+        <v-btn class="expansion-btn" flat fav small v-show="isMinimized" @click="isMinimized = false">
+         <v-icon>expand_more</v-icon>
+        </v-btn>
+
+      </div>
+    </v-toolbar>
+
+    <v-card :class="{'app-content': true, 'minimized': isMinimized}" v-show="isAuthenticated" style="padding: 2px">
 
       <v-card  light style="min-height:600px"
         v-show="currentStep == 1"
@@ -287,6 +383,7 @@ export default {
 
       currentStep: 0,
       showDashboard: true,
+      isMinimized: false,
 
 
       //hubEnpoint: null,
@@ -297,7 +394,7 @@ export default {
       projectTemplate: {
 
         workflow: {
-          title: 'De novo variant analysis',
+          title: 'Variant analysis',
           summary: 'Look for de novo variants in whole exome or genome sequencing research project.  Perform basic quality control.',
           description: 'The de novo report is used to search for de novo variants in a proband, when sequencing data is present for the proband and both parents.  This report is comprised of the following steps:',
           steps: [
@@ -333,7 +430,7 @@ export default {
               ]
             },
             { number: 4,
-              title: 'De novo variants',
+              title: 'Variants',
               app: 'gene',
               summary: 'Interrogate proband for known pathogenic or de novo variants and check for areas of insufficient coverage in genes.',
               description: 'The GENE.IOBIO app is used to interrogate proband variants in the identified gene list that could be candidates for causative variants.',
