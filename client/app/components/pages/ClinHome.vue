@@ -7,7 +7,7 @@
 @import ../../../assets/sass/variables
 
 .app-content
-  margin-top: 160px
+  margin-top: 170px
 
 .app-content.minimized
     margin-top: 50px
@@ -51,7 +51,7 @@
   color: $text-color
 
   .stepper.stepper--non-linear
-    height: 160px
+    height: 170px
 
   .stepper-btn-panel
     width: 100%
@@ -170,25 +170,27 @@
 
 .dashboard-card
   .expansion-btn
-    bottom: 5px
+    bottom: 0px
     right: 5px
     position: absolute
     margin: 0px
     padding: 0px
-    min-width: 40px
+    min-width: 110px
     height: 30px
 
     .btn__content
-      max-width: 40px
+      max-width: 110px
       padding: 0px
       margin: 0px
       height: 30px
+      color: $app-color
+      font-weight: 600
 
       .material-icons
-        font-size: 4em
+        font-size: 2em
         color: $app-color
         height: 30px
-        width: 40px
+        width: 30px
 
   .stepper__step--active
     .stepper__label
@@ -206,7 +208,7 @@
       @authenticated="onAuthenticated">
     </login>
 
-    <v-toolbar v-show="isAuthenticated"   fixed  app :height="isMinimized ? 50 : 160">
+    <v-toolbar v-show="isAuthenticated"   fixed  app :height="isMinimized ? 50 : 170">
       <div v-show="isAuthenticated" light :class="{'dashboard-card': true, 'minimized': isMinimized}">
 
 
@@ -297,9 +299,11 @@
 
         <v-btn class="expansion-btn" flat fav small v-show="!isMinimized" @click="isMinimized = true">
          <v-icon>expand_less</v-icon>
+         show less
         </v-btn>
         <v-btn class="expansion-btn" flat fav small v-show="isMinimized" @click="isMinimized = false">
          <v-icon>expand_more</v-icon>
+         show more
         </v-btn>
 
       </div>
