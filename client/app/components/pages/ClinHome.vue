@@ -50,6 +50,9 @@
   width: 100%
   color: $text-color
 
+  .stepper__header
+    margin-top: 20px
+
   .stepper.stepper--non-linear
     height: 170px
 
