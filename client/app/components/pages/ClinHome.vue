@@ -19,6 +19,7 @@
     height: 50px
     width: 260px
     margin-right: 10px
+    margin-top: 0px
   .stepper__step
     padding: 24px 5px 24px 5px
   .stepper__items
