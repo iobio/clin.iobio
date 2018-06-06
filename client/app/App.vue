@@ -78,6 +78,7 @@ button
     background-color: $app-color !important
     border-color: $app-color !important
 
+
 </style>
 
 <template>

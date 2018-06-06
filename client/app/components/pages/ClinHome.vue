@@ -6,18 +6,38 @@
 
 @import ../../../assets/sass/variables
 
+
+
 .app-content
   margin-top: 170px
+  margin-left: 0px
+
+.app-content.sidebar
+  margin-top: 0px
+  margin-left: 270px
 
 .app-content.minimized
-    margin-top: 50px
+  margin-top: 50px
+  margin-left: 0px
 
-.dashboard-card.minimized
+.app-content.minimized.sidebar
+  margin-top: 0px
+  margin-left: 110px
+
+
+
+
+h5
+  color:  $app-color
+  margin-top: 8px
+  font-size: 16px
+
+.horizontal-dashboard-card.minimized
   .stepper.stepper--non-linear
     height: 50px
   .stepper__header
     height: 50px
-    width: 260px
+    width: 220px
     margin-right: 10px
     margin-top: 0px
   .stepper__step
@@ -45,7 +65,7 @@
     width: 40px !important
     margin-left: 0px
 
-.dashboard-card
+.horizontal-dashboard-card
   padding: 0px
   margin: 0px
   width: 100%
@@ -77,9 +97,7 @@
       height: 30px
 
 
-  h5
-    font-weight: bold
-    margin-top: 3px
+
 
   .vertical-divider
     border-left: 1px solid $divider-color
@@ -172,7 +190,144 @@
 
 @import ../../../assets/sass/variables
 
-.dashboard-card
+h5
+  display: inline-block
+
+.split-btn
+  position: absolute
+  top: 0px
+  right: 40px
+  display: inline-block
+  margin: 0px
+  padding: 0px
+  min-width: 30px
+  height: 30px
+  margin-left: -10px
+
+  .btn__content
+    max-width: 30px
+    padding: 0px
+    margin: 0px
+    height: 30px
+    color: $app-color
+    font-weight: 600
+
+    .material-icons
+      font-size: 2em
+      color: $app-color
+      height: 30px
+      width: 30px
+.horizontal-dashboard-card
+  .split-btn
+    left: 170px
+
+.vertical-dashboard-card
+  height: 100%
+  .stepper--vertical
+    height: calc(100% + 110px)
+    .stepper__step
+      width: 100%
+      padding: 14px 10px 14px 5px
+    .stepper__header
+      height: initial
+      -webkit-box-shadow: none
+      box-shadow: none
+    .stepper__content
+      margin: -8px -36px -16px 16px
+      padding: 8px 50px 16px 8px
+
+
+  .workflow-summary-panel
+    padding: 0px 10px 10px 10px
+  .step-summary-panel
+    width: 220px
+    word-wrap: break-word
+  .tasks-panel
+    width: 220px
+
+  .task-entry
+
+  .task-name
+    display: inline-block
+    vertical-align: bottom
+    width: 115px
+    cursor: pointer
+    line-height: 15px
+    padding-bottom: 8px
+    padding-top: 3px
+
+  .task-switch
+    display: inline-block !important
+    width: 24px !important
+    height: 30px
+    margin-left: 20px
+    margin-right: 0px
+    margin-bottom: 0px
+    vertical-align: top
+    margin-top: 0px !important
+
+
+  .task-checkbox-header1
+    margin-left: 95px
+    display: inline-block
+    width: 74px
+    margin-top: 5px
+
+  .task-checkbox-header2
+    display: inline-block
+    margin-top: 5px
+
+  .expansion-btn
+    top: 0px
+    right: 5px
+    position: absolute
+    margin: 0px
+    padding: 0px
+    min-width: 30px
+    height: 30px
+
+    .btn__content
+      max-width: 30px
+      padding: 0px
+      margin: 0px
+      height: 30px
+      color: $app-color
+      font-weight: 600
+
+      .material-icons
+        font-size: 2em
+        color: $app-color
+        height: 30px
+        width: 30px
+
+
+.vertical-dashboard-card.minimized
+  .stepper--vertical
+    .stepper__step
+      width: 100%
+      padding: 14px 5px 14px 0px
+    .stepper__content
+      margin:  0px -36px -6px 6px
+      padding: 8px 50px 16px 8px
+    .stepper__header
+      padding-left: 2px
+    .stepper__step__step
+      margin-right: 6px
+
+    .step-summary-panel
+      width: 100px
+      word-wrap: break-word
+  .tasks-panel
+    width: 100px
+  .task-switch
+    margin-left: 0px
+    margin-bottom: 10px
+  .task-name
+    width: 80px
+    padding-right: 10px
+    padding-bottom: 0px
+
+.horizontal-dashboard-card
   .expansion-btn
     bottom: 0px
     right: 5px
@@ -181,6 +336,7 @@
     padding: 0px
     min-width: 110px
     height: 30px
+
 
     .btn__content
       max-width: 110px
@@ -205,22 +361,30 @@
 
 <template>
 
-  <div>
+  <div style="display:flex">
     <login
-      v-show="!isAuthenticated"
+      v-if="!isAuthenticated"
       :userSession="userSession"
       @authenticated="onAuthenticated">
     </login>
 
-    <v-toolbar v-show="isAuthenticated"   fixed  app :height="isMinimized ? 50 : 170">
-      <div v-show="isAuthenticated" light :class="{'dashboard-card': true, 'minimized': isMinimized}">
+
+    <v-toolbar v-if="!isSidebar && isAuthenticated"   fixed   :height="isMinimized ? 50 : 170">
+      <div v-show="isAuthenticated" light :class="{'horizontal-dashboard-card': true, 'minimized': isMinimized}">
 
 
 
         <v-stepper v-model="currentStep"  non-linear>
           <div class="workflow-summary-panel" v-show="!isMinimized">
             <div>
+              <v-btn class="split-btn" flat fav small
+              v-show="!isMinimized"
+              @click="isSidebar = true"
+              v-tooltip.right="`Show dashboard on left`">
+                <v-icon>more_vert</v-icon>
+              </v-btn>
               <h5> {{ project.workflow.title }} </h5>
+
               <div>
                 {{ project.workflow.summary}}
               </div>
@@ -301,19 +465,116 @@
           </v-stepper-items>
         </v-stepper>
 
-        <v-btn class="expansion-btn" flat fav small v-show="!isMinimized" @click="isMinimized = true">
-         <v-icon>expand_less</v-icon>
-         show less
-        </v-btn>
-        <v-btn class="expansion-btn" flat fav small v-show="isMinimized" @click="isMinimized = false">
-         <v-icon>expand_more</v-icon>
-         show more
-        </v-btn>
+          <v-btn class="expansion-btn" flat fav small v-show="!isMinimized" @click="isMinimized = true">
+            <v-icon>expand_less</v-icon>
+            show less
+          </v-btn>
+          <v-btn class="expansion-btn" flat fav small v-show="isMinimized" @click="isMinimized = false">
+            <v-icon>expand_more</v-icon>
+            show more
+          </v-btn>
+
+
 
       </div>
     </v-toolbar>
 
-    <v-card :class="{'app-content': true, 'minimized': isMinimized}" v-show="isAuthenticated" style="padding: 2px">
+    <v-navigation-drawer
+      v-show="isSidebar && isAuthenticated"
+      :mini-variant.sync="isMinimized"
+      :hide-overlay="true"
+      fixed
+      :width="isMinimized ? 110 : 270"
+      mini-variant-width="110">
+      <div v-show="isAuthenticated"  light :class="{'vertical-dashboard-card': true, 'minimized': isMinimized}">
+
+
+
+        <v-stepper v-model="currentStep" vertical non-linear >
+          <div class="workflow-summary-panel" >
+            <div>
+              <v-btn class="split-btn" flat fav small
+               v-show="!isMinimized"
+               @click="isSidebar = false"
+               v-tooltip.right="`Show dashboard on top`">
+                <v-icon>more_horiz</v-icon>
+              </v-btn>
+
+              <h5> {{ project.workflow.title }} </h5>
+
+              <v-btn class="expansion-btn" flat fav small v-show="!isMinimized" @click="isMinimized = true">
+                <v-icon>chevron_left</v-icon>
+              </v-btn>
+              <v-btn class="expansion-btn" flat fav small v-show="isMinimized" @click="isMinimized = false">
+                <v-icon>chevron_right</v-icon>
+              </v-btn>
+
+              <div v-show="!isMinimized">
+                {{ project.workflow.summary}}
+              </div>
+            </div>
+          </div>
+
+
+
+          <v-stepper-header>
+
+            <template v-for="step in project.workflow.steps">
+              <v-stepper-step v-show="!isMinimized || isSidebar || step.number == currentStep" :key="step.number" editable :step="step.number" :complete="step.complete">
+                 {{ step.title }}
+              </v-stepper-step>
+              <v-stepper-content :key="step.number" :step="step.number">
+                <div class="step-summary-panel" v-if="!isMinimized">
+                    {{ step.summary }}
+                </div>
+
+                <div class="tasks-panel" v-if="step.tasks">
+                  <div  v-show="!isMinimized">
+                    <span class="task-checkbox-header1">Complete</span>
+                    <span class="task-checkbox-header2">Passed</span>
+
+                  </div>
+                  <div class="task-entry"
+                   v-for="task in step.tasks"
+                   :key="task.name"
+                   >
+                    <span class="task-name"
+                    v-tooltip.left="task.name"
+                    @mouseover="onMouseOverTask(step, task)"
+                    @mouseleave="onMouseLeaveTask(step, task)">
+                    {{ task.name }}
+                    </span>
+                    <v-checkbox class="task-switch"
+                      v-model="task.complete"
+                      v-tooltip.right="`Completed`"
+                    ></v-checkbox>
+                    <v-switch small class="task-switch"
+                      v-if="task.complete"
+                      v-model="task.pass"
+                      v-tooltip.right="`Passed`"
+                    ></v-switch>
+                  </div>
+
+                </div>
+              </v-stepper-content>
+            </template>
+
+
+          </v-stepper-header>
+
+
+
+        </v-stepper>
+
+
+
+      </div>
+    </v-navigation-drawer>
+
+
+    <div style="width:100%;height:100%;padding: 2px"
+    :class="{'app-content': true, 'sidebar': isSidebar, 'minimized': isMinimized}"
+    v-show="isAuthenticated" >
 
       <v-card  light style="min-height:600px"
         v-show="currentStep == 1"
@@ -349,9 +610,10 @@
         </report>
       </v-card>
 
-    </v-card>
-  </div>
+    </div>
 
+
+  </div>
 
 </template>
 
@@ -388,6 +650,8 @@ export default {
     let self = this;
     return {
       greeting: 'clin.iobio.vue',
+
+      isSidebar: true,
 
       isAuthenticated: false,
       userSession:  null,
