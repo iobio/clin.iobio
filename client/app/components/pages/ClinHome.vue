@@ -8,6 +8,8 @@
 
 
 
+
+
 .app-content
   margin-top: 170px
   margin-left: 0px
@@ -480,7 +482,7 @@ h5
     </v-toolbar>
 
     <v-navigation-drawer
-      v-show="isSidebar && isAuthenticated"
+      v-if="isSidebar && isAuthenticated"
       :mini-variant.sync="isMinimized"
       :hide-overlay="true"
       fixed
@@ -517,13 +519,16 @@ h5
 
 
 
-          <v-stepper-header>
 
             <template v-for="step in project.workflow.steps">
-              <v-stepper-step v-show="!isMinimized || isSidebar || step.number == currentStep" :key="step.number" editable :step="step.number" :complete="step.complete">
+              <v-stepper-step v-show="!isMinimized || isSidebar || step.number == currentStep"
+              :key="`step` + step.number"
+              editable
+              :step="step.number"
+              :complete="step.complete">
                  {{ step.title }}
               </v-stepper-step>
-              <v-stepper-content :key="step.number" :step="step.number">
+              <v-stepper-content :key="`content` + step.number" :step="step.number">
                 <div class="step-summary-panel" v-if="!isMinimized">
                     {{ step.summary }}
                 </div>
@@ -560,7 +565,7 @@ h5
             </template>
 
 
-          </v-stepper-header>
+
 
 
 
@@ -652,9 +657,13 @@ export default {
       greeting: 'clin.iobio.vue',
 
       isSidebar: true,
+      isMinimized: false,
+
+      showDashboard: true,
 
       isAuthenticated: false,
       userSession:  null,
+
 
       idProject: null,
       projectModel: null,
@@ -681,8 +690,7 @@ export default {
       },
 
       currentStep: 0,
-      showDashboard: true,
-      isMinimized: false,
+
 
 
       //hubEnpoint: null,
@@ -790,7 +798,9 @@ export default {
 
 
         // We have moved to a new step.  Save the workflow step.
-        self.promiseUpdateWorkflow();
+        if (self.project && self.project.idProject) {
+          self.promiseUpdateWorkflow();
+        }
       }
     }
   },
