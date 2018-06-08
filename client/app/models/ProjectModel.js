@@ -128,6 +128,33 @@ export default class ProjectModel {
     })
   }
 
+  promiseUpdateFilters(project) {
+    let self = this;
+
+    return new Promise(function(resolve, reject) {
+      var params = {
+        TableName: self.table,
+        Key:{
+            "idProject": project.idProject
+        },
+        UpdateExpression: "set filters = :filters",
+        ExpressionAttributeValues:{
+            ":filters": project.filters
+        },
+        ReturnValues:"UPDATED_NEW"
+      };
+      self.userSession.dynamodb.update(params, function(err, data) {
+        if (err) {
+          console.log(err, err.stack); // an error occurred
+          reject(err);
+        }
+        else  {
+          resolve();
+        }
+      });
+    })
+  }
+
   promiseUpdateWorkflow(project) {
     let self = this;
 

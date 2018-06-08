@@ -611,7 +611,8 @@ h5
         <report
         :phenotypes="project.phenotypes"
         :genes="project.genes"
-        :variants="project.variants">
+        :variants="project.variants"
+        :filters="project.filters">
         </report>
       </v-card>
 
@@ -944,7 +945,10 @@ export default {
         this.promiseUpdateVariants(messageObject.variants);
         this.promiseCompleteStepTask('De novo variants', 'De novo variants');
         this.promiseCompleteStepTask('De novo variants', 'Pathogenic variants');
+      } else if (messageObject.type == "save-filters") {
+        this.promiseUpdateFilters(messageObject.filters);
       }
+
 
     },
 
@@ -998,6 +1002,12 @@ export default {
     promiseUpdateWorkflow: function() {
       let self = this;
       return self.projectModel.promiseUpdateWorkflow(self.project);
+    },
+
+    promiseUpdateFilters: function(filters) {
+      let self = this;
+      self.project.filters = filters;
+      return self.projectModel.promiseUpdateFilters(self.project);
     },
 
     promiseCompleteStepTask: function(stepTitle, taskName) {
