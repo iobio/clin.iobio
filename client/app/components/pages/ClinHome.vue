@@ -307,7 +307,7 @@ h5
   .stepper--vertical
     .stepper__step
       width: 100%
-      padding: 14px 5px 14px 0px
+      padding: 14px 5px 14px 3px
     .stepper__content
       margin:  0px -36px -6px 6px
       padding: 8px 50px 16px 8px
