@@ -460,7 +460,7 @@ export default {
     },
     highestImpactClass: function(variant) {
       let clazz = "filter-symbol";
-      clazz += " impact_" + variant.impact.toUpperCase();
+      clazz += " impact_" + (variant.impact && variant.impact.length > 0 ? variant.impact.toUpperCase() : "none");
       return clazz;
     },
     afDisplay: function(variant) {
