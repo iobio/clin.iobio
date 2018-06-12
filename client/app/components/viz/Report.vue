@@ -156,18 +156,18 @@
         vertical-align: top
       .vep-consequence
         display: inline-block
-        width: 105px
+        width: 125px
         line-height: 12px
         vertical-align: top
       .rsid
         display: inline-block
-        width: 105px
+        width: 125px
         line-height: 12px
         vertical-align: top
 
       .af
         display: inline-block
-        width: 60px
+        width: 100px
         vertical-align: top
         line-height: 12px
 
@@ -180,6 +180,13 @@
         width: 105px
         font-size: 13px
         font-weight: bold
+
+      .transcript
+        display: inline-block
+        width: 125px
+        margin-top: -2px
+        vertical-align: top
+        font-size: 12px
 
       .has-called-variants
         font-size: 15px
@@ -276,6 +283,7 @@
                         <div class="variant-symbols">
 
                           <span class="gene-name"> {{ variant.gene }}</span>
+                          <span class="transcript"> {{ variant.transcript }}</span>
                           <app-icon
                            icon="clinvar"
                            v-if="clinvar(variant) == 'clinvar_path' || clinvar(variant) == 'clinvar_lpath'"
@@ -285,7 +293,7 @@
 
                           <app-icon
                            :icon="variant.inheritance"
-                           v-if="variant.inheritance && variant.inhertance != '' && variant.inheritance != 'none'"
+                           v-if="variant.inheritance && variant.inheritance != '' && variant.inheritance != 'none'"
                            class="inheritance-badge" height="15" width="15">
                           </app-icon>
 
