@@ -38,7 +38,7 @@ export default class HubSession {
               }
               var modelInfo = {
                 'relationship':   data.relationship == 'siblings' ? 'sibling' : data.relationship,
-                'affectedStatus': theSample.pedigree.affection_status == 1 || theSample.pedigree.affection_status == 2 ? 'affected' : 'unaffected',
+                'affectedStatus': theSample.pedigree.affection_status == 2 ? 'affected' : 'unaffected',
                 'name':           theSample.id,
                 'sample':         theSample.id,
                 'vcf':            theSample.files.vcf,
@@ -74,7 +74,8 @@ export default class HubSession {
 
     let pedigree = {}
 
-    const probandIndex = raw_pedigree.findIndex(d => d.pedigree.affection_status == 1 || d.pedigree.affection_status == 2);
+    const probandIndex = raw_pedigree.findIndex(d => d.pedigree.affection_status == 2
+                                                && d.pedigree.maternal_id &&  d.pedigree.paternal_id);
     if (probandIndex != -1) {
       const proband  = raw_pedigree.splice(probandIndex, 1)[0];
 
