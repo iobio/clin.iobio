@@ -931,7 +931,7 @@ export default {
 
 
 
-      if (messageObject.type == "apply-genes") {
+      if (messageObject.type == "apply-genes" && messageObject.sender == 'genepanel.iobio.io') {
         var taskMap = {
           'gtr':              'Panel genes',
           'phenotype-driven': 'Phenotype driven genes',
@@ -940,6 +940,9 @@ export default {
         this.promiseUpdateGenes(messageObject.genes);
         this.promiseUpdatePhenotypes(messageObject.searchTerms);
         this.promiseCompleteStepTask('Gene lists', taskMap[messageObject.source]);
+        this.sendAppMessage('gene', messageObject);
+      } if (messageObject.type == "apply-genes" && messageObject.sender == 'gene.iobio.io') {
+        this.promiseUpdateGenes(messageObject.genes);
         this.sendAppMessage('gene', messageObject);
       } else if (messageObject.type == "save-variants") {
         this.promiseUpdateVariants(messageObject.variants);
