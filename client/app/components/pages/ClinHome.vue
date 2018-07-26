@@ -657,7 +657,7 @@ export default {
     return {
       greeting: 'clin.iobio.vue',
 
-      isSidebar: true,
+      isSidebar: false,
       isMinimized: false,
 
       showDashboard: true,
@@ -673,12 +673,12 @@ export default {
 
       appUrls: {
         'localhost': {
-            'gene':      'http://localhost:4026',
+            'gene':      'http://localhost:4026/#/?launchedFromClin=true',
             'genepanel': 'http://localhost:4024',
             'bam':       'http://localhost:4027'
         },
         'dev': {
-            'gene':      'http://newgene.iobio.io',
+            'gene':      'http://newgene.iobio.io/#/?launchedFromClin=true',
             'genepanel': 'http://panel.iobio.io',
             'bam':       'http://newbam.iobio.io'
         },
