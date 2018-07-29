@@ -2,7 +2,7 @@
  * Home.vue
  *
  */
-<style lang="sass" scoped >
+<style lang="sass"  >
 
 @import ../../../assets/sass/variables
 
@@ -41,33 +41,36 @@ h5
 
 .split-btn
   position: absolute
-  top: 5px
-  left: 0px
+  bottom: 10px
+  left: 4px
   display: inline-block
   margin: 0px
   padding: 0px
-  min-width: 30px
-  height: 30px
+  min-width: 20px
+  height: 20px
 
-  .btn__content
-    max-width: 30px
-    padding: 0px
-    margin: 0px
-    height: 30px
-    color: $app-color
-    font-weight: 600
+.split-btn .btn__content
+  max-width: 20px
+  padding: 0px
+  margin: 0px
+  height: 20px
+  color: $app-color
+  font-weight: 600
 
-    .material-icons
-      font-size: 2em
-      color: $app-color
-      height: 30px
-      width: 30px
+.split-btn .btn__content .material-icons
+  font-size: 20px
+  color: $app-color
+  height: 20px
+  width: 20px
 
 .horizontal-dashboard-card
   padding: 0px
   margin: 0px
   width: 100%
   color: $text-color
+
+  .stepper__label
+    line-height: 17px !important
 
   hr.divider
     display: none
@@ -78,7 +81,7 @@ h5
       font-weight: 600
 
   .stepper__header
-    margin-top: 10px
+    margin-top: 5px
     -webkit-box-shadow: none
     box-shadow: none
     width: 600px
@@ -125,17 +128,14 @@ h5
     overflow-y: scroll
     font-size: 12px
 
-    h5
-      margin-left: 30px
-
   .stepper__content
     padding: 0px 0px 0px 0px
 
 
 
   .stepper__step
-    padding-top: 0px
-    padding-bottom: 10px
+    padding-top: 3px
+    padding-bottom: 20px
     padding-left: 10px
     padding-right: 10px
     width: 150px
@@ -222,6 +222,10 @@ h5
 
 .vertical-dashboard-card
   height: 100%
+
+  .split-btn
+    bottom: 20px
+
   .stepper--vertical
     height: calc(100% + 110px)
     .stepper__step
@@ -338,7 +342,7 @@ h5
   .stepper__step
     padding: 16px 5px 24px 5px
   .stepper__items
-    width: calc(100% - 310px)
+    width: calc(100% - 320px)
   .stepper-btn
     min-width: 40px
   .stepper-btn .btn__content
@@ -390,7 +394,7 @@ h5
               <v-btn class="split-btn" flat fav small
               v-show="!isMinimized"
               @click="isSidebar = true"
-              v-tooltip.right="`Show dashboard on left`">
+              v-tooltip.top="`Show dashboard on left`">
                 <v-icon>vertical_split</v-icon>
               </v-btn>
               <h5> {{ project.workflow.title }} </h5>
@@ -507,7 +511,7 @@ h5
               <v-btn class="split-btn" flat fav small
                v-show="!isMinimized"
                @click="isSidebar = false"
-               v-tooltip.right="`Show dashboard on top`">
+               v-tooltip.bottom="`Show dashboard on top`">
                 <v-icon>horizontal_split</v-icon>
               </v-btn>
 
@@ -771,7 +775,7 @@ export default {
               ]
             },
             { number: 5,
-              title: 'Variants (gene driven)',
+              title: 'Variants - gene driven',
               app: 'gene',
               summary: 'Interrogate proband for known pathogenic for possible caustive variants based on genes associated with proband\'s phenotypes. Check for areas of insufficient coverage in genes.',
               description: 'The GENE.IOBIO app is used to interrogate proband variants in the identified gene list that could be candidates for causative variants.',
@@ -784,7 +788,7 @@ export default {
               ]
             },
             { number: 6,
-              title: 'Variants (full analysis)',
+              title: 'Variants - full analysis',
               app: 'genefull',
               summary: 'Review possible caustive variants found in whole exome/genome of proband, taking into account inheritance mode based on parents and siblings',
               description: 'The GENE.IOBIO app is used to review variants from whole exome/genome variant analysis',
@@ -1074,22 +1078,27 @@ export default {
 
     onMouseOverTask: function(step, task) {
       let self = this;
-      let msgObject = {
-        'type':   'show-tooltip',
-        'sender': 'clin.iobio',
-        'task':   task
-      };
-      self.sendAppMessage(step.app, msgObject);
+      if (step.app) {
+        let msgObject = {
+          'type':   'show-tooltip',
+          'sender': 'clin.iobio',
+          'task':   task
+        };
+        self.sendAppMessage(step.app, msgObject);
+
+      }
     },
 
     onMouseLeaveTask: function(step, task) {
       let self = this;
-      let msgObject = {
-        'type':   'hide-tooltip',
-        'sender': 'clin.iobio',
-        'task':   task
-      };
-      self.sendAppMessage(step.app, msgObject);
+      if (step.app) {
+        let msgObject = {
+          'type':   'hide-tooltip',
+          'sender': 'clin.iobio',
+          'task':   task
+        };
+        self.sendAppMessage(step.app, msgObject);
+      }
     }
 
   }

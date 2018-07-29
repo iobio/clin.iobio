@@ -10,6 +10,25 @@ html {
   font-family: 'Open Sans', 'Quattrocento Sans', 'sans serif';
 }
 
+.theme--dark .toolbar, .application .theme--dark.toolbar {
+    background-color: rgba(0,0,0,0.47);
+    color: #fff;
+}
+
+.theme--dark .stepper, .application .theme--dark.stepper {
+    background-color: rgba(0,0,0,0.47);
+    color: #fff;
+}
+
+.theme--dark .btn {
+    background-color: rgba(0,0,0,0.47);
+    color: #fff;
+}
+
+.theme--dark .navigation-drawer, .application .theme--dark.navigation-drawer {
+    background-color: rgba(0,0,0,0.47);
+}
+
 .application.theme--light {
   background: #fafafa;
   color:  rgb(113,113,113);
@@ -32,21 +51,26 @@ html {
   fill:  rgb(113,113,113);
 }
 
-.input-group--text-field.input-group--prepend-icon .input-group__prepend-icon {
-  padding-right: 3px;
-  justify-content: flex-end;
-}
 
 .theme--light .list, .application .theme--light.list {
   color: rgb(113, 113, 113)
 }
-.menu__content .list__tile__title a {
-  color: rgb(113, 113, 113)
-}
+
 
 .theme--light .btn:not(.btn--icon):not(.btn--flat),
 .application .theme--light.btn:not(.btn--icon):not(.btn--flat) {
   background-color: white;
+}
+
+
+
+.menu__content .list__tile__title a {
+  color: rgb(113, 113, 113)
+}
+
+.input-group--text-field.input-group--prepend-icon .input-group__prepend-icon {
+  padding-right: 3px;
+  justify-content: flex-end;
 }
 
 .card {
