@@ -7,7 +7,7 @@
 @import ../../../assets/sass/variables
 
 nav.toolbar
-  background-color: $app-color !important
+
 
 .layout.row
   padding-left: 20px
@@ -20,10 +20,10 @@ nav.toolbar
 
     <v-layout row wrap class="mt-5" justify-center>
        <v-flex xs4 >
-        <v-toolbar dark >
-          <v-toolbar-title>Login to clin.iobio</v-toolbar-title>
+        <v-toolbar light class="light-blue darken-2" >
+          <v-toolbar-title class="white--text" >Login to clin.iobio</v-toolbar-title>
         </v-toolbar>
-        <v-card >
+        <v-card  >
           <v-layout row wrap>
               <v-flex xs12>
                 <v-text-field v-model="userName" label="Enter your user name" type="text">

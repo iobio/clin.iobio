@@ -19,7 +19,7 @@
   margin-left: 270px
 
 .app-content.minimized
-  margin-top: 50px
+  margin-top: 60px
   margin-left: 0px
 
 .app-content.minimized.sidebar
@@ -28,44 +28,40 @@
 
 
 
+.stepper__content
+  color: $text-color
 
 h5
   color:  $app-color
   margin-top: 8px
   font-size: 16px
+  display: inline-block
 
-.horizontal-dashboard-card.minimized
-  .stepper.stepper--non-linear
-    height: 50px
-  .stepper__header
-    height: 50px
-    width: 220px
-    margin-right: 10px
-    margin-top: 0px
-  .stepper__step
-    padding: 24px 5px 24px 5px
-  .stepper__items
-    width: calc(100% - 290px)
-  .stepper-btn
-    min-width: 40px
-  .stepper-btn .btn__content
-      max-width: 40px
 
-  .tasks-panel
-    padding-top: 13px
-    width: 100%
-  .task-name
-    width: initial
-    padding-top: 3px
-    padding-right: 5px
-  .task-entry
-    display: inline-block
-    clear: initial
-    margin-right: 30px
-  .task-switch
-    float: left
-    width: 40px !important
-    margin-left: 0px
+
+.split-btn
+  position: absolute
+  top: 5px
+  left: 0px
+  display: inline-block
+  margin: 0px
+  padding: 0px
+  min-width: 30px
+  height: 30px
+
+  .btn__content
+    max-width: 30px
+    padding: 0px
+    margin: 0px
+    height: 30px
+    color: $app-color
+    font-weight: 600
+
+    .material-icons
+      font-size: 2em
+      color: $app-color
+      height: 30px
+      width: 30px
 
 .horizontal-dashboard-card
   padding: 0px
@@ -73,8 +69,21 @@ h5
   width: 100%
   color: $text-color
 
+  hr.divider
+    display: none
+
+
+  .stepper__step--active
+    .stepper__label
+      font-weight: 600
+
   .stepper__header
-    margin-top: 20px
+    margin-top: 10px
+    -webkit-box-shadow: none
+    box-shadow: none
+    width: 600px
+    float: left
+    justify-content: flex-start
 
   .stepper.stepper--non-linear
     height: 170px
@@ -93,22 +102,20 @@ h5
     height: 30px
 
   .stepper-btn .btn__content
-      max-width: 110px
-      padding: 0px
-      margin: 0px
-      height: 30px
-
-
+    max-width: 110px
+    padding: 0px
+    margin: 0px
+    height: 30px
 
 
   .vertical-divider
     border-left: 1px solid $divider-color
-    height: 135px
+    height: 160px
     float: left
     margin-top: 5px
     margin-bottom: 5px
-    margin-left: 3px
-    margin-right: 3px
+    margin-left: 10px
+    margin-right: 10px
 
   .workflow-summary-panel
     width: 200px
@@ -118,22 +125,26 @@ h5
     overflow-y: scroll
     font-size: 12px
 
+    h5
+      margin-left: 30px
+
   .stepper__content
     padding: 0px 0px 0px 0px
 
-  .stepper__header
-    -webkit-box-shadow: none
-    box-shadow: none
-    width: calc(100% - 700px)
-    float: left
 
 
+  .stepper__step
+    padding-top: 0px
+    padding-bottom: 10px
+    padding-left: 10px
+    padding-right: 10px
+    width: 150px
 
   .stepper__items
     float: left
     display: inline-block
     margin-left: 5px
-    width: 480px
+    min-width: 480px
 
   .step-summary-panel
     width: 200px
@@ -185,43 +196,29 @@ h5
     margin-top: 5px
 
 
-</style>
+  .expansion-btn
+    bottom: 0px
+    right: 5px
+    position: absolute
+    margin: 0px
+    padding: 0px
+    min-width: 110px
+    height: 30px
+    color: $app-color
 
-<style lang="sass"  >
 
-
-@import ../../../assets/sass/variables
-
-h5
-  display: inline-block
-
-.split-btn
-  position: absolute
-  top: 0px
-  right: 40px
-  display: inline-block
-  margin: 0px
-  padding: 0px
-  min-width: 30px
-  height: 30px
-  margin-left: -10px
-
-  .btn__content
-    max-width: 30px
+  .expansion-btn .btn__content
+    max-width: 110px
     padding: 0px
     margin: 0px
     height: 30px
-    color: $app-color
     font-weight: 600
 
-    .material-icons
-      font-size: 2em
-      color: $app-color
-      height: 30px
-      width: 30px
-.horizontal-dashboard-card
-  .split-btn
-    left: 170px
+  .expansion-btn .btn__content .material-icons
+    font-size: 2em
+    color: $app-color
+    height: 30px
+    width: 30px
 
 .vertical-dashboard-card
   height: 100%
@@ -288,19 +285,19 @@ h5
     min-width: 30px
     height: 30px
 
-    .btn__content
-      max-width: 30px
-      padding: 0px
-      margin: 0px
-      height: 30px
-      color: $app-color
-      font-weight: 600
+  .expansion-btn .btn__content
+    max-width: 30px
+    padding: 0px
+    margin: 0px
+    height: 30px
+    color: $app-color !important
+    font-weight: 600
 
-      .material-icons
-        font-size: 2em
-        color: $app-color
-        height: 30px
-        width: 30px
+  .expansion-btn .btn__content .material-icons
+    font-size: 2em
+    color: $app-color
+    height: 30px
+    width: 30px
 
 
 .vertical-dashboard-card.minimized
@@ -329,34 +326,45 @@ h5
     padding-right: 10px
     padding-bottom: 0px
 
-.horizontal-dashboard-card
-  .expansion-btn
-    bottom: 0px
-    right: 5px
-    position: absolute
-    margin: 0px
-    padding: 0px
-    min-width: 110px
-    height: 30px
+
+.horizontal-dashboard-card.minimized
+  .stepper.stepper--non-linear
+    height: 60px
+  .stepper__header
+    height: 60px
+    width: 280px
+    margin-right: 10px
+    margin-top: 0px
+  .stepper__step
+    padding: 16px 5px 24px 5px
+  .stepper__items
+    width: calc(100% - 310px)
+  .stepper-btn
+    min-width: 40px
+  .stepper-btn .btn__content
+      max-width: 40px
+
+  .tasks-panel
+    padding-top: 13px
+    width: 100%
+  .task-name
+    width: initial
+    padding-top: 3px
+    padding-right: 5px
+  .task-entry
+    display: inline-block
+    clear: initial
+    margin-right: 30px
+  .task-switch
+    float: left
+    width: 40px !important
+    margin-left: 0px
+
+  .vertical-divider
+    height: 50px
 
 
-    .btn__content
-      max-width: 110px
-      padding: 0px
-      margin: 0px
-      height: 30px
-      color: $app-color
-      font-weight: 600
 
-      .material-icons
-        font-size: 2em
-        color: $app-color
-        height: 30px
-        width: 30px
-
-  .stepper__step--active
-    .stepper__label
-      font-weight: 600
 </style>
 
 
@@ -371,8 +379,8 @@ h5
     </login>
 
 
-    <v-toolbar v-if="!isSidebar && isAuthenticated"   fixed   :height="isMinimized ? 50 : 170">
-      <div v-show="isAuthenticated" light :class="{'horizontal-dashboard-card': true, 'minimized': isMinimized}">
+    <v-toolbar v-if="!isSidebar && isAuthenticated"  dark  fixed   :height="isMinimized ? 60 : 170">
+      <div v-show="isAuthenticated"  :class="{'horizontal-dashboard-card': true, 'minimized': isMinimized}">
 
 
 
@@ -383,7 +391,7 @@ h5
               v-show="!isMinimized"
               @click="isSidebar = true"
               v-tooltip.right="`Show dashboard on left`">
-                <v-icon>more_vert</v-icon>
+                <v-icon>vertical_split</v-icon>
               </v-btn>
               <h5> {{ project.workflow.title }} </h5>
 
@@ -405,7 +413,7 @@ h5
               </v-stepper-step>
               <v-divider v-show="step.number != project.workflow.steps.length  && !isMinimized "></v-divider>
             </template>
-            <v-btn v-show="isMinimized" :disabled="currentStep == 5" class="stepper-btn" flat small @click="currentStep = currentStep + 1">
+            <v-btn v-show="isMinimized" :disabled="currentStep == project.workflow.steps.length" class="stepper-btn" flat small @click="currentStep = currentStep + 1">
               <v-icon>chevron_right</v-icon>
             </v-btn>
             <div v-show="!isMinimized" class="stepper-btn-panel">
@@ -413,7 +421,7 @@ h5
               <v-icon>chevron_left</v-icon>
               Previous
               </v-btn>
-              <v-btn :disabled="currentStep == 5" class="stepper-btn" flat  @click="currentStep = currentStep + 1">
+              <v-btn :disabled="currentStep == project.workflow.steps" class="stepper-btn" flat  @click="currentStep = currentStep + 1">
                 <v-icon>chevron_right</v-icon>
                 Next
               </v-btn>
@@ -486,6 +494,7 @@ h5
       :mini-variant.sync="isMinimized"
       :hide-overlay="true"
       fixed
+      dark
       :width="isMinimized ? 110 : 270"
       mini-variant-width="110">
       <div v-show="isAuthenticated"  light :class="{'vertical-dashboard-card': true, 'minimized': isMinimized}">
@@ -499,7 +508,7 @@ h5
                v-show="!isMinimized"
                @click="isSidebar = false"
                v-tooltip.right="`Show dashboard on top`">
-                <v-icon>more_horiz</v-icon>
+                <v-icon>horizontal_split</v-icon>
               </v-btn>
 
               <h5> {{ project.workflow.title }} </h5>
@@ -584,29 +593,45 @@ h5
       <v-card  light style="min-height:600px"
         v-show="currentStep == 1"
       >
-        <intro
-        :project="project">
-        </intro>
+        <div>
+          Load data
+        </div>
       </v-card>
 
-      <div id="bam-iframe" v-show="currentStep == 2">
-        <iframe  :src="apps.bam.url" style="width:100%;height:100%" frameBorder="0">
-        </iframe>
-      </div>
+      <v-card  light style="min-height:600px"
+        v-show="currentStep == 2"
+      >
+        <div>
+          Submit full analysis
+        </div>
+      </v-card>
+
+      <v-card  light style="min-height:600px"
+        v-show="currentStep == 3"
+      >
+        <div>
+          Enter phenotypes
+        </div>
+      </v-card>
 
 
-      <div id="gene-panel-iframe" v-show="currentStep == 3">
+      <div id="gene-panel-iframe" v-show="currentStep == 4">
         <iframe  :src="apps.genepanel.url" style="width:100%;height:100%" frameBorder="0">
         </iframe>
       </div>
 
-      <div id="gene-iframe" v-show="currentStep == 4">
+      <div id="gene-iframe" v-show="currentStep == 5">
+        <iframe  :src="apps.gene.url" style="width:100%;height:100%" frameBorder="0">
+        </iframe>
+      </div>
+
+      <div id="genefull-iframe" v-show="currentStep == 6">
         <iframe  :src="apps.gene.url" style="width:100%;height:100%" frameBorder="0">
         </iframe>
       </div>
 
       <v-card   style="min-height:600px"
-        v-show="currentStep == 5"
+        v-show="currentStep == 7"
       >
         <report
         :phenotypes="project.phenotypes"
@@ -703,30 +728,38 @@ export default {
 
         workflow: {
           title: 'Variant analysis',
-          summary: 'Look for de novo variants in whole exome or genome sequencing research project.  Perform basic quality control.',
-          description: 'The de novo report is used to search for de novo variants in a proband, when sequencing data is present for the proband and both parents.  This report is comprised of the following steps:',
+          summary: 'Look for causative variants in whole exome or genome sequencing research project. ',
+          description: 'The variant report is used to search for caustive variants in a proband, when sequencing data is present for the proband and both parents.  This report is comprised of the following steps:',
           steps: [
 
             { number: 1,
-              title: 'Overview',
-              summary: 'Get an overview of the steps for of de novo variant analysis',
-              isIntro: true
+              title: 'Load data',
+              summary: 'Load the sequencing variant and alignment files for the trio.',
+              isIntro: false
             },
             { number: 2,
-              title: 'Data QC',
-              app: 'bam',
+              title: 'Submit full analysis',
               summary: 'Check quality of sequence alignments for the proband.',
               description: 'Check the quality of the underlying sequencing data for the proband. Using the BAM.IOBIO app, areas of missing coverage or unexpected statistics potentially suggesting contamination are investigated.',
               complete: false,
               tasks: [
-                { name: 'Genome wide coverage',  key: 'genome_wide_coverage', tooltip: 'Some instruction here about how to determine if coverage across entire genome is okay', complete: false, pass: false },
-                { name: 'Median coverage',       key: 'median_coverage',  tooltip: 'Instructions here about median coverage', complete: false, pass: false },
-                { name: 'Mapped reads',          key: 'mapped_reads',     tooltip: 'Instructions here about mapped reads', complete: false, pass: false },
-                { name: 'Duplicate rate',        key: 'duplicate_rate',   tooltip: 'Instructions here about duplicate rate', complete: false, pass: false }
+                { name: 'Specify filters',  key: 'genome_wide_filters', tooltip: 'Specify the filters to apply to all variants to limit to a reasonable set of variants that are possibly causative', complete: false, pass: false },
+                { name: 'Enter email',       key: 'email',  tooltip: 'Enter the email to receive notification when the job has finished', complete: false, pass: false }
               ]
             },
             { number: 3,
-              title: 'Gene lists',
+              title: 'Phenotypes',
+              summary: 'Enter all of the phenotypes associated with the proband.',
+              description: 'Enter all of the phenotypes associated with the proband.',
+              complete: false,
+              tasks: [
+                { name: 'Enter text description',  key: 'phenotype_description', tooltip: 'Enter free form text that describes the proband\'s phenotypes', complete: false, pass: false },
+                { name: 'GTR search terms',       key: 'phenotype_gtr',  tooltip: 'Specify all of the syndromes/disorders that can be searched in the Genetic Testing Registry', complete: false, pass: false },
+                { name: 'Phenolyzer search terms',       key: 'phenotype_phenolyzer',  tooltip: 'Specify all of the phenotypes that can be used to run Phenolyzer', complete: false, pass: false }
+              ]
+            },
+            { number: 4,
+              title: 'Genes',
               app: 'genepanel',
               summary: 'Generate list of candidate genes.',
               description: "The PANEL.IOBIO app is used to identify genes that are most likely associated with the proband's phenotypes.",
@@ -737,20 +770,31 @@ export default {
                 { name: 'Export genes',            key: 'export-genes',    complete: false, pass: false }
               ]
             },
-            { number: 4,
-              title: 'Variants',
+            { number: 5,
+              title: 'Variants (gene driven)',
               app: 'gene',
-              summary: 'Interrogate proband for known pathogenic or de novo variants and check for areas of insufficient coverage in genes.',
+              summary: 'Interrogate proband for known pathogenic for possible caustive variants based on genes associated with proband\'s phenotypes. Check for areas of insufficient coverage in genes.',
               description: 'The GENE.IOBIO app is used to interrogate proband variants in the identified gene list that could be candidates for causative variants.',
               complete: false,
               tasks: [
                 { name: 'Pathogenic variants',     key: 'pathogenic',     tooltip: 'After genes are analyzed, this badge will show you the number of genes with pathogenic variants, which are variants with a 5% allele frequency or less and a pathogenic/likely pathogenic designation from ClinVar', complete: false, pass: false },
-                { name: 'De novo variants',        key: 'denovo',         tooltip: 'After genes are analyzed, this badge will show you the number of genes with de novo variants, which are variants with a 5% allele frequency or less and a de novo inheritance mode', complete: false, pass: false },
+                { name: 'VUS',        key: 'vus',         tooltip: 'After genes are analyzed, this badge will show you the number of genes with  ossible caustive variants, which are variants with a 5% allele frequency', complete: false, pass: false },
                 { name: 'Insufficient coverage',   key: 'coverage',       tooltip: 'After genes are analyzed, this badge will show you the number of genes insufficient coverage.', complete: false, pass: false },
                 { name: 'Expand gene list',        key: 'genes-menu',     tooltip: 'Enter a new gene name or click on the + button to expand the gene list', complete: false, pass: false }
               ]
             },
-            { number: 5,
+            { number: 6,
+              title: 'Variants (full analysis)',
+              app: 'genefull',
+              summary: 'Review possible caustive variants found in whole exome/genome of proband, taking into account inheritance mode based on parents and siblings',
+              description: 'The GENE.IOBIO app is used to review variants from whole exome/genome variant analysis',
+              complete: false,
+              tasks: [
+                { name: 'Pathogenic variants',     key: 'pathogenic',     tooltip: 'After genes are analyzed, this badge will show you the number of genes with pathogenic variants, which are variants with a 5% allele frequency or less and a pathogenic/likely pathogenic designation from ClinVar', complete: false, pass: false },
+                { name: 'VUS',        key: 'vus',         tooltip: 'After genes are analyzed, this badge will show you the number of genes with  ossible caustive variants, which are variants with a 5% allele frequency', complete: false, pass: false }
+              ]
+            },
+            { number: 7,
               title: 'Report',
               summary: 'Generate report for analysis results.',
               description: 'Results from this full analysis are summarized in the report, which can be updated or amended.',
@@ -814,7 +858,7 @@ export default {
       self.project = self.projectTemplate;
 
       // WORKAROUND - until project id can be passed in from hub
-      self.idProject = self.paramProjectId && self.paramProjectId.length > 0 ? self.paramProjectId : "test";
+      self.idProject = self.paramProjectId && self.paramProjectId.length > 0 ? self.paramProjectId : "testexploratory";
 
       self.userSession = new UserSession();
       window.addEventListener("message", self.receiveAppMessage, false);
@@ -903,7 +947,7 @@ export default {
       let self = this;
       var theObject = obj ? obj : {type: 'start-analysis', sender: 'clin.iobio'};
       var iframeSelector = self.apps[appName].iframeSelector;
-      if (iframeSelector && iframeSelector.length > 0) {
+      if (iframeSelector && iframeSelector.length > 0 && $(iframeSelector).length > 0) {
         $(iframeSelector)[0].contentWindow.postMessage(JSON.stringify(theObject), '*');
       } else {
         console.log("Unable to send clin message to " + appName + " because iframe not present ");
