@@ -28,7 +28,9 @@ html {
 .theme--dark .navigation-drawer, .application .theme--dark.navigation-drawer {
     background-color: rgba(0,0,0,0.47);
 }
-
+.theme--dark .stepper .stepper__step--editable:hover .stepper__label {
+  text-shadow: none !important;
+}
 .application.theme--light {
   background: #fafafa;
   color:  rgb(113,113,113);
