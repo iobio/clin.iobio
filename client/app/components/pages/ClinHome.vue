@@ -345,7 +345,7 @@
     .stepper__step
       padding: 16px 5px 24px 5px
     .stepper__items
-      width: calc(100% - 170px)
+      width: calc(100% - 320px)
     .stepper-btn
       min-width: 40px
     .stepper-btn .btn__content
