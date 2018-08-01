@@ -8,8 +8,6 @@
 
 
 
-
-
 .app-content
   margin-top: 170px
   margin-left: 0px
@@ -28,344 +26,349 @@
 
 
 
-.stepper__content
-  color: $text-color
 
-h5
-  color:  $app-color
-  margin-top: 8px
-  font-size: 16px
-  display: inline-block
+#clin-container
 
 
-
-.split-btn
-  position: absolute
-  bottom: 10px
-  left: 4px
-  display: inline-block
-  margin: 0px
-  padding: 0px
-  min-width: 20px
-  height: 20px
-
-.split-btn .btn__content
-  max-width: 20px
-  padding: 0px
-  margin: 0px
-  height: 20px
-  color: $app-color
-  font-weight: 600
-
-.split-btn .btn__content .material-icons
-  font-size: 20px
-  color: $app-color
-  height: 20px
-  width: 20px
-
-.horizontal-dashboard-card
-  padding: 0px
-  margin: 0px
-  width: 100%
-  color: $text-color
-
-  .stepper__label
-    line-height: 17px !important
-
-  hr.divider
-    display: none
-
-
-  .stepper__step--active
-    .stepper__label
-      font-weight: 600
-
-  .stepper__header
-    margin-top: 5px
-    -webkit-box-shadow: none
-    box-shadow: none
-    width: 600px
-    float: left
-    justify-content: flex-start
-
-  .stepper.stepper--non-linear
-    height: 170px
-
-  .stepper-btn-panel
-    width: 100%
-    text-align: center
-
-  .stepper-btn
-    color: $app-color
-    display: inline-block
-    margin: 0px
-    margin-top: 12px
-    padding: 0px
-    min-width: 110px
-    height: 30px
-
-  .stepper-btn .btn__content
-    max-width: 110px
-    padding: 0px
-    margin: 0px
-    height: 30px
-
-
-  .vertical-divider
-    border-left: 1px solid $divider-color
-    height: 160px
-    float: left
-    margin-top: 5px
-    margin-bottom: 5px
-    margin-left: 10px
-    margin-right: 10px
-
-  .workflow-summary-panel
-    width: 200px
-    float: left
-    display: inline-block
-    padding: 5px 5px 5px 10px
-    overflow-y: scroll
-    font-size: 12px
 
   .stepper__content
-    padding: 0px 0px 0px 0px
+    color: $text-color
 
-
-
-  .stepper__step
-    padding-top: 3px
-    padding-bottom: 20px
-    padding-left: 10px
-    padding-right: 10px
-    width: 150px
-
-  .stepper__items
-    float: left
+  h5
+    color:  $app-color
+    margin-top: 8px
+    font-size: 16px
     display: inline-block
-    margin-left: 5px
-    min-width: 480px
-
-  .step-summary-panel
-    width: 200px
-    float: left
-    display: inline-block
-    padding: 5px 15px 5px 5px
-    overflow-y: scroll
-    font-size: 12px
-
-  .tasks-panel
-    width: 280px
-    float: left
-    display: inline-block
-    padding-top: 0px
-
-  .task-entry
-    clear: both
-    overflow: auto
-
-  .task-name
-    float: left
-    display: inline-block
-    vertical-align: top
-    width: 160px
-    cursor: pointer
-
-  .task-switch
-    float: left
-    display: inline-block !important
-    width: 24px !important
-    height: 30px
-    margin-left: 20px
-    margin-right: 0px
-    margin-bottom: 0px
-    vertical-align: top
-    margin-top: 0px !important
 
 
-  .task-checkbox-header1
-    margin-left: 150px
-    display: inline-block
-    float: left
-    width: 74px
-    margin-top: 5px
-
-  .task-checkbox-header2
-    display: inline-block
-    float: left
-    margin-top: 5px
-
-
-  .expansion-btn
-    bottom: 0px
-    right: 5px
-    position: absolute
-    margin: 0px
-    padding: 0px
-    min-width: 110px
-    height: 30px
-    color: $app-color
-
-
-  .expansion-btn .btn__content
-    max-width: 110px
-    padding: 0px
-    margin: 0px
-    height: 30px
-    font-weight: 600
-
-  .expansion-btn .btn__content .material-icons
-    font-size: 2em
-    color: $app-color
-    height: 30px
-    width: 30px
-
-.vertical-dashboard-card
-  height: 100%
 
   .split-btn
-    bottom: 20px
-
-  .stepper--vertical
-    height: calc(100% + 110px)
-    .stepper__step
-      width: 100%
-      padding: 14px 10px 14px 5px
-    .stepper__header
-      height: initial
-      -webkit-box-shadow: none
-      box-shadow: none
-    .stepper__content
-      margin: -8px -36px -16px 16px
-      padding: 8px 50px 16px 8px
-
-
-  .workflow-summary-panel
-    padding: 0px 10px 10px 10px
-  .step-summary-panel
-    width: 220px
-    word-wrap: break-word
-  .tasks-panel
-    width: 220px
-
-  .task-entry
-
-  .task-name
-    display: inline-block
-    vertical-align: bottom
-    width: 115px
-    cursor: pointer
-    line-height: 15px
-    padding-bottom: 8px
-    padding-top: 3px
-
-  .task-switch
-    display: inline-block !important
-    width: 24px !important
-    height: 30px
-    margin-left: 20px
-    margin-right: 0px
-    margin-bottom: 0px
-    vertical-align: top
-    margin-top: 0px !important
-
-
-  .task-checkbox-header1
-    margin-left: 95px
-    display: inline-block
-    width: 74px
-    margin-top: 5px
-
-  .task-checkbox-header2
-    display: inline-block
-    margin-top: 5px
-
-  .expansion-btn
-    top: 0px
-    right: 5px
     position: absolute
+    bottom: 10px
+    left: 4px
+    display: inline-block
     margin: 0px
     padding: 0px
-    min-width: 30px
-    height: 30px
+    min-width: 20px
+    height: 20px
 
-  .expansion-btn .btn__content
-    max-width: 30px
+  .split-btn .btn__content
+    max-width: 20px
     padding: 0px
     margin: 0px
-    height: 30px
-    color: $app-color !important
+    height: 20px
+    color: $app-color
     font-weight: 600
 
-  .expansion-btn .btn__content .material-icons
-    font-size: 2em
+  .split-btn .btn__content .material-icons
+    font-size: 20px
     color: $app-color
-    height: 30px
-    width: 30px
+    height: 20px
+    width: 20px
+
+  .horizontal-dashboard-card
+    padding: 0px
+    margin: 0px
+    width: 100%
+    color: $text-color
+
+    .stepper__label
+      line-height: 17px !important
+
+    hr.divider
+      display: none
 
 
-.vertical-dashboard-card.minimized
-  .stepper--vertical
-    .stepper__step
-      width: 100%
-      padding: 14px 5px 14px 3px
-    .stepper__content
-      margin:  0px -36px -6px 6px
-      padding: 8px 50px 16px 8px
+    .stepper__step--active
+      .stepper__label
+        font-weight: 600
+
     .stepper__header
-      padding-left: 2px
-    .stepper__step__step
-      margin-right: 6px
+      margin-top: 10px
+      -webkit-box-shadow: none
+      box-shadow: none
+      width: 450px
+      float: left
+      justify-content: flex-start
+
+    .stepper.stepper--non-linear
+      height: 170px
+
+    .stepper-btn-panel
+      width: 100%
+      text-align: center
+
+    .stepper-btn
+      color: $app-color
+      display: inline-block
+      margin: 0px
+      margin-top: 12px
+      padding: 0px
+      min-width: 110px
+      height: 30px
+
+    .stepper-btn .btn__content
+      max-width: 110px
+      padding: 0px
+      margin: 0px
+      height: 30px
+
+
+    .vertical-divider
+      border-left: 1px solid $divider-color
+      height: 160px
+      float: left
+      margin-top: 5px
+      margin-bottom: 5px
+      margin-left: 10px
+      margin-right: 10px
+
+    .workflow-summary-panel
+      width: 200px
+      float: left
+      display: inline-block
+      padding: 5px 5px 5px 10px
+      overflow-y: scroll
+      font-size: 12px
+
+    .stepper__content
+      padding: 0px 0px 0px 0px
+
+
+
+    .stepper__step
+      padding-top: 10px
+      padding-bottom: 10px
+      padding-left: 10px
+      padding-right: 10px
+      width: 150px
+
+    .stepper__items
+      float: left
+      display: inline-block
+      margin-left: 5px
+      min-width: 480px
 
     .step-summary-panel
-      width: 100px
+      width: 200px
+      float: left
+      display: inline-block
+      padding: 5px 15px 5px 5px
+      overflow-y: scroll
+      font-size: 12px
+
+    .tasks-panel
+      width: 280px
+      float: left
+      display: inline-block
+      padding-top: 0px
+
+    .task-entry
+      clear: both
+      overflow: auto
+
+    .task-name
+      float: left
+      display: inline-block
+      vertical-align: top
+      width: 160px
+      cursor: pointer
+
+    .task-switch
+      float: left
+      display: inline-block !important
+      width: 24px !important
+      height: 30px
+      margin-left: 20px
+      margin-right: 0px
+      margin-bottom: 0px
+      vertical-align: top
+      margin-top: 0px !important
+
+
+    .task-checkbox-header1
+      margin-left: 150px
+      display: inline-block
+      float: left
+      width: 74px
+      margin-top: 5px
+
+    .task-checkbox-header2
+      display: inline-block
+      float: left
+      margin-top: 5px
+
+
+    .expansion-btn
+      bottom: 0px
+      right: 5px
+      position: absolute
+      margin: 0px
+      padding: 0px
+      min-width: 110px
+      height: 30px
+      color: $app-color
+
+
+    .expansion-btn .btn__content
+      max-width: 110px
+      padding: 0px
+      margin: 0px
+      height: 30px
+      font-weight: 600
+
+    .expansion-btn .btn__content .material-icons
+      font-size: 2em
+      color: $app-color
+      height: 30px
+      width: 30px
+
+  .vertical-dashboard-card
+    height: 100%
+
+    .split-btn
+      bottom: 20px
+
+    .stepper--vertical
+      height: calc(100% + 110px)
+      .stepper__step
+        width: 100%
+        padding: 14px 10px 14px 5px
+      .stepper__header
+        height: initial
+        -webkit-box-shadow: none
+        box-shadow: none
+      .stepper__content
+        margin: -8px -36px -16px 16px
+        padding: 8px 50px 16px 8px
+
+
+    .workflow-summary-panel
+      padding: 0px 10px 10px 10px
+    .step-summary-panel
+      width: 220px
       word-wrap: break-word
-  .tasks-panel
-    width: 100px
-  .task-switch
-    margin-left: 0px
-    margin-bottom: 10px
-  .task-name
-    width: 80px
-    padding-right: 10px
-    padding-bottom: 0px
+    .tasks-panel
+      width: 220px
+
+    .task-entry
+
+    .task-name
+      display: inline-block
+      vertical-align: bottom
+      width: 115px
+      cursor: pointer
+      line-height: 15px
+      padding-bottom: 8px
+      padding-top: 3px
+
+    .task-switch
+      display: inline-block !important
+      width: 24px !important
+      height: 30px
+      margin-left: 20px
+      margin-right: 0px
+      margin-bottom: 0px
+      vertical-align: top
+      margin-top: 0px !important
 
 
-.horizontal-dashboard-card.minimized
-  .stepper.stepper--non-linear
-    height: 60px
-  .stepper__header
-    height: 60px
-    width: 280px
-    margin-right: 10px
-    margin-top: 0px
-  .stepper__step
-    padding: 16px 5px 24px 5px
-  .stepper__items
-    width: calc(100% - 320px)
-  .stepper-btn
-    min-width: 40px
-  .stepper-btn .btn__content
-      max-width: 40px
+    .task-checkbox-header1
+      margin-left: 95px
+      display: inline-block
+      width: 74px
+      margin-top: 5px
 
-  .tasks-panel
-    padding-top: 13px
-    width: 100%
-  .task-name
-    width: initial
-    padding-top: 3px
-    padding-right: 5px
-  .task-entry
-    display: inline-block
-    clear: initial
-    margin-right: 30px
-  .task-switch
-    float: left
-    width: 40px !important
-    margin-left: 0px
+    .task-checkbox-header2
+      display: inline-block
+      margin-top: 5px
 
-  .vertical-divider
-    height: 50px
+    .expansion-btn
+      top: 0px
+      right: 5px
+      position: absolute
+      margin: 0px
+      padding: 0px
+      min-width: 30px
+      height: 30px
+
+    .expansion-btn .btn__content
+      max-width: 30px
+      padding: 0px
+      margin: 0px
+      height: 30px
+      color: $app-color !important
+      font-weight: 600
+
+    .expansion-btn .btn__content .material-icons
+      font-size: 2em
+      color: $app-color
+      height: 30px
+      width: 30px
+
+
+  .vertical-dashboard-card.minimized
+    .stepper--vertical
+      .stepper__step
+        width: 100%
+        padding: 14px 5px 14px 3px
+      .stepper__content
+        margin:  0px -36px -6px 6px
+        padding: 8px 50px 16px 8px
+      .stepper__header
+        padding-left: 2px
+      .stepper__step__step
+        margin-right: 6px
+
+      .step-summary-panel
+        width: 100px
+        word-wrap: break-word
+    .tasks-panel
+      width: 100px
+    .task-switch
+      margin-left: 0px
+      margin-bottom: 10px
+    .task-name
+      width: 80px
+      padding-right: 10px
+      padding-bottom: 0px
+
+
+  .horizontal-dashboard-card.minimized
+    .stepper.stepper--non-linear
+      height: 60px
+    .stepper__header
+      height: 60px
+      width: 280px
+      margin-right: 10px
+      margin-top: 0px
+    .stepper__step
+      padding: 16px 5px 24px 5px
+    .stepper__items
+      width: calc(100% - 170px)
+    .stepper-btn
+      min-width: 40px
+    .stepper-btn .btn__content
+        max-width: 40px
+
+    .tasks-panel
+      padding-top: 13px
+      width: 100%
+    .task-name
+      width: initial
+      padding-top: 3px
+      padding-right: 5px
+    .task-entry
+      display: inline-block
+      clear: initial
+      margin-right: 30px
+    .task-switch
+      float: left
+      width: 40px !important
+      margin-left: 0px
+
+    .vertical-divider
+      height: 50px
 
 
 
@@ -375,7 +378,7 @@ h5
 
 <template>
 
-  <div style="display:flex">
+  <div id="clin-container" style="display:flex">
     <login
       v-if="!isAuthenticated"
       :userSession="userSession"
@@ -405,7 +408,6 @@ h5
             </div>
           </div>
 
-          <div class="vertical-divider" v-show="!isMinimized"></div>
 
           <v-stepper-header>
             <v-btn v-show="isMinimized" :disabled="currentStep == 1" class="stepper-btn" flat small @click="currentStep = currentStep - 1">
@@ -590,17 +592,17 @@ h5
     </v-navigation-drawer>
 
 
-    <div style="width:100%;height:100%;padding: 2px"
+    <div style="width:100%;height:100%;padding: 0px"
     :class="{'app-content': true, 'sidebar': isSidebar, 'minimized': isMinimized}"
     v-show="isAuthenticated" >
-
       <v-card  light style="min-height:600px"
         v-show="currentStep == 1"
       >
-        <div>
-          Load data
-        </div>
+        <intro
+        :project="project">
+        </intro>
       </v-card>
+
 
       <v-card  light style="min-height:600px"
         v-show="currentStep == 2"
@@ -610,32 +612,24 @@ h5
         </div>
       </v-card>
 
-      <v-card  light style="min-height:600px"
-        v-show="currentStep == 3"
-      >
-        <div>
-          Enter phenotypes
-        </div>
-      </v-card>
 
-
-      <div id="gene-panel-iframe" v-show="currentStep == 4">
+      <div id="gene-panel-iframe" v-show="currentStep == 3">
         <iframe  :src="apps.genepanel.url" style="width:100%;height:100%" frameBorder="0">
         </iframe>
       </div>
 
-      <div id="gene-iframe" v-show="currentStep == 5">
+      <div id="gene-iframe" v-show="currentStep == 4">
         <iframe  :src="apps.gene.url" style="width:100%;height:100%" frameBorder="0">
         </iframe>
       </div>
 
-      <div id="genefull-iframe" v-show="currentStep == 6">
+      <div id="genefull-iframe" v-show="currentStep == 5">
         <iframe  :src="apps.gene.url" style="width:100%;height:100%" frameBorder="0">
         </iframe>
       </div>
 
       <v-card   style="min-height:600px"
-        v-show="currentStep == 7"
+        v-show="currentStep == 6"
       >
         <report
         :phenotypes="project.phenotypes"
@@ -737,9 +731,9 @@ export default {
           steps: [
 
             { number: 1,
-              title: 'Load data',
-              summary: 'Load the sequencing variant and alignment files for the trio.',
-              isIntro: false
+              title: 'Overview',
+              summary: 'Get an overview of the steps for of de novo variant analysis',
+              isIntro: true
             },
             { number: 2,
               title: 'Submit full analysis',
@@ -752,18 +746,7 @@ export default {
               ]
             },
             { number: 3,
-              title: 'Phenotypes',
-              summary: 'Enter all of the phenotypes associated with the proband.',
-              description: 'Enter all of the phenotypes associated with the proband.',
-              complete: false,
-              tasks: [
-                { name: 'Enter text description',  key: 'phenotype_description', tooltip: 'Enter free form text that describes the proband\'s phenotypes', complete: false, pass: false },
-                { name: 'GTR search terms',       key: 'phenotype_gtr',  tooltip: 'Specify all of the syndromes/disorders that can be searched in the Genetic Testing Registry', complete: false, pass: false },
-                { name: 'Phenolyzer search terms',       key: 'phenotype_phenolyzer',  tooltip: 'Specify all of the phenotypes that can be used to run Phenolyzer', complete: false, pass: false }
-              ]
-            },
-            { number: 4,
-              title: 'Genes',
+              title: 'Gene list',
               app: 'genepanel',
               summary: 'Generate list of candidate genes.',
               description: "The PANEL.IOBIO app is used to identify genes that are most likely associated with the proband's phenotypes.",
@@ -774,7 +757,7 @@ export default {
                 { name: 'Export genes',            key: 'export-genes',    complete: false, pass: false }
               ]
             },
-            { number: 5,
+            { number: 4,
               title: 'Variants - gene driven',
               app: 'gene',
               summary: 'Interrogate proband for known pathogenic for possible caustive variants based on genes associated with proband\'s phenotypes. Check for areas of insufficient coverage in genes.',
@@ -787,7 +770,7 @@ export default {
                 { name: 'Expand gene list',        key: 'genes-menu',     tooltip: 'Enter a new gene name or click on the + button to expand the gene list', complete: false, pass: false }
               ]
             },
-            { number: 6,
+            { number: 5,
               title: 'Variants - full analysis',
               app: 'genefull',
               summary: 'Review possible caustive variants found in whole exome/genome of proband, taking into account inheritance mode based on parents and siblings',
@@ -798,7 +781,7 @@ export default {
                 { name: 'VUS',        key: 'vus',         tooltip: 'After genes are analyzed, this badge will show you the number of genes with  ossible caustive variants, which are variants with a 5% allele frequency', complete: false, pass: false }
               ]
             },
-            { number: 7,
+            { number: 6,
               title: 'Report',
               summary: 'Generate report for analysis results.',
               description: 'Results from this full analysis are summarized in the report, which can be updated or amended.',
@@ -959,10 +942,9 @@ export default {
       }
     },
 
-
     receiveAppMessage: function(event) {
       // Do we trust the sender of this message?
-      if (event.origin !== this.apps.bam.url &&  event.origin !== this.apps.gene.url &&  event.origin !== this.apps.genepanel.url) {
+      if (!this.isValidAppOrigin(event)) {
         if (this.paramDebug) {
           console.log("parentWindow received message frum untrusted sender. Event.origin is " + event.origin );
         }
@@ -1001,6 +983,12 @@ export default {
 
 
     },
+
+
+    isValidAppOrigin: function(event) {
+      return (this.apps.gene.url.indexOf(event.origin) >= 0 || this.apps.genepanel.url.indexOf(event.origin) >= 0);
+    },
+
 
     promiseGetProject: function(idProject, createIfEmpty) {
       let self = this;
