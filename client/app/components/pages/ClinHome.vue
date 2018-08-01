@@ -991,7 +991,6 @@ export default {
         this.sendAppMessage('gene', messageObject);
       } if (messageObject.type == "apply-genes" && messageObject.sender == 'gene.iobio.io') {
         this.promiseUpdateGenes(messageObject.genes);
-        this.sendAppMessage('gene', messageObject);
       } else if (messageObject.type == "save-variants") {
         this.promiseUpdateVariants(messageObject.variants);
         this.promiseCompleteStepTask('De novo variants', 'De novo variants');
