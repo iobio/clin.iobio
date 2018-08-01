@@ -39,11 +39,9 @@
       padding-right: 30px
       padding-top: 10px
       display: inline-block
-      color:  $text-color
 
     .toolbar-button
       min-width: 70px
-      color: $text-color
       margin-right: 5px
       margin-left: 0px
       font-size: 13px
@@ -71,7 +69,6 @@
   .gene-list
 
   .subheader
-    color: $text-color
     height: initial
     font-size: 15px
 
@@ -87,7 +84,6 @@
       height: initial
       font-size: 13px
       margin-left: -3px
-      text-color: $text-color
       margin-top: 5px
 
     li
@@ -141,7 +137,6 @@
 
     .variant-label
       font-size: 12px
-      color: $text-color !important
 
 
       .coord

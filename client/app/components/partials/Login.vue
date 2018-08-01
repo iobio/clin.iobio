@@ -20,10 +20,10 @@ nav.toolbar
 
     <v-layout row wrap class="mt-5" justify-center>
        <v-flex xs4 >
-        <v-toolbar dark class="light-blue lighten-1" >
+        <v-toolbar light class="light-blue darken-4" >
           <v-toolbar-title  class="white--text" >Login to clin.iobio</v-toolbar-title>
         </v-toolbar>
-        <v-card  dark >
+        <v-card  light >
           <v-layout row wrap>
               <v-flex xs12>
                 <v-text-field v-model="userName" label="Enter your user name" type="text">
@@ -37,7 +37,7 @@ nav.toolbar
 
 
               <v-flex xs12>
-                <v-btn dark @click="authenticate">Login</v-btn>
+                <v-btn  @click="authenticate">Login</v-btn>
               </v-flex>
           </v-layout>
         </v-card>
