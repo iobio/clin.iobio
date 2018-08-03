@@ -10,27 +10,6 @@ html {
   font-family: 'Open Sans', 'Quattrocento Sans', 'sans serif';
 }
 
-.theme--dark .toolbar, .application .theme--dark.toolbar {
-    background-color: rgba(0,0,0,0.47);
-    color: #fff;
-}
-
-.theme--dark .stepper, .application .theme--dark.stepper {
-    background-color: rgba(0,0,0,0.47);
-    color: #fff;
-}
-
-.theme--dark .btn {
-    background-color: rgba(0,0,0,0.47);
-    color: #fff;
-}
-
-.theme--dark .navigation-drawer, .application .theme--dark.navigation-drawer {
-    background-color: rgba(0,0,0,0.47);
-}
-.theme--dark .stepper .stepper__step--editable:hover .stepper__label {
-  text-shadow: none !important;
-}
 .application.theme--light {
   background: #fafafa;
   color:  rgb(113,113,113);

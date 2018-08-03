@@ -29,6 +29,10 @@
 
 #clin-container
 
+  .toolbar--fixed.elevation-0
+    box-shadow: none !important
+    -webkit-box-shadow: none !important
+
 
 
   .stepper__content
@@ -74,6 +78,7 @@
 
     .stepper__label
       line-height: 17px !important
+      text-shadown: none !important
 
     hr.divider
       display: none
@@ -82,6 +87,7 @@
     .stepper__step--active
       .stepper__label
         font-weight: 600
+        text-shadow: none !important
 
     .stepper__header
       margin-top: 10px
@@ -93,6 +99,8 @@
 
     .stepper.stepper--non-linear
       height: 170px
+      -webkit-box-shadow: none !important
+      background-color: $app-background-color
 
     .stepper-btn-panel
       width: 100%
@@ -231,6 +239,7 @@
 
     .stepper--vertical
       height: calc(100% + 110px)
+      background-color: $app-background-color
       .stepper__step
         width: 100%
         padding: 14px 10px 14px 5px
@@ -242,6 +251,10 @@
         margin: -8px -36px -16px 16px
         padding: 8px 50px 16px 8px
 
+    .stepper__step--active
+      .stepper__label
+        font-weight: 600
+        text-shadow: none !important
 
     .workflow-summary-panel
       padding: 0px 10px 10px 10px
@@ -386,7 +399,7 @@
     </login>
 
 
-    <v-toolbar v-if="!isSidebar && isAuthenticated"  dark  fixed   :height="isMinimized ? 60 : 170">
+    <v-toolbar  v-if="!isSidebar && isAuthenticated"  dark  fixed flat  :height="isMinimized ? 60 : 170">
       <div v-show="isAuthenticated"  :class="{'horizontal-dashboard-card': true, 'minimized': isMinimized}">
 
 
@@ -501,6 +514,7 @@
       :hide-overlay="true"
       fixed
       dark
+      flat
       :width="isMinimized ? 110 : 270"
       mini-variant-width="110">
       <div v-show="isAuthenticated"  light :class="{'vertical-dashboard-card': true, 'minimized': isMinimized}">
