@@ -34,6 +34,17 @@ const routes = [
     name: 'home',
     path: '/',
     component: Home,
+    beforeEnter: (to, from, next) => {
+      var idx = to.hash.indexOf("#access_token");
+      if (idx == 0) {
+        let queryParams = Qs.parse(to.hash.substring(1));
+        let { access_token, expires_in, token_type, ...otherQueryParams } = queryParams;
+        localStorage.setItem('hub-iobio-tkn', token_type + ' ' + access_token);
+        next('/' + Qs.stringify(otherQueryParams, { addQueryPrefix: true, arrayFormat: 'brackets' }));
+      } else {
+        next();
+      }
+    },
     props: (route) => ({
         //paramIdProject:        route.query.idProject,
 
@@ -46,30 +57,12 @@ const routes = [
         paramSource:                route.query.source
     })
   },
-  {
+   {
     name: 'home-hub',
     path: '/access_token*',
-    beforeEnter: (to, from, next) => {
-            // remove initial slash from path and parse
-      let queryParams = Qs.parse(to.path.substring(1));
-      let { access_token, expires_in, token_type, ...otherQueryParams } = queryParams;
-      localStorage.setItem('hub-iobio-tkn', token_type + ' ' + access_token);
-      next('/' + Qs.stringify(otherQueryParams, { addQueryPrefix: true, arrayFormat: 'brackets' }));
-    },
-    component: Home,
-    props: (route) => ({
-
-
-        paramDebug:                 route.query.debug,
-
-        paramProjectId:             route.query.project_uuid,
-
-        paramSampleId:              route.query.sample_uuid,
-        paramTokenType:             route.query.token_type,
-        paramToken:                 route.query.access_token,
-        paramSource:                route.query.source
-    })
+    redirect: '/'
   }
+
 ]
 
 const router = new VueRouter({
