@@ -31,7 +31,7 @@ if [[ $1 == "prod" ]]; then
   echo "** Uploaded to prod s3 bucket **"
   aws s3 cp ./deploy/  s3://static.iobio.io/prod/clin.iobio.io/ --recursive
   echo "** Renew cloudfrount cache **"
-  aws cloudfront create-invalidation --distribution-id E2Y2NGXFSUAHUW --paths /
+  aws cloudfront create-invalidation --distribution-id E2Y2NGXFSUAHUW --paths /\*
 
 
 else
@@ -39,5 +39,5 @@ else
   #aws s3 sync ./deploy/  s3://static.iobio.io/dev/clin.iobio.io/
   aws s3 cp ./deploy/  s3://static.iobio.io/dev/clin.iobio.io/ --recursive
   echo "** Renew cloudfrount cache **"
-  aws cloudfront create-invalidation --distribution-id E2S63OUSKGCXCO --paths /
+  aws cloudfront create-invalidation --distribution-id E2S63OUSKGCXCO --paths /\*
 fi
