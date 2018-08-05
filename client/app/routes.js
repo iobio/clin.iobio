@@ -50,6 +50,7 @@ const routes = [
 
         paramDebug:            route.query.debug,
 
+        paramAnalysisId:            route.query.analysis_uuid,
         paramProjectId:             route.query.project_uuid,
         paramSampleId:              route.query.sample_uuid,
         paramTokenType:             route.query.token_type,

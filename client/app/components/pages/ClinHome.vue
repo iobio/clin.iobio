@@ -399,7 +399,8 @@
     </login>
 
 
-    <v-toolbar  v-if="!isSidebar && isAuthenticated"  dark  fixed flat  :height="isMinimized ? 60 : 170">
+    <v-toolbar  v-if="!isSidebar && isAuthenticated && workflow && analysis "
+        dark  fixed flat  :height="isMinimized ? 60 : 170">
       <div v-show="isAuthenticated"  :class="{'horizontal-dashboard-card': true, 'minimized': isMinimized}">
 
 
@@ -413,10 +414,10 @@
               v-tooltip.top="`Show dashboard on left`">
                 <v-icon>vertical_split</v-icon>
               </v-btn>
-              <h5> {{ project.workflow.title }} </h5>
+              <h5> {{ workflow.title }} </h5>
 
               <div>
-                {{ project.workflow.summary}}
+                {{ workflow.summary}}
               </div>
             </div>
           </div>
@@ -426,13 +427,13 @@
             <v-btn v-show="isMinimized" :disabled="currentStep == 1" class="stepper-btn" flat small @click="currentStep = currentStep - 1">
               <v-icon>chevron_left</v-icon>
             </v-btn>
-            <template v-for="step in project.workflow.steps">
+            <template v-for="step in analysis.steps">
               <v-stepper-step v-show="!isMinimized || step.number == currentStep" :key="step.number" editable :step="step.number" :complete="step.complete">
-                {{ step.title }}
+                {{ getStepTitle(step.key) }}
               </v-stepper-step>
-              <v-divider v-show="step.number != project.workflow.steps.length  && !isMinimized "></v-divider>
+              <v-divider v-show="step.number != analysis.steps.length  && !isMinimized "></v-divider>
             </template>
-            <v-btn v-show="isMinimized" :disabled="currentStep == project.workflow.steps.length" class="stepper-btn" flat small @click="currentStep = currentStep + 1">
+            <v-btn v-show="isMinimized" :disabled="currentStep == analysis.steps.length" class="stepper-btn" flat small @click="currentStep = currentStep + 1">
               <v-icon>chevron_right</v-icon>
             </v-btn>
             <div v-show="!isMinimized" class="stepper-btn-panel">
@@ -440,7 +441,7 @@
               <v-icon>chevron_left</v-icon>
               Previous
               </v-btn>
-              <v-btn :disabled="currentStep == project.workflow.steps" class="stepper-btn" flat  @click="currentStep = currentStep + 1">
+              <v-btn :disabled="currentStep == analysis.steps" class="stepper-btn" flat  @click="currentStep = currentStep + 1">
                 <v-icon>chevron_right</v-icon>
                 Next
               </v-btn>
@@ -451,13 +452,13 @@
           <div class="vertical-divider" ></div>
 
           <v-stepper-items>
-            <template v-for="step in project.workflow.steps">
+            <template v-for="step in analysis.steps">
 
-              <v-stepper-content :key="step.number" :step="step.number">
+              <v-stepper-content :key="step.key" :step="getStepNumber(step.key)">
                 <div class="step-summary-panel" v-if="!isMinimized">
-                  <h5>{{ step.title }}</h5>
+                  <h5>{{ getStepTitle(step.key) }}</h5>
                   <div>
-                      {{ step.summary }}
+                      {{ getStepSummary(step.key) }}
                   </div>
                 </div>
 
@@ -469,13 +470,13 @@
                   </div>
                   <div class="task-entry"
                    v-for="task in step.tasks"
-                   :key="task.name"
+                   :key="task.key"
                    >
                     <span class="task-name"
-                    v-tooltip.left="task.name"
+                    v-tooltip.left="getTaskName(step.key, task.key)"
                     @mouseover="onMouseOverTask(step, task)"
                     @mouseleave="onMouseLeaveTask(step, task)">
-                    {{ task.name }}
+                    {{ getTaskName(step.key, task.key) }}
                     </span>
                     <v-checkbox class="task-switch"
                       v-model="task.complete"
@@ -509,7 +510,7 @@
     </v-toolbar>
 
     <v-navigation-drawer
-      v-if="isSidebar && isAuthenticated"
+      v-if="isSidebar && isAuthenticated "
       :mini-variant.sync="isMinimized"
       :hide-overlay="true"
       fixed
@@ -517,7 +518,7 @@
       flat
       :width="isMinimized ? 110 : 270"
       mini-variant-width="110">
-      <div v-show="isAuthenticated"  light :class="{'vertical-dashboard-card': true, 'minimized': isMinimized}">
+      <div v-show="isAuthenticated && workflow && analysis"  light :class="{'vertical-dashboard-card': true, 'minimized': isMinimized}">
 
 
 
@@ -531,7 +532,7 @@
                 <v-icon>horizontal_split</v-icon>
               </v-btn>
 
-              <h5> {{ project.workflow.title }} </h5>
+              <h5> {{ workflow.title }} </h5>
 
               <v-btn class="expansion-btn" flat fav small v-show="!isMinimized" @click="isMinimized = true">
                 <v-icon>chevron_left</v-icon>
@@ -541,7 +542,7 @@
               </v-btn>
 
               <div v-show="!isMinimized">
-                {{ project.workflow.summary}}
+                {{ workflow.summary}}
               </div>
             </div>
           </div>
@@ -549,17 +550,17 @@
 
 
 
-            <template v-for="step in project.workflow.steps">
+            <template v-for="step in analysis.steps">
               <v-stepper-step v-show="!isMinimized || isSidebar || step.number == currentStep"
-              :key="`step` + step.number"
+              :key="`step` + step.key"
               editable
-              :step="step.number"
+              :step="getStepNumber(step.key)"
               :complete="step.complete">
-                 {{ step.title }}
+                 {{ getStepTitle(step.key) }}
               </v-stepper-step>
-              <v-stepper-content :key="`content` + step.number" :step="step.number">
+              <v-stepper-content :key="`content` + step.key" :step="getStepNumber(step.key)">
                 <div class="step-summary-panel" v-if="!isMinimized">
-                    {{ step.summary }}
+                    {{ getStepSummary(step.key) }}
                 </div>
 
                 <div class="tasks-panel" v-if="step.tasks">
@@ -570,13 +571,13 @@
                   </div>
                   <div class="task-entry"
                    v-for="task in step.tasks"
-                   :key="task.name"
+                   :key="task.key"
                    >
                     <span class="task-name"
-                    v-tooltip.left="task.name"
+                    v-tooltip.left="getTaskName(step.key, task.key)"
                     @mouseover="onMouseOverTask(step, task)"
                     @mouseleave="onMouseLeaveTask(step, task)">
-                    {{ task.name }}
+                    {{ getTaskName(step.key, task.key) }}
                     </span>
                     <v-checkbox class="task-switch"
                       v-model="task.complete"
@@ -608,12 +609,14 @@
 
     <div style="width:100%;height:100%;padding: 0px"
     :class="{'app-content': true, 'sidebar': isSidebar, 'minimized': isMinimized}"
-    v-show="isAuthenticated" >
+    v-show="isAuthenticated " >
       <v-card  light style="min-height:600px"
+        v-if="analysis && workflow"
         v-show="currentStep == 1"
       >
         <intro
-        :project="project">
+        :workflow="workflow"
+        :analysis="analysis">
         </intro>
       </v-card>
 
@@ -646,10 +649,11 @@
         v-show="currentStep == 6"
       >
         <report
-        :phenotypes="project.phenotypes"
-        :genes="project.genes"
-        :variants="project.variants"
-        :filters="project.filters">
+        v-if="analysis"
+        :phenotypes="analysis.phenotypes"
+        :genes="analysis.genes"
+        :variants="analysis.variants"
+        :filters="analysis.filters">
         </report>
       </v-card>
 
@@ -667,7 +671,7 @@ import Intro from  '../viz/Intro.vue'
 import Report from '../viz/Report.vue'
 import Login from  '../partials/Login.vue'
 
-import ProjectModel from  '../../models/ProjectModel.js'
+import AnalysisModel from  '../../models/AnalysisModel.js'
 import UserSession  from  '../../models/UserSession.js'
 import HubSession  from  '../../models/HubSession.js'
 
@@ -685,6 +689,7 @@ export default {
 
     paramProjectId:   null,
     paramSampleId:    null,
+    paramAnalysisId:  null,
     paramTokenType:   null,
     paramToken:       null,
     paramSource:      null
@@ -692,30 +697,23 @@ export default {
   data() {
     let self = this;
     return {
-      greeting: 'clin.iobio.vue',
-
+      greeting: 'clin.iobio.io',
       isSidebar: false,
       isMinimized: false,
 
-      showDashboard: true,
-
       isAuthenticated: false,
       userSession:  null,
-
-
-      idProject: null,
-      projectModel: null,
-
+      hubSession: null,
       modelInfos: null,
 
       appUrls: {
         'localhost': {
-            'gene':      'http://localhost:4026/#/?launchedFromClin=true',
+            'gene':      'http://localhost:4026/?launchedFromClin=true',
             'genepanel': 'http://localhost:4024',
             'bam':       'http://localhost:4027'
         },
         'dev': {
-            'gene':      'http://newgene.iobio.io/#/?launchedFromClin=true',
+            'gene':      'https://dev.gene.iobio.io/?launchedFromClin=true',
             'genepanel': 'http://panel.iobio.io',
             'bam':       'http://newbam.iobio.io'
         },
@@ -729,84 +727,11 @@ export default {
 
       currentStep: 0,
 
+      analysisModel: null,
 
-
-      //hubEnpoint: null,
-      hubSession: null,
-
-      project: null,
-
-      projectTemplate: {
-
-        workflow: {
-          title: 'Variant analysis',
-          summary: 'Look for causative variants in whole exome or genome sequencing research project. ',
-          description: 'The variant report is used to search for caustive variants in a proband, when sequencing data is present for the proband and both parents.  This report is comprised of the following steps:',
-          steps: [
-
-            { number: 1,
-              title: 'Overview',
-              summary: 'Get an overview of the steps for of de novo variant analysis',
-              isIntro: true
-            },
-            { number: 2,
-              title: 'Submit full analysis',
-              summary: 'Check quality of sequence alignments for the proband.',
-              description: 'Check the quality of the underlying sequencing data for the proband. Using the BAM.IOBIO app, areas of missing coverage or unexpected statistics potentially suggesting contamination are investigated.',
-              complete: false,
-              tasks: [
-                { name: 'Specify filters',  key: 'genome_wide_filters', tooltip: 'Specify the filters to apply to all variants to limit to a reasonable set of variants that are possibly causative', complete: false, pass: false },
-                { name: 'Enter email',       key: 'email',  tooltip: 'Enter the email to receive notification when the job has finished', complete: false, pass: false }
-              ]
-            },
-            { number: 3,
-              title: 'Gene list',
-              app: 'genepanel',
-              summary: 'Generate list of candidate genes.',
-              description: "The PANEL.IOBIO app is used to identify genes that are most likely associated with the proband's phenotypes.",
-              complete: false,
-              tasks: [
-                { name: 'Panel genes',             key: 'gtr-genes',       complete: false, pass: false },
-                { name: 'Phenotype driven genes',  key: 'phenotype-genes', complete: false, pass: false },
-                { name: 'Export genes',            key: 'export-genes',    complete: false, pass: false }
-              ]
-            },
-            { number: 4,
-              title: 'Variants - gene driven',
-              app: 'gene',
-              summary: 'Interrogate proband for known pathogenic for possible caustive variants based on genes associated with proband\'s phenotypes. Check for areas of insufficient coverage in genes.',
-              description: 'The GENE.IOBIO app is used to interrogate proband variants in the identified gene list that could be candidates for causative variants.',
-              complete: false,
-              tasks: [
-                { name: 'Pathogenic variants',     key: 'pathogenic',     tooltip: 'After genes are analyzed, this badge will show you the number of genes with pathogenic variants, which are variants with a 5% allele frequency or less and a pathogenic/likely pathogenic designation from ClinVar', complete: false, pass: false },
-                { name: 'VUS',        key: 'vus',         tooltip: 'After genes are analyzed, this badge will show you the number of genes with  ossible caustive variants, which are variants with a 5% allele frequency', complete: false, pass: false },
-                { name: 'Insufficient coverage',   key: 'coverage',       tooltip: 'After genes are analyzed, this badge will show you the number of genes insufficient coverage.', complete: false, pass: false },
-                { name: 'Expand gene list',        key: 'genes-menu',     tooltip: 'Enter a new gene name or click on the + button to expand the gene list', complete: false, pass: false }
-              ]
-            },
-            { number: 5,
-              title: 'Variants - full analysis',
-              app: 'genefull',
-              summary: 'Review possible caustive variants found in whole exome/genome of proband, taking into account inheritance mode based on parents and siblings',
-              description: 'The GENE.IOBIO app is used to review variants from whole exome/genome variant analysis',
-              complete: false,
-              tasks: [
-                { name: 'Pathogenic variants',     key: 'pathogenic',     tooltip: 'After genes are analyzed, this badge will show you the number of genes with pathogenic variants, which are variants with a 5% allele frequency or less and a pathogenic/likely pathogenic designation from ClinVar', complete: false, pass: false },
-                { name: 'VUS',        key: 'vus',         tooltip: 'After genes are analyzed, this badge will show you the number of genes with  ossible caustive variants, which are variants with a 5% allele frequency', complete: false, pass: false }
-              ]
-            },
-            { number: 6,
-              title: 'Report',
-              summary: 'Generate report for analysis results.',
-              description: 'Results from this full analysis are summarized in the report, which can be updated or amended.',
-              complete: false
-            }
-
-          ]
-
-        }
-      }
-
+      idWorkflow: "1",
+      workflow: null,
+      analysis: null,
 
     }
   },
@@ -829,7 +754,7 @@ export default {
   watch: {
     currentStep: function() {
       let self = this;
-      if (self.isAuthenticated && self.project && self.currentStep) {
+      if (self.isAuthenticated && self.workflow && self.analysis && self.currentStep) {
         var theApp = null;
 
         // If this is the first time we have loaded the app, send
@@ -844,7 +769,7 @@ export default {
 
 
         // We have moved to a new step.  Save the workflow step.
-        if (self.project && self.project.idProject) {
+        if (self.analysis && self.analysis.id) {
           self.promiseUpdateWorkflow();
         }
       }
@@ -855,11 +780,6 @@ export default {
 
     init: function() {
       let self = this;
-
-      self.project = self.projectTemplate;
-
-      // WORKAROUND - until project id can be passed in from hub
-      self.idProject = self.paramProjectId && self.paramProjectId.length > 0 ? self.paramProjectId : "testexploratory";
 
       self.userSession = new UserSession();
       window.addEventListener("message", self.receiveAppMessage, false);
@@ -880,7 +800,8 @@ export default {
           && self.paramSampleId && self.paramSource) {
 
         self.hubSession = new HubSession();
-        self.hubSession.promiseInit(self.paramSampleId, self.paramSource)
+        // For now, just hardcode is_pedgree = true
+        self.hubSession.promiseInit(self.paramSampleId, self.paramSource, true)
         .then(modelInfos => {
           self.modelInfos = modelInfos;
         })
@@ -904,18 +825,68 @@ export default {
 
     onAuthenticated: function() {
       let self = this;
-      this.isAuthenticated = true;
-      this.projectModel = new ProjectModel(this.userSession);
+      self.isAuthenticated = true;
+      self.analysisModel = new AnalysisModel(self.userSession);
+
+      self.promiseGetWorkflow(self.idWorkflow)
+      .then(function() {
 
 
-      if (this.idProject) {
-        this.promiseGetProject(this.idProject, true)
+        self.promiseGetAnalysis(
+          self.paramProjectId && self.paramProjectId.length > 0 ? self.paramProjectId : 'test-project',
+          self.paramSampleId && self.paramSampleId.length > 0 ? self.paramSampleId : 'test-sample',
+          self.paramAnalysisId,
+          self.workflow,
+          true)
         .then(function() {
 
 
         })
+
+      })
+
+    },
+
+    getWorkflowStep: function(stepKey) {
+      let self = this;
+      if (self.workflow) {
+        var theSteps = self.workflow.steps.filter(function(step) {
+          return step.key == stepKey;
+        })
+        return theSteps.length > 0 ? theSteps[0] : null;
+      } else {
+        return null;
       }
     },
+    getStepNumber: function(stepKey) {
+      var workflowStep = this.getWorkflowStep(stepKey);
+      return workflowStep ? workflowStep.number : "";
+    },
+    getStepTitle: function(stepKey) {
+      var workflowStep = this.getWorkflowStep(stepKey);
+      return workflowStep ? workflowStep.title : "";
+    },
+    getStepSummary: function(stepKey) {
+      var workflowStep = this.getWorkflowStep(stepKey);
+      return workflowStep ? workflowStep.summary : "";
+    },
+    getWorkflowTask: function(stepKey, taskKey) {
+      let self = this;
+      var workflowStep = self.getWorkflowStep(stepKey);
+      if (workflowStep) {
+        var theTasks = workflowStep.tasks.filter(function(task) {
+          return task.key == taskKey;
+        })
+        return theTasks.length > 0 ? theTasks[0] : null;
+      } else {
+        return null;
+      }
+    },
+    getTaskName: function(stepKey, taskKey) {
+      var theTask = this.getWorkflowTask(stepKey, taskKey);
+      return theTask ? theTask.name : "";
+    },
+
 
     setData: function(appName, pauseMillisec=0) {
       let self = this;
@@ -930,13 +901,13 @@ export default {
         }
 
         var msgObject = {
-            type: 'set-data',
-            sender: 'clin.iobio',
-            'modelInfo': probandModelInfo[0],
+            type:        'set-data',
+            sender:      'clin.iobio',
+            'modelInfo':  probandModelInfo[0],
             'modelInfos': self.modelInfos,
-            'phenotypes': self.project.phenotypes,
-            'genes': self.project.genes,
-            'variants': self.project.variants
+            'phenotypes': self.analysis.phenotypes,
+            'genes':      self.analysis.genes,
+            'variants':   self.analysis.variants
         };
 
         self.sendAppMessage(appName, msgObject);
@@ -977,20 +948,20 @@ export default {
 
       if (messageObject.type == "apply-genes" && messageObject.sender == 'genepanel.iobio.io') {
         var taskMap = {
-          'gtr':              'Panel genes',
-          'phenotype-driven': 'Phenotype driven genes',
-          'all':              'Export genes'
+          'gtr':              'gtr-genes',
+          'phenotype-driven': 'phenotype-genes',
+          'all':              'export-genes'
         }
         this.promiseUpdateGenes(messageObject.genes);
         this.promiseUpdatePhenotypes(messageObject.searchTerms);
-        this.promiseCompleteStepTask('Gene lists', taskMap[messageObject.source]);
+        this.promiseCompleteStepTask('genes', taskMap[messageObject.source]);
         this.sendAppMessage('gene', messageObject);
       } if (messageObject.type == "apply-genes" && messageObject.sender == 'gene.iobio.io') {
         this.promiseUpdateGenes(messageObject.genes);
       } else if (messageObject.type == "save-variants") {
         this.promiseUpdateVariants(messageObject.variants);
-        this.promiseCompleteStepTask('De novo variants', 'De novo variants');
-        this.promiseCompleteStepTask('De novo variants', 'Pathogenic variants');
+        this.promiseCompleteStepTask('variants', 'pathogenic');
+        this.promiseCompleteStepTask('variants', 'vus');
       } else if (messageObject.type == "save-filters") {
         this.promiseUpdateFilters(messageObject.filters);
       }
@@ -1003,72 +974,139 @@ export default {
       return (this.apps.gene.url.indexOf(event.origin) >= 0 || this.apps.genepanel.url.indexOf(event.origin) >= 0);
     },
 
-
-    promiseGetProject: function(idProject, createIfEmpty) {
+    promiseGetWorkflow: function(idWorkflow) {
       let self = this;
       return new Promise(function(resolve, reject) {
-        self.projectModel.promiseGetProject(idProject)
-        .then( function(theProject) {
+        self.analysisModel.promiseGetWorkflow(idWorkflow)
+        .then(function(theWorkflow) {
+          self.workflow = theWorkflow;
+          resolve();
+        })
+        .catch(function(error) {
+          reject(error);
+        })
+      })
+    },
 
-          if (theProject == null && createIfEmpty) {
-            self.project = $.extend({}, self.projectTemplate);
-            self.project.idProject = idProject;
-            self.project.genes = [];
-            self.project.phenotypes = [];
-            self.project.variants = [];
-            self.projectModel.promiseAddProject(self.project)
-            .then(function() {
+
+    promiseGetAnalysis: function(idProject, idSample, idAnalysis, workflow, createIfEmpty) {
+      let self = this;
+      return new Promise(function(resolve, reject) {
+
+        if (idAnalysis == null || idAnalysis.length == 0) {
+
+          self.analysisModel.promiseGetAnalysesForSample(workflow.id, idSample)
+          .then(function(analyses) {
+            if (analyses && analyses.length > 0) {
+
+              // TODO:  get last analysis if there is more than one
+              self.analysis = analyses[0];
+              self.idAnalysis = self.analysis.id;
               resolve();
-            })
 
-          } else {
-            self.project = theProject;
-            resolve();
-          }
+            } else if (createIfEmpty) {
 
-        })
-        .catch(function(err) {
+              self.idAnalysis = self.createUniqueId();
+              self.analysis = {};
+              self.analysis.id = self.idAnalysis;
+              self.analysis.datetime_created = self.getCurrentDateTime();
+              self.analysis.project_id = idProject;
+              self.analysis.sample_id = idSample;
+              self.analysis.workflow_id = workflow.id;
+              self.analysis.genes = [];
+              self.analysis.phenotypes = [];
+              self.analysis.variants = [];
+              self.analysis.steps = workflow.steps.map(function(step) {
+                let stepObject = {
+                  key: step.key,
+                  number: step.number,
+                  complete: false
+                };
+                if (step.tasks) {
+                  stepObject.tasks = step.tasks.map(function(task) {
+                      return {
+                        key: task.key,
+                        complete: false,
+                        passed: false,
+                      }
+                  })
+                }
+                return stepObject;
+              })
+              self.analysisModel.promiseAddAnalysis(self.analysis)
+              .then(function() {
+                resolve();
+              })
+              .catch(function(err) {
+                reject(err);
+              })
+
+            } else {
+              reject("Unable to find/create an analysis");
+            }
+          })
+          .catch(function(err) {
+            reject(err);
+          })
+
+        } else {
+          self.analysisModel.promiseGetAnalysis(idAnalysis)
+          .then( function(theAnalysis) {
+
+              self.analysis = theAnalysis;
+              self.idAnalysis = self.analysis.id;
+              resolve();
+          })
+          .catch(function(err) {
           reject(err);
-        })
+          })
+
+        }
+
       });
     },
 
     promiseUpdateGenes: function(genes) {
       let self = this;
-      self.project.genes = genes;
-      return self.projectModel.promiseUpdateGenes(self.project);
+      self.analysis.genes = genes;
+      self.analysis.datetime_last_modified = self.getCurrentDateTime();
+      return self.analysisModel.promiseUpdateGenes(self.analysis);
     },
 
     promiseUpdatePhenotypes: function(phenotypes) {
       let self = this;
-      self.project.phenotypes = phenotypes;
-      return self.projectModel.promiseUpdatePhenotypes(self.project);
+      self.analysis.phenotypes = phenotypes;
+      self.analysis.datetime_last_modified = self.getCurrentDateTime();
+      return self.analysisModel.promiseUpdatePhenotypes(self.analysis);
     },
 
     promiseUpdateVariants: function(variants) {
       let self = this;
-      self.project.variants = variants;
-      return self.projectModel.promiseUpdateVariants(self.project);
+      self.analysis.variants = variants;
+      self.analysis.datetime_last_modified = self.getCurrentDateTime();
+      return self.analysisModel.promiseUpdateVariants(self.analysis);
     },
 
     promiseUpdateWorkflow: function() {
       let self = this;
-      return self.projectModel.promiseUpdateWorkflow(self.project);
+      self.analysis.datetime_last_modified = self.getCurrentDateTime();
+      return self.analysisModel.promiseUpdateSteps(self.analysis);
     },
 
     promiseUpdateFilters: function(filters) {
       let self = this;
-      self.project.filters = filters;
-      return self.projectModel.promiseUpdateFilters(self.project);
+      self.analysis.filters = filters;
+      self.analysis.datetime_last_modified = self.getCurrentDateTime();
+      return self.analysisModel.promiseUpdateFilters(self.analysis);
     },
 
-    promiseCompleteStepTask: function(stepTitle, taskName) {
-      var filteredStep = this.project.workflow.steps.filter(function(step) {
-        return step.title == stepTitle;
+    promiseCompleteStepTask: function(stepKey, taskKey) {
+      var filteredStep = this.analysis.steps.filter(function(step) {
+        return step.key == stepKey;
       })
       if (filteredStep.length > 0) {
         var filteredTask = filteredStep[0].tasks.filter(function(task) {
-          return task.name == taskName;
+          return task.key == taskKey;
         })
         if (filteredTask.length > 0) {
           filteredTask[0].complete = true;
@@ -1083,7 +1121,7 @@ export default {
         let msgObject = {
           'type':   'show-tooltip',
           'sender': 'clin.iobio',
-          'task':   task
+          'task':   self.getWorkflowTask(step.key, task.key)
         };
         self.sendAppMessage(step.app, msgObject);
 
@@ -1096,11 +1134,28 @@ export default {
         let msgObject = {
           'type':   'hide-tooltip',
           'sender': 'clin.iobio',
-          'task':   task
+          'task':   self.getWorkflowTask(step.key, task.key)
         };
         self.sendAppMessage(step.app, msgObject);
       }
+    },
+
+    createUniqueId: function() {
+      var uniqueId = Math.random().toString(36).substring(2)
+                 + (new Date()).getTime().toString(36);
+      return uniqueId;
+    },
+
+    getCurrentDateTime: function() {
+      var dateObj = new Date();
+      return dateObj.getTime();
+    },
+
+    formatCurrentDateTime: function(time) {
+      var dateObject = new Date(time);
+      return dateObject.toString();
     }
+
 
   }
 }
