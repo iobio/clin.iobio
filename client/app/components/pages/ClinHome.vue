@@ -124,7 +124,7 @@
 
     .vertical-divider
       border-left: 1px solid $divider-color
-      height: 160px
+      height: 150px
       float: left
       margin-top: 5px
       margin-bottom: 5px
