@@ -75,8 +75,8 @@ button
 
 button
   &.primary
-    background-color: $app-color !important
-    border-color: $app-color !important
+    background-color: $button-color !important
+    border-color: $button-color !important
 
 
 </style>

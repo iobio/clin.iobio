@@ -11,6 +11,9 @@
 .app-content
   margin-top: 170px
   margin-left: 0px
+  border-top: $divider-color
+  border-top-width: .5px
+  border-top-style: none
 
 .app-content.sidebar
   margin-top: 0px
@@ -41,15 +44,18 @@
   h5
     color:  $app-color
     margin-top: 8px
+    margin-bottom: 4px
+    margin-left: 0px
     font-size: 16px
     display: inline-block
 
 
 
+
   .split-btn
     position: absolute
-    bottom: 10px
-    left: 4px
+    top: 5px
+    left: 154px
     display: inline-block
     margin: 0px
     padding: 0px
@@ -75,6 +81,10 @@
     margin: 0px
     width: 100%
     color: $text-color
+
+    .split-btn
+      top: 10px
+
 
     .stepper__label
       line-height: 17px !important
