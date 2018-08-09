@@ -36,6 +36,11 @@
     box-shadow: none !important
     -webkit-box-shadow: none !important
 
+  .stepper__label
+    color: $text-color !important
+
+  .workflow-summary-description
+    color: $text-color
 
 
   .stepper__content
@@ -81,6 +86,7 @@
     margin: 0px
     width: 100%
     color: $text-color
+    border-bottom: $border-color solid 1px
 
     .split-btn
       top: 10px
@@ -88,7 +94,7 @@
 
     .stepper__label
       line-height: 17px !important
-      text-shadown: none !important
+      text-shadow: none !important
 
     hr.divider
       display: none
@@ -243,9 +249,17 @@
 
   .vertical-dashboard-card
     height: 100%
+    overflow: scroll-y
+
+    h5.workflow-title
+      font-size: 18px
+
+    .workflow-summary-panel
+      padding: 12px 10px 10px 10px
 
     .split-btn
-      bottom: 20px
+      right: 34px
+      left: initial
 
     .stepper--vertical
       height: calc(100% + 110px)
@@ -261,13 +275,15 @@
         margin: -8px -36px -16px 16px
         padding: 8px 50px 16px 8px
 
+    .stepper__label
+      color: $text-color
+
+
     .stepper__step--active
       .stepper__label
         font-weight: 600
         text-shadow: none !important
 
-    .workflow-summary-panel
-      padding: 0px 10px 10px 10px
     .step-summary-panel
       width: 220px
       word-wrap: break-word
@@ -301,10 +317,12 @@
       display: inline-block
       width: 74px
       margin-top: 5px
+      font-size: 12px
 
     .task-checkbox-header2
       display: inline-block
       margin-top: 5px
+      font-size: 12px
 
     .expansion-btn
       top: 0px
@@ -410,7 +428,7 @@
 
 
     <v-toolbar  v-if="!isSidebar && isAuthenticated && workflow && analysis "
-        dark  fixed flat  :height="isMinimized ? 60 : 170">
+        light  fixed flat  :height="isMinimized ? 60 : 170">
       <div v-show="isAuthenticated"  :class="{'horizontal-dashboard-card': true, 'minimized': isMinimized}">
 
 
@@ -524,9 +542,9 @@
       :mini-variant.sync="isMinimized"
       :hide-overlay="true"
       fixed
-      dark
+      light
       flat
-      :width="isMinimized ? 110 : 270"
+      :width="isMinimized ? 120 : 270"
       mini-variant-width="110">
       <div v-show="isAuthenticated && workflow && analysis"  light :class="{'vertical-dashboard-card': true, 'minimized': isMinimized}">
 
@@ -542,7 +560,7 @@
                 <v-icon>horizontal_split</v-icon>
               </v-btn>
 
-              <h5> {{ workflow.title }} </h5>
+              <h5 class="workflow-title"> {{ workflow.title }} </h5>
 
               <v-btn class="expansion-btn" flat fav small v-show="!isMinimized" @click="isMinimized = true">
                 <v-icon>chevron_left</v-icon>
@@ -551,7 +569,7 @@
                 <v-icon>chevron_right</v-icon>
               </v-btn>
 
-              <div v-show="!isMinimized">
+              <div class="workflow-summary-description" v-show="!isMinimized">
                 {{ workflow.summary}}
               </div>
             </div>
@@ -624,7 +642,7 @@
         v-if="analysis && workflow"
         v-show="currentStep == 1"
       >
-        <intro
+        <intro style="padding:20px"
         :workflow="workflow"
         :analysis="analysis">
         </intro>
@@ -634,7 +652,7 @@
       <v-card  light style="min-height:600px"
         v-show="currentStep == 2"
       >
-        <div>
+        <div style="padding:20px">
           Submit full analysis
         </div>
       </v-card>

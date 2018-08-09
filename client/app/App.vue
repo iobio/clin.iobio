@@ -49,7 +49,7 @@ button
 .stepper__step--active
   .stepper__step__step
     background-color: $app-color !important
-    color: white !important
+    color: white
 
 .stepper__label
   color: $text-color
