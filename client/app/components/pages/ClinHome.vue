@@ -30,6 +30,11 @@
 
 
 #clin-container
+
+  .navigation-drawer--fixed
+    overflow-y: scroll
+
+
   .input-group--selection-controls.accent--text
     .icon--selection-control
       color: $text-color
@@ -41,6 +46,7 @@
   .stepper__step
     .stepper__label
       color: $text-color
+      line-height: 16px
 
 
   .stepper__step.stepper__step--active
@@ -262,7 +268,7 @@
 
   .vertical-dashboard-card
     height: 100%
-    overflow: scroll-y
+
 
     h5.workflow-title
       font-size: 18px
@@ -368,7 +374,7 @@
         padding: 14px 5px 14px 3px
       .stepper__content
         margin:  0px -36px -6px 6px
-        padding: 8px 50px 16px 8px
+        padding: 8px 50px 0px 8px
       .stepper__header
         padding-left: 2px
       .stepper__step__step
