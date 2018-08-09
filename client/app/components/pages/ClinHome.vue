@@ -29,15 +29,28 @@
 
 
 
-
 #clin-container
+  .input-group--selection-controls.accent--text
+    .icon--selection-control
+      color: $text-color
+
+  .input-group--selection-controls.accent--text.input-group--active
+    .icon--selection-control
+      color: $app-color
+
+  .stepper__step
+    .stepper__label
+      color: $text-color
+
+
+  .stepper__step.stepper__step--active
+    .stepper__label
+      color: $app-color
 
   .toolbar--fixed.elevation-0
     box-shadow: none !important
     -webkit-box-shadow: none !important
 
-  .stepper__label
-    color: $text-color !important
 
   .workflow-summary-description
     color: $text-color
