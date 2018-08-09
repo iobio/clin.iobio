@@ -167,10 +167,10 @@
       margin-right: 10px
 
     .workflow-summary-panel
-      width: 200px
+      width: 220px
       float: left
       display: inline-block
-      padding: 5px 5px 5px 10px
+      padding: 5px 15px 5px 10px
       overflow-y: scroll
       font-size: 12px
 
