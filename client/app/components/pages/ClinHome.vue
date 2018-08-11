@@ -688,7 +688,7 @@
       </div>
 
       <div id="genefull-iframe" v-show="currentStep == 5">
-        <iframe  :src="apps.gene.url" style="width:100%;height:100%" frameBorder="0">
+        <iframe  :src="apps.gene.url + '&mode=full'" style="width:100%;height:100%" frameBorder="0">
         </iframe>
       </div>
 
@@ -756,11 +756,13 @@ export default {
       appUrls: {
         'localhost': {
             'gene':      'http://localhost:4026/?launchedFromClin=true',
+            'genefull':  'http://localhost:4026/?launchedFromClin=true&mode=full',
             'genepanel': 'http://localhost:4024',
             'bam':       'http://localhost:4027'
         },
         'dev': {
             'gene':      'https://dev.gene.iobio.io/?launchedFromClin=true',
+            'genefull':  'https://dev.gene.iobio.io/?launchedFromClin=true&mode=full',
             'genepanel': 'http://panel.iobio.io',
             'bam':       'http://newbam.iobio.io'
         },
@@ -769,7 +771,8 @@ export default {
       apps: {
         'bam':       {url: null, isLoaded: false, step: 2, iframeSelector: '#bam-iframe iframe'},
         'genepanel': {url: null, isLoaded: false, step: 3, iframeSelector: '#gene-panel-iframe iframe'},
-        'gene':      {url: null, isLoaded: false, step: 4, iframeSelector: '#gene-iframe iframe'}
+        'gene':      {url: null, isLoaded: false, step: 4, iframeSelector: '#gene-iframe iframe'},
+        'genefull':  {url: null, isLoaded: false, step: 5, iframeSelector: '#genefull-iframe iframe'}
       },
 
       currentStep: 0,
@@ -947,14 +950,18 @@ export default {
           return;
         }
 
+
         var msgObject = {
-            type:        'set-data',
-            sender:      'clin.iobio',
-            'modelInfo':  probandModelInfo[0],
-            'modelInfos': self.modelInfos,
-            'phenotypes': self.analysis.phenotypes,
-            'genes':      self.analysis.genes,
-            'variants':   self.analysis.variants
+            type:                  'set-data',
+            sender:                'clin.iobio',
+            receiver:               appName,
+            'modelInfo':            probandModelInfo[0],
+            'modelInfos':           self.modelInfos,
+            'phenotypes':           self.analysis.phenotypes,
+            'genes':                self.analysis.genes,
+            'variants':             self.analysis.variants,
+            'variantsFullAnalysis': self.analysis.variants_full_analysis,
+            'variantData':          appName == 'genefull' ? self.analysisModel.parseFullAnalysisTSV(self.analysis) : null
         };
 
         self.sendAppMessage(appName, msgObject);
@@ -1006,9 +1013,13 @@ export default {
       } if (messageObject.type == "apply-genes" && messageObject.sender == 'gene.iobio.io') {
         this.promiseUpdateGenes(messageObject.genes);
       } else if (messageObject.type == "save-variants") {
-        this.promiseUpdateVariants(messageObject.variants);
-        this.promiseCompleteStepTask('variants', 'pathogenic');
-        this.promiseCompleteStepTask('variants', 'vus');
+        if (messageObject.app == 'gene') {
+          this.promiseUpdateVariants(messageObject.variants);
+          this.promiseCompleteStepTask('variants', 'pathogenic');
+          this.promiseCompleteStepTask('variants', 'vus');
+        } else if (messageObject.app == 'genefull') {
+          this.promiseUpdateVariantsFullAnalysis(messageObject.variantsFullAnalysis);
+        }
       } else if (messageObject.type == "save-filters") {
         this.promiseUpdateFilters(messageObject.filters);
       }
@@ -1133,6 +1144,14 @@ export default {
       self.analysis.datetime_last_modified = self.getCurrentDateTime();
       return self.analysisModel.promiseUpdateVariants(self.analysis);
     },
+
+    promiseUpdateVariantsFullAnalysis: function(variants) {
+      let self = this;
+      self.analysis.variants_full_analysis = variants;
+      self.analysis.datetime_last_modified = self.getCurrentDateTime();
+      return self.analysisModel.promiseUpdateVariantsFullAnalysis(self.analysis);
+    },
+
 
     promiseUpdateWorkflow: function() {
       let self = this;

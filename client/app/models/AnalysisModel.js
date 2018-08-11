@@ -57,6 +57,25 @@ export default class AnalysisModel {
 
   }
 
+  parseFullAnalysisTSV(analysis) {
+    if (analysis.full_analysis_records != null && analysis.full_analysis_records.length > 0) {
+      if (analysis.variants_full_analysis == null || analysis.variants_full_analysis.length == 0) {
+        let buf = "";
+        analysis.full_analysis_records.forEach(function(rec) {
+          if (buf.length > 0) {
+            buf += "\n";
+          }
+          buf += rec.split(",").join("\t");
+        });
+        return buf;
+      } else {
+        return null;
+      }
+    } else {
+      return null;
+    }
+  }
+
   promiseGetAnalysesForSample(idWorkflow, idSample ) {
     let self = this;
 
@@ -174,6 +193,34 @@ export default class AnalysisModel {
         UpdateExpression: "set variants = :variants, datetime_last_modified = :datetime_last_modified",
         ExpressionAttributeValues:{
             ":variants": analysis.variants,
+             ":datetime_last_modified": analysis.datetime_last_modified
+        },
+        ReturnValues:"UPDATED_NEW"
+      };
+      self.userSession.dynamodb.update(params, function(err, data) {
+        if (err) {
+          console.log(err, err.stack); // an error occurred
+          reject(err);
+        }
+        else  {
+          resolve();
+        }
+      });
+    })
+  }
+
+  promiseUpdateVariantsFullAnalysis(analysis) {
+    let self = this;
+
+    return new Promise(function(resolve, reject) {
+      var params = {
+        TableName: self.analysisTable,
+        Key:{
+            "id": analysis.id
+        },
+        UpdateExpression: "set variants_full_analysis = :variants_full_analysis, datetime_last_modified = :datetime_last_modified",
+        ExpressionAttributeValues:{
+            ":variants_full_analysis": analysis.variants_full_analysis,
              ":datetime_last_modified": analysis.datetime_last_modified
         },
         ReturnValues:"UPDATED_NEW"
