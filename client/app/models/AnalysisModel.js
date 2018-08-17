@@ -2,6 +2,9 @@ export default class AnalysisModel {
   constructor(userSession) {
     this.userSession = userSession;
     this.analysisTable = "clin.iobio.analysis";
+    this.analysisCacheTable  = {
+      'gene':     "clin.iobio.cache.gene",
+      'genefull': "clin.iobio.cache.genefull" }
     this.workflowTable = "clin.iobio.workflow";
   }
 
@@ -237,6 +240,7 @@ export default class AnalysisModel {
     })
   }
 
+
   promiseUpdateFilters(analysis) {
     let self = this;
 
@@ -292,4 +296,139 @@ export default class AnalysisModel {
       });
     })
   }
+
+
+
+  promiseGetCache(app, idAnalysis) {
+    let self = this;
+
+    return new Promise(function(resolve, reject) {
+      var params = {
+        TableName: self.analysisCacheTable[app],
+        FilterExpression: "#analysis_id = :analysis_id",
+        ExpressionAttributeNames: {
+            "#analysis_id": "analysis_id"
+        },
+        ExpressionAttributeValues: {
+            ":analysis_id": idAnalysis
+        }
+      };
+
+      self.userSession.dynamodb.scan(params, function(err, data) {
+        if (err) {
+          reject(err);
+        } else {
+          if (data && data.Items) {
+            resolve(data.Items);
+          } else {
+            resolve(null);
+          }
+        }
+      });
+    })
+
+  }
+
+  promiseUpdateCache(app, idAnalysis, oldCacheKeys, newCacheItems) {
+    let self = this;
+
+    return new Promise(function(resolve, reject) {
+      self._promiseDeleteCache(app, oldCacheKeys)
+      .then(function() {
+        self._promiseAddCache(app, idAnalysis, newCacheItems)
+        .then(function() {
+          resolve();
+        })
+        .catch(function(error) {
+          var msg = "Problem occurred in AnalysisModel.promiseUpdateCache " + error;
+          reject(msg);
+        })
+      })
+
+    })
+  }
+
+  _promiseAddCache(app, idAnalysis, cacheItems) {
+    let self = this;
+    return new Promise(function(resolve, reject) {
+      let promises = [];
+
+
+      cacheItems.forEach(function(cacheItem) {
+        cacheItem.analysis_id = idAnalysis;
+        var p = self._promiseAddCacheItem(app, cacheItem);
+        promises.push(p);
+      })
+
+      Promise.all(promises)
+      .then(function() {
+        resolve();
+      })
+      .catch(function(error) {
+        reject("Unable to add cache for analysis " + error);
+      })
+    })
+
+  }
+
+  _promiseAddCacheItem(app, cacheItem) {
+    let self = this;
+    return new Promise(function(resolve, reject) {
+      var params = {
+          TableName: self.analysisCacheTable[app],
+          Item: cacheItem
+      };
+      self.userSession.dynamodb.put(params, function (err) {
+        if (err) {
+          reject(err);
+        } else {
+          resolve();
+        }
+      })
+    })
+  }
+
+  _promiseDeleteCache(app, cacheKeys) {
+    let self = this;
+    return new Promise(function(resolve, reject) {
+      let promises = [];
+
+      cacheKeys.forEach(function(cacheKey) {
+        var p = self._promiseDeleteCacheItem(app, cacheKey);
+        promises.push(p);
+      })
+
+      Promise.all(promises)
+      .then(function() {
+        resolve();
+      })
+      .catch(function(error) {
+        reject("Unable to delete cache for analysis " + error);
+      })
+    })
+
+  }
+
+  _promiseDeleteCacheItem(app, cacheKey) {
+    let self = this;
+    return new Promise(function(resolve, reject) {
+      var params = {
+        TableName: self.analysisCacheTable[app],
+        Key:{
+            "cache_key": cacheKey
+        }
+      };
+
+      self.userSession.dynamodb.delete(params, function(err, data) {
+        if (err) {
+          console.log(err);
+          reject(err);
+        } else {
+          resolve();
+        }
+      });
+
+    });
+  }
+
 }

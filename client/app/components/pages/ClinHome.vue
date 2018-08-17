@@ -782,6 +782,8 @@ export default {
       idWorkflow: "1",
       workflow: null,
       analysis: null,
+      analysisCache:     {'gene': null, 'genefull': null},
+      analysisCacheKeys: {'gene': null, 'genefull': null}
 
     }
   },
@@ -887,7 +889,7 @@ export default {
           self.paramSampleId && self.paramSampleId.length > 0 ? self.paramSampleId : 'test-sample',
           self.paramAnalysisId,
           self.workflow,
-          true)
+          {'createIfEmpty': true, 'getCache': true} )
         .then(function() {
 
 
@@ -950,22 +952,28 @@ export default {
           return;
         }
 
-
-        var msgObject = {
-            type:                  'set-data',
-            sender:                'clin.iobio',
-            receiver:               appName,
-            'modelInfo':            probandModelInfo[0],
-            'modelInfos':           self.modelInfos,
-            'phenotypes':           self.analysis.phenotypes,
-            'genes':                self.analysis.genes,
-            'variants':             self.analysis.variants,
-            'variantsFullAnalysis': self.analysis.variants_full_analysis,
-            'variantData':          appName == 'genefull' ? self.analysisModel.parseFullAnalysisTSV(self.analysis) : null
-        };
+        self.promiseGetCache(appName)
+        .then(function() {
+         var msgObject = {
+              type:                  'set-data',
+              sender:                'clin.iobio',
+              receiver:               appName,
+              'modelInfo':            probandModelInfo[0],
+              'modelInfos':           self.modelInfos,
+              'phenotypes':           self.analysis.phenotypes,
+              'genes':                self.analysis.genes,
+              'variants':             self.analysis.variants,
+              'variantsFullAnalysis': self.analysis.variants_full_analysis,
+              'variantData':          appName == 'genefull' ? self.analysisModel.parseFullAnalysisTSV(self.analysis) : null,
+              'cache':                self.analysisCache[appName] ? self.analysisCache[appName] : null
+          };
 
         self.sendAppMessage(appName, msgObject);
-      }, pauseMillisec);
+
+        })
+
+
+       }, pauseMillisec);
 
     },
 
@@ -1020,6 +1028,8 @@ export default {
         } else if (messageObject.app == 'genefull') {
           this.promiseUpdateVariantsFullAnalysis(messageObject.variantsFullAnalysis);
         }
+      } else if (messageObject.type == "save-cache") {
+        this.promiseUpdateCache(messageObject.app, messageObject.cache);
       } else if (messageObject.type == "save-filters") {
         this.promiseUpdateFilters(messageObject.filters);
       }
@@ -1047,9 +1057,12 @@ export default {
     },
 
 
-    promiseGetAnalysis: function(idProject, idSample, idAnalysis, workflow, createIfEmpty) {
+    promiseGetAnalysis: function(idProject, idSample, idAnalysis, workflow, options={}) {
       let self = this;
       return new Promise(function(resolve, reject) {
+
+        var createIfEmpty = options.hasOwnProperty("createIfEmpty") ? options.createIfEmpty : true;
+
 
         if (idAnalysis == null || idAnalysis.length == 0) {
 
@@ -1060,6 +1073,7 @@ export default {
               // TODO:  get last analysis if there is more than one
               self.analysis = analyses[0];
               self.idAnalysis = self.analysis.id;
+
               resolve();
 
             } else if (createIfEmpty) {
@@ -1124,6 +1138,33 @@ export default {
       });
     },
 
+    promiseGetCache: function(app) {
+      let self = this;
+
+      return new Promise(function(resolve, reject) {
+        if (app == 'gene' || app == 'genefull') {
+          self.analysisModel.promiseGetCache(app, self.analysis.id)
+          .then(function(data) {
+            self.analysisCache[app] = data;
+            self.analysisCacheKeys[app] = data.map(function(cacheItem) {
+              return cacheItem.cache_key;
+            });
+            resolve();
+          })
+          .catch(function(error) {
+            let msg = "Problem in ClinHome.promiseGetCache(): " + error;
+            console.log(msg);
+            reject(msg);
+          })
+        } else {
+          self.analysisCache[app] = null;
+          self.analysisCacheKeys[app] = null;
+          resolve();
+        }
+
+      })
+    },
+
     promiseUpdateGenes: function(genes) {
       let self = this;
       self.analysis.genes = genes;
@@ -1164,6 +1205,11 @@ export default {
       self.analysis.filters = filters;
       self.analysis.datetime_last_modified = self.getCurrentDateTime();
       return self.analysisModel.promiseUpdateFilters(self.analysis);
+    },
+
+    promiseUpdateCache: function(app, cacheItems) {
+      let self = this;
+      return self.analysisModel.promiseUpdateCache(app, self.analysis.id, self.analysisCacheKeys[app], cacheItems);
     },
 
     promiseCompleteStepTask: function(stepKey, taskKey) {
