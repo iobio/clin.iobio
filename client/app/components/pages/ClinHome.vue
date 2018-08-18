@@ -1143,12 +1143,15 @@ export default {
 
       return new Promise(function(resolve, reject) {
         if (app == 'gene' || app == 'genefull') {
+
           self.analysisModel.promiseGetCache(app, self.analysis.id)
           .then(function(data) {
             self.analysisCache[app] = data;
+
             self.analysisCacheKeys[app] = data.map(function(cacheItem) {
               return cacheItem.cache_key;
             });
+
             resolve();
           })
           .catch(function(error) {
@@ -1156,6 +1159,7 @@ export default {
             console.log(msg);
             reject(msg);
           })
+
         } else {
           self.analysisCache[app] = null;
           self.analysisCacheKeys[app] = null;
@@ -1209,7 +1213,7 @@ export default {
 
     promiseUpdateCache: function(app, cacheItems) {
       let self = this;
-      return self.analysisModel.promiseUpdateCache(app, self.analysis.id, self.analysisCacheKeys[app], cacheItems);
+      return self.analysisModel.promiseUpdateCache(app, self.analysis.id, cacheItems);
     },
 
     promiseCompleteStepTask: function(stepKey, taskKey) {

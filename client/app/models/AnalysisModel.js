@@ -303,6 +303,10 @@ export default class AnalysisModel {
     let self = this;
 
     return new Promise(function(resolve, reject) {
+
+      let lastEvaluatedKey = null;
+      let cacheItems = [];
+
       var params = {
         TableName: self.analysisCacheTable[app],
         FilterExpression: "#analysis_id = :analysis_id",
@@ -313,50 +317,48 @@ export default class AnalysisModel {
             ":analysis_id": idAnalysis
         }
       };
+      if (lastEvaluatedKey) {
+        params.ExclusiveStartKey = lastEvaluatedKey;
+      }
 
-      self.userSession.dynamodb.scan(params, function(err, data) {
+      let onScan = function(err, data) {
         if (err) {
           reject(err);
         } else {
-          if (data && data.Items) {
-            resolve(data.Items);
-          } else {
-            resolve(null);
+          if (data) {
+            lastEvaluatedKey = data.LastEvaluatedKey;
+            if (data.Items) {
+              cacheItems = cacheItems.concat(data.Items);
+            }
+            if (lastEvaluatedKey == null) {
+              resolve(cacheItems);
+            } else {
+              params.ExclusiveStartKey = lastEvaluatedKey;
+              doScan();
+            }
           }
         }
-      });
+      }
+
+      let doScan = function() {
+        self.userSession.dynamodb.scan(params, onScan);
+      }
+
+      doScan();
+
     })
 
   }
 
-  promiseUpdateCache(app, idAnalysis, oldCacheKeys, newCacheItems) {
+  promiseUpdateCache(app, idAnalysis, cacheItems) {
     let self = this;
-
-    return new Promise(function(resolve, reject) {
-      self._promiseDeleteCache(app, oldCacheKeys)
-      .then(function() {
-        self._promiseAddCache(app, idAnalysis, newCacheItems)
-        .then(function() {
-          resolve();
-        })
-        .catch(function(error) {
-          var msg = "Problem occurred in AnalysisModel.promiseUpdateCache " + error;
-          reject(msg);
-        })
-      })
-
-    })
-  }
-
-  _promiseAddCache(app, idAnalysis, cacheItems) {
-    let self = this;
-    return new Promise(function(resolve, reject) {
+   return new Promise(function(resolve, reject) {
       let promises = [];
 
 
       cacheItems.forEach(function(cacheItem) {
         cacheItem.analysis_id = idAnalysis;
-        var p = self._promiseAddCacheItem(app, cacheItem);
+        var p = self._promisePutCacheItem(app, cacheItem);
         promises.push(p);
       })
 
@@ -371,12 +373,17 @@ export default class AnalysisModel {
 
   }
 
-  _promiseAddCacheItem(app, cacheItem) {
+
+  _promisePutCacheItem(app, cacheItem) {
     let self = this;
     return new Promise(function(resolve, reject) {
       var params = {
           TableName: self.analysisCacheTable[app],
-          Item: cacheItem
+          Item: cacheItem,
+          ProvisionedThroughput: {
+            ReadCapacityUnits: 6,
+            WriteCapacityUnits: 1000
+          },
       };
       self.userSession.dynamodb.put(params, function (err) {
         if (err) {
