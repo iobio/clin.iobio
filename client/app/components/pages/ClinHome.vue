@@ -783,7 +783,8 @@ export default {
       workflow: null,
       analysis: null,
       analysisCache:     {'gene': null, 'genefull': null},
-      analysisCacheKeys: {'gene': null, 'genefull': null}
+      analysisCacheKeys: {'gene': null, 'genefull': null},
+      variants:          {'gene': null, 'genefull': null}
 
     }
   },
@@ -952,7 +953,10 @@ export default {
           return;
         }
 
-        self.promiseGetCache(appName)
+        self.promiseGetVariants(appName)
+        .then(function() {
+          return self.promiseGetCache(appName)
+        })
         .then(function() {
          var msgObject = {
               type:                  'set-data',
@@ -962,8 +966,7 @@ export default {
               'modelInfos':           self.modelInfos,
               'phenotypes':           self.analysis.phenotypes,
               'genes':                self.analysis.genes,
-              'variants':             self.analysis.variants,
-              'variantsFullAnalysis': self.analysis.variants_full_analysis,
+              'variants':             appName == 'gene' || appName == 'genefull'  ? self.variants[appName] : null,
               'variantData':          appName == 'genefull' ? self.analysisModel.parseFullAnalysisTSV(self.analysis) : null,
               'cache':                self.analysisCache[appName] ? self.analysisCache[appName] : null
           };
@@ -1021,12 +1024,10 @@ export default {
       } if (messageObject.type == "apply-genes" && messageObject.sender == 'gene.iobio.io') {
         this.promiseUpdateGenes(messageObject.genes);
       } else if (messageObject.type == "save-variants") {
-        if (messageObject.app == 'gene') {
-          this.promiseUpdateVariants(messageObject.variants);
-          this.promiseCompleteStepTask('variants', 'pathogenic');
-          this.promiseCompleteStepTask('variants', 'vus');
-        } else if (messageObject.app == 'genefull') {
-          this.promiseUpdateVariantsFullAnalysis(messageObject.variantsFullAnalysis);
+        if (messageObject.action == "update") {
+          this.promiseUpdateVariants(messageObject.app, messageObject.variants);
+        } else if (messageObject.action == "delete") {
+          this.promiseDeleteVariants(messageobject.app, messageObject.variants)
         }
       } else if (messageObject.type == "save-cache") {
         this.promiseUpdateCache(messageObject.app, messageObject.cache);
@@ -1138,6 +1139,32 @@ export default {
       });
     },
 
+    promiseGetVariants: function(app) {
+      let self = this;
+
+      return new Promise(function(resolve, reject) {
+        if ( app == 'genefull' || app == 'gene') {
+
+          self.analysisModel.promiseGetVariants(app, self.analysis.id)
+          .then(function(data) {
+            self.variants[app] = data;
+            resolve();
+          })
+          .catch(function(error) {
+            let msg = "Problem in ClinHome.promiseGetVariants() for " + app + ": " + error;
+            console.log(msg);
+            reject(msg);
+          })
+
+        } else {
+          self.variants[app] = null;
+          resolve();
+        }
+
+      })
+    },
+
+
     promiseGetCache: function(app) {
       let self = this;
 
@@ -1183,20 +1210,17 @@ export default {
       return self.analysisModel.promiseUpdatePhenotypes(self.analysis);
     },
 
-    promiseUpdateVariants: function(variants) {
+    promiseUpdateVariants: function(app, variants) {
       let self = this;
-      self.analysis.variants = variants;
-      self.analysis.datetime_last_modified = self.getCurrentDateTime();
-      return self.analysisModel.promiseUpdateVariants(self.analysis);
+      return self.analysisModel.promiseUpdateVariants(app, self.analysis.id, variants);
     },
 
-    promiseUpdateVariantsFullAnalysis: function(variants) {
-      let self = this;
-      self.analysis.variants_full_analysis = variants;
-      self.analysis.datetime_last_modified = self.getCurrentDateTime();
-      return self.analysisModel.promiseUpdateVariantsFullAnalysis(self.analysis);
-    },
 
+    promiseDeleteVariants: function(app, variants) {
+      let self = this;
+      self.analysis.datetime_last_modified = self.getCurrentDateTime();
+      return self.analysisModel.promiseDeleteVariants(app, self.analysis.id, variants);
+    },
 
     promiseUpdateWorkflow: function() {
       let self = this;

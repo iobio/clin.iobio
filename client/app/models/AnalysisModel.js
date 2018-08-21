@@ -2,10 +2,15 @@ export default class AnalysisModel {
   constructor(userSession) {
     this.userSession = userSession;
     this.analysisTable = "clin.iobio.analysis";
+    this.variantTable  = {
+      'gene':     "clin.iobio.variant.gene",
+      'genefull': "clin.iobio.variant.gene.full" }
     this.analysisCacheTable  = {
       'gene':     "clin.iobio.cache.gene",
-      'genefull': "clin.iobio.cache.genefull" }
+      'genefull': "clin.iobio.cache.gene.full" }
     this.workflowTable = "clin.iobio.workflow";
+
+    this.DELIM = "^";
   }
 
   promiseGetWorkflow(idWorkflow) {
@@ -184,60 +189,153 @@ export default class AnalysisModel {
     })
   }
 
-  promiseUpdateVariants(analysis) {
+
+  promiseGetVariants(app, idAnalysis) {
     let self = this;
 
     return new Promise(function(resolve, reject) {
+
+      let lastEvaluatedKey = null;
+      let variants = [];
+
       var params = {
-        TableName: self.analysisTable,
-        Key:{
-            "id": analysis.id
+        TableName: self.variantTable[app],
+        FilterExpression: "#analysis_id = :analysis_id",
+        ExpressionAttributeNames: {
+            "#analysis_id": "analysis_id"
         },
-        UpdateExpression: "set variants = :variants, datetime_last_modified = :datetime_last_modified",
-        ExpressionAttributeValues:{
-            ":variants": analysis.variants,
-             ":datetime_last_modified": analysis.datetime_last_modified
-        },
-        ReturnValues:"UPDATED_NEW"
-      };
-      self.userSession.dynamodb.update(params, function(err, data) {
-        if (err) {
-          console.log(err, err.stack); // an error occurred
-          reject(err);
+        ExpressionAttributeValues: {
+            ":analysis_id": idAnalysis
         }
-        else  {
+      };
+      if (lastEvaluatedKey) {
+        params.ExclusiveStartKey = lastEvaluatedKey;
+      }
+
+      let onScan = function(err, data) {
+        if (err) {
+          reject(err);
+        } else {
+          if (data) {
+            lastEvaluatedKey = data.LastEvaluatedKey;
+            if (data.Items) {
+              variants = variants.concat(data.Items);
+            }
+            if (lastEvaluatedKey == null) {
+              resolve(variants);
+            } else {
+              params.ExclusiveStartKey = lastEvaluatedKey;
+              doScan();
+            }
+          }
+        }
+      }
+
+      let doScan = function() {
+        self.userSession.dynamodb.scan(params, onScan);
+      }
+
+      doScan();
+
+    })
+
+  }
+
+  promiseUpdateVariants(app, idAnalysis, variants) {
+    let self = this;
+    return new Promise(function(resolve, reject) {
+      let promises = [];
+
+
+      variants.forEach(function(variant) {
+        variant.analysis_id = idAnalysis;
+        variant.variant_id  = variant.gene + self.DELIM + variant.start + self.DELIM + variant.ref + self.DELIM + variant.alt;
+        var p = self._promisePutVariant(app, variant);
+        promises.push(p);
+      })
+
+      Promise.all(promises)
+      .then(function() {
+        resolve();
+      })
+      .catch(function(error) {
+        let msg = "Unable to add variant for " + app + " analysis: " + error;
+        console.log(msg);
+        reject(msg);
+      })
+    })
+
+  }
+
+
+  _promisePutVariant(app, variant) {
+    let self = this;
+    return new Promise(function(resolve, reject) {
+      var params = {
+          TableName: self.variantTable[app],
+          Item: variant,
+          ProvisionedThroughput: {
+            ReadCapacityUnits: 6,
+            WriteCapacityUnits: 400
+          },
+      };
+      self.userSession.dynamodb.put(params, function (err) {
+        if (err) {
+          reject(err);
+        } else {
           resolve();
         }
-      });
+      })
     })
   }
 
-  promiseUpdateVariantsFullAnalysis(analysis) {
+  promiseDeleteVariants(app, idAnalysis, variants) {
     let self = this;
+    return new Promise(function(resolve, reject) {
+      let promises = [];
 
+
+      variants.forEach(function(variant) {
+        let idVariant  = variant.gene + self.DELIM + variant.start + self.DELIM + variant.ref + self.DELIM + variant.alt;
+        var p = self._promiseDeleteVariant(app, idVariant, idAnalysis);
+        promises.push(p);
+      })
+
+      Promise.all(promises)
+      .then(function() {
+        resolve();
+      })
+      .catch(function(error) {
+        let msg = "Unable to delete variant for " + app + " analysis: " + error;
+        console.log(msg);
+        reject(msg);
+      })
+    })
+
+  }
+
+
+  _promiseDeleteVariant(app, idVariant, idAnalysis) {
+    let self = this;
     return new Promise(function(resolve, reject) {
       var params = {
-        TableName: self.analysisTable,
+        TableName: self.analysisCacheTable[app],
         Key:{
-            "id": analysis.id
-        },
-        UpdateExpression: "set variants_full_analysis = :variants_full_analysis, datetime_last_modified = :datetime_last_modified",
-        ExpressionAttributeValues:{
-            ":variants_full_analysis": analysis.variants_full_analysis,
-             ":datetime_last_modified": analysis.datetime_last_modified
-        },
-        ReturnValues:"UPDATED_NEW"
-      };
-      self.userSession.dynamodb.update(params, function(err, data) {
-        if (err) {
-          console.log(err, err.stack); // an error occurred
-          reject(err);
+            "variant_id": idVariant,
+            "analysis_id": idAnalysis
         }
-        else  {
+      };
+
+      self.userSession.dynamodb.delete(params, function(err, data) {
+        if (err) {
+          console.log(err);
+          reject(err);
+        } else {
           resolve();
         }
       });
-    })
+
+    });
   }
 
 
