@@ -1027,7 +1027,7 @@ export default {
         if (messageObject.action == "update") {
           this.promiseUpdateVariants(messageObject.app, messageObject.variants);
         } else if (messageObject.action == "delete") {
-          this.promiseDeleteVariants(messageobject.app, messageObject.variants)
+          this.promiseDeleteVariants(messageObject.app, messageObject.variants)
         }
       } else if (messageObject.type == "save-cache") {
         this.promiseUpdateCache(messageObject.app, messageObject.cache);

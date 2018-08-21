@@ -319,7 +319,7 @@ export default class AnalysisModel {
     let self = this;
     return new Promise(function(resolve, reject) {
       var params = {
-        TableName: self.analysisCacheTable[app],
+        TableName: self.variantTable[app],
         Key:{
             "variant_id": idVariant,
             "analysis_id": idAnalysis
