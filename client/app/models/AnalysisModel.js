@@ -241,6 +241,34 @@ export default class AnalysisModel {
 
   }
 
+  replaceMatchingVariants(refreshedVariants, existingVariants) {
+    let self = this;
+    refreshedVariants.forEach(function(refreshedVariant) {
+      let matchingIdx = self.findMatchingVariantIndex(refreshedVariant, existingVariants);
+      if (matchingIdx != -1) {
+        existingVariants[matchingIdx] = refreshedVariant;
+      } else {
+        existingVariants.push(refreshedVariant);
+      }
+    })
+  }
+
+  findMatchingVariantIndex(variant, existingVariants) {
+    let matchingIdx = -1;
+    let idx = 0;
+    existingVariants.forEach(function(v) {
+      if (matchingIdx == -1
+          && v.gene == variant.gene
+          && v.start == variant.start
+          && v.ref == variant.ref
+          && v.alt == variant.alt ) {
+        matchingIdx = idx;
+      }
+      idx++;
+    })
+    return matchingIdx;
+  }
+
   promiseUpdateVariants(app, idAnalysis, variants) {
     let self = this;
     return new Promise(function(resolve, reject) {
@@ -480,7 +508,7 @@ export default class AnalysisModel {
           Item: cacheItem,
           ProvisionedThroughput: {
             ReadCapacityUnits: 6,
-            WriteCapacityUnits: 1000
+            WriteCapacityUnits: 4000
           },
       };
       self.userSession.dynamodb.put(params, function (err) {

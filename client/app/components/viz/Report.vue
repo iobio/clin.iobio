@@ -242,11 +242,11 @@
         </div>
       </div>
 
-      <div >
-        <h4 >Variants</h4>
+      <div class="mr-4" v-for="interpretation in variantsByInterpretation" :key="interpretation.key">
+        <h4 >{{ interpretation.display + ' ' }} Variants</h4>
         <v-card>
 
-          <template v-for="geneList in organizedVariants">
+          <template v-for="geneList in interpretation.organizedVariants">
             <v-subheader
             :key="geneList.key"
             class="gene-list"
@@ -369,48 +369,72 @@ export default {
     phenotypes: null,
     genes: null,
     variants: null,
+    variantsFullAnalysis: null,
     filters: null
 
   },
   data() {
     return {
-      organizedVariants: null
+      variantsByInterpretation: null
     };
   },
   methods: {
-    organizeVariantsByFilter: function() {
+
+    organizeVariantsByInterpretation: function() {
+      let self = this;
+      self.variantsByInterpretation = [
+       { key: 'sig',         display: 'Significant',          organizedVariants: null},
+       { key: 'unknown-sig', display: 'Unknown Significance', organizedVariants: null}
+      ];
+      self.variantsByInterpretation.forEach(function(interpretation) {
+        interpretation.organizedVariants = self.organizeVariantsByFilter(interpretation.key);
+      })
+    },
+    organizeVariantsByFilter: function(interpretation) {
       let self = this;
       let filterList = [];
 
-
       for (var filterName in self.filters) {
         let filterObject = self.filters[filterName];
-        var sortedGenes = self.organizeVariantsByGene(filterName, filterObject.userFlagged);
+        var sortedGenes = self.organizeVariantsByGene(filterName, filterObject.userFlagged, interpretation);
         if (sortedGenes.length > 0) {
           filterList.push({key: filterName, filter: filterObject, genes: sortedGenes});
         }
       }
 
-      self.organizedVariants = filterList.sort(function(filterObject1, filterObject2) {
+      let organizedVariants = filterList.sort(function(filterObject1, filterObject2) {
         return filterObject1.filter.order > filterObject2.filter.order;
       })
 
       var variantIndex = 0;
-      self.organizedVariants.forEach(function(filterObject) {
+      organizedVariants.forEach(function(filterObject) {
         filterObject.genes.forEach(function(geneList) {
           geneList.variants.forEach(function(variant) {
             variant.index = variantIndex++;
           })
         })
       })
+
+      return organizedVariants;
     },
 
 
-    organizeVariantsByGene: function(filterName, userFlagged) {
+    organizeVariantsByGene: function(filterName, userFlagged, interpretation) {
       let self = this;
+      let theVariants = [];
       if (this.variants) {
+        theVariants = theVariants.concat(this.variants.filter(function(v) {
+          return v.interpretation == interpretation;
+        }));
+      }
+      if (this.variantsFullAnalysis) {
+        theVariants = theVariants.concat(this.variantsFullAnalysis.filter(function(v) {
+          return v.interpretation == interpretation;
+        }));
+      }
+      if (theVariants.length > 0) {
         let theGenes   = [];
-        this.variants.forEach(function(variant) {
+        theVariants.forEach(function(variant) {
           if ((userFlagged && variant.isUserFlagged) ||
             (filterName && variant.filtersPassed && variant.filtersPassed.indexOf(filterName) >= 0)) {
 
@@ -435,6 +459,9 @@ export default {
     },
     onVariantSelected: function(variant) {
       this.$emit("flagged-variant-selected", variant);
+    },
+    refreshReport: function() {
+      this.organizeVariantsByInterpretation();
     },
 
 
@@ -521,7 +548,10 @@ export default {
   },
   watch: {
     variants: function() {
-      this.organizeVariantsByFilter();
+      this.organizeVariantsByInterpretation();
+    },
+    variantsFullAnalysis: function() {
+      this.organizeVariantsByInterpretation();
     }
   },
 }

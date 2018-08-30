@@ -28,8 +28,11 @@
   margin-left: 110px
 
 
+.toolbar__content
+  background: $app-background-color
 
 #clin-container
+  font-size: 13px
 
   .navigation-drawer--fixed
     overflow-y: scroll
@@ -63,7 +66,7 @@
 
 
   .stepper__content
-    color: $text-color
+    color: $text-color !important
 
   h5
     color:  $app-color
@@ -116,8 +119,7 @@
       text-shadow: none !important
 
     hr.divider
-      display: none
-
+      background-color: $text-color !important
 
     .stepper__step--active
       .stepper__label
@@ -125,12 +127,12 @@
         text-shadow: none !important
 
     .stepper__header
-      margin-top: 10px
+      margin-top: 5px
       -webkit-box-shadow: none
       box-shadow: none
-      width: 450px
-      float: left
-      justify-content: flex-start
+      font-size: 13px
+      justify-content: space-between
+      height: 30px
 
     .stepper.stepper--non-linear
       height: 170px
@@ -138,16 +140,15 @@
       background-color: $app-background-color
 
     .stepper-btn-panel
-      width: 100%
-      text-align: center
+      height: 30px
+      vertical-align: top
 
     .stepper-btn
       color: $app-color
       display: inline-block
       margin: 0px
-      margin-top: 12px
+      margin-top: 0px
       padding: 0px
-      min-width: 110px
       height: 30px
 
     .stepper-btn .btn__content
@@ -173,55 +174,57 @@
       padding: 5px 15px 5px 10px
       overflow-y: scroll
       font-size: 12px
+      line-height: 14px
 
     .stepper__content
       padding: 0px 0px 0px 0px
 
-
+      .stepper__wrapper
+        display: flex
+        flex-direction: row
+        justify-content: center
 
     .stepper__step
-      padding-top: 10px
-      padding-bottom: 10px
-      padding-left: 10px
-      padding-right: 10px
-      width: 150px
+      padding-top: 5px
+      padding-bottom: 5px
+      margin-left: 0px
+      margin-right: 0px
 
     .stepper__items
-      float: left
-      display: inline-block
+      display: flex
       margin-left: 5px
       min-width: 480px
 
     .step-summary-panel
-      width: 200px
-      float: left
+      width: 300px
       display: inline-block
-      padding: 5px 15px 5px 5px
+      padding: 15px 35px 5px 5px
       overflow-y: scroll
       font-size: 12px
+      line-height: 14px
 
     .tasks-panel
-      width: 280px
-      float: left
+      width: 320px
       display: inline-block
       padding-top: 0px
+      margin-top: 15px
 
     .task-entry
       clear: both
       overflow: auto
+      display: flex
+
 
     .task-name
-      float: left
-      display: inline-block
+      display: flex
       vertical-align: top
       width: 160px
       cursor: pointer
 
     .task-switch
-      float: left
-      display: inline-block !important
+      display: flex
       width: 24px !important
-      height: 30px
+      height: 25px
       margin-left: 20px
       margin-right: 0px
       margin-bottom: 0px
@@ -275,6 +278,7 @@
 
     .workflow-summary-panel
       padding: 12px 10px 10px 10px
+      line-height: 14px
 
     .split-btn
       right: 34px
@@ -290,9 +294,13 @@
         height: initial
         -webkit-box-shadow: none
         box-shadow: none
+        font-size: 13px
       .stepper__content
         margin: -8px -36px -16px 16px
         padding: 8px 50px 16px 8px
+
+      .stepper__content:not(:last-child)
+        border-left: 1px solid $text-color
 
     .stepper__label
       color: $text-color
@@ -306,6 +314,7 @@
     .step-summary-panel
       width: 220px
       word-wrap: break-word
+      line-height: 14px
     .tasks-panel
       width: 220px
 
@@ -397,38 +406,42 @@
   .horizontal-dashboard-card.minimized
     .stepper.stepper--non-linear
       height: 60px
+      display: flex
     .stepper__header
       height: 60px
-      width: 280px
-      margin-right: 10px
+      margin-right: 30px
       margin-top: 0px
     .stepper__step
       padding: 16px 5px 24px 5px
     .stepper__items
-      width: calc(100% - 320px)
+      display: flex
     .stepper-btn
       min-width: 40px
+      margin-top: 10px
     .stepper-btn .btn__content
         max-width: 40px
 
     .tasks-panel
-      padding-top: 13px
-      width: 100%
+      padding-top: 12px
+      display: flex
+      width: initial
+      margin-top: 0px
     .task-name
       width: initial
-      padding-top: 3px
+      padding-top: 5px
       padding-right: 5px
     .task-entry
-      display: inline-block
+      display: flex
       clear: initial
       margin-right: 30px
     .task-switch
-      float: left
+      display: flex
       width: 40px !important
       margin-left: 0px
 
     .vertical-divider
       height: 50px
+      display: none
 
 
 
@@ -450,9 +463,6 @@
         light  fixed flat  :height="isMinimized ? 60 : 170">
       <div v-show="isAuthenticated"  :class="{'horizontal-dashboard-card': true, 'minimized': isMinimized}">
 
-
-
-        <v-stepper v-model="currentStep"  non-linear>
           <div class="workflow-summary-panel" v-show="!isMinimized">
             <div>
               <v-btn class="split-btn" flat fav small
@@ -469,6 +479,10 @@
             </div>
           </div>
 
+          <div class="vertical-divider" ></div>
+
+
+        <v-stepper v-model="currentStep"  non-linear>
 
           <v-stepper-header>
             <v-btn v-show="isMinimized" :disabled="currentStep == 1" class="stepper-btn" flat small @click="currentStep = currentStep - 1">
@@ -496,14 +510,14 @@
           </v-stepper-header>
 
 
-          <div class="vertical-divider" ></div>
+
 
           <v-stepper-items>
             <template v-for="step in analysis.steps">
 
               <v-stepper-content :key="step.key" :step="getStepNumber(step.key)">
                 <div class="step-summary-panel" v-if="!isMinimized">
-                  <h5>{{ getStepTitle(step.key) }}</h5>
+                  <h5 v-if="false">{{ getStepTitle(step.key) }}</h5>
                   <div>
                       {{ getStepSummary(step.key) }}
                   </div>
@@ -511,8 +525,8 @@
 
                 <div class="tasks-panel" v-if="step.tasks">
                   <div  v-show="!isMinimized">
-                    <span class="task-checkbox-header1">Complete</span>
-                    <span class="task-checkbox-header2">Passed</span>
+                    <span v-if="false"  class="task-checkbox-header1">Complete</span>
+                    <span v-if="false" class="task-checkbox-header2">Passed</span>
 
                   </div>
                   <div class="task-entry"
@@ -530,7 +544,7 @@
                       v-tooltip.right="`Completed`"
                     ></v-checkbox>
                     <v-switch small class="task-switch"
-                      v-if="task.complete"
+                      v-if="false && task.complete"
                       v-model="task.pass"
                       v-tooltip.right="`Passed`"
                     ></v-switch>
@@ -612,8 +626,8 @@
 
                 <div class="tasks-panel" v-if="step.tasks">
                   <div  v-show="!isMinimized">
-                    <span class="task-checkbox-header1">Complete</span>
-                    <span class="task-checkbox-header2">Passed</span>
+                    <span v-if="false" class="task-checkbox-header1">Complete</span>
+                    <span v-if="false" class="task-checkbox-header2">Passed</span>
 
                   </div>
                   <div class="task-entry"
@@ -630,8 +644,8 @@
                       v-model="task.complete"
                       v-tooltip.right="`Completed`"
                     ></v-checkbox>
-                    <v-switch small class="task-switch"
-                      v-if="task.complete"
+                    <v-switch  small class="task-switch"
+                      v-if="false && task.complete"
                       v-model="task.pass"
                       v-tooltip.right="`Passed`"
                     ></v-switch>
@@ -668,26 +682,17 @@
       </v-card>
 
 
-      <v-card  light style="min-height:600px"
-        v-show="currentStep == 2"
-      >
-        <div style="padding:20px">
-          Submit full analysis
-        </div>
-      </v-card>
-
-
-      <div id="gene-panel-iframe" v-show="currentStep == 3">
+      <div id="gene-panel-iframe" v-show="currentStep == 2">
         <iframe  :src="apps.genepanel.url" style="width:100%;height:100%" frameBorder="0">
         </iframe>
       </div>
 
-      <div id="gene-iframe" v-show="currentStep == 4">
+      <div id="gene-iframe" v-show="currentStep == 3">
         <iframe  :src="apps.gene.url" style="width:100%;height:100%" frameBorder="0">
         </iframe>
       </div>
 
-      <div id="genefull-iframe" v-show="currentStep == 5">
+      <div id="genefull-iframe" v-show="currentStep == 4">
         <iframe  :src="apps.gene.url + '&mode=full'" style="width:100%;height:100%" frameBorder="0">
         </iframe>
       </div>
@@ -696,10 +701,12 @@
         v-show="currentStep == 6"
       >
         <report
+        ref="reportRef"
         v-if="analysis"
         :phenotypes="analysis.phenotypes"
         :genes="analysis.genes"
-        :variants="analysis.variants"
+        :variants="variants.gene"
+        :variantsFullAnalysis="variants.genefull"
         :filters="analysis.filters">
         </report>
       </v-card>
@@ -993,6 +1000,8 @@ export default {
     },
 
     receiveAppMessage: function(event) {
+      let self = this;
+
       // Do we trust the sender of this message?
       if (!this.isValidAppOrigin(event)) {
         if (this.paramDebug) {
@@ -1025,7 +1034,7 @@ export default {
         this.promiseUpdateGenes(messageObject.genes);
       } else if (messageObject.type == "save-variants") {
         if (messageObject.action == "update") {
-          this.promiseUpdateVariants(messageObject.app, messageObject.variants);
+          this.promiseUpdateVariants(messageObject.app, messageObject.variants)
         } else if (messageObject.action == "delete") {
           this.promiseDeleteVariants(messageObject.app, messageObject.variants)
         }
@@ -1212,6 +1221,10 @@ export default {
 
     promiseUpdateVariants: function(app, variants) {
       let self = this;
+      self.analysisModel.replaceMatchingVariants(variants, self.variants[app]);
+      if (self.$refs.reportRef) {
+        self.$refs.reportRef.refreshReport();
+      }
       return self.analysisModel.promiseUpdateVariants(app, self.analysis.id, variants);
     },
 
