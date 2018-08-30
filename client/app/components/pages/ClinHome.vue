@@ -698,7 +698,7 @@
       </div>
 
       <v-card   style="min-height:600px"
-        v-show="currentStep == 6"
+        v-show="currentStep == 5"
       >
         <report
         ref="reportRef"
