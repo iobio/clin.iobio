@@ -32,7 +32,7 @@
   background: $app-background-color
 
 #clin-container
-  font-size: 13px
+  font-size: 14px
 
   .navigation-drawer--fixed
     overflow-y: scroll
@@ -108,10 +108,11 @@
     margin: 0px
     width: 100%
     color: $text-color
-    border-bottom: $border-color solid 1px
+    border-bottom: $nav-border-color solid 1px
 
     .split-btn
       top: 10px
+
 
 
     .stepper__label
@@ -130,7 +131,7 @@
       margin-top: 5px
       -webkit-box-shadow: none
       box-shadow: none
-      font-size: 13px
+      font-size: 14px
       justify-content: space-between
       height: 30px
 
@@ -168,13 +169,18 @@
       margin-right: 10px
 
     .workflow-summary-panel
-      width: 220px
+      width: 170px
       float: left
       display: inline-block
       padding: 5px 15px 5px 10px
       overflow-y: scroll
-      font-size: 12px
-      line-height: 14px
+      font-size: 13px
+      line-height: 18px
+      margin-left: 4px
+      margin-right: 10px
+
+      h5
+        margin-bottom: 10px
 
     .stepper__content
       padding: 0px 0px 0px 0px
@@ -198,13 +204,12 @@
     .step-summary-panel
       width: 300px
       display: inline-block
-      padding: 15px 35px 5px 5px
+      padding: 20px 15px 5px 5px
       overflow-y: scroll
-      font-size: 12px
-      line-height: 14px
+      font-size: 13px
+      line-height: 16px
 
     .tasks-panel
-      width: 320px
       display: inline-block
       padding-top: 0px
       margin-top: 15px
@@ -218,15 +223,15 @@
     .task-name
       display: flex
       vertical-align: top
-      width: 160px
       cursor: pointer
+      padding-top: 6px
 
     .task-switch
       display: flex
-      width: 24px !important
+      max-width: 24px !important
       height: 25px
       margin-left: 20px
-      margin-right: 0px
+      margin-right: 5px
       margin-bottom: 0px
       vertical-align: top
       margin-top: 0px !important
@@ -277,8 +282,8 @@
       font-size: 18px
 
     .workflow-summary-panel
-      padding: 12px 10px 10px 10px
-      line-height: 14px
+      padding: 13px 10px 10px 10px
+      line-height: 16px
 
     .split-btn
       right: 34px
@@ -290,11 +295,13 @@
       .stepper__step
         width: 100%
         padding: 14px 10px 14px 5px
+        margin-bottom: 0px
+        margin-top: 8px
       .stepper__header
         height: initial
         -webkit-box-shadow: none
         box-shadow: none
-        font-size: 13px
+        font-size: 14px
       .stepper__content
         margin: -8px -36px -16px 16px
         padding: 8px 50px 16px 8px
@@ -315,6 +322,8 @@
       width: 220px
       word-wrap: break-word
       line-height: 14px
+      margin-bottom: 10px
+
     .tasks-panel
       width: 220px
 
@@ -323,7 +332,7 @@
     .task-name
       display: inline-block
       vertical-align: bottom
-      width: 115px
+      width: 170px
       cursor: pointer
       line-height: 15px
       padding-bottom: 8px
@@ -392,11 +401,18 @@
       .step-summary-panel
         width: 100px
         word-wrap: break-word
+
+      .stepper__content:not(:last-child)
+        border-left: none !important
+
+    .task-entry
+      display: flex
     .tasks-panel
       width: 100px
     .task-switch
       margin-left: 0px
       margin-bottom: 10px
+      margin-right: 4px
     .task-name
       width: 80px
       padding-right: 10px
@@ -533,12 +549,6 @@
                    v-for="task in step.tasks"
                    :key="task.key"
                    >
-                    <span class="task-name"
-                    v-tooltip.left="getTaskName(step.key, task.key)"
-                    @mouseover="onMouseOverTask(step, task)"
-                    @mouseleave="onMouseLeaveTask(step, task)">
-                    {{ getTaskName(step.key, task.key) }}
-                    </span>
                     <v-checkbox class="task-switch"
                       v-model="task.complete"
                       v-tooltip.right="`Completed`"
@@ -548,6 +558,12 @@
                       v-model="task.pass"
                       v-tooltip.right="`Passed`"
                     ></v-switch>
+                    <span class="task-name"
+                    v-tooltip.left="getTaskName(step.key, task.key)"
+                    @mouseover="onMouseOverTask(step, task)"
+                    @mouseleave="onMouseLeaveTask(step, task)">
+                    {{ getTaskName(step.key, task.key) }}
+                    </span>
                   </div>
 
                 </div>
@@ -577,8 +593,8 @@
       fixed
       light
       flat
-      :width="isMinimized ? 120 : 270"
-      mini-variant-width="110">
+      :width="isMinimized ? 160 : 270"
+      mini-variant-width="150">
       <div v-show="isAuthenticated && workflow && analysis"  light :class="{'vertical-dashboard-card': true, 'minimized': isMinimized}">
 
 
@@ -634,12 +650,6 @@
                    v-for="task in step.tasks"
                    :key="task.key"
                    >
-                    <span class="task-name"
-                    v-tooltip.left="getTaskName(step.key, task.key)"
-                    @mouseover="onMouseOverTask(step, task)"
-                    @mouseleave="onMouseLeaveTask(step, task)">
-                    {{ getTaskName(step.key, task.key) }}
-                    </span>
                     <v-checkbox class="task-switch"
                       v-model="task.complete"
                       v-tooltip.right="`Completed`"
@@ -649,6 +659,12 @@
                       v-model="task.pass"
                       v-tooltip.right="`Passed`"
                     ></v-switch>
+                    <span class="task-name"
+                    v-tooltip.left="getTaskName(step.key, task.key)"
+                    @mouseover="onMouseOverTask(step, task)"
+                    @mouseleave="onMouseLeaveTask(step, task)">
+                    {{ getTaskName(step.key, task.key) }}
+                    </span>
                   </div>
 
                 </div>
