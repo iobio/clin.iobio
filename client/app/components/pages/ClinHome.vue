@@ -9,7 +9,7 @@
 
 
 .app-content
-  margin-top: 170px
+  margin-top: 145px
   margin-left: 0px
   border-top: $divider-color
   border-top-width: .5px
@@ -136,7 +136,7 @@
       height: 30px
 
     .stepper.stepper--non-linear
-      height: 170px
+      height: 145px
       -webkit-box-shadow: none !important
       background-color: $app-background-color
 
@@ -161,7 +161,7 @@
 
     .vertical-divider
       border-left: 1px solid $divider-color
-      height: 150px
+      height: 120px
       float: left
       margin-top: 5px
       margin-bottom: 5px
@@ -204,7 +204,7 @@
     .step-summary-panel
       width: 300px
       display: inline-block
-      padding: 20px 15px 5px 5px
+      padding: 15px 15px 5px 5px
       overflow-y: scroll
       font-size: 13px
       line-height: 16px
@@ -212,7 +212,7 @@
     .tasks-panel
       display: inline-block
       padding-top: 0px
-      margin-top: 15px
+      margin-top: 10px
 
     .task-entry
       clear: both
@@ -476,7 +476,7 @@
 
 
     <v-toolbar  v-if="!isSidebar && isAuthenticated && workflow && analysis "
-        light  fixed flat  :height="isMinimized ? 60 : 170">
+        light  fixed flat  :height="isMinimized ? 60 : 145">
       <div v-show="isAuthenticated"  :class="{'horizontal-dashboard-card': true, 'minimized': isMinimized}">
 
           <div class="workflow-summary-panel" v-show="!isMinimized">
