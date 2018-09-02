@@ -243,33 +243,51 @@ export default class AnalysisModel {
 
   replaceMatchingVariants(refreshedVariants, existingVariants) {
     let self = this;
-    refreshedVariants.forEach(function(refreshedVariant) {
-      let matchingIdx = self.findMatchingVariantIndex(refreshedVariant, existingVariants);
-      if (matchingIdx != -1) {
-        existingVariants[matchingIdx] = refreshedVariant;
-      } else {
-        existingVariants.push(refreshedVariant);
-      }
-    })
+    if (refreshedVariants && existingVariants) {
+      refreshedVariants.forEach(function(refreshedVariant) {
+        let matchingIdx = self.findMatchingVariantIndex(refreshedVariant, existingVariants);
+        if (matchingIdx != -1) {
+          existingVariants[matchingIdx] = refreshedVariant;
+        } else {
+          existingVariants.push(refreshedVariant);
+        }
+      })
+    }
+  }
+
+  getObsoleteVariants(refreshedVariants, existingVariants) {
+    let self = this;
+    let unmatchedVariants = [];
+    if (refreshedVariants && existingVariants) {
+      existingVariants.forEach(function(existingVariant) {
+        let matchingIdx = self.findMatchingVariantIndex(existingVariant, refreshedVariants);
+        if (matchingIdx == -1) {
+          unmatchedVariants.push(existingVariant);
+        }
+      })
+    }
+    return unmatchedVariants;
   }
 
   findMatchingVariantIndex(variant, existingVariants) {
     let matchingIdx = -1;
     let idx = 0;
-    existingVariants.forEach(function(v) {
-      if (matchingIdx == -1
-          && v.gene == variant.gene
-          && v.start == variant.start
-          && v.ref == variant.ref
-          && v.alt == variant.alt ) {
-        matchingIdx = idx;
-      }
-      idx++;
-    })
+    if (existingVariants) {
+      existingVariants.forEach(function(v) {
+        if (matchingIdx == -1
+            && v.gene == variant.gene
+            && v.start == variant.start
+            && v.ref == variant.ref
+            && v.alt == variant.alt ) {
+          matchingIdx = idx;
+        }
+        idx++;
+      })
+    }
     return matchingIdx;
   }
 
-  promiseUpdateVariants(app, idAnalysis, variants) {
+  promiseUpdateVariants(app, idAnalysis, variants, variantsToDelete) {
     let self = this;
     return new Promise(function(resolve, reject) {
       let promises = [];
@@ -281,6 +299,11 @@ export default class AnalysisModel {
         var p = self._promisePutVariant(app, variant);
         promises.push(p);
       })
+
+      if (variantsToDelete && variantsToDelete.length > 0) {
+        var p = self.promiseDeleteVariants(app, idAnalysis, variantsToDelete);
+        promises.push(p);
+      }
 
       Promise.all(promises)
       .then(function() {
@@ -521,13 +544,13 @@ export default class AnalysisModel {
     })
   }
 
-  _promiseDeleteCache(app, cacheKeys) {
+  promiseDeleteCache(app, idAnalysis, cacheKeys) {
     let self = this;
     return new Promise(function(resolve, reject) {
       let promises = [];
 
       cacheKeys.forEach(function(cacheKey) {
-        var p = self._promiseDeleteCacheItem(app, cacheKey);
+        var p = self._promiseDeleteCacheItem(app, idAnalysis, cacheKey);
         promises.push(p);
       })
 
@@ -542,13 +565,18 @@ export default class AnalysisModel {
 
   }
 
-  _promiseDeleteCacheItem(app, cacheKey) {
+  _promiseDeleteCacheItem(app, idAnalysis, cacheKey) {
     let self = this;
     return new Promise(function(resolve, reject) {
       var params = {
         TableName: self.analysisCacheTable[app],
         Key:{
-            "cache_key": cacheKey
+            "cache_key": cacheKey,
+            "analysis_id": idAnalysis
+        },
+        ProvisionedThroughput: {
+          ReadCapacityUnits: 6,
+          WriteCapacityUnits: 8000
         }
       };
 

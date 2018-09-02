@@ -792,10 +792,10 @@ export default {
       },
 
       apps: {
-        'bam':       {url: null, isLoaded: false, step: 2, iframeSelector: '#bam-iframe iframe'},
-        'genepanel': {url: null, isLoaded: false, step: 3, iframeSelector: '#gene-panel-iframe iframe'},
-        'gene':      {url: null, isLoaded: false, step: 4, iframeSelector: '#gene-iframe iframe'},
-        'genefull':  {url: null, isLoaded: false, step: 5, iframeSelector: '#genefull-iframe iframe'}
+        'bam':       {url: null, isLoaded: false, step: 0, iframeSelector: '#bam-iframe iframe'},
+        'genepanel': {url: null, isLoaded: false, step: 2, iframeSelector: '#gene-panel-iframe iframe'},
+        'gene':      {url: null, isLoaded: false, step: 3, iframeSelector: '#gene-iframe iframe'},
+        'genefull':  {url: null, isLoaded: false, step: 4, iframeSelector: '#genefull-iframe iframe'}
       },
 
       currentStep: 0,
@@ -833,6 +833,7 @@ export default {
       if (self.isAuthenticated && self.workflow && self.analysis && self.currentStep) {
         var theApp = null;
 
+
         // If this is the first time we have loaded the app, send
         // message to set the data
         for (var appName in self.apps) {
@@ -841,6 +842,18 @@ export default {
               self.setData(appName, 500);
               app.isLoaded = true;
           }
+        }
+
+
+        // If we are going to gene.iobio (candidate genes), request
+        // the genes from gene panel
+        let appGene = self.apps.gene;
+        if (appGene.step == self.currentStep && appGene.isLoaded) {
+          var msgObject = {
+            type:                  'request-genes',
+            sender:                'clin.iobio',
+            receiver:              'genepanel' };
+          self.sendAppMessage('genepanel', msgObject);
         }
 
 
@@ -1051,6 +1064,8 @@ export default {
       } else if (messageObject.type == "save-variants") {
         if (messageObject.action == "update") {
           this.promiseUpdateVariants(messageObject.app, messageObject.variants)
+        } if (messageObject.action == "replace") {
+          this.promiseReplaceVariants(messageObject.app, messageObject.variants)
         } else if (messageObject.action == "delete") {
           this.promiseDeleteVariants(messageObject.app, messageObject.variants)
         }
@@ -1196,15 +1211,45 @@ export default {
       return new Promise(function(resolve, reject) {
         if (app == 'gene' || app == 'genefull') {
 
+          let cacheItems = [];
+          let cacheKeysToDelete = [];
+
           self.analysisModel.promiseGetCache(app, self.analysis.id)
           .then(function(data) {
-            self.analysisCache[app] = data;
+
+            // For candidate gene variant analysis, we only want to keep cache items
+            // for relevant genes
+            if (app == 'gene') {
+              data.forEach(function(cacheItem) {
+                var keyTokens = cacheItem.cache_key.split(self.analysisModel.DELIM);
+                // TODO:  Use common class cache helper to parse key
+                if (keyTokens.length > 2) {
+                  let gene = keyTokens[2];
+                  if (self.analysis.genes.indexOf(gene) >= 0) {
+                    cacheItems.push(cacheItem);
+                  } else {
+                    cacheKeysToDelete.push(cacheItem.cache_key);
+                  }
+                }
+              })
+              self.analysisCache[app] = cacheItems;
+
+            } else {
+              self.analysisCache[app] = data;
+            }
+
+
 
             self.analysisCacheKeys[app] = data.map(function(cacheItem) {
               return cacheItem.cache_key;
             });
 
-            resolve();
+
+            self.analysisModel.promiseDeleteCache(app, self.analysis.id, cacheKeysToDelete)
+            .then(function() {
+              resolve();
+            })
+
           })
           .catch(function(error) {
             let msg = "Problem in ClinHome.promiseGetCache(): " + error;
@@ -1233,6 +1278,18 @@ export default {
       self.analysis.phenotypes = phenotypes;
       self.analysis.datetime_last_modified = self.getCurrentDateTime();
       return self.analysisModel.promiseUpdatePhenotypes(self.analysis);
+    },
+
+    promiseReplaceVariants: function(app, variants) {
+      let self = this;
+      self.analysisModel.replaceMatchingVariants(variants, self.variants[app]);
+      let variantsToRemove = self.analysisModel.getObsoleteVariants(variants, self.variants[app]);
+
+      self.variants[app] = variants;
+      if (self.$refs.reportRef) {
+        self.$refs.reportRef.refreshReport();
+      }
+      return self.analysisModel.promiseUpdateVariants(app, self.analysis.id, variants, variantsToRemove);
     },
 
     promiseUpdateVariants: function(app, variants) {
