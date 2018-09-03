@@ -25,7 +25,7 @@
 
 .app-content.minimized.sidebar
   margin-top: 0px
-  margin-left: 110px
+  margin-left: 160px
 
 
 .toolbar__content
@@ -69,7 +69,7 @@
     color: $text-color !important
 
   h5
-    color:  $app-color
+    color:  $text-color
     margin-top: 8px
     margin-bottom: 4px
     margin-left: 0px
@@ -94,12 +94,12 @@
     padding: 0px
     margin: 0px
     height: 20px
-    color: $app-color
+    color: $text-color
     font-weight: 600
 
   .split-btn .btn__content .material-icons
     font-size: 20px
-    color: $app-color
+    color: $text-color
     height: 20px
     width: 20px
 
