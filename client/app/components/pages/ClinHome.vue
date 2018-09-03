@@ -691,10 +691,11 @@
         v-if="analysis && workflow"
         v-show="currentStep == 1"
       >
-        <intro style="padding:20px"
+        <setup style="padding:20px"
         :workflow="workflow"
-        :analysis="analysis">
-        </intro>
+        :analysis="analysis"
+        :modelInfos="modelInfos">
+        </setup>
       </v-card>
 
 
@@ -737,7 +738,7 @@
 
 <script>
 
-import Intro from  '../viz/Intro.vue'
+import Setup from  '../viz/Setup.vue'
 import Report from '../viz/Report.vue'
 import Login from  '../partials/Login.vue'
 
@@ -750,7 +751,7 @@ import HubSession  from  '../../models/HubSession.js'
 export default {
   name: 'home',
   components: {
-    Intro,
+    Setup,
     Login,
     Report
   },
