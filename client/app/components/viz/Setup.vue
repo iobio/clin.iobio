@@ -4,6 +4,8 @@
 
 #setup-panel
 
+
+
   .card
     min-height: 70px !important
 
@@ -68,6 +70,45 @@
               suffix="%"
             ></v-text-field>
           </v-flex>
+          <v-flex xs1 class="ml-4">
+            <v-text-field
+              name="Coverage"
+              label="Coverage"
+              value="10"
+              prefix=">"
+              suffix="X"
+            ></v-text-field>
+          </v-flex>
+          <v-flex xs3 class="ml-4">
+            <v-select
+                label="Clinvar"
+                v-bind:items="clinvar"
+                v-model="clinvarSelectedCandidateGenes"
+                multiple
+                chips
+                persistent-hint
+              ></v-select>
+          </v-flex>
+          <v-flex xs3 class="ml-4">
+            <v-select
+                label="Inheritance modes"
+                v-bind:items="inheritanceModes"
+                v-model="inheritanceModesSelectedCandidateGenes"
+                multiple
+                chips
+                persistent-hint
+              ></v-select>
+          </v-flex>
+          <v-flex xs3 class="ml-4">
+            <v-select
+                label="VEP impact"
+                v-bind:items="impacts"
+                v-model="impactsSelectedCandidateGenes"
+                multiple
+                chips
+                persistent-hint
+              ></v-select>
+          </v-flex>
         </v-layout>
     </v-card>
 
@@ -83,7 +124,7 @@
               suffix="%"
           ></v-text-field>
         </v-flex>
-        <v-flex xs1 class="ml-3">
+        <v-flex xs1 class="ml-4">
           <v-text-field
               name="Coverage"
               label="Coverage"
@@ -91,6 +132,36 @@
               prefix=">"
               suffix="X"
           ></v-text-field>
+         </v-flex>
+         <v-flex xs3 class="ml-4">
+            <v-select
+                label="Clinvar"
+                v-bind:items="clinvar"
+                v-model="clinvarSelected"
+                multiple
+                chips
+                persistent-hint
+              ></v-select>
+          </v-flex>
+          <v-flex xs3 class="ml-4">
+          <v-select
+              label="Inheritance modes"
+              v-bind:items="inheritanceModes"
+              v-model="inheritanceModesSelected"
+              multiple
+              chips
+              persistent-hint
+            ></v-select>
+        </v-flex>
+        <v-flex xs3 class="ml-4">
+          <v-select
+              label="VEP impact"
+              v-bind:items="impacts"
+              v-model="impactsSelected"
+              multiple
+              chips
+              persistent-hint
+            ></v-select>
         </v-flex>
       </v-layout>
     </v-card>
@@ -118,6 +189,18 @@ export default {
   },
   data() {
     return {
+      inheritanceModes: ["De novo", "Recessive", "Compound het", "Autosomal dominant", "X-linked"],
+      inheritanceModesSelected: ["De novo", "Recessive", "Compound het", "Autosomal dominant", "X-linked"],
+      inheritanceModesSelectedCandidateGenes: ["De novo", "Recessive", "Compound het", "Autosomal dominant", "X-linked"],
+
+      impacts: ["High", "Moderate", "Modifier", "Low"],
+      impactsSelected: ["High"],
+      impactsSelectedCandidateGenes: ["High", "Moderate"],
+
+      clinvar: ["Pathogenic", "Likely pathogenic", "Uncertain signficance", "Conflicting data", "Unknown", "Benign", "Likely benign"],
+      clinvarSelected: ["Pathogenic", "Likely pathogenic"],
+      clinvarSelectedCandidateGenes: ["Pathogenic", "Likely pathogenic"]
+
     };
   },
   computed: {

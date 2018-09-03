@@ -6,7 +6,8 @@
 
 @import ../../../assets/sass/variables
 
-
+.clin-card
+  background-color: rgb(250, 250, 250)
 
 .app-content
   margin-top: 145px
@@ -692,6 +693,7 @@
         v-show="currentStep == 1"
       >
         <setup style="padding:20px"
+        class="clin-card"
         :workflow="workflow"
         :analysis="analysis"
         :modelInfos="modelInfos">
@@ -714,12 +716,13 @@
         </iframe>
       </div>
 
-      <v-card   style="min-height:600px"
+      <v-card    style="min-height:600px"
         v-show="currentStep == 5"
       >
         <report
         ref="reportRef"
         v-if="analysis"
+        class="clin-card"
         :phenotypes="analysis.phenotypes"
         :genes="analysis.genes"
         :variants="variants.gene"
