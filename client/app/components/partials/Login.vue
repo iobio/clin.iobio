@@ -2,26 +2,30 @@
  * Login.vue
  *
  */
-<style lang="sass" scoped >
+<style lang="sass"  >
 
 @import ../../../assets/sass/variables
 
-nav.toolbar
+.login-dialog
+  .row
+    padding-left: 20px
+    padding-right: 20px
+
+.login-toolbar
+  .toolbar__content
+    background-color: $app-color !important
 
 
-.layout.row
-  padding-left: 20px
-  padding-right: 20px
 
 </style>
 
 
 <template>
 
-    <v-layout row wrap class="mt-5" justify-center>
+    <v-layout class="login-dialog mt-5" row wrap justify-center>
        <v-flex xs4 >
-        <v-toolbar light class="light-blue darken-4" >
-          <v-toolbar-title  class="white--text" >Login to clin.iobio</v-toolbar-title>
+        <v-toolbar light class="login-toolbar" >
+          <v-toolbar-title class="white--text" >Login to clin.iobio</v-toolbar-title>
         </v-toolbar>
         <v-card  light >
           <v-layout row wrap>
