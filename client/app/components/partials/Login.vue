@@ -13,7 +13,7 @@
 
 .login-toolbar
   .toolbar__content
-    background-color: $app-color !important
+    background-color: $login-nav-color !important
 
 
 
