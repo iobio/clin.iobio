@@ -7,7 +7,7 @@
 
   h5
     font-size: 18px
-    color:   $app-color
+    color:   $app-header-color
 
   h4
     font-size: 16px
@@ -26,7 +26,7 @@
 
     h5
       font-size: 14px
-      color: $app-color
+      color: $app-header-color
 
   .row
     margin-left: 10px

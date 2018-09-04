@@ -1225,24 +1225,31 @@ export default {
 
             // For candidate gene variant analysis, we only want to keep cache items
             // for relevant genes
+            let applicableGenes = [];
             if (app == 'gene') {
-              data.forEach(function(cacheItem) {
-                var keyTokens = cacheItem.cache_key.split(self.analysisModel.DELIM);
-                // TODO:  Use common class cache helper to parse key
-                if (keyTokens.length > 2) {
-                  let gene = keyTokens[2];
-                  if (self.analysis.genes.indexOf(gene) >= 0) {
-                    cacheItems.push(cacheItem);
-                  } else {
-                    cacheKeysToDelete.push(cacheItem.cache_key);
-                  }
-                }
+              applicableGenes = self.analysis.genes;
+            } else if (app == 'genefull') {
+              let geneMap = {};
+              self.variants.genefull.forEach(function(v) {
+                geneMap[v.gene] = true;
               })
-              self.analysisCache[app] = cacheItems;
-
-            } else {
-              self.analysisCache[app] = data;
+              for (var geneName in geneMap) {
+                applicableGenes.push(geneName);
+              }
             }
+            data.forEach(function(cacheItem) {
+              var keyTokens = cacheItem.cache_key.split(self.analysisModel.DELIM);
+              // TODO:  Use common class cache helper to parse key
+              if (keyTokens.length > 2) {
+                let gene = keyTokens[2];
+                if (applicableGenes.indexOf(gene) >= 0) {
+                  cacheItems.push(cacheItem);
+                } else {
+                  cacheKeysToDelete.push(cacheItem.cache_key);
+                }
+              }
+            })
+            self.analysisCache[app] = cacheItems;
 
 
 
