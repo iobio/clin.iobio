@@ -51,7 +51,7 @@
     <h4 class="mt-4">Samples</h4>
     <v-card light class="model-info-panel">
       <div  v-for="modelInfo in modelInfos" :key="modelInfo.sample">
-        <h5>{{ modelInfo.relationship}}&nbsp;&nbsp;{{ modelInfo.sample }}</h5>
+        <h5>{{ modelInfo.relationship}}  {{ modelInfo.sample }}</h5>
         <div class="file-info" >{{ modelInfo.vcf }}</div>
         <div class="file-info">{{ modelInfo.bam }}</div>
       </div>
