@@ -3,8 +3,14 @@
 @import ../../../assets/sass/variables
 
 #setup-panel
+  padding: 5px 20px 5px 20px
 
+  h5
+    font-size: 18px
+    color:   $app-color
 
+  h4
+    font-size: 16px
 
   .card
     min-height: 70px !important
@@ -33,7 +39,16 @@
 
 
 
-    <h4>Samples</h4>
+    <div style="text-xs-center" >
+      <h5>Setup</h5>
+      <span style="float:right">
+        <v-btn color="primary">
+          Apply
+        </v-btn>
+      </span>
+    </div>
+
+    <h4 class="mt-4">Samples</h4>
     <v-card light class="model-info-panel">
       <div  v-for="modelInfo in modelInfos" :key="modelInfo.sample">
         <h5>{{ modelInfo.relationship}}&nbsp;&nbsp;{{ modelInfo.sample }}</h5>
@@ -44,7 +59,7 @@
 
 
 
-    <h4>General settings</h4>
+    <h4 class="mt-4">Candidate genes</h4>
     <v-card light>
         <v-layout row>
           <v-flex xs2>
@@ -166,11 +181,6 @@
       </v-layout>
     </v-card>
 
-    <div class="text-xs-right">
-      <v-btn  color="primary">
-        Apply
-      </v-btn>
-    </div>
 
 
   </div>

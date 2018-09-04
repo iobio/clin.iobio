@@ -4,9 +4,9 @@
 
 
 #clin-report-card
-  padding: 0 10px 0 10px
   display: flex
   flex-direction: row
+  padding: 5px 20px 5px 20px
 
   #clinvar-symbol
     display: inline-block

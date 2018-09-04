@@ -8,6 +8,10 @@
 
 .clin-card
   background-color: rgb(250, 250, 250)
+  min-height: 600px
+  padding: 0px
+
+
 
 .app-content
   margin-top: 145px
@@ -688,12 +692,11 @@
     <div style="width:100%;height:100%;padding: 0px"
     :class="{'app-content': true, 'sidebar': isSidebar, 'minimized': isMinimized}"
     v-show="isAuthenticated " >
-      <v-card  light style="min-height:600px"
+      <v-card  class="clin-card"
         v-if="analysis && workflow"
         v-show="currentStep == 1"
       >
-        <setup style="padding:20px"
-        class="clin-card"
+        <setup
         :workflow="workflow"
         :analysis="analysis"
         :modelInfos="modelInfos">
@@ -716,13 +719,12 @@
         </iframe>
       </div>
 
-      <v-card    style="min-height:600px"
+      <v-card  class="clin-card"
         v-show="currentStep == 5"
       >
         <report
         ref="reportRef"
         v-if="analysis"
-        class="clin-card"
         :phenotypes="analysis.phenotypes"
         :genes="analysis.genes"
         :variants="variants.gene"
