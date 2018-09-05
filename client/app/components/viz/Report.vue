@@ -181,8 +181,6 @@
       padding-top: 10px
       align-items: flex-start
 
-    .list__tile__avatar
-      min-width: initial
 
     .list__tile__sub-title
       height: initial
