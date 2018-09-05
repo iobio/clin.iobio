@@ -4,6 +4,7 @@
 
 #setup-panel
   padding: 5px 20px 5px 20px
+  background-color: $clin-panel-background-color
 
   h5
     font-size: 18px
@@ -11,6 +12,7 @@
 
   h4
     font-size: 16px
+    color:   $app-header-color
 
   .card
     min-height: 70px !important
@@ -48,19 +50,21 @@
       </span>
     </div>
 
-    <h4 class="mt-4">Samples</h4>
-    <v-card light class="model-info-panel">
-      <div  v-for="modelInfo in modelInfos" :key="modelInfo.sample">
-        <h5>{{ modelInfo.relationship}}  {{ modelInfo.sample }}</h5>
-        <div class="file-info" >{{ modelInfo.vcf }}</div>
-        <div class="file-info">{{ modelInfo.bam }}</div>
+    <v-card light class="mt-4">
+      <h4 >Samples</h4>
+      <div class="model-info-panel">
+        <div  v-for="modelInfo in modelInfos" :key="modelInfo.sample">
+          <h5>{{ modelInfo.relationship}}  {{ modelInfo.sample }}</h5>
+          <div class="file-info" >{{ modelInfo.vcf }}</div>
+          <div class="file-info">{{ modelInfo.bam }}</div>
+        </div>
       </div>
     </v-card>
 
 
 
-    <h4 class="mt-4">Candidate genes</h4>
-    <v-card light>
+    <v-card class="mt-4" light>
+      <h4>Candidate genes</h4>
         <v-layout row>
           <v-flex xs2>
             <v-text-field
@@ -72,9 +76,9 @@
         </v-layout>
     </v-card>
 
-    <h4 class="mt-4">Variant filters in candidate genes</h4>
 
-    <v-card light >
+    <v-card class="mt-4" light >
+        <h4 >Variant filters in candidate genes</h4>
         <v-layout row>
           <v-flex xs1>
             <v-text-field
@@ -127,8 +131,8 @@
         </v-layout>
     </v-card>
 
-    <h4 class="mt-4">Variant filters in all genes</h4>
-    <v-card light >
+    <v-card light class="mt-4">
+    <h4 >Variant filters in all genes</h4>
       <v-layout row>
         <v-flex xs1>
           <v-text-field
