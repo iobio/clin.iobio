@@ -78,8 +78,10 @@
 
   i.material-icons.sig
     color: $significant-color !important
+    margin-right: 3px
   i.material-icons.unknown-sig
     color: $significant-color !important
+    margin-right: 3px
 
 
   .variant-toolbar
