@@ -1,4 +1,4 @@
-<style lang="sass" scoped >
+<style lang="sass"  >
 
 @import ../../../assets/sass/variables
 
@@ -34,6 +34,11 @@
     margin-left: 10px
     margin-right: 10px
 
+  .input-group--select
+    .input-group__selections__comma
+      font-size: 13px
+      line-height: 15px
+
 </style>
 
 <template>
@@ -63,7 +68,7 @@
 
 
 
-    <v-card class="mt-4" light>
+    <v-card class="mt-2" light>
       <h4>Candidate genes</h4>
         <v-layout row>
           <v-flex xs2>
@@ -77,7 +82,7 @@
     </v-card>
 
 
-    <v-card class="mt-4" light >
+    <v-card class="mt-2" light >
         <h4 >Variant filters in candidate genes</h4>
         <v-layout row>
           <v-flex xs1>
@@ -104,7 +109,6 @@
                 v-bind:items="clinvar"
                 v-model="clinvarSelectedCandidateGenes"
                 multiple
-                chips
                 persistent-hint
               ></v-select>
           </v-flex>
@@ -114,7 +118,6 @@
                 v-bind:items="inheritanceModes"
                 v-model="inheritanceModesSelectedCandidateGenes"
                 multiple
-                chips
                 persistent-hint
               ></v-select>
           </v-flex>
@@ -124,14 +127,13 @@
                 v-bind:items="impacts"
                 v-model="impactsSelectedCandidateGenes"
                 multiple
-                chips
                 persistent-hint
               ></v-select>
           </v-flex>
         </v-layout>
     </v-card>
 
-    <v-card light class="mt-4">
+    <v-card light class="mt-2">
     <h4 >Variant filters in all genes</h4>
       <v-layout row>
         <v-flex xs1>
@@ -158,7 +160,6 @@
                 v-bind:items="clinvar"
                 v-model="clinvarSelected"
                 multiple
-                chips
                 persistent-hint
               ></v-select>
           </v-flex>
@@ -168,7 +169,6 @@
               v-bind:items="inheritanceModes"
               v-model="inheritanceModesSelected"
               multiple
-              chips
               persistent-hint
             ></v-select>
         </v-flex>
@@ -178,7 +178,6 @@
               v-bind:items="impacts"
               v-model="impactsSelected"
               multiple
-              chips
               persistent-hint
             ></v-select>
         </v-flex>
