@@ -523,7 +523,7 @@
               <v-icon>chevron_left</v-icon>
               Previous
               </v-btn>
-              <v-btn :disabled="currentStep == analysis.steps" class="stepper-btn" flat  @click="currentStep = currentStep + 1">
+              <v-btn :disabled="currentStep == analysis.steps.length" class="stepper-btn" flat  @click="currentStep = currentStep + 1">
                 <v-icon>chevron_right</v-icon>
                 Next
               </v-btn>
