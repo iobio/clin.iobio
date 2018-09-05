@@ -71,11 +71,11 @@
     <v-card class="mt-2" light>
       <h4>Candidate genes</h4>
         <v-layout row>
-          <v-flex xs2>
+          <v-flex xs3>
             <v-text-field
-              name="Number of genes to select"
-              label="Number of genes to select"
-              value="10"
+              name="Max size of candidate gene list"
+              label="Max size of candidate gene list"
+              value="50"
             ></v-text-field>
           </v-flex>
         </v-layout>

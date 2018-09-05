@@ -786,13 +786,13 @@ export default {
         'localhost': {
             'gene':      'http://localhost:4026/?launchedFromClin=true',
             'genefull':  'http://localhost:4026/?launchedFromClin=true&mode=full',
-            'genepanel': 'http://localhost:4024',
+            'genepanel': 'http://localhost:4024/?launchedFromClin=true',
             'bam':       'http://localhost:4027'
         },
         'dev': {
             'gene':      'https://dev.gene.iobio.io/?launchedFromClin=true',
             'genefull':  'https://dev.gene.iobio.io/?launchedFromClin=true&mode=full',
-            'genepanel': 'http://panel.iobio.io',
+            'genepanel': 'http://panel.iobio.io/?launchedFromClin=true',
             'bam':       'http://newbam.iobio.io'
         },
       },
