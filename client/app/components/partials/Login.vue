@@ -51,7 +51,7 @@
 
 
               <v-flex xs12>
-                <v-btn  @click="authenticate">Login</v-btn>
+                <v-btn :disabled="researcher == null || userName == null  || password == null ? true : false" @click="authenticate">Login</v-btn>
               </v-flex>
           </v-layout>
         </v-card>
