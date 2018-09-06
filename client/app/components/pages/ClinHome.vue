@@ -919,10 +919,19 @@ export default {
 
     },
 
-    onAuthenticated: function() {
+    onAuthenticated: function(researcher) {
       let self = this;
       self.isAuthenticated = true;
       self.analysisModel = new AnalysisModel(self.userSession);
+
+      let sampleId = null;
+      if (researcher && researcher.length > 0) {
+        sampleId = researcher;
+      } else if (self.paramSampleId && self.paramSampleId.length > 0) {
+        sampleId = self.paramSampleId;
+      } else {
+        sampleId = 'test-sample';
+      }
 
       self.promiseGetWorkflow(self.idWorkflow)
       .then(function() {
@@ -930,7 +939,7 @@ export default {
 
         self.promiseGetAnalysis(
           self.paramProjectId && self.paramProjectId.length > 0 ? self.paramProjectId : 'test-project',
-          self.paramSampleId && self.paramSampleId.length > 0 ? self.paramSampleId : 'test-sample',
+          sampleId,
           self.paramAnalysisId,
           self.workflow,
           {'createIfEmpty': true, 'getCache': true} )

@@ -39,6 +39,16 @@
                 </v-text-field>
               </v-flex>
 
+              <v-flex xs12>
+                <v-select
+                    label="Your name"
+                    v-bind:items="researchers"
+                    v-model="researcher"
+                    autocomplete
+                    persistent-hint
+                ></v-select>
+              </v-flex>
+
 
               <v-flex xs12>
                 <v-btn  @click="authenticate">Login</v-btn>
@@ -65,6 +75,22 @@ export default {
     return {
       userName: null,
       password: null,
+      researcher: null,
+      researchers: [
+        "adit",
+        "al",
+        "anders",
+        "attila",
+        "gabor",
+        "josh",
+        "matt",
+        "marti",
+        "rong",
+        "pinar",
+        "steve",
+        "steph",
+        "tony"
+      ]
     };
   },
   methods: {
@@ -74,7 +100,7 @@ export default {
       self.userSession.authenticate(self.userName, self.password,
       function(success) {
         if (success) {
-          self.$emit('authenticated')
+          self.$emit('authenticated', self.researcher)
         }
       })
     }
