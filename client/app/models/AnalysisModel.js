@@ -325,6 +325,10 @@ export default class AnalysisModel {
       var params = {
           TableName: self.variantTable[app],
           Item: variant,
+          Key:{
+            "variant_id": variant.variant_id,
+            "analysis_id": variant.analysis_id
+          },
           ProvisionedThroughput: {
             ReadCapacityUnits: 6,
             WriteCapacityUnits: 400
