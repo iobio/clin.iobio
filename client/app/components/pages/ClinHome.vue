@@ -123,6 +123,7 @@
     .stepper__label
       line-height: 17px !important
       text-shadow: none !important
+      font-size: 16px
 
     hr.divider
       background-color: $text-color !important
@@ -316,6 +317,7 @@
 
     .stepper__label
       color: $text-color
+      font-size: 16px
 
 
     .stepper__step--active

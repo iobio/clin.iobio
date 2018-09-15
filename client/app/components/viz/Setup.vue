@@ -6,13 +6,14 @@
   padding: 5px 20px 5px 20px
   background-color: $clin-panel-background-color
 
-  h5
+  .card-title
     font-size: 18px
     color:   $app-header-color
 
   h4
     font-size: 16px
     color:   $app-header-color
+
 
   .card
     min-height: 70px !important
@@ -28,7 +29,7 @@
 
     h5
       font-size: 14px
-      color: $app-header-color
+      color: $text-color
 
   .row
     margin-left: 10px
@@ -47,7 +48,7 @@
 
 
     <div style="text-xs-center" >
-      <h5>Setup</h5>
+      <span class="card-title">Setup</span>
       <span style="float:right">
         <v-btn color="primary">
           Apply

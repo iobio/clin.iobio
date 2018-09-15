@@ -24,7 +24,7 @@
       width: 500px
 
 
-  h5
+  .card-title
     font-size: 18px
     color:   $app-header-color
 
@@ -303,7 +303,7 @@
 <template>
   <div id="clin-report-card">
 
-    <h5>Findings</h5>
+    <div class="card-title">Findings</div>
     <div class="findings">
 
 
