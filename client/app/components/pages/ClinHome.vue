@@ -844,13 +844,15 @@ export default {
     paramAnalysisId:  null,
     paramTokenType:   null,
     paramToken:       null,
-    paramSource:      null
+    paramSource:      null,
+
+    paramTheme: null
   },
   data() {
     let self = this;
     return {
       greeting: 'clin.iobio.io',
-      theme:    'light',
+      theme:    self.paramTheme,
       isSidebar: false,
       isMinimized: false,
 

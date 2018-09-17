@@ -55,7 +55,9 @@ const routes = [
         paramSampleId:              route.query.sample_uuid,
         paramTokenType:             route.query.token_type,
         paramToken:                 route.query.access_token,
-        paramSource:                route.query.source
+        paramSource:                route.query.source,
+
+        paramTheme:                 route.query.theme
     })
   },
    {
