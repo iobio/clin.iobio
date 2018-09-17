@@ -7,7 +7,7 @@
   display: flex
   flex-direction: column
   padding: 5px 20px 5px 20px
-  background-color: $clin-panel-background-color
+  background-color: $panel-background-color
   min-height: 600px
 
   .findings
@@ -61,6 +61,14 @@
         padding: 3px 3px !important
         border-radius: 24px
         line-height: initial
+
+        &.ordinal
+          justify-content: space-around
+          padding: 0px
+          font-size: 11px
+          background-color: transparent
+          color: $text-color
+          border: #d5d5d5 solid thin
 
   .phenotype-entry
     line-height: 18px
@@ -208,6 +216,9 @@
         justify-content: space-around
         padding: 0px
         font-size: 11px
+        background-color: white
+        color: $text-color
+        border: #d5d5d5 solid thin
 
     .variant-notes
       font-size: 13px
@@ -315,7 +326,7 @@
             <template v-for="(phenotype, index) in phenotypeList">
               <v-list-tile avatar  v-bind:key="phenotype" @click="" >
                 <v-list-tile-avatar>
-                  <v-badge> {{ index + 1 }} </v-badge>
+                  <v-badge class="ordinal"> {{ index + 1 }} </v-badge>
                 </v-list-tile-avatar>
                 <v-list-tile-content>
                   <v-list-tile-title v-html="phenotype"></v-list-tile-title>
@@ -333,7 +344,7 @@
             <template v-for="(gene, index) in genes">
               <v-list-tile avatar  v-bind:key="gene" @click="" >
                 <v-list-tile-avatar>
-                  <v-badge> {{ index + 1 }} </v-badge>
+                  <v-badge class="ordinal"> {{ index + 1 }} </v-badge>
                 </v-list-tile-avatar>
                 <v-list-tile-content>
                   <v-list-tile-title v-html="gene"></v-list-tile-title>

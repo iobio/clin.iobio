@@ -4,7 +4,7 @@
 
 #setup-panel
   padding: 5px 20px 5px 20px
-  background-color: $clin-panel-background-color
+  background-color: $panel-background-color
 
   .card-title
     font-size: 18px
