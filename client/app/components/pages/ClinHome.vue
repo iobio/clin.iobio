@@ -6,6 +6,7 @@
 
 @import ../../../assets/sass/variables
 
+
 .clin-card
   background-color: rgb(250, 250, 250)
   min-height: 600px
@@ -30,11 +31,11 @@
 
 .app-content.minimized.sidebar
   margin-top: 0px
-  margin-left: 160px
+  margin-left: 150px
 
 
 .toolbar__content
-  background: $app-background-color
+  background: $nav-background-color
 
 #clin-container
   font-size: 14px
@@ -60,14 +61,36 @@
   .stepper__step.stepper__step--active
     .stepper__label
       color: $app-color
+    .stepper__step__step.primary
+      background-color: $app-color !important
 
   .toolbar--fixed.elevation-0
     box-shadow: none !important
     -webkit-box-shadow: none !important
 
 
-  .workflow-summary-description
+  .workflow-summary-panel
     color: $text-color
+
+  .workflow-summary-title
+    font-size: 18px
+
+
+  .workflow-summary-description
+    font-family: $app-text-font
+    line-height: 16px
+    font-size: 13px
+
+
+  .step-summary-panel
+    font-family: $app-text-font
+    line-height: 16px
+    font-size: 13px
+
+  .task-name
+    font-family: $app-text-font
+    font-size: 13px
+
 
 
   .stepper__content
@@ -78,23 +101,24 @@
     margin-top: 8px
     margin-bottom: 4px
     margin-left: 0px
-    font-size: 16px
+    font-size: 18px
     display: inline-block
 
 
 
 
-  .split-btn
+  .preferences-button
     position: absolute
-    top: 5px
-    left: 154px
+    top: 2px
+    left: 150px
     display: inline-block
     margin: 0px
     padding: 0px
     min-width: 20px
     height: 20px
+    z-index: 1
 
-  .split-btn .btn__content
+  .preferences-button .btn__content
     max-width: 20px
     padding: 0px
     margin: 0px
@@ -102,7 +126,7 @@
     color: $text-color
     font-weight: 600
 
-  .split-btn .btn__content .material-icons
+  .preferences-button .btn__content .material-icons
     font-size: 20px
     color: $text-color
     height: 20px
@@ -144,7 +168,7 @@
     .stepper.stepper--non-linear
       height: 145px
       -webkit-box-shadow: none !important
-      background-color: $app-background-color
+      background-color: $nav-background-color
 
     .stepper-btn-panel
       height: 30px
@@ -180,8 +204,6 @@
       display: inline-block
       padding: 5px 15px 5px 10px
       overflow-y: scroll
-      font-size: 13px
-      line-height: 18px
       margin-left: 4px
       margin-right: 10px
 
@@ -212,8 +234,6 @@
       display: inline-block
       padding: 15px 15px 5px 5px
       overflow-y: scroll
-      font-size: 13px
-      line-height: 16px
 
     .tasks-panel
       display: inline-block
@@ -256,40 +276,21 @@
       margin-top: 5px
 
 
-    .expansion-btn
-      bottom: 0px
-      right: 5px
-      position: absolute
-      margin: 0px
-      padding: 0px
-      min-width: 110px
-      height: 30px
-      color: $app-color
-
-
-    .expansion-btn .btn__content
-      max-width: 110px
-      padding: 0px
-      margin: 0px
-      height: 30px
-      font-weight: 600
-
-    .expansion-btn .btn__content .material-icons
-      font-size: 2em
-      color: $app-color
-      height: 30px
-      width: 30px
-
   .vertical-dashboard-card
     height: 100%
 
 
+    .preferences-button
+      top: 4px
+      right: 0px
+      left: initial
+
     h5.workflow-title
       font-size: 18px
+      margin-top: 0px
 
     .workflow-summary-panel
       padding: 13px 10px 10px 10px
-      line-height: 16px
 
     .split-btn
       right: 34px
@@ -297,7 +298,7 @@
 
     .stepper--vertical
       height: calc(100% + 110px)
-      background-color: $app-background-color
+      background-color: $nav-background-color
       .stepper__step
         width: 100%
         padding: 14px 10px 14px 5px
@@ -328,7 +329,6 @@
     .step-summary-panel
       width: 220px
       word-wrap: break-word
-      line-height: 14px
       margin-bottom: 10px
 
     .tasks-panel
@@ -368,31 +368,13 @@
       margin-top: 5px
       font-size: 12px
 
-    .expansion-btn
-      top: 0px
-      right: 5px
-      position: absolute
-      margin: 0px
-      padding: 0px
-      min-width: 30px
-      height: 30px
-
-    .expansion-btn .btn__content
-      max-width: 30px
-      padding: 0px
-      margin: 0px
-      height: 30px
-      color: $app-color !important
-      font-weight: 600
-
-    .expansion-btn .btn__content .material-icons
-      font-size: 2em
-      color: $app-color
-      height: 30px
-      width: 30px
 
 
   .vertical-dashboard-card.minimized
+
+    .workflow-title
+      width: 105px
+
     .stepper--vertical
       .stepper__step
         width: 100%
@@ -427,6 +409,11 @@
 
 
   .horizontal-dashboard-card.minimized
+
+    .preferences-button
+      top: 8px
+      left: 155px
+
     .stepper.stepper--non-linear
       height: 60px
       display: flex
@@ -468,13 +455,102 @@
 
 
 
+
+
+
+
+#clin-container
+
+  &.dark
+
+    .preferences-button
+      .btn__content
+        .material-icons
+          color: white
+
+    .toolbar__content
+      background: $dark-nav-background-color
+
+    .workflow-summary-description
+      color: $dark-text-color
+
+    .input-group--selection-controls.accent--text
+      .icon--selection-control
+        color: $dark-text-color
+
+
+    .input-group--selection-controls.accent--text.input-group--active
+      .icon--selection-control
+        color: $dark-app-color
+
+
+    .stepper__step__step
+      background-color: $dark-stepper-color
+
+    .stepper__step.stepper__step
+      .stepper__label
+        color: $dark-text-color
+
+    .stepper__step.stepper__step--active
+      .stepper__label
+        color: $dark-app-color
+      .stepper__step__step.primary
+        background-color: $dark-app-color !important
+
+    .stepper__content
+      color: $dark-text-color !important
+
+    h5
+      color:  $dark-text-color
+
+    .split-btn .btn__content
+      color: $dark-text-color
+
+    .split-btn .btn__content .material-icons
+      color: $dark-text-color
+
+
+    .horizontal-dashboard-card
+      color: $dark-text-color
+      border-bottom: $dark-nav-border-color solid 1px
+
+      .stepper.stepper--non-linear
+        background-color: $dark-nav-background-color
+
+      .stepper-btn
+        color: $dark-app-color
+
+
+      .expansion-btn
+        color: $dark-app-color
+
+      .expansion-btn .btn__content .material-icons
+        color: $dark-app-color
+
+      hr.divider
+        background-color: $dark-text-color !important
+
+    .vertical-dashboard-card
+      .stepper--vertical
+        background-color: $dark-nav-background-color
+
+      .stepper__label
+        color: $dark-text-color
+
+      .expansion-btn .btn__content
+        color: $dark-app-color !important
+
+      .expansion-btn .btn__content .material-icons
+        color: $dark-app-color
+
+
 </style>
 
 
 
 <template>
 
-  <div id="clin-container" style="display:flex">
+  <div id="clin-container" style="display:flex" :class="theme">
     <login
       v-if="!isAuthenticated"
       :userSession="userSession"
@@ -486,17 +562,24 @@
         light  fixed flat  :height="isMinimized ? 60 : 145">
       <div v-show="isAuthenticated"  :class="{'horizontal-dashboard-card': true, 'minimized': isMinimized}">
 
+          <preferences-menu
+            class="preferences-button"
+            :isSidebar="isSidebar"
+            :isMinimized="isMinimized"
+            :theme="theme"
+            @switch-theme="switchTheme"
+            @switch-sidebar="switchSidebar"
+            @switch-minimized="switchMinimized">
+          </preferences-menu>
+
           <div class="workflow-summary-panel" v-show="!isMinimized">
             <div>
-              <v-btn class="split-btn" flat fav small
-              v-show="!isMinimized"
-              @click="isSidebar = true"
-              v-tooltip.top="`Show dashboard on left`">
-                <v-icon>vertical_split</v-icon>
-              </v-btn>
-              <h5> {{ workflow.title }} </h5>
 
-              <div>
+
+
+              <h5 class="workflow-summary-title"> {{ workflow.title }} </h5>
+
+              <div class="workflow-summary-description">
                 {{ workflow.summary}}
               </div>
             </div>
@@ -579,15 +662,6 @@
           </v-stepper-items>
         </v-stepper>
 
-          <v-btn class="expansion-btn" flat fav small v-show="!isMinimized" @click="isMinimized = true">
-            <v-icon>expand_less</v-icon>
-            show less
-          </v-btn>
-          <v-btn class="expansion-btn" flat fav small v-show="isMinimized" @click="isMinimized = false">
-            <v-icon>expand_more</v-icon>
-            show more
-          </v-btn>
-
 
 
       </div>
@@ -595,35 +669,31 @@
 
     <v-navigation-drawer
       v-if="isSidebar && isAuthenticated "
-      :mini-variant.sync="isMinimized"
+
       :hide-overlay="true"
       fixed
       light
       flat
-      :width="isMinimized ? 160 : 270"
+      :width="isMinimized ? 150 : 270"
       mini-variant-width="150">
       <div v-show="isAuthenticated && workflow && analysis"  light :class="{'vertical-dashboard-card': true, 'minimized': isMinimized}">
 
-
+        <preferences-menu
+          class="preferences-button"
+          :isSidebar="isSidebar"
+          :isMinimized="isMinimized"
+          :theme="theme"
+          @switch-theme="switchTheme"
+          @switch-sidebar="switchSidebar"
+          @switch-minimized="switchMinimized">
+        </preferences-menu>
 
         <v-stepper v-model="currentStep" vertical non-linear >
           <div class="workflow-summary-panel" >
             <div>
-              <v-btn class="split-btn" flat fav small
-               v-show="!isMinimized"
-               @click="isSidebar = false"
-               v-tooltip.bottom="`Show dashboard on top`">
-                <v-icon>horizontal_split</v-icon>
-              </v-btn>
 
               <h5 class="workflow-title"> {{ workflow.title }} </h5>
 
-              <v-btn class="expansion-btn" flat fav small v-show="!isMinimized" @click="isMinimized = true">
-                <v-icon>chevron_left</v-icon>
-              </v-btn>
-              <v-btn class="expansion-btn" flat fav small v-show="isMinimized" @click="isMinimized = false">
-                <v-icon>chevron_right</v-icon>
-              </v-btn>
 
               <div class="workflow-summary-description" v-show="!isMinimized">
                 {{ workflow.summary}}
@@ -748,6 +818,7 @@
 import Setup from  '../viz/Setup.vue'
 import Report from '../viz/Report.vue'
 import Login from  '../partials/Login.vue'
+import PreferencesMenu from  '../partials/PreferencesMenu.vue'
 
 import AnalysisModel from  '../../models/AnalysisModel.js'
 import UserSession  from  '../../models/UserSession.js'
@@ -760,7 +831,8 @@ export default {
   components: {
     Setup,
     Login,
-    Report
+    Report,
+    PreferencesMenu
   },
   props: {
     paramDebug:  null,
@@ -776,6 +848,7 @@ export default {
     let self = this;
     return {
       greeting: 'clin.iobio.io',
+      theme:    'light',
       isSidebar: false,
       isMinimized: false,
 
@@ -919,6 +992,16 @@ export default {
       }
 
 
+    },
+
+    switchTheme: function(theme) {
+      this.theme = theme;
+    },
+    switchSidebar: function(isSidebar) {
+      this.isSidebar = isSidebar
+    },
+    switchMinimized: function(isMinimized) {
+      this.isMinimized = isMinimized
     },
 
     onAuthenticated: function(researcher) {

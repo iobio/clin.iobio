@@ -42,32 +42,6 @@ button
         background-color: $amber-lighten-2 !important
 
 
-.stepper__step__step
-  background-color: $default-badge-color !important
-  color: white !important
-
-.stepper__step--active
-  .stepper__step__step
-    background-color: $app-color !important
-    color: white
-
-.stepper__label
-  color: $text-color
-
-.theme--light
-  .stepper
-    .stepper__step--active
-      .stepper__label
-        text-shadow: none
-        color: $app-color !important
-
-.application
-  .theme--light
-    .stepper
-      .stepper__step--active
-        .stepper__label
-          text-shadow: none
-          color: $app-color !important
 
 .task-switch
   &.accent--text

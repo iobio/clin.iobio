@@ -1,16 +1,17 @@
+$app-font:             'Poppins', sans-serif
+$app-text-font:        'Open sans', sans-serif
+
+$light-blue:           #66bffe
+$toned-down-blue:      rgb(69, 104, 142)
+$bright-navy:          #486da8
+$dark-grey:            #4e4f57
+
 $amber-lighten-4:      #FFECB3
 $amber-lighten-3:      #FFE082
 $amber-lighten-2:      #FFD54F
 $amber-lighten-1:      #FFCA28
 $amber-darken-1:       #FFB300
 
-
-$app-font:             'Poppins', sans-serif
-
-$light-blue:       #66bffe
-$toned-down-blue:  rgb(69, 104, 142)
-$bright-navy:      #486da8
-$dark-grey:        #62646c
 
 
 $default-badge-color:    rgb(155, 155, 155)
@@ -20,83 +21,72 @@ $app-content-color:      $toned-down-blue
 $app-header-color:       $toned-down-blue
 $button-color:           $toned-down-blue
 $panel-background-color: #fafafa
-
-
-$app-color:              $bright-navy
-$app-background-color:   #f7f5f5
-$nav-border-color:       #c8c6c6
-$text-color:             $dark-grey
-
-//$app-color:            $light-blue
-//$app-background-color: black
-//$nav-border-color:     black
-//$text-color:           white
-
-
-
-$link-color:             $app-color
-$app-accent-color:       $amber-darken-1
+$link-color:             $toned-down-blue
 $info-color:             $amber-lighten-4
 $info-color-dark:        $amber-lighten-3
+
+
+/*                            */
+/*  App colors - light theme  */
+/*                            */
+$app-color:              $bright-navy
+$nav-border-color:       #c8c6c6
+$text-color:             $dark-grey
+$nav-background-color:   #f7f5f5
+
+/*                            */
+/*  App colors - dark theme   */
+/*                            */
+$dark-app-color:            $light-blue
+$dark-nav-border-color:     #424242
+$dark-text-color:           white
+$dark-nav-background-color: #424242
+$dark-stepper-color:        #969595
 
 
 /*                       */
 /* gene.iobio styling    */
 /*                       */
-$notes-background-color:        #fffae2
-$current-color:                 rgb(53, 134, 192)
-$current-frame-color:           #969696
-$coverage-problem-color:        rgba(68, 116, 152, .75)
-$app-gray:                      #888888
-$called-variant-color:          $coverage-problem-color
-$called-variant-color-darker:   $coverage-problem-color
-$loaded-variant-color:          $app-gray
+$notes-background-color:      #fffae2
+$current-color:               rgb(53, 134, 192)
+$current-frame-color:         #969696
+$coverage-problem-color:      rgba(68, 116, 152, .75)
+$app-gray:                    #888888
+$called-variant-color:        $coverage-problem-color
+$called-variant-color-darker: $coverage-problem-color
+$loaded-variant-color:        $app-gray
 
+$hom-color:                   rgba(173, 38, 38, 0.65)
+$het-color:                   rgb(181, 181, 181)
+$homref-color:                rgb(216, 216, 216)
 
-$hom-color:                       rgba(173, 38, 38, 0.65)
-$het-color:                       rgb(181, 181, 181)
-$homref-color:                    rgb(216, 216, 216)
+$bookmark-color:              #3773A7
 
-$bookmark-color:                  #3773A7
+$high-impact-color:          #ac1113
+$moderate-impact-color:      #ec9d2c
+$modifier-impact-color:      #f9e4b5
+$low-impact-color:           rgba(181, 207, 107, 0.65)
 
+$level-high-color:           $high-impact-color
+$level-likely-high-color:    rgb(193, 131, 132)
+$level-medium-color:         rgba(231, 186, 82, 1)
+$level-low-color:            $low-impact-color
+$level-likely-low-color:     rgba(181, 207, 107, 1)
+$level-conflicting-color:    rgb(111, 182, 180)
+$level-other-color:          rgb(189, 189, 189)
 
-$high-impact-color:       #ac1113
-$moderate-impact-color:   #ec9d2c
-$modifier-impact-color:   #f9e4b5
-$low-impact-color:        rgba(181, 207, 107, 0.65)
+$significant-color:          #831b1c
+$unknown-significance-color: $level-likely-high-color
+$not-significant-color:      #b1b2ae
+$not-reviewed-color:         #858585
 
-
-$level-high-color:        $high-impact-color
-$level-likely-high-color: rgb(193, 131, 132)
-$level-medium-color:      rgba(231, 186, 82, 1)
-$level-low-color:         $low-impact-color
-$level-likely-low-color:  rgba(181, 207, 107, 1)
-$level-conflicting-color: rgb(111, 182, 180)
-$level-other-color:       rgb(189, 189, 189)
-
-
-$significant-color:            #831b1c
-$unknown-significance-color:   $level-likely-high-color
-$not-significant-color:        #b1b2ae
-$not-reviewed-color:           #858585
-
-$tour-button-color:      #E45C5C
-
-$gene-box-color:         rgba(93, 128, 157, 0.63)
-$gene-box-border-color:  rgb(93, 128, 157)
-$tour-background-color:  rgba(81, 77, 77, 0.9)
-$tour-data-button-color: #989898
-$tour-hilite-color:      #E45C5C
-$tour-theme-color:     #1D287B
-
-
-$clinvar-path-color:     #ad494A
-$clinvar-lpath-color:    #FB7737
-$clinvar-uc-color:       rgba(231,186,82,1)
-$clinvar-benign-color:   rgba(156,194,49,1)
-$clinvar-lbenign-color:  rgba(181,207,107,1)
-$clinvar-other-color:    rgb(189,189,189)
-$clinvar-cd-color:       rgb(111, 182, 180)
+$clinvar-path-color:        #ad494A
+$clinvar-lpath-color:       #FB7737
+$clinvar-uc-color:          rgba(231,186,82,1)
+$clinvar-benign-color:      rgba(156,194,49,1)
+$clinvar-lbenign-color:     rgba(181,207,107,1)
+$clinvar-other-color:       rgb(189,189,189)
+$clinvar-cd-color:          rgb(111, 182, 180)
 
 
 
