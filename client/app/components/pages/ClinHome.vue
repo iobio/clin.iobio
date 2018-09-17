@@ -109,7 +109,7 @@
 
   .preferences-button
     position: absolute
-    top: 2px
+    top: 5px
     left: 150px
     display: inline-block
     margin: 0px
@@ -412,7 +412,8 @@
 
     .preferences-button
       top: 8px
-      left: 155px
+      left: 0px
+      right: initial
 
     .stepper.stepper--non-linear
       height: 60px
@@ -421,6 +422,7 @@
       height: 60px
       margin-right: 30px
       margin-top: 0px
+      margin-left: 30px
     .stepper__step
       padding: 16px 5px 24px 5px
     .stepper__items
