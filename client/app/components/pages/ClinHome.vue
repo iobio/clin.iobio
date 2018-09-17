@@ -778,17 +778,17 @@
       </v-card>
 
 
-      <div id="gene-panel-iframe" v-show="currentStep == 2">
+      <div id="gene-panel-iframe" v-show="!isAuthenticated || currentStep == 2">
         <iframe  :src="apps.genepanel.url" style="width:100%;height:100%" frameBorder="0">
         </iframe>
       </div>
 
-      <div id="gene-iframe" v-show="currentStep == 3">
+      <div id="gene-iframe" v-show="!isAuthenticated || currentStep == 3">
         <iframe  :src="apps.gene.url" style="width:100%;height:100%" frameBorder="0">
         </iframe>
       </div>
 
-      <div id="genefull-iframe" v-show="currentStep == 4">
+      <div id="genefull-iframe" v-show="!isAuthenticated || currentStep == 4">
         <iframe  :src="apps.gene.url + '&mode=full'" style="width:100%;height:100%" frameBorder="0">
         </iframe>
       </div>
@@ -917,15 +917,7 @@ export default {
         var theApp = null;
 
 
-        // If this is the first time we have loaded the app, send
-        // message to set the data
-        for (var appName in self.apps) {
-          let app = self.apps[appName];
-          if (app.step == self.currentStep && !app.isLoaded) {
-              self.setData(appName, 500);
-              app.isLoaded = true;
-          }
-        }
+
 
 
         // If we are going to gene.iobio (candidate genes), request
@@ -1032,6 +1024,15 @@ export default {
           {'createIfEmpty': true, 'getCache': true} )
         .then(function() {
 
+
+          // Send message to set the data in the iobio apps
+          for (var appName in self.apps) {
+            let app = self.apps[appName];
+            if (!app.isLoaded) {
+                self.setData(appName, 500);
+                app.isLoaded = true;
+            }
+          }
 
         })
 
