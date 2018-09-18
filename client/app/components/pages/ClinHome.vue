@@ -1108,6 +1108,7 @@ export default {
               'modelInfos':           self.modelInfos,
               'phenotypes':           self.analysis.phenotypes,
               'genes':                self.analysis.genes,
+              'genesData':            self.analysis.genesData,
               'variants':             appName == 'gene' || appName == 'genefull'  ? self.variants[appName] : null,
               'variantData':          appName == 'genefull' ? self.analysisModel.parseFullAnalysisTSV(self.analysis) : null,
               'cache':                self.analysisCache[appName] ? self.analysisCache[appName] : null
@@ -1161,8 +1162,7 @@ export default {
           'phenotype-driven': 'phenotype-genes',
           'all':              'export-genes'
         }
-        this.promiseUpdateGenes(messageObject.genes);
-        this.promiseUpdatePhenotypes(messageObject.searchTerms);
+        this.promiseUpdateGenesData(messageObject.data, messageObject.genes, messageObject.searchTerms);
         this.promiseCompleteStepTask('genes', taskMap[messageObject.source]);
         this.sendAppMessage('gene', messageObject);
       } if (messageObject.type == "apply-genes" && messageObject.sender == 'gene.iobio.io') {
@@ -1428,6 +1428,15 @@ export default {
         }
 
       })
+    },
+
+    promiseUpdateGenesData: function(genesData, genes, phenotypes) {
+      let self = this;
+      self.analysis.genesData = genesData;
+      self.analysis.genes = genes;
+      self.analysis.phenotypes = phenotypes;
+      self.analysis.datetime_last_modified = self.getCurrentDateTime();
+      return self.analysisModel.promiseUpdateGenesData(self.analysis);
     },
 
     promiseUpdateGenes: function(genes) {

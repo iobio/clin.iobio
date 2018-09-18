@@ -133,6 +133,37 @@ export default class AnalysisModel {
     })
   }
 
+  promiseUpdateGenesData(analysis) {
+    let self = this;
+
+    return new Promise(function(resolve, reject) {
+      var params = {
+        TableName: self.analysisTable,
+        Key:{
+            "id": analysis.id
+        },
+        UpdateExpression: "set genesData = :genesData, genes = :genes, phenotypes = :phenotypes, datetime_last_modified = :datetime_last_modified",
+        ExpressionAttributeValues:{
+            ":genes": analysis.genes,
+            ":phenotypes": analysis.phenotypes,
+            ":genesData": analysis.genesData,
+            ":datetime_last_modified": analysis.datetime_last_modified
+        },
+        ReturnValues:"UPDATED_NEW"
+      };
+      self.userSession.dynamodb.update(params, function(err, data) {
+        if (err) {
+          console.log(err, err.stack); // an error occurred
+          reject(err);
+        }
+        else  {
+          resolve();
+        }
+      });
+    })
+  }
+
+
   promiseUpdateGenes(analysis) {
     let self = this;
 
