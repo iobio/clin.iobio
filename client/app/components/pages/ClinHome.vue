@@ -852,7 +852,7 @@ export default {
     let self = this;
     return {
       greeting: 'clin.iobio.io',
-      theme:    self.paramTheme,
+      theme:    self.paramTheme && self.paramTheme.length > 0 ? self.paramTheme : 'dark',
       isSidebar: false,
       isMinimized: false,
 
