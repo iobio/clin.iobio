@@ -21,7 +21,7 @@
     .col2
       display: flex
       flex-direction: column
-      width: 500px
+      min-width: 350px
 
 
   .card-title
