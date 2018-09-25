@@ -871,7 +871,7 @@ export default {
         'dev': {
             'gene':      'https://dev.gene.iobio.io/?launchedFromClin=true',
             'genefull':  'https://dev.gene.iobio.io/?launchedFromClin=true&mode=full',
-            'genepanel': 'http://panel.iobio.io/?launchedFromClin=true',
+            'genepanel': 'https://dev.panel.iobio.io/?launchedFromClin=true',
             'bam':       'http://newbam.iobio.io'
         },
       },
