@@ -1108,7 +1108,10 @@ export default {
               'modelInfos':           self.modelInfos,
               'phenotypes':           self.analysis.phenotypes,
               'genes':                self.analysis.genes,
-              'genesData':            self.analysis.genesData,
+              'genesReport':          self.analysis.genesReport,
+              'genesGtr':             self.analysis.genesGtr,
+              'genesPhenolyzer':      self.analysis.genesPhenolyzer,
+              'genesManual':          self.analysis.genesManual,
               'variants':             appName == 'gene' || appName == 'genefull'  ? self.variants[appName] : null,
               'variantData':          appName == 'genefull' ? self.analysisModel.parseFullAnalysisTSV(self.analysis) : null,
               'cache':                self.analysisCache[appName] ? self.analysisCache[appName] : null
@@ -1162,7 +1165,7 @@ export default {
           'phenotype-driven': 'phenotype-genes',
           'all':              'export-genes'
         }
-        this.promiseUpdateGenesData(messageObject.data, messageObject.genes, messageObject.searchTerms);
+        this.promiseUpdateGenesData(messageObject);
         this.promiseCompleteStepTask('genes', taskMap[messageObject.source]);
         this.sendAppMessage('gene', messageObject);
       } if (messageObject.type == "apply-genes" && messageObject.sender == 'gene.iobio.io') {
@@ -1430,11 +1433,14 @@ export default {
       })
     },
 
-    promiseUpdateGenesData: function(genesData, genes, phenotypes) {
+    promiseUpdateGenesData: function(messageObject) {
       let self = this;
-      self.analysis.genesData = genesData;
-      self.analysis.genes = genes;
-      self.analysis.phenotypes = phenotypes;
+      self.analysis.genesReport     = messageObject.genesReport;
+      self.analysis.genesGtr        = messageObject.genesGtr;
+      self.analysis.genesPhenolyzer = messageObject.genesPhenolyzer;
+      self.analysis.genesManual     = messageObject.genesManual;
+      self.analysis.genes           = messageObject.genes;
+      self.analysis.phenotypes      = messageObject.searchTerms;
       self.analysis.datetime_last_modified = self.getCurrentDateTime();
       return self.analysisModel.promiseUpdateGenesData(self.analysis);
     },

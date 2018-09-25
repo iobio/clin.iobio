@@ -142,11 +142,14 @@ export default class AnalysisModel {
         Key:{
             "id": analysis.id
         },
-        UpdateExpression: "set genesData = :genesData, genes = :genes, phenotypes = :phenotypes, datetime_last_modified = :datetime_last_modified",
+        UpdateExpression: "set genesReport = :genesReport, genesGtr = :genesGtr, genesPhenolyzer = :genesPhenolyzer, genesManual = :genesManual, genes = :genes, phenotypes = :phenotypes, datetime_last_modified = :datetime_last_modified",
         ExpressionAttributeValues:{
             ":genes": analysis.genes,
             ":phenotypes": analysis.phenotypes,
-            ":genesData": analysis.genesData,
+            ":genesReport": analysis.genesReport,
+            ":genesGtr": analysis.genesGtr,
+            ":genesPhenolyzer": analysis.genesPhenolyzer,
+            ":genesManual": analysis.genesManual,
             ":datetime_last_modified": analysis.datetime_last_modified
         },
         ReturnValues:"UPDATED_NEW"
