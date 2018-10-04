@@ -79,17 +79,17 @@
   .workflow-summary-description
     font-family: $app-text-font
     line-height: 16px
-    font-size: 13px
+    font-size: 14px
 
 
   .step-summary-panel
     font-family: $app-text-font
     line-height: 16px
-    font-size: 13px
+    font-size: 14px
 
   .task-name
     font-family: $app-text-font
-    font-size: 13px
+    font-size: 14px
 
 
 
