@@ -39,6 +39,10 @@
     height: 30px !important
     .input-group--selection-controls__ripple
       height: 30px !important
+    &.input-group--hide-details
+      .input-group__details
+        display: none !important
+        min-height: 0px !important
 
 .toolbar__content
   background: $nav-background-color
@@ -649,12 +653,14 @@
                    >
                     <v-checkbox class="task-switch"
                       v-model="task.complete"
+                      hide-details
                       v-tooltip.right="`Completed`"
                     ></v-checkbox>
                     <v-switch small class="task-switch"
                       v-if="false && task.complete"
                       v-model="task.pass"
                       v-tooltip.right="`Passed`"
+                      hide-details
                     ></v-switch>
                     <span class="task-name"
                     v-tooltip.left="getTaskName(step.key, task.key)"
