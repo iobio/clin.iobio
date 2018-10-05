@@ -34,6 +34,12 @@
   margin-left: 150px
 
 
+.task-entry
+  .task-switch
+    height: 30px !important
+    .input-group--selection-controls__ripple
+      height: 30px !important
+
 .toolbar__content
   background: $nav-background-color
 
@@ -334,9 +340,7 @@
     .tasks-panel
       width: 220px
 
-    .task-entry
-      .input-group--selection-controls__ripple
-        height: 30px !important
+
 
     .task-name
       display: inline-block
