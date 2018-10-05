@@ -41,7 +41,7 @@
   font-size: 14px
 
   .navigation-drawer--fixed
-    overflow-y: scroll
+    overflow-y: auto
 
 
   .input-group--selection-controls.accent--text
@@ -203,7 +203,7 @@
       float: left
       display: inline-block
       padding: 5px 15px 5px 10px
-      overflow-y: scroll
+      overflow-y: auto
       margin-left: 4px
       margin-right: 10px
 
@@ -233,7 +233,7 @@
       width: 300px
       display: inline-block
       padding: 15px 15px 5px 5px
-      overflow-y: scroll
+      overflow-y: auto
 
     .tasks-panel
       display: inline-block
@@ -335,6 +335,8 @@
       width: 220px
 
     .task-entry
+      .input-group--selection-controls__ripple
+        height: 30px !important
 
     .task-name
       display: inline-block
@@ -348,7 +350,7 @@
     .task-switch
       display: inline-block !important
       width: 24px !important
-      height: 30px
+      height: 30px !important
       margin-left: 20px
       margin-right: 0px
       margin-bottom: 0px
