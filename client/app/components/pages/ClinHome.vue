@@ -945,6 +945,18 @@ export default {
           self.sendAppMessage('genepanel', msgObject);
         }
 
+        // Indicate to app that it is now visible
+        for (var appName in self.apps) {
+          let app = self.apps[appName];
+          if (app.isLoaded && app.step == self.currentStep) {
+            var msgObject = {
+              type:                  'show',
+              sender:                'clin.iobio',
+              isFrameVisible:        true,
+              receiver:              appName };
+            self.sendAppMessage(appName, msgObject);
+          }
+        }
 
         // We have moved to a new step.  Save the workflow step.
         if (self.analysis && self.analysis.id) {
@@ -1112,10 +1124,12 @@ export default {
           return self.promiseGetCache(appName)
         })
         .then(function() {
-         var msgObject = {
+          let app = self.apps[appName];
+          var msgObject = {
               type:                  'set-data',
               sender:                'clin.iobio',
               receiver:               appName,
+              'isFrameVisible':       app.step == self.currentStep,
               'modelInfo':            probandModelInfo[0],
               'modelInfos':           self.modelInfos,
               'phenotypes':           self.analysis.phenotypes,
@@ -1141,6 +1155,11 @@ export default {
     sendAppMessage: function(appName, obj) {
       let self = this;
       var theObject = obj ? obj : {type: 'start-analysis', sender: 'clin.iobio'};
+      if (!theObject.hasOwnProperty("isFrameVisible")) {
+        let app = self.apps[appName];
+        theObject.isFrameVisible = app.step == self.currentStep;
+      }
+
       var iframeSelector = self.apps[appName].iframeSelector;
       if (iframeSelector && iframeSelector.length > 0 && $(iframeSelector).length > 0) {
         $(iframeSelector)[0].contentWindow.postMessage(JSON.stringify(theObject), '*');
