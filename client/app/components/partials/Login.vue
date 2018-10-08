@@ -14,7 +14,11 @@
 .login-toolbar
   .toolbar__content
     background-color: $login-nav-color !important
-
+.new-password-hint
+  font-size: 15px
+  padding: 10px
+  font-style: italic
+  color: $app-color
 
 
 </style>
@@ -25,26 +29,33 @@
     <v-layout class="login-dialog mt-5" row wrap justify-center>
        <v-flex xs4 >
         <v-toolbar light class="login-toolbar" >
-          <v-toolbar-title class="white--text" >Login to clin.iobio</v-toolbar-title>
+          <v-toolbar-title v-if="!isAuthenticated && !newPasswordRequired" class="white--text" >Login to clin.iobio</v-toolbar-title>
+          <v-toolbar-title v-if="!isAuthenticated && newPasswordRequired && !showNewPasswordMessage" class="white--text" >Change your password</v-toolbar-title>
+          <v-toolbar-title v-if="!isAuthenticated && newPasswordRequired && showNewPasswordMessage" class="white--text" >Login again</v-toolbar-title>
+          <v-toolbar-title v-if="isAuthenticated" class="white--text" >Select a project</v-toolbar-title>
         </v-toolbar>
         <v-card  light >
           <v-layout row wrap>
               <v-flex xs12>
-                <v-text-field v-model="userName" label="Enter your user name" type="text">
+                <v-text-field v-if="!isAuthenticated && !showNewPasswordMessage" v-model="userName" label="Enter your user name" type="text">
                 </v-text-field>
               </v-flex>
 
-              <v-flex v-if="!newPasswordRequired" xs12>
+              <v-flex v-if="!isAuthenticated && !newPasswordRequired && !showNewPasswordMessage" xs12>
                 <v-text-field v-model="password" label="Enter your password" type="password">
                 </v-text-field>
               </v-flex>
 
-              <v-flex xs12 v-if="newPasswordRequired">
+              <v-flex xs12  v-if="!isAuthenticated && newPasswordRequired && !showNewPasswordMessage">
                 <v-text-field v-model="newPassword" label="Enter your new password" type="password">
                 </v-text-field>
               </v-flex>
 
-              <v-flex xs12 v-if="!newPasswordRequired">
+              <v-flex xs12 class="new-password-hint" v-if="!isAuthenticated && newPasswordRequired && !showNewPasswordMessage" >
+                You are required to set a new password.
+              </v-flex>
+
+              <v-flex xs12 v-if="isAuthenticated && !newPasswordRequired">
                 <v-select
                     label="Project"
                     v-bind:items="projects"
@@ -54,28 +65,21 @@
                 ></v-select>
               </v-flex>
 
-              <v-flex v-if="!newPasswordRequired" xs12>
-                <v-select
-                    label="Your name"
-                    v-bind:items="researchers"
-                    v-model="researcher"
-                    autocomplete
-                    persistent-hint
-                ></v-select>
+
+
+              <v-flex xs12 v-if="!isAuthenticated">
+                <v-btn v-if="!newPasswordRequired" :disabled="userName == null  || password == null ? true : false" @click="authenticate">Login</v-btn>
+                <v-btn v-if="newPasswordRequired && !showNewPasswordMessage" :disabled="userName == null  || newPassword == null  ? true : false" @click="authenticateNewPassword">Change Password</v-btn>
               </v-flex>
 
-
-              <v-flex xs12>
-                <v-btn v-if="!newPasswordRequired" :disabled="researcher == null || userName == null  || password == null || project == null? true : false" @click="authenticate">Login</v-btn>
-                <v-btn v-if="newPasswordRequired" :disabled="userName == null  || newPassword == null  ? true : false" @click="authenticateNewPassword">Change Password</v-btn>
-              </v-flex>
-
-             <v-alert class="success"
-              success
-              :value="showNewPasswordMessage"
+             <div style="margin-top: 10px;font-size: 16px"
+              v-show="!isAuthenticated && showNewPasswordMessage"
               >
-                  Your password has been succesfully changed.  Please launch clin.iobio again to login.
-            </v-alert>
+                  Your password has been succesfully changed.
+                  <br>
+                  Please <a  :href="launchUrl">Login</a> with new password.
+            </div>
+
           </v-layout>
         </v-card>
       </v-flex>
@@ -98,22 +102,6 @@ export default {
     return {
       userName: null,
       password: null,
-      researcher: null,
-      researchers: [
-        "adit",
-        "al",
-        "anders",
-        "attila",
-        "gabor",
-        "josh",
-        "matt",
-        "marti",
-        "rong",
-        "pinar",
-        "steve",
-        "steph",
-        "tony"
-      ],
       project: null,
       projects: [
         "platinum",
@@ -123,17 +111,32 @@ export default {
 
       newPasswordRequired: false,
       newPassword: null,
-      showNewPasswordMessage: false
+      showNewPasswordMessage: false,
+      launchUrl: false,
+      isAuthenticated: false
     };
   },
+  mounted() {
+    this.launchUrl = window.document.URL;
+  },
+  watch: {
+    project: function() {
+      let self = this;
+      if (self.isAuthenticated && self.project && self.project.length > 0) {
+         self.$emit('authenticated', self.userName, self.project)
+      }
+    }
+  },
   methods: {
+
+
 
     authenticate: function() {
       let self = this;
       self.userSession.authenticate(self.userName, self.password,
       function(success) {
         if (success) {
-          self.$emit('authenticated', self.researcher, self.project)
+          self.isAuthenticated = true;
         }
       },
       function() {

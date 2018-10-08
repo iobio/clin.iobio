@@ -99,8 +99,9 @@ export default class UserSession {
           AWS.config.update({
             region: self.region
           });
-          self.dynamodb = new AWS.DynamoDB.DocumentClient({convertEmptyValues: true});
-          callback(true);
+          AWS.config.credentials.get(function(err) {
+            callback(true);
+          });
         },
 
         onFailure: function(err) {
