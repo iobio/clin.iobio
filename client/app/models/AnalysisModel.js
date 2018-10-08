@@ -8,9 +8,39 @@ export default class AnalysisModel {
     this.analysisCacheTable  = {
       'gene':     "clin.iobio.cache.gene",
       'genefull': "clin.iobio.cache.gene.full" }
+    this.variantDataTable  = {
+      'gene':     null,
+      'genefull': "clin.iobio.variant.data.gene.full" }
     this.workflowTable = "clin.iobio.workflow";
+    this.modelInfoTable = "clin.iobio.model.info";
 
     this.DELIM = "^";
+  }
+
+  promiseGetModelInfo(id) {
+    let self = this;
+
+    return new Promise(function(resolve, reject) {
+      var params = {
+        TableName: self.modelInfoTable,
+        Key:{
+            "id": id
+        }
+      };
+
+      self.userSession.dynamodb.get(params, function(err, data) {
+        if (err) {
+          reject(err);
+        } else {
+          if (data && data.Item) {
+            resolve(data.Item);
+          } else {
+            resolve(null);
+          }
+        }
+      });
+    })
+
   }
 
   promiseGetWorkflow(idWorkflow) {
@@ -65,39 +95,69 @@ export default class AnalysisModel {
 
   }
 
-  parseFullAnalysisTSV(analysis) {
-    if (analysis.full_analysis_records != null && analysis.full_analysis_records.length > 0) {
-      if (analysis.variants_full_analysis == null || analysis.variants_full_analysis.length == 0) {
-        let buf = "";
-        analysis.full_analysis_records.forEach(function(rec) {
-          if (buf.length > 0) {
-            buf += "\n";
+  promiseGetVariantData(app, id) {
+    let self = this;
+
+
+    return new Promise(function(resolve, reject) {
+      if (self.variantDataTable[app]) {
+        var params = {
+          TableName: self.variantDataTable[app],
+          Key:{
+              "id": id
           }
-          buf += rec.split(",").join("\t");
+        };
+
+        self.userSession.dynamodb.get(params, function(err, data) {
+          if (err) {
+            reject(err);
+          } else {
+            if (data && data.Item) {
+              resolve(data.Item);
+            } else {
+              resolve(null);
+            }
+          }
         });
-        return buf;
       } else {
-        return null;
+        reject("No variant data table exists for app " + app);
       }
+    })
+
+  }
+
+  parseVariantData(variantData) {
+    if (variantData != null && variantData.length > 0) {
+      let buf = "";
+      variantData.forEach(function(rec) {
+        if (buf.length > 0) {
+          buf += "\n";
+        }
+        buf += rec.split(",").join("\t");
+      });
+      return buf;
+
     } else {
       return null;
     }
   }
 
-  promiseGetAnalysesForSample(idWorkflow, idSample ) {
+  promiseGetAnalysesForSample(idWorkflow, idProject, idSample ) {
     let self = this;
 
     return new Promise(function(resolve, reject) {
       var params = {
         TableName: self.analysisTable,
-        FilterExpression: "#sample_id = :sample_id and #workflow_id = :workflow_id",
+        FilterExpression: "#project_id = :project_id and #sample_id = :sample_id and #workflow_id = :workflow_id",
         ExpressionAttributeNames: {
+            "#project_id":  "project_id",
             "#sample_id":   "sample_id",
             "#workflow_id": "workflow_id",
         },
         ExpressionAttributeValues: {
             ":workflow_id": idWorkflow,
-            ":sample_id":   idSample
+            ":sample_id":   idSample,
+            ":project_id":  idProject
         }
       };
 

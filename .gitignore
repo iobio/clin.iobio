@@ -1,3 +1,4 @@
 client/dist
 node_modules
 deploy
+private_model_info.json

@@ -839,7 +839,6 @@ import UserSession  from  '../../models/UserSession.js'
 import HubSession  from  '../../models/HubSession.js'
 
 
-
 export default {
   name: 'home',
   components: {
@@ -904,9 +903,11 @@ export default {
       analysis: null,
       analysisCache:     {'gene': null, 'genefull': null},
       analysisCacheKeys: {'gene': null, 'genefull': null},
-      variants:          {'gene': null, 'genefull': null}
+      variants:          {'gene': null, 'genefull': null},
+      variantData:       {'gene': null, 'genefull': null}
 
     }
+
   },
 
   created: function() {
@@ -996,19 +997,6 @@ export default {
           self.modelInfos = modelInfos;
         })
 
-      } else {
-
-        let demoVcf = "https://s3.amazonaws.com/iobio/samples/vcf/platinum-exome.vcf.gz";
-        let demoBams = {
-            'proband': 'https://s3.amazonaws.com/iobio/samples/bam/NA12878.exome.bam',
-            'mother':  'https://s3.amazonaws.com/iobio/samples/bam/NA12892.exome.bam',
-            'father':  'https://s3.amazonaws.com/iobio/samples/bam/NA12891.exome.bam'
-        };
-        self.modelInfos = [
-          {relationship: 'proband', affectedStatus: 'affected',   name: 'NA12878', 'sample': 'NA12878', 'vcf': demoVcf, 'tbi': null, 'bam': demoBams['proband'], 'bai': null },
-          {relationship: 'mother',  affectedStatus: 'unaffected', name: 'NA12892', 'sample': 'NA12892', 'vcf': demoVcf, 'tbi': null, 'bam': demoBams['mother'], 'bai': null  },
-          {relationship: 'father',  affectedStatus: 'unaffected', name: 'NA12891', 'sample': 'NA12891', 'vcf': demoVcf, 'tbi': null, 'bam': demoBams['father'], 'bai': null  }
-        ];
       }
 
 
@@ -1024,7 +1012,7 @@ export default {
       this.isMinimized = isMinimized
     },
 
-    onAuthenticated: function(researcher) {
+    onAuthenticated: function(researcher, project) {
       let self = this;
       self.isAuthenticated = true;
       self.analysisModel = new AnalysisModel(self.userSession);
@@ -1038,31 +1026,82 @@ export default {
         sampleId = 'test-sample';
       }
 
-      self.promiseGetWorkflow(self.idWorkflow)
-      .then(function() {
+      let projectId = null;
+      if (project && project.length > 0) {
+        projectId = project;
+      } else if (self.paramProjectId && self.paramProjectId.length > 0) {
+        projectId = self.paramProjectId;
+      } else {
+        projectId = 'test-project';
+      }
 
+      let promiseModelInfo = null;
+      if (self.hubSession == null) {
 
-        self.promiseGetAnalysis(
-          self.paramProjectId && self.paramProjectId.length > 0 ? self.paramProjectId : 'test-project',
-          sampleId,
-          self.paramAnalysisId,
-          self.workflow,
-          {'createIfEmpty': true, 'getCache': true} )
+        promiseModelInfo = self.analysisModel.promiseGetModelInfo(projectId)
+        .then(function(modelInfo) {
+
+          self.modelInfos = [
+           {'relationship': 'proband',
+            'affectedStatus': 'affected',
+            'name':    modelInfo.sampleId.proband,
+            'sample':  modelInfo.sampleId.proband,
+            'vcf':     modelInfo.vcf,
+            'tbi':     null,
+            'bam':     modelInfo.bam.proband,
+            'bai':     null },
+           {'relationship': 'mother',
+            'affectedStatus': 'unaffected',
+            'name':    modelInfo.sampleId.mother,
+            'sample':  modelInfo.sampleId.mother,
+            'vcf':     modelInfo.vcf,
+            'tbi':     null,
+            'bam':     modelInfo.bam.mother,
+            'bai':     null },
+           {'relationship': 'father',
+            'affectedStatus': 'unaffected',
+            'name':    modelInfo.sampleId.father,
+            'sample':  modelInfo.sampleId.father,
+            'vcf':     modelInfo.vcf,
+            'tbi':     null,
+            'bam':     modelInfo.bam.father,
+            'bai':     null },
+          ];
+        })
+
+      } else {
+        promiseModelInfo = Promise.resolve();
+      }
+
+      promiseModelInfo.then(function() {
+        self.promiseGetWorkflow(self.idWorkflow)
         .then(function() {
 
 
-          // Send message to set the data in the iobio apps
-          for (var appName in self.apps) {
-            let app = self.apps[appName];
-            if (!app.isLoaded) {
-                self.setData(appName, 500);
-                app.isLoaded = true;
+          self.promiseGetAnalysis(
+            projectId,
+            sampleId,
+            self.paramAnalysisId,
+            self.workflow,
+            {'createIfEmpty': true, 'getCache': true} )
+          .then(function() {
+
+
+            // Send message to set the data in the iobio apps
+            for (var appName in self.apps) {
+              let app = self.apps[appName];
+              if (!app.isLoaded) {
+                  self.setData(appName, 500);
+                  app.isLoaded = true;
+              }
             }
-          }
+
+          })
 
         })
-
       })
+
+
 
     },
 
@@ -1121,6 +1160,9 @@ export default {
 
         self.promiseGetVariants(appName)
         .then(function() {
+          return self.promiseGetVariantData(appName)
+        })
+        .then(function() {
           return self.promiseGetCache(appName)
         })
         .then(function() {
@@ -1139,7 +1181,7 @@ export default {
               'genesPhenolyzer':      self.analysis.genesPhenolyzer,
               'genesManual':          self.analysis.genesManual,
               'variants':             appName == 'gene' || appName == 'genefull'  ? self.variants[appName] : null,
-              'variantData':          appName == 'genefull' ? self.analysisModel.parseFullAnalysisTSV(self.analysis) : null,
+              'variantData':          appName == 'genefull' && self.variantData.genefull && self.variantData.genefull.length > 0 ? self.analysisModel.parseVariantData(self.variantData.genefull) : null,
               'cache':                self.analysisCache[appName] ? self.analysisCache[appName] : null
           };
 
@@ -1245,9 +1287,9 @@ export default {
         var createIfEmpty = options.hasOwnProperty("createIfEmpty") ? options.createIfEmpty : true;
 
 
-        if (idSample && idSample.length > 0) {
+        if (idProject && idProject.length > 0 && idSample && idSample.length > 0) {
 
-          self.analysisModel.promiseGetAnalysesForSample(workflow.id, idSample)
+          self.analysisModel.promiseGetAnalysesForSample(workflow.id, idProject, idSample)
           .then(function(analyses) {
             if (analyses && analyses.length > 0) {
 
@@ -1268,7 +1310,6 @@ export default {
               self.analysis.workflow_id = workflow.id;
               self.analysis.genes = [];
               self.analysis.phenotypes = [];
-              self.analysis.variants = [];
               self.analysis.steps = workflow.steps.map(function(step) {
                 let stepObject = {
                   key: step.key,
@@ -1285,58 +1326,7 @@ export default {
                   })
                 }
                 return stepObject;
-              })
-
-              // TEMP WORKAROUND FOR DEMO
-              self.analysis.full_analysis_records = [
-                "chrom,start,end,ref,alt,gene",
-                "chr12,52200883,52200884,C,T,SCN8A",
-                "chr14,50088956,50088957,C,G,MGAT2",
-                "chr15,41229630,41229631,T,G,DLL4",
-                "chr17,76471351,76471352,G,A,DNAH17",
-                "chr18,29790525,29790526,G,A,MEP1B",
-                "chr1,89660990,89660991,C,G,GBP4",
-                "chr3,183882961,183882962,C,G,DVL3",
-                "chr6,128505803,128505804,A,C,PTPRK",
-                "chr6,27115123,27115127,GACA,G,HIST1H2AH",
-                "chr9,2096705,2096706,A,T,SMARCA2",
-                "chrX,135067674,135067675,G,C,SLC9A6",
-                "chrX,63444309,63444310,C,T,ASB12",
-                "chr1,236702208,236702210,CA,TG,LGALS8",
-                "chr2,228194479,228194481,AG,TT,MFF",
-                "chr3,190106072,190106074,GG,C,CLDN16",
-                "chr5,139931628,139931629,C,GTCG,SRA1",
-                "chr5,139931776,139931779,GGT,A,SRA1",
-                "chr6,41166148,41166155,ACACTGT,GCGCTCC,TREML2",
-                "chr6,150210680,150210685,GTGGC,ATGGT,RAET1E",
-                "chr8,10467624,10467629,TCTGT,ATTAC,RP1L1",
-                "chr8,10467635,10467637,TT,CC,RP1L1",
-                "chr9,138439805,138439809,CGCT,TGCC,OBP2A",
-                "chr15,43925133,43925135,TT,AG,CATSPER2",
-                "chr17,17698534,17698535,G,A,RAI1",
-                "chr17,34432662,34432664,AT,GA,CCL4",
-                "chr19,41386485,41386487,CA,AG,CYP2A7",
-                "chr19,49244218,49244220,CG,AA,IZUMO1",
-                "chr20,62200574,62200576,TG,CA,HELZ2",
-                "chr22,22869544,22869548,TAAT,GAAC,ZNF280A",
-                "chr22,39497451,39497454,AAG,GAC,APOBEC3H",
-                "chr19,40901401,40901402,G,A,PRX",
-                "chr10,51225280,51225281,C,G,AGAP8",
-                "chr16,2345708,2345709,G,A,ABCA3",
-                "chr16,2369714,2369715,T,G,ABCA3",
-                "chr22,45255643,45255644,G,T,PRR5-ARHGAP8",
-                "chr22,45255687,45255688,C,T,PRR5-ARHGAP8",
-                "chr3,126730872,126730873,G,A,PLXNA1",
-                "chr3,126741107,126741108,G,A,PLXNA1",
-                "chr5,41055905,41055906,C,G,MROH2B",
-                "chr5,41061714,41061716,CA,TG,MROH2B",
-                "chr6,32170246,32170247,C,T,NOTCH4",
-                "chr6,32188639,32188642,TCT,CCC,NOTCH4",
-                "chrX,140993988,140993990,TC,CT,MAGEC1",
-                "chrX,140994380,140994381,C,G,MAGEC1",
-                "chrX,140993988,140993990,TC,CT,MAGEC1",
-                "chrX,140994084,140994087,CCC,GCA,MAGEC1"
-              ],
+              }),
               self.analysisModel.promiseAddAnalysis(self.analysis)
               .then(function() {
                 resolve();
@@ -1368,6 +1358,26 @@ export default {
         }
 
       });
+    },
+
+    promiseGetVariantData: function(app) {
+      let self = this;
+      return new Promise(function(resolve, reject) {
+        if (app == 'genefull') {
+          self.analysisModel.promiseGetVariantData(app, self.analysis.project_id)
+          .then(function(variantData) {
+            if (variantData && variantData.data) {
+              self.variantData[app] = variantData.data;
+            } else {
+              self.variantData[app] = null;
+            }
+            resolve();
+          })
+        } else {
+          self.variantData[app] = null;
+          resolve();
+        }
+      })
     },
 
     promiseGetVariants: function(app) {

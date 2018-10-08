@@ -13,9 +13,12 @@ export default class UserSession {
     this.cognitoIdentityRoleArn   = 'arn:aws:iam::806953317734:role/Cognito_cliniobiopoolAuth_Role';
 
     this.dynamodb                 = null;
+
+    this.cognitoUser              = null;
+    this.userAttributes           = null;
   }
 
-  authenticate(userName, password, callback) {
+  authenticate(userName, password, callback, callbackNewPassword) {
     let self = this;
     AWSCognito.config.region = self.region;
     var poolData = {
@@ -28,14 +31,14 @@ export default class UserSession {
         Username : userName,
         Pool : userPool
     };
-    var cognitoUser = new AWSCognito.CognitoIdentityServiceProvider.CognitoUser(userData);
+    this.cognitoUser = new AWSCognito.CognitoIdentityServiceProvider.CognitoUser(userData);
 
     var authenticationData = {
       Username : userName,
       Password : password
     };
     var authDetails = new AWSCognito.CognitoIdentityServiceProvider.AuthenticationDetails(authenticationData);
-    cognitoUser.authenticateUser(authDetails,
+    this.cognitoUser.authenticateUser(authDetails,
     {
       onSuccess: function (result) {
         var cognitoidentity = new AWS.CognitoIdentity();
@@ -63,9 +66,48 @@ export default class UserSession {
       },
 
       newPasswordRequired: function(userAttributes, requiredAttributes) {
-        console.log(err);
-        callback(false);
+        if (callbackNewPassword) {
+          self.userAttributes = userAttributes;
+          delete self.userAttributes.email_verified;
+          delete self.userAttributes.phone_number_verified;
+          callbackNewPassword();
+        } else {
+          console.log("Authentication failed, new password required")
+          callback(false);
+        }
       }
     });
   }
+
+  authenticateNewPassword(newPassword, callback) {
+    let self = this;
+    this.cognitoUser.completeNewPasswordChallenge(newPassword, this.userAttributes,
+      {
+        onSuccess: function (result) {
+          var cognitoidentity = new AWS.CognitoIdentity();
+          AWS.config.region = self.region;
+
+          var logins = {};
+          logins[self.cognitoIdentityLoginName] = result.getIdToken().getJwtToken();
+
+          AWS.config.credentials = new AWS.CognitoIdentityCredentials({
+              IdentityPoolId: self.cognitoPoolId,
+              RoleArn:        self.cognitoIdentityRoleArn,
+              Logins:         logins
+          });
+
+          AWS.config.update({
+            region: self.region
+          });
+          self.dynamodb = new AWS.DynamoDB.DocumentClient({convertEmptyValues: true});
+          callback(true);
+        },
+
+        onFailure: function(err) {
+          console.log(err);
+          callback(false);
+        }
+      });
+  }
+
 }
