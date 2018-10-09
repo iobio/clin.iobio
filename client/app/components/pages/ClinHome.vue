@@ -83,13 +83,14 @@
     color: $text-color
 
   .workflow-summary-title
-    font-size: 18px
+    font-size: 16px
+    padding-top: 3px
 
 
   .workflow-summary-description
     font-family: $app-text-font
-    line-height: 16px
-    font-size: 14px
+    line-height: 15px
+    font-size: 13px
 
 
   .step-summary-panel
@@ -108,8 +109,8 @@
 
   h5
     color:  $text-color
-    margin-top: 8px
-    margin-bottom: 4px
+    margin-top: 2px
+    margin-bottom: 5px
     margin-left: 0px
     font-size: 18px
     display: inline-block
@@ -119,8 +120,8 @@
 
   .preferences-button
     position: absolute
-    top: 5px
-    left: 150px
+    top: 0px
+    left: 240px
     display: inline-block
     margin: 0px
     padding: 0px
@@ -206,16 +207,16 @@
       margin-top: 5px
       margin-bottom: 5px
       margin-left: 10px
-      margin-right: 10px
+      margin-right: 0px
 
     .workflow-summary-panel
-      width: 170px
+      width: 270px
       float: left
       display: inline-block
-      padding: 5px 15px 5px 10px
+      padding: 5px 5px 5px 10px
       overflow-y: auto
       margin-left: 4px
-      margin-right: 10px
+      margin-right: 0px
 
       h5
         margin-bottom: 10px
@@ -296,7 +297,7 @@
       left: initial
 
     h5.workflow-title
-      font-size: 18px
+      font-size: 16px
       margin-top: 0px
 
     .workflow-summary-panel
@@ -421,7 +422,7 @@
   .horizontal-dashboard-card.minimized
 
     .preferences-button
-      top: 8px
+      top: 0px
       left: 0px
       right: initial
 
@@ -587,12 +588,14 @@
           <div class="workflow-summary-panel" v-show="!isMinimized">
             <div>
 
-
-
-              <h5 class="workflow-summary-title"> {{ workflow.title }} </h5>
-
-              <div class="workflow-summary-description">
+              <h5 v-if="!caseSummary"class="workflow-summary-title"> {{ workflow.title }} </h5>
+              <div v-if="!caseSummary" class="workflow-summary-description">
                 {{ workflow.summary}}
+              </div>
+
+              <h5 v-if="caseSummary" class="workflow-summary-title"> {{ caseSummary.name }} </h5>
+              <div v-if="caseSummary" class="workflow-summary-description">
+                {{ caseSummary.phenotypes}}
               </div>
             </div>
           </div>
@@ -706,11 +709,14 @@
           <div class="workflow-summary-panel" >
             <div>
 
-              <h5 class="workflow-title"> {{ workflow.title }} </h5>
-
-
-              <div class="workflow-summary-description" v-show="!isMinimized">
+              <h5 v-if="!caseSummary" class="workflow-title"> {{ workflow.title }} </h5>
+              <div v-if="!caseSummary" class="workflow-summary-description" v-show="!isMinimized">
                 {{ workflow.summary}}
+              </div>
+
+              <h5 v-if="caseSummary" class="workflow-title"> {{ caseSummary.name }} </h5>
+              <div v-if="caseSummary"  class="workflow-summary-description" v-show="!isMinimized">
+                {{ caseSummary.phenotypes}}
               </div>
             </div>
           </div>
@@ -901,6 +907,7 @@ export default {
       idWorkflow: "1",
       workflow: null,
       analysis: null,
+      caseSummary: null,
       analysisCache:     {'gene': null, 'genefull': null},
       analysisCacheKeys: {'gene': null, 'genefull': null},
       variants:          {'gene': null, 'genefull': null},
@@ -1041,32 +1048,38 @@ export default {
         promiseModelInfo = self.analysisModel.promiseGetModelInfo(projectId)
         .then(function(modelInfo) {
 
-          self.modelInfos = [
-           {'relationship': 'proband',
-            'affectedStatus': 'affected',
-            'name':    modelInfo.sampleId.proband,
-            'sample':  modelInfo.sampleId.proband,
-            'vcf':     modelInfo.vcf,
-            'tbi':     null,
-            'bam':     modelInfo.bam.proband,
-            'bai':     null },
-           {'relationship': 'mother',
-            'affectedStatus': 'unaffected',
-            'name':    modelInfo.sampleId.mother,
-            'sample':  modelInfo.sampleId.mother,
-            'vcf':     modelInfo.vcf,
-            'tbi':     null,
-            'bam':     modelInfo.bam.mother,
-            'bai':     null },
-           {'relationship': 'father',
-            'affectedStatus': 'unaffected',
-            'name':    modelInfo.sampleId.father,
-            'sample':  modelInfo.sampleId.father,
-            'vcf':     modelInfo.vcf,
-            'tbi':     null,
-            'bam':     modelInfo.bam.father,
-            'bai':     null },
-          ];
+          self.caseSummary = modelInfo.summary;
+
+          if (self.hubSession == null) {
+            self.modelInfos = [
+             {'relationship': 'proband',
+              'affectedStatus': 'affected',
+              'name':    modelInfo.sampleId.proband,
+              'sample':  modelInfo.sampleId.proband,
+              'vcf':     modelInfo.vcf,
+              'tbi':     null,
+              'bam':     modelInfo.bam.proband,
+              'bai':     null },
+             {'relationship': 'mother',
+              'affectedStatus': 'unaffected',
+              'name':    modelInfo.sampleId.mother,
+              'sample':  modelInfo.sampleId.mother,
+              'vcf':     modelInfo.vcf,
+              'tbi':     null,
+              'bam':     modelInfo.bam.mother,
+              'bai':     null },
+             {'relationship': 'father',
+              'affectedStatus': 'unaffected',
+              'name':    modelInfo.sampleId.father,
+              'sample':  modelInfo.sampleId.father,
+              'vcf':     modelInfo.vcf,
+              'tbi':     null,
+              'bam':     modelInfo.bam.father,
+              'bai':     null },
+            ];
+
+          }
+
         })
 
       } else {
