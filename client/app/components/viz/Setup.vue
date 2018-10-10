@@ -15,6 +15,10 @@
     color:   $app-header-color
 
 
+  h5
+    margin-bottom: 5px
+    margin-top: 5px
+
   .card
     min-height: 70px !important
 
@@ -50,7 +54,7 @@
     <div style="text-xs-center" >
       <span class="card-title">Setup</span>
       <span style="float:right">
-        <v-btn color="primary">
+        <v-btn v-if="false" color="primary">
           Apply
         </v-btn>
       </span>
@@ -59,7 +63,7 @@
     <v-card light class="mt-4">
       <h4 >Samples</h4>
       <div class="model-info-panel">
-        <div  v-for="modelInfo in modelInfos" :key="modelInfo.sample">
+        <div  v-for="modelInfo in modelInfos" :key="modelInfo.sample" style="margin-bottom: 15px">
           <h5>{{ modelInfo.relationship}}  {{ modelInfo.sample }}</h5>
           <div class="file-info" >{{ modelInfo.vcf }}</div>
           <div class="file-info">{{ modelInfo.bam }}</div>
@@ -69,7 +73,7 @@
 
 
 
-    <v-card class="mt-2" light>
+    <v-card v-if="false" class="mt-2" light>
       <h4>Candidate genes</h4>
         <v-layout row>
           <v-flex xs3>
@@ -83,7 +87,7 @@
     </v-card>
 
 
-    <v-card class="mt-2" light >
+    <v-card v-if="false" class="mt-2" light >
         <h4 >Variant filters in candidate genes</h4>
         <v-layout row>
           <v-flex xs1>
@@ -134,7 +138,7 @@
         </v-layout>
     </v-card>
 
-    <v-card light class="mt-2">
+    <v-card v-if="false" light class="mt-2">
     <h4 >Variant filters in all genes</h4>
       <v-layout row>
         <v-flex xs1>
