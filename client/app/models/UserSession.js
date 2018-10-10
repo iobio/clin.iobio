@@ -18,8 +18,14 @@ export default class UserSession {
     this.userAttributes           = null;
   }
 
+  authenticateMosaic(userName, password, callback, callbackNewPassword) {
+    let self = this;
+    self.authenticate("clin.session", password, callback, callbackNewPassword);
+  }
+
   authenticate(userName, password, callback, callbackNewPassword) {
     let self = this;
+
     AWSCognito.config.region = self.region;
     var poolData = {
       UserPoolId : self.userPoolId,

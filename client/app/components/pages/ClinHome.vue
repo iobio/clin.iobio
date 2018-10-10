@@ -565,10 +565,16 @@
 
   <div id="clin-container" style="display:flex" :class="theme">
     <login
-      v-if="!isAuthenticated"
+      v-if="!hubSession && !isAuthenticated"
       :userSession="userSession"
       @authenticated="onAuthenticated">
     </login>
+
+    <login-mosaic
+      v-if="hubSession && !isAuthenticated"
+      :userSession="userSession"
+      @authenticated-mosaic="onAuthenticatedMosaic">
+    </login-mosaic>
 
 
     <v-toolbar  v-if="!isSidebar && isAuthenticated && workflow && analysis "
@@ -838,6 +844,7 @@
 import Setup from  '../viz/Setup.vue'
 import Report from '../viz/Report.vue'
 import Login from  '../partials/Login.vue'
+import LoginMosaic from  '../partials/LoginMosaic.vue'
 import PreferencesMenu from  '../partials/PreferencesMenu.vue'
 
 import AnalysisModel from  '../../models/AnalysisModel.js'
@@ -850,6 +857,7 @@ export default {
   components: {
     Setup,
     Login,
+    LoginMosaic,
     Report,
     PreferencesMenu
   },
@@ -1113,6 +1121,91 @@ export default {
 
         })
       })
+
+    },
+
+    onAuthenticatedMosaic: function(researcher, project) {
+      let self = this;
+      self.isAuthenticated = true;
+      self.analysisModel = new AnalysisModel(self.userSession);
+
+
+      let sampleToProjectMap = {
+        "16-103-140939": "A474",
+        "16-103-140941": "A474",
+        "16-103-140940": "A474",
+
+        "16-243-140846": "A476",
+        "16-243-140843": "A476",
+        "16-243-140845": "A476",
+
+        "NA12891.exome": "platinum",
+        "NA12892.exome": "platinum",
+        "NA12878.exome": "platinum",
+        "NA12877.exome": "platinum"
+      }
+
+      let sampleId = null;
+      if (researcher && researcher.length > 0) {
+        sampleId = researcher;
+      } else if (self.paramSampleId && self.paramSampleId.length > 0) {
+        sampleId = self.paramSampleId;
+      } else {
+        sampleId = 'test-sample';
+      }
+
+      let projectId = null;
+      if (project && project.length > 0) {
+        projectId = project;
+      } else if (self.paramProjectId && self.paramProjectId.length > 0) {
+        projectId = self.paramProjectId;
+      } else {
+        self.modelInfos.forEach(function(modelInfo) {
+          if (!projectId) {
+            if (modelInfo.sample) {
+              projectId = sampleToProjectMap[modelInfo.sample];
+            } else if (modelInfo.name) {
+              projectId = sampleToProjectMap[modelInfo.name];
+            }
+          }
+        })
+      }
+
+      if (projectId != null) {
+        self.analysisModel.promiseGetModelInfo(projectId)
+          .then(function(modelInfo) {
+
+            self.caseSummary = modelInfo.summary;
+
+            self.promiseGetWorkflow(self.idWorkflow)
+            .then(function() {
+
+
+              self.promiseGetAnalysis(
+                projectId,
+                sampleId,
+                self.paramAnalysisId,
+                self.workflow,
+                {'createIfEmpty': true, 'getCache': true} )
+              .then(function() {
+
+
+                // Send message to set the data in the iobio apps
+                for (var appName in self.apps) {
+                  let app = self.apps[appName];
+                  if (!app.isLoaded) {
+                      self.setData(appName, 500);
+                      app.isLoaded = true;
+                  }
+                }
+
+              })
+
+            })
+        })
+      } else {
+        alert("Unable to get project for sample passed from Mosaic");
+      }
 
 
 

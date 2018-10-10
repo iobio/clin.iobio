@@ -1,5 +1,5 @@
 /*
- * Login.vue
+ * LoginDeprecated.vue
  *
  */
 <style lang="sass"  >
@@ -92,7 +92,7 @@
 import UserSession  from  '../../models/UserSession.js'
 
 export default {
-  name: 'login',
+  name: 'login-deprecated',
   components: {
   },
   props: {
