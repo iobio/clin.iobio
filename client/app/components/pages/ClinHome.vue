@@ -894,10 +894,10 @@ export default {
             'bam':       'http://localhost:4027'
         },
         'dev': {
-            'gene':      'http://dev.gene.iobio.io/?launchedFromClin=true',
-            'genefull':  'http://dev.gene.iobio.io/?launchedFromClin=true&mode=full',
-            'genepanel': 'http://dev.panel.iobio.io/?launchedFromClin=true',
-            'bam':       'http://newbam.iobio.io'
+            'gene':      'https://dev.gene.iobio.io/?launchedFromClin=true',
+            'genefull':  'https://dev.gene.iobio.io/?launchedFromClin=true&mode=full',
+            'genepanel': 'https://dev.panel.iobio.io/?launchedFromClin=true',
+            'bam':       'https://newbam.iobio.io'
         },
       },
 
