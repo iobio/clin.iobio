@@ -515,9 +515,11 @@ export default {
 
       if (self.phenotypes) {
         self.phenotypes.forEach(function(phenotypeArray) {
-          phenotypeArray.forEach(function(phenotype) {
-            phenotypeList.push(phenotype);
-          })
+          if (phenotypeArray) {
+            phenotypeArray.forEach(function(phenotype) {
+              phenotypeList.push(phenotype);
+            })
+          }
         })
       }
 
