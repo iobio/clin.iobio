@@ -84,7 +84,7 @@ export default {
       self.userSession.authenticateMosaic(self.researcher, self.password,
         function(success) {
           if (success) {
-            self.$emit('authenticated-mosaic', self.userName);
+            self.$emit('authenticated-mosaic', self.researcher);
             self.isAuthenticated = true;
           }
         },
