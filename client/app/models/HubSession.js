@@ -150,12 +150,12 @@ export default class HubSession {
     // If the sample selected doesn't have a mother and father (isn't a proband), find
     // the proband by looking for a child with mother and father filled in and affected status
     if (probandIndex == -1) {
-      probandIndex = raw_pedigree.findIndex(d => ( d.affection_status == 2 && d.pedigree.maternal_id && d.pedigree.paternal_id ) );
+      probandIndex = raw_pedigree.findIndex(d => ( d.pedigree.affection_status == 2 && d.pedigree.maternal_id && d.pedigree.paternal_id ) );
     }
     // If the sample selected doesn't have a mother and father (isn't a proband), find
     // the proband by looking for a child with mother and father filled in and unknown affected status
     if (probandIndex == -1) {
-      probandIndex = raw_pedigree.findIndex(d => ( d.affection_status == 0 && d.pedigree.maternal_id && d.pedigree.paternal_id ) );
+      probandIndex = raw_pedigree.findIndex(d => ( d.pedigree.affection_status == 0 && d.pedigree.maternal_id && d.pedigree.paternal_id ) );
     }
 
 
