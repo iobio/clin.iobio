@@ -914,7 +914,10 @@ export default {
       analysisCache:     {'gene': null, 'genefull': null},
       analysisCacheKeys: {'gene': null, 'genefull': null},
       variants:          {'gene': null, 'genefull': null},
-      variantData:       {'gene': null, 'genefull': null}
+      variantData:       {'gene': null, 'genefull': null},
+
+
+      clearSavedAnalysis: false
 
     }
 
@@ -1022,10 +1025,11 @@ export default {
       this.isMinimized = isMinimized
     },
 
-    onAuthenticated: function(researcher, project) {
+    onAuthenticated: function(researcher, project, clearSavedData) {
       let self = this;
       self.isAuthenticated = true;
       self.analysisModel = new AnalysisModel(self.userSession);
+      self.clearSavedAnalysis = clearSavedData;
 
       let sampleId = null;
       if (researcher && researcher.length > 0) {
@@ -1396,6 +1400,16 @@ export default {
               self.analysis = analyses[0];
               self.idAnalysis = self.analysis.id;
 
+              if (self.clearSavedAnalysis) {
+                self.analysis.genes = [];
+                self.analysis.genesGtr = [];
+                self.analysis.genesPhenolyzer = [];
+                self.analysis.genesManual = [];
+                self.analysis.genesReport = [];
+                self.analysis.phenotypes = [];
+              }
+
+
               resolve();
 
             } else if (createIfEmpty) {
@@ -1487,8 +1501,17 @@ export default {
 
           self.analysisModel.promiseGetVariants(app, self.analysis.id)
           .then(function(data) {
-            self.variants[app] = data;
-            resolve();
+
+            if (self.clearSavedAnalysis) {
+              self.promiseDeleteVariants(app, data)
+              .then(function() {
+                self.variants = [];
+                resolve();
+              })
+            } else {
+              self.variants[app] = data;
+              resolve();
+            }
           })
           .catch(function(error) {
             let msg = "Problem in ClinHome.promiseGetVariants() for " + app + ": " + error;
@@ -1516,46 +1539,62 @@ export default {
 
           self.analysisModel.promiseGetCache(app, self.analysis.id)
           .then(function(data) {
-
-            // For candidate gene variant analysis, we only want to keep cache items
-            // for relevant genes
-            let applicableGenes = [];
-            if (app == 'gene') {
-              applicableGenes = self.analysis.genes;
-            } else if (app == 'genefull') {
-              let geneMap = {};
-              self.variants.genefull.forEach(function(v) {
-                geneMap[v.gene] = true;
+            if (self.clearSavedAnalysis) {
+              let cache_keys = data.map(function(cacheItem) {
+                return cacheItem.cache_key;
               })
-              for (var geneName in geneMap) {
-                applicableGenes.push(geneName);
-              }
+              return self.analysisModel.promiseDeleteCache(app, self.analysis.id, cache_keys);
+            } else {
+              return Promise.resolve(data);
             }
-            data.forEach(function(cacheItem) {
-              var keyTokens = cacheItem.cache_key.split(self.analysisModel.DELIM);
-              // TODO:  Use common class cache helper to parse key
-              if (keyTokens.length > 2) {
-                let gene = keyTokens[2];
-                if (applicableGenes.indexOf(gene) >= 0) {
-                  cacheItems.push(cacheItem);
-                } else {
-                  cacheKeysToDelete.push(cacheItem.cache_key);
+
+          })
+          .then(function(data) {
+            if (self.clearSavedAnalysis) {
+              self.analysisCache[app] = null;
+              self.analysisCacheKeys[app] = null;
+              resolve();
+            } else {
+              // For candidate gene variant analysis, we only want to keep cache items
+              // for relevant genes
+              let applicableGenes = [];
+              if (app == 'gene') {
+                applicableGenes = self.analysis.genes;
+              } else if (app == 'genefull') {
+                let geneMap = {};
+                self.variants.genefull.forEach(function(v) {
+                  geneMap[v.gene] = true;
+                })
+                for (var geneName in geneMap) {
+                  applicableGenes.push(geneName);
                 }
               }
-            })
-            self.analysisCache[app] = cacheItems;
+              data.forEach(function(cacheItem) {
+                var keyTokens = cacheItem.cache_key.split(self.analysisModel.DELIM);
+                // TODO:  Use common class cache helper to parse key
+                if (keyTokens.length > 2) {
+                  let gene = keyTokens[2];
+                  if (applicableGenes.indexOf(gene) >= 0) {
+                    cacheItems.push(cacheItem);
+                  } else {
+                    cacheKeysToDelete.push(cacheItem.cache_key);
+                  }
+                }
+              })
+              self.analysisCache[app] = cacheItems;
 
 
 
-            self.analysisCacheKeys[app] = data.map(function(cacheItem) {
-              return cacheItem.cache_key;
-            });
+              self.analysisCacheKeys[app] = data.map(function(cacheItem) {
+                return cacheItem.cache_key;
+              });
 
 
-            self.analysisModel.promiseDeleteCache(app, self.analysis.id, cacheKeysToDelete)
-            .then(function() {
-              resolve();
-            })
+              self.analysisModel.promiseDeleteCache(app, self.analysis.id, cacheKeysToDelete)
+              .then(function() {
+                resolve();
+              })
+            }
 
           })
           .catch(function(error) {

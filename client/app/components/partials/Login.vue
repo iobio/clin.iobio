@@ -55,6 +55,15 @@
                 You are required to set a new password.
               </v-flex>
 
+
+              <v-flex xs12 v-if="isAuthenticated && !newPasswordRequired">
+                <v-switch class="clear-cache-switch"
+                  label="Clear saved data"
+                  v-model="clearSavedData"
+                  >
+                </v-switch>
+              </v-flex>
+
               <v-flex xs12 v-if="isAuthenticated && !newPasswordRequired">
                 <v-select
                     label="Project"
@@ -64,6 +73,7 @@
                     persistent-hint
                 ></v-select>
               </v-flex>
+
 
 
 
@@ -113,7 +123,8 @@ export default {
       newPassword: null,
       showNewPasswordMessage: false,
       launchUrl: false,
-      isAuthenticated: false
+      isAuthenticated: false,
+      clearSavedData: false
     };
   },
   mounted() {
@@ -123,7 +134,7 @@ export default {
     project: function() {
       let self = this;
       if (self.isAuthenticated && self.project && self.project.length > 0) {
-         self.$emit('authenticated', self.userName, self.project)
+         self.$emit('authenticated', self.userName, self.project, self.clearSavedData)
       }
     }
   },
