@@ -56,6 +56,7 @@
               </v-flex>
 
 
+<!--
               <v-flex xs12 v-if="isAuthenticated && !newPasswordRequired">
                 <v-switch class="clear-cache-switch"
                   label="Clear saved data"
@@ -63,6 +64,13 @@
                   >
                 </v-switch>
               </v-flex>
+
+
+              <v-flex xs12 v-if="clearSavedData">
+                <v-text-field  v-model="clearSavedDataResearcher" label="Enter your user name" type="text">
+                </v-text-field>
+              </v-flex>
+            -->
 
               <v-flex xs12 v-if="isAuthenticated && !newPasswordRequired">
                 <v-select
@@ -124,7 +132,8 @@ export default {
       showNewPasswordMessage: false,
       launchUrl: false,
       isAuthenticated: false,
-      clearSavedData: false
+      clearSavedData: false,
+      clearSavedDataResearcher: null
     };
   },
   mounted() {
@@ -134,7 +143,11 @@ export default {
     project: function() {
       let self = this;
       if (self.isAuthenticated && self.project && self.project.length > 0) {
-         self.$emit('authenticated', self.userName, self.project, self.clearSavedData)
+        if (self.clearSavedData) {
+           self.$emit('authenticated', self.clearSavedDataResearcher, self.project, self.clearSavedData)
+        } else {
+           self.$emit('authenticated', self.userName, self.project, self.clearSavedData)
+        }
       }
     }
   },

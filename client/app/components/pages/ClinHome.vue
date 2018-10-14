@@ -1097,36 +1097,42 @@ export default {
         self.promiseGetWorkflow(self.idWorkflow)
         .then(function() {
 
+          if (self.clearSavedAnalysis) {
+            self.promiseClearAnalysis(projectId, sampleId, self.workflow)
+          } else {
+            self.promiseGetAnalysis(
+              projectId,
+              sampleId,
+              self.paramAnalysisId,
+              self.workflow,
+              {'createIfEmpty': true, 'getCache': true} )
+            .then(function() {
 
-          self.promiseGetAnalysis(
-            projectId,
-            sampleId,
-            self.paramAnalysisId,
-            self.workflow,
-            {'createIfEmpty': true, 'getCache': true} )
-          .then(function() {
 
-
-            // Send message to set the data in the iobio apps
-            for (var appName in self.apps) {
-              let app = self.apps[appName];
-              if (!app.isLoaded) {
-                  self.setData(appName, 500);
-                  app.isLoaded = true;
+              // Send message to set the data in the iobio apps
+              for (var appName in self.apps) {
+                let app = self.apps[appName];
+                if (!app.isLoaded) {
+                    self.setData(appName, 500);
+                    app.isLoaded = true;
+                }
               }
-            }
 
-          })
+            })
+
+          }
+
 
         })
       })
 
     },
 
-    onAuthenticatedMosaic: function(researcher, project) {
+    onAuthenticatedMosaic: function(researcher, clearSavedData) {
       let self = this;
       self.isAuthenticated = true;
       self.analysisModel = new AnalysisModel(self.userSession);
+      self.clearSavedAnalysis = clearSavedData;
 
 
       let sampleToProjectMap = {
@@ -1154,9 +1160,7 @@ export default {
       }
 
       let projectId = null;
-      if (project && project.length > 0) {
-        projectId = project;
-      } else if (self.paramProjectId && self.paramProjectId.length > 0) {
+      if (self.paramProjectId && self.paramProjectId.length > 0) {
         projectId = self.paramProjectId;
       } else {
         self.modelInfos.forEach(function(modelInfo) {
@@ -1466,6 +1470,80 @@ export default {
           })
           .catch(function(err) {
           reject(err);
+          })
+
+        }
+
+      });
+    },
+
+
+
+    promiseClearAnalysis: function(idProject, idSample, workflow) {
+      let self = this;
+      return new Promise(function(resolve, reject) {
+
+
+        if (idProject && idProject.length > 0 && idSample && idSample.length > 0) {
+
+          self.analysisModel.promiseGetAnalysesForSample(workflow.id, idProject, idSample)
+          .then(function(analyses) {
+            if (analyses && analyses.length > 0) {
+
+
+              self.analysis = analyses[0];
+              self.idAnalysis = self.analysis.id;
+
+              if (self.clearSavedAnalysis) {
+                self.analysis.genes = [];
+                self.analysis.genesGtr = [];
+                self.analysis.genesPhenolyzer = [];
+                self.analysis.genesManual = [];
+                self.analysis.genesReport = [];
+                self.analysis.phenotypes = [];
+              }
+
+              self.analysisModel.promiseGetVariants('gene', self.analysis.id)
+              .then(function(data) {
+                return self.promiseDeleteVariants('gene', data);
+              })
+              .then(function(data) {
+                return self.analysisModel.promiseGetCache('gene', self.analysis.id);
+              })
+              .then(function(data) {
+                let cache_keys = data.map(function(cacheItem) {
+                  return cacheItem.cache_key;
+                })
+                return self.analysisModel.promiseDeleteCache('gene', self.analysis.id, cache_keys)
+              })
+
+              self.analysisModel.promiseGetVariants('genefull', self.analysis.id)
+              .then(function(data) {
+                return self.promiseDeleteVariants('genefull', data);
+              })
+              .then(function(data) {
+                return self.analysisModel.promiseGetCache('genefull', self.analysis.id);
+              })
+              .then(function(data) {
+                let cache_keys = data.map(function(cacheItem) {
+                  return cacheItem.cache_key;
+                })
+                return self.analysisModel.promiseDeleteCache('genefull', self.analysis.id, cache_keys)
+              })
+              .then(function() {
+                resolve();
+              })
+              .catch(function(error) {
+                console.log("Unable to clear analysis " + error);
+                reject(error);
+              })
+            } else {
+              resolve();
+            }
+          })
+          .catch(function(err) {
+            console.log("Unable to get analysis " + err);
+            reject(err);
           })
 
         }
