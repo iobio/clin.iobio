@@ -1005,7 +1005,7 @@ export default {
 
         self.hubSession = new HubSession();
         // For now, just hardcode is_pedgree = true
-        self.hubSession.promiseInit(self.paramSampleId, self.paramSource, true)
+        self.hubSession.promiseInit(self.paramSampleId, self.paramSource, true, self.paramProjectId)
         .then(modelInfos => {
           self.modelInfos = modelInfos;
         })
