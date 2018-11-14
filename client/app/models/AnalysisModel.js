@@ -95,6 +95,28 @@ export default class AnalysisModel {
 
   }
 
+  promiseDeleteAnalysis(idAnalysis) {
+    let self = this;
+    return new Promise(function(resolve, reject) {
+      var params = {
+        TableName: self.analysisTable,
+        Key:{
+            "id": idAnalysis
+        }
+      };
+
+      self.userSession.dynamodb.delete(params, function(err, data) {
+        if (err) {
+          console.log(err);
+          reject(err);
+        } else {
+          resolve();
+        }
+      });
+
+    });
+  }
+
   promiseGetVariantData(app, id) {
     let self = this;
 
