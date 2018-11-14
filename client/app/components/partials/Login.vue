@@ -56,7 +56,6 @@
               </v-flex>
 
 
-<!--
               <v-flex xs12 v-if="isAuthenticated && !newPasswordRequired">
                 <v-switch class="clear-cache-switch"
                   label="Clear saved data"
@@ -70,7 +69,7 @@
                 <v-text-field  v-model="clearSavedDataResearcher" label="Enter your user name" type="text">
                 </v-text-field>
               </v-flex>
-            -->
+
 
               <v-flex xs12 v-if="isAuthenticated && !newPasswordRequired">
                 <v-select
@@ -122,9 +121,7 @@ export default {
       password: null,
       project: null,
       projects: [
-        "platinum",
-        "A474",
-        "A476"
+        "platinum"
       ],
 
       newPasswordRequired: false,
