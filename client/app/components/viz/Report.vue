@@ -432,6 +432,9 @@
 
 
                           </div>
+                          <div>
+                            CANDIDATE GENE
+                          </div>
                         </v-list-tile-title>
 
                         <v-list-tile-sub-title >
@@ -586,6 +589,9 @@ export default {
         theVariants = this.variants.filter(function(v) {
           return v.interpretation == interpretation;
         });
+        theVariants.forEach(function(v) {
+          v.candidateGene = true;
+        })
       }
       if (analysisKey == 'genefull' && this.variantsFullAnalysis) {
         theVariants = this.variantsFullAnalysis.filter(function(v) {
