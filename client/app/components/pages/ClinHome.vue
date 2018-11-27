@@ -798,17 +798,23 @@
 
 
       <div id="gene-panel-iframe" v-show="!isAuthenticated || currentStep == 2">
-        <iframe  :src="apps.genepanel.url" style="width:100%;height:100%" frameBorder="0">
+        <iframe
+        :src="apps.genepanel.url + '&iobio_source=' + iobioSource"
+        style="width:100%;height:100%" frameBorder="0">
         </iframe>
       </div>
 
       <div id="gene-iframe" v-show="!isAuthenticated || currentStep == 3">
-        <iframe  :src="apps.gene.url" style="width:100%;height:100%" frameBorder="0">
+        <iframe
+        :src="apps.gene.url"
+        style="width:100%;height:100%" frameBorder="0">
         </iframe>
       </div>
 
       <div id="genefull-iframe" v-show="!isAuthenticated || currentStep == 4">
-        <iframe  :src="apps.gene.url + '&mode=full'" style="width:100%;height:100%" frameBorder="0">
+        <iframe
+        :src="apps.gene.url + '&mode=full'"
+        style="width:100%;height:100%" frameBorder="0">
         </iframe>
       </div>
 
@@ -865,6 +871,7 @@ export default {
     paramTokenType:   null,
     paramToken:       null,
     paramSource:      null,
+    paramIobioSource: null,
 
     paramTheme: null
   },
@@ -880,6 +887,8 @@ export default {
       userSession:  null,
       hubSession: null,
       modelInfos: null,
+
+      iobioSource: self.paramIobioSource ? self.paramIobioSource : 'hub-chpc.iobio.io',
 
       appUrls: {
         'localhost': {
@@ -1064,25 +1073,25 @@ export default {
               'name':    modelInfo.sampleId.proband,
               'sample':  modelInfo.sampleId.proband,
               'vcf':     modelInfo.vcf,
-              'tbi':     null,
-              'bam':     modelInfo.bam.proband,
-              'bai':     null },
+              'tbi':     modelInfo.tbi,
+              'bam':     modelInfo.bam ? modelInfo.bam.proband : null,
+              'bai':     modelInfo.bai ? modelInfo.bai.proband : null, },
              {'relationship': 'mother',
               'affectedStatus': 'unaffected',
               'name':    modelInfo.sampleId.mother,
               'sample':  modelInfo.sampleId.mother,
               'vcf':     modelInfo.vcf,
-              'tbi':     null,
-              'bam':     modelInfo.bam.mother,
-              'bai':     null },
+              'tbi':     modelInfo.tbi,
+              'bam':     modelInfo.bam ? modelInfo.bam.mother : null,
+              'bai':     modelInfo.bai ? modelInfo.bai.mother : null},
              {'relationship': 'father',
               'affectedStatus': 'unaffected',
               'name':    modelInfo.sampleId.father,
               'sample':  modelInfo.sampleId.father,
               'vcf':     modelInfo.vcf,
-              'tbi':     null,
-              'bam':     modelInfo.bam.father,
-              'bai':     null },
+              'tbi':     modelInfo.tbi,
+              'bam':     modelInfo.bam ? modelInfo.bam.father : null,
+              'bai':     modelInfo.bai ? modelInfo.bai.father : null },
             ];
 
           }
@@ -1252,6 +1261,33 @@ export default {
       return theTask ? theTask.name : "";
     },
 
+    isS3(modelInfos) {
+      let self = this;
+      let S3_URL = "https://s3.amazonaws.com";
+      return self.modelInfos.filter(function(modelInfo) {
+
+        let vcfS3 = false;
+        let bamS3 = false;
+        if (modelInfo.vcf) {
+          if (modelInfo.vcf.indexOf(S3_URL) == 0) {
+            vcfS3 = true;
+          }
+        } else {
+          vcfS3 = true;
+        }
+
+        if (modelInfo.bam) {
+          if (modelInfo.vcf.indexOf(S3_URL) == 0) {
+           bamS3 = true;
+          }
+        } else {
+           bamS3 = true;
+        }
+
+        return vcfS3 && bamS3;
+      }).length > 0;
+    },
+
 
     setData: function(appName, pauseMillisec=0) {
       let self = this;
@@ -1278,6 +1314,7 @@ export default {
               type:                  'set-data',
               sender:                'clin.iobio',
               receiver:               appName,
+              'iobioSource':          self.isS3() ? 'nv-prod.iobio.io' : self.iobioSource,
               'isFrameVisible':       app.step == self.currentStep,
               'modelInfo':            probandModelInfo[0],
               'modelInfos':           self.modelInfos,

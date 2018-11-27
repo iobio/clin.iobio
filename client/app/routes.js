@@ -1,3 +1,4 @@
+
 import jQuery               from 'jquery'
 global.jQuery = jQuery
 global.$ = jQuery
@@ -50,12 +51,14 @@ const routes = [
 
         paramDebug:            route.query.debug,
 
-        paramAnalysisId:            route.query.analysis_uuid,
-        paramProjectId:             route.query.project_uuid,
-        paramSampleId:              route.query.sample_uuid,
+        paramAnalysisId:            route.query.analysis_id,
+        paramProjectId:             route.query.project_id,
+        paramSampleId:              route.query.sample_id,
         paramTokenType:             route.query.token_type,
         paramToken:                 route.query.access_token,
         paramSource:                route.query.source,
+
+        paramIobioSource:           route.query.iobio_source,
 
         paramTheme:                 route.query.theme
     })
