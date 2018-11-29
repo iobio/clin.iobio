@@ -872,6 +872,8 @@ export default {
     paramToken:       null,
     paramSource:      null,
     paramIobioSource: null,
+    paramGeneBatchSize:        null,
+    paramGeneIgnoreAlignments: null,
 
     paramTheme: null
   },
@@ -924,6 +926,8 @@ export default {
       analysisCacheKeys: {'gene': null, 'genefull': null},
       variants:          {'gene': null, 'genefull': null},
       variantData:       {'gene': null, 'genefull': null},
+
+      geneIgnoreAlignments: false,
 
 
       clearSavedAnalysis: false
@@ -1008,13 +1012,17 @@ export default {
       self.apps.genepanel.url = self.appUrls[appTarget].genepanel;
       self.apps.gene.url      = self.appUrls[appTarget].gene;
 
+      if (self.paramGeneIgnoreAlignments != null && self.paramGeneIgnoreAlignments.length > 0) {
+        self.geneIgnoreAlignments = self.paramGeneIgnoreAlignments == 'true' ? true : false;
+      }
+
 
       if (localStorage.getItem('hub-iobio-tkn') && localStorage.getItem('hub-iobio-tkn').length > 0
           && self.paramSampleId && self.paramSource) {
 
         self.hubSession = new HubSession();
         // For now, just hardcode is_pedgree = true
-        self.hubSession.promiseInit(self.paramSampleId, self.paramSource, true, self.paramProjectId)
+        self.hubSession.promiseInit(self.paramSampleId, self.paramSource, true, self.paramProjectId, self.geneIgnoreAlignments)
         .then(modelInfos => {
           self.modelInfos = modelInfos;
         })
@@ -1074,24 +1082,24 @@ export default {
               'sample':  modelInfo.sampleId.proband,
               'vcf':     modelInfo.vcf,
               'tbi':     modelInfo.tbi,
-              'bam':     modelInfo.bam ? modelInfo.bam.proband : null,
-              'bai':     modelInfo.bai ? modelInfo.bai.proband : null, },
+              'bam':     !self.geneIgnoreAlignments && modelInfo.bam ? modelInfo.bam.proband : null,
+              'bai':     !self.geneIgnoreAlignments && modelInfo.bai ? modelInfo.bai.proband : null, },
              {'relationship': 'mother',
               'affectedStatus': 'unaffected',
               'name':    modelInfo.sampleId.mother,
               'sample':  modelInfo.sampleId.mother,
               'vcf':     modelInfo.vcf,
               'tbi':     modelInfo.tbi,
-              'bam':     modelInfo.bam ? modelInfo.bam.mother : null,
-              'bai':     modelInfo.bai ? modelInfo.bai.mother : null},
+              'bam':     !self.geneIgnoreAlignments && modelInfo.bam ? modelInfo.bam.mother : null,
+              'bai':     !self.geneIgnoreAlignments && modelInfo.bai ? modelInfo.bai.mother : null},
              {'relationship': 'father',
               'affectedStatus': 'unaffected',
               'name':    modelInfo.sampleId.father,
               'sample':  modelInfo.sampleId.father,
               'vcf':     modelInfo.vcf,
               'tbi':     modelInfo.tbi,
-              'bam':     modelInfo.bam ? modelInfo.bam.father : null,
-              'bai':     modelInfo.bai ? modelInfo.bai.father : null },
+              'bam':     !self.geneIgnoreAlignments && modelInfo.bam ? modelInfo.bam.father : null,
+              'bai':     !self.geneIgnoreAlignments && modelInfo.bai ? modelInfo.bai.father : null },
             ];
 
           }
@@ -1181,41 +1189,46 @@ export default {
         })
       }
 
-      if (projectId != null) {
-        self.analysisModel.promiseGetModelInfo(projectId)
-          .then(function(modelInfo) {
-
+      let getModelPromise = null;
+      if (self.paramProjectId == null ||  self.paramProjectId.length == 0) {
+        getModelPromise = self.analysisModel.promiseGetModelInfo(projectId)
+        .then(function() {
             self.caseSummary = modelInfo.summary;
-
-            self.promiseGetWorkflow(self.idWorkflow)
-            .then(function() {
-
-
-              self.promiseGetAnalysis(
-                projectId,
-                sampleId,
-                self.paramAnalysisId,
-                self.workflow,
-                {'createIfEmpty': true, 'getCache': true} )
-              .then(function() {
-
-
-                // Send message to set the data in the iobio apps
-                for (var appName in self.apps) {
-                  let app = self.apps[appName];
-                  if (!app.isLoaded) {
-                      self.setData(appName, 500);
-                      app.isLoaded = true;
-                  }
-                }
-
-              })
-
-            })
         })
       } else {
-        alert("Unable to get project for sample passed from Mosaic");
+        getModelPromise = Promise.resolve();
       }
+
+      getModelPromise
+      .then(function(modelInfo) {
+
+
+        self.promiseGetWorkflow(self.idWorkflow)
+        .then(function() {
+
+
+          self.promiseGetAnalysis(
+            projectId,
+            sampleId,
+            self.paramAnalysisId,
+            self.workflow,
+            {'createIfEmpty': true, 'getCache': true} )
+          .then(function() {
+
+
+            // Send message to set the data in the iobio apps
+            for (var appName in self.apps) {
+              let app = self.apps[appName];
+              if (!app.isLoaded) {
+                  self.setData(appName, 500);
+                  app.isLoaded = true;
+              }
+            }
+
+          })
+
+        })
+      })
 
 
 
@@ -1328,8 +1341,11 @@ export default {
               'variantData':          appName == 'genefull' && self.variantData.genefull && self.variantData.genefull.length > 0 ? self.analysisModel.parseVariantData(self.variantData.genefull) : null,
               'cache':                self.analysisCache[appName] ? self.analysisCache[appName] : null
           };
+          if (self.paramGeneBatchSize & (appName == 'gene' || appName == 'genefull')) {
+            msgObject.batchSize = +self.paramGeneBatchSize;
+          }
 
-        self.sendAppMessage(appName, msgObject);
+          self.sendAppMessage(appName, msgObject);
 
         })
 

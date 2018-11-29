@@ -20,7 +20,7 @@ export default class UserSession {
 
   authenticateMosaic(userName, password, callback, callbackNewPassword) {
     let self = this;
-    self.authenticate("clin.session", password, callback, callbackNewPassword);
+    self.authenticate(userName, password, callback, callbackNewPassword);
   }
 
   authenticate(userName, password, callback, callbackNewPassword) {
