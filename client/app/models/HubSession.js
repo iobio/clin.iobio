@@ -7,7 +7,7 @@ export default class HubSession {
     this.apiVersion =  '/apiv1';
   }
 
-  promiseInit(sampleId, source, isPedigree, projectId, includeBams=true ) {
+  promiseInit(sampleId, source, isPedigree, projectId, ignoreAlignments=false ) {
     let self = this;
     self.api = source + self.apiVersion;
 
@@ -59,7 +59,7 @@ export default class HubSession {
                       'tbi':            theSample.files.tbi == null || theSample.files.tbi.indexOf(theSample.files.vcf) == 0 ? null : theSample.files.tbi};
                     modelInfos.push(modelInfo);
 
-                    if (includeBams) {
+                    if (!ignoreAlignments) {
                       if (theSample.files.bam != null) {
                         modelInfo.bam = theSample.files.bam;
                         if (theSample.files.bai) {
