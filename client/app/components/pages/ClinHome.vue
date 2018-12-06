@@ -1022,7 +1022,7 @@ export default {
 
         self.hubSession = new HubSession();
         // For now, just hardcode is_pedgree = true
-        self.hubSession.promiseInit(self.paramSampleId, self.paramSource, true, self.paramProjectId, self.geneIgnoreAlignments)
+        self.hubSession.promiseInit(self.paramSampleId, self.paramSource, true, self.paramProjectId)
         .then(modelInfos => {
           self.modelInfos = modelInfos;
         })
@@ -1274,7 +1274,7 @@ export default {
       return theTask ? theTask.name : "";
     },
 
-    isS3(modelInfos) {
+    isS3() {
       let self = this;
       let S3_URL = "https://s3.amazonaws.com";
       return self.modelInfos.filter(function(modelInfo) {
@@ -1323,6 +1323,16 @@ export default {
         })
         .then(function() {
           let app = self.apps[appName];
+
+          // TEMP CODE TO WORKAROUND java problem in coverage service.
+          // !! REMOVE THIS ONCE coverage re-written in Python
+          if (!self.isS3()) {
+            self.modelInfos.forEach(function(modelInfo) {
+              modelInfo.bam = null;
+              modelInfo.bai = null;
+            })
+          }
+
           var msgObject = {
               type:                  'set-data',
               sender:                'clin.iobio',
@@ -1341,9 +1351,13 @@ export default {
               'variantData':          appName == 'genefull' && self.variantData.genefull && self.variantData.genefull.length > 0 ? self.analysisModel.parseVariantData(self.variantData.genefull) : null,
               'cache':                self.analysisCache[appName] ? self.analysisCache[appName] : null
           };
-          if (self.paramGeneBatchSize & (appName == 'gene' || appName == 'genefull')) {
+          if (self.paramGeneBatchSize && (appName == 'gene' || appName == 'genefull')) {
             msgObject.batchSize = +self.paramGeneBatchSize;
+          } else if ((appName == 'gene' || appName == 'genefull') && msgObject.iobioSource == 'hub-chpc.iobio.io') {
+            msgObject.batchSize = 3;
           }
+
+
 
           self.sendAppMessage(appName, msgObject);
 

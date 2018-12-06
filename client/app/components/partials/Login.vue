@@ -121,8 +121,7 @@ export default {
       password: null,
       project: null,
       projects: [
-        "platinum",
-        "6"
+        "platinum"
       ],
 
       newPasswordRequired: false,
