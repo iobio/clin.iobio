@@ -43,10 +43,10 @@ export default class HubSession {
                   // gene.iobio only supports siblings in same multi-sample vcf as proband.
                   // bypass siblings in their own vcf.
                   let bypass = false;
-                  if (data.relationship == 'siblings' && theSample.files.vcf != probandSample.files.vcf) {
-                    bypass = true;
-                    console.log("Bypassing sibling " + theSample.id + ".  This sample must reside in the same vcf as the proband in order to be processed.")
-                  }
+                  //if (data.relationship == 'siblings' && theSample.files.vcf != probandSample.files.vcf) {
+                  //  bypass = true;
+                  // console.log("Bypassing sibling " + theSample.id + ".  This sample must reside in the same vcf as the proband in order to be processed.")
+                  //}
 
                   if (!bypass) {
 
@@ -100,6 +100,20 @@ export default class HubSession {
 
 
 
+  }
+
+
+  promiseGetProject(project_id) {
+    let self = this;
+    return new Promise(function(resolve, reject) {
+      self.getProject(project_id)
+      .done(data => {
+          resolve(data);
+      })
+      .fail(error => {
+        reject("Error getting project " + project_id + ": " + error);
+      });
+    });
   }
 
   promiseGetSampleInfo(project_id, sample_id, isPedigree) {
@@ -314,6 +328,17 @@ export default class HubSession {
       headers: {
         'Authorization': localStorage.getItem('hub-iobio-tkn')
       }
+    });
+  }
+  getProject(projectId) {
+    let self = this;
+    return $.ajax({
+        url: self.api + '/projects/' + projectId,
+        type: 'GET',
+        contentType: 'application/json',
+        headers: {
+            'Authorization': localStorage.getItem('hub-iobio-tkn')
+        }
     });
   }
 

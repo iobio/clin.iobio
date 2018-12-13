@@ -1025,6 +1025,13 @@ export default {
         self.hubSession.promiseInit(self.paramSampleId, self.paramSource, true, self.paramProjectId)
         .then(modelInfos => {
           self.modelInfos = modelInfos;
+
+          self.hubSession.promiseGetProject(self.paramProjectId)
+          .then(function(project) {
+            self.caseSummary = {};
+            self.caseSummary.name = project.name;
+            self.caseSummary.phenotypes = project.description;
+          })
         })
 
       }
@@ -1151,83 +1158,30 @@ export default {
       self.analysisModel = new AnalysisModel(self.userSession);
       self.clearSavedAnalysis = clearSavedData;
 
+      self.promiseGetWorkflow(self.idWorkflow)
+      .then(function() {
 
-      let sampleToProjectMap = {
-        "16-103-140939": "A474",
-        "16-103-140941": "A474",
-        "16-103-140940": "A474",
 
-        "16-243-140846": "A476",
-        "16-243-140843": "A476",
-        "16-243-140845": "A476",
+        self.promiseGetAnalysis(
+          self.paramProjectId,
+          self.paramSampleId,
+          self.paramAnalysisId,
+          self.workflow,
+          {'createIfEmpty': true, 'getCache': true} )
+        .then(function() {
 
-        "NA12891.exome": "platinum",
-        "NA12892.exome": "platinum",
-        "NA12878.exome": "platinum",
-        "NA12877.exome": "platinum"
-      }
 
-      let sampleId = null;
-      if (researcher && researcher.length > 0) {
-        sampleId = researcher;
-      } else if (self.paramSampleId && self.paramSampleId.length > 0) {
-        sampleId = self.paramSampleId;
-      } else {
-        sampleId = 'test-sample';
-      }
-
-      let projectId = null;
-      if (self.paramProjectId && self.paramProjectId.length > 0) {
-        projectId = self.paramProjectId;
-      } else {
-        self.modelInfos.forEach(function(modelInfo) {
-          if (!projectId) {
-            if (modelInfo.name) {
-              projectId = sampleToProjectMap[modelInfo.name];
+          // Send message to set the data in the iobio apps
+          for (var appName in self.apps) {
+            let app = self.apps[appName];
+            if (!app.isLoaded) {
+                self.setData(appName, 500);
+                app.isLoaded = true;
             }
           }
-        })
-      }
-
-      let getModelPromise = null;
-      if (self.paramProjectId == null ||  self.paramProjectId.length == 0) {
-        getModelPromise = self.analysisModel.promiseGetModelInfo(projectId)
-        .then(function() {
-            self.caseSummary = modelInfo.summary;
-        })
-      } else {
-        getModelPromise = Promise.resolve();
-      }
-
-      getModelPromise
-      .then(function(modelInfo) {
-
-
-        self.promiseGetWorkflow(self.idWorkflow)
-        .then(function() {
-
-
-          self.promiseGetAnalysis(
-            projectId,
-            sampleId,
-            self.paramAnalysisId,
-            self.workflow,
-            {'createIfEmpty': true, 'getCache': true} )
-          .then(function() {
-
-
-            // Send message to set the data in the iobio apps
-            for (var appName in self.apps) {
-              let app = self.apps[appName];
-              if (!app.isLoaded) {
-                  self.setData(appName, 500);
-                  app.isLoaded = true;
-              }
-            }
-
-          })
 
         })
+
       })
 
 
@@ -1323,15 +1277,6 @@ export default {
         })
         .then(function() {
           let app = self.apps[appName];
-
-          // TEMP CODE TO WORKAROUND java problem in coverage service.
-          // !! REMOVE THIS ONCE coverage re-written in Python
-          if (!self.isS3()) {
-            self.modelInfos.forEach(function(modelInfo) {
-              modelInfo.bam = null;
-              modelInfo.bai = null;
-            })
-          }
 
           var msgObject = {
               type:                  'set-data',
