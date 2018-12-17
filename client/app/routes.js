@@ -26,6 +26,8 @@ import                           '../assets/css/v-tooltip.css'
 Vue.use(VTooltip)
 
 
+import Util                 from './globals/Util.js'
+import GlobalApp            from './globals/GlobalApp.js'
 
 
 Vue.use(VueRouter);
@@ -80,7 +82,20 @@ const router = new VueRouter({
 
 
 
+// define a globals mixin object
+Vue.mixin({
+  data: function() {
+    return {
+      utility: new Util(),
+      globalApp: new GlobalApp()
+    };
+  },
+  created: function(){
+    this.utility.globalApp = this.globalApp;
+    this.globalApp.utility = this.utility;
 
+  }
+})
 
 window.vm = new Vue({
   el: '#app',

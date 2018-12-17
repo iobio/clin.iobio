@@ -5,6 +5,7 @@ export default class HubSession {
     this.samples = null;
     this.url = null;
     this.apiVersion =  '/apiv1';
+    this.pedigreeSamples = null;
   }
 
   promiseInit(sampleId, source, isPedigree, projectId ) {
@@ -37,7 +38,6 @@ export default class HubSession {
                 let p =  self.promiseGetFileMapForSample(projectId, s, rel).then(data => {
                   let theSample = data.sample;
                   theSample.files = data.fileMap;
-
 
 
                   // gene.iobio only supports siblings in same multi-sample vcf as proband.
@@ -154,6 +154,23 @@ export default class HubSession {
       self.getPedigreeForSample(project_id, sample_id)
       .done(data => {
         let pedigree = self.parsePedigree(data, sample_id)
+        self.pedigreeSamples = [];
+
+        // Temporary workaround until we can use latest PedigreeChart
+        for (var rel in pedigree) {
+          if (Array.isArray(pedigree[rel])) {
+            pedigree[rel].forEach(function(sample) {
+              sample.uuid = sample.id;
+              sample.relationship = rel;
+              self.pedigreeSamples.push(sample);
+            })
+          } else {
+            let sample = (pedigree[rel]);
+            sample.uuid = sample.id;
+            sample.relationship = rel;
+            self.pedigreeSamples.push(sample);
+          }
+        }
         resolve(pedigree);
       })
       .fail(error => {

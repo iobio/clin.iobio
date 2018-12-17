@@ -792,7 +792,9 @@
         <setup
         :workflow="workflow"
         :analysis="analysis"
-        :modelInfos="modelInfos">
+        :modelInfos="modelInfos"
+        :pedigree="hubSession ? hubSession.pedigreeSamples : null"
+        :sampleId="paramSampleId">
         </setup>
       </v-card>
 

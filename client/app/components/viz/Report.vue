@@ -318,7 +318,7 @@
     <div class="findings">
 
 
-      <div class="mt-2 col1" >
+      <div class="mt-2 col1" v-if="false" >
         <v-card class="phenotypes-card" >
           <h4 >Phenotypes</h4>
 
@@ -337,7 +337,7 @@
 
         </v-card>
 
-        <v-card   class="mt-2 genes-card">
+        <v-card   class="mt-2 genes-card" >
           <h4 >Candidate genes</h4>
 
           <v-list one-line>
@@ -359,8 +359,8 @@
       </div>
 
       <div class="mt-2 ml-4 col2" v-for="analysis in variantsByAnalysis" :key="analysis.key">
-        <v-card>
-          <h4 >{{ analysis.display + ' ' }}</h4>
+        <div>
+
 
           <div class="mt-1 mb-3" v-for="interpretation in analysis.interpretations" :key="interpretation.key">
 
@@ -380,7 +380,7 @@
                 <template
                  v-for="geneObject in geneList.genes">
 
-                  <template v-for="(variant, index) in geneObject.variants">
+                  <v-card v-for="(variant, index) in geneObject.variants">
 
                     <v-list-tile ripple
                     @click="onVariantSelected(variant)"
@@ -399,7 +399,7 @@
                           <div class="variant-symbols">
 
                             <span class="gene-name"> {{ variant.gene }}</span>
-                            <span class="transcript"> {{ variant.transcript }}</span>
+                            <span class="transcript"> </span>
                             <app-icon
                              icon="clinvar"
                              v-if="clinvar(variant) == 'clinvar_path' || clinvar(variant) == 'clinvar_lpath'"
@@ -407,22 +407,26 @@
                              class="clinvar-badge" height="13" width="13">
                             </app-icon>
 
+                            <span class="transcript"> {{ variant.inheritance }} </span>
+
                             <app-icon
                              :icon="variant.inheritance"
-                             v-if="variant.inheritance && variant.inheritance != '' && variant.inheritance != 'none'"
+                             v-if="false && variant.inheritance && variant.inheritance != '' && variant.inheritance != 'none'"
                              class="inheritance-badge" height="15" width="15">
                             </app-icon>
 
                             <app-icon
+                             v-if="false"
                              icon="impact"
-                             :type="variant.type.toLowerCase()"
+                             :type="variant.type"
                              :clazz="highestImpactClass(variant)"
                              class="impact-badge" height="15" width="15">
                             </app-icon>
 
                            <app-icon
+                             v-if="false"
                              icon="zygosity"
-                             :type="zygosity(variant).toLowerCase()"
+                             :type="zygosity(variant)"
                              height="14" width="24">
                             </app-icon>
 
@@ -445,9 +449,10 @@
                             <div style="display:inline-block;vertical-align:top">
                               <span class="vep-consequence">{{ vepConsequence(variant) }}</span>
                             </div>
-                            <span class="af">{{ afDisplay(variant) }}</span>
+                            <span class="af" v-if="false">{{ afDisplay(variant) }}</span>
+                            <span class="hgvs">  {{ hgvsP(variant) }} </span>
                           </div>
-                          <div class="variant-label">
+                          <div class="variant-label" v-if="false">
                             <div style="display:inline-block;" >
                               <span class="hgvs">  {{ hgvsP(variant) }} </span>
                             </div>
@@ -468,7 +473,7 @@
                     </v-list-tile>
 
 
-                  </template>
+                  </v-card>
 
                 </template>
               </v-list>
@@ -477,7 +482,7 @@
           </div>
 
 
-        </v-card>
+        </div>
 
       </div>
 
@@ -534,8 +539,8 @@ export default {
     organizeVariantsByAnalysis: function() {
       let self = this;
       self.variantsByAnalysis = [
-        { key: 'gene',         display: 'Variants in candidate genes', interpretations: null},
-        { key: 'genefull',     display: 'Variants in all genes',       interpretations: null}
+        { key: 'gene',         display: 'Variants', interpretations: null},
+        //{ key: 'genefull',     display: 'Variants in all genes',       interpretations: null}
       ]
       self.variantsByAnalysis.forEach(function(analysis) {
         analysis.interpretations = self.organizeVariantsByInterpretation(analysis.key);
@@ -545,8 +550,8 @@ export default {
     organizeVariantsByInterpretation: function(analysisKey) {
       let self = this;
       let variantsByInterpretation = [
-       { key: 'sig',         display: 'Significant',          organizedVariants: null},
-       { key: 'unknown-sig', display: 'Unknown Significance', organizedVariants: null}
+       { key: 'sig',         display: 'Significant Variants',          organizedVariants: null},
+       { key: 'unknown-sig', display: 'Variants of Unknown Significance', organizedVariants: null}
       ];
       variantsByInterpretation.forEach(function(interpretation) {
         interpretation.organizedVariants = self.organizeVariantsByFilter(analysisKey, interpretation.key);
@@ -585,6 +590,8 @@ export default {
     organizeVariantsByGene: function(filterName, userFlagged, analysisKey, interpretation) {
       let self = this;
       let theVariants = [];
+
+/*
       if (analysisKey == 'gene' && this.variants) {
         theVariants = this.variants.filter(function(v) {
           return v.interpretation == interpretation;
@@ -597,6 +604,16 @@ export default {
         theVariants = this.variantsFullAnalysis.filter(function(v) {
           return v.interpretation == interpretation;
         });
+      }
+      */
+
+      this.variants.forEach(function(variant) {
+        theVariants.push(variant);
+      })
+      if (this.variantsFullAnalysis) {
+        this.variantsFullAnalysis.forEach(function(variant) {
+          theVariants.push(variant);
+        })
       }
       if (theVariants.length > 0) {
         let theGenes   = [];
