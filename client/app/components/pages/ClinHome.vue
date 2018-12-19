@@ -54,6 +54,19 @@
     overflow-y: auto
 
 
+  #findings-button
+    padding: 4px;
+    max-height: 30px;
+    margin-left: 10px
+    margin-top: 0px
+    margin-bottom: 10px
+
+    &.is-active
+      background-color:  $app-color
+
+      .btn__content
+        color: white
+
   .input-group--selection-controls.accent--text
     .icon--selection-control
       color: $text-color
@@ -386,6 +399,7 @@
     .workflow-title
       width: 105px
 
+
     .stepper--vertical
       .stepper__step
         width: 100%
@@ -420,6 +434,9 @@
 
 
   .horizontal-dashboard-card.minimized
+
+    #findings-button
+      margin-top: 10px
 
     .preferences-button
       top: 0px
@@ -475,6 +492,16 @@
 #clin-container
 
   &.dark
+
+    #findings-button
+      background-color: #d7d7d7
+      color:  $dark-nav-background-color
+
+      &.is-active
+        background-color:  $dark-app-color
+
+        .btn__content
+          color: white
 
     .preferences-button
       .btn__content
@@ -599,7 +626,10 @@
                 {{ workflow.summary}}
               </div>
 
+
               <h5 v-if="caseSummary" class="workflow-summary-title"> {{ caseSummary.name }} </h5>
+
+
               <div v-if="caseSummary" class="workflow-summary-description">
                 {{ caseSummary.phenotypes}}
               </div>
@@ -612,6 +642,8 @@
         <v-stepper v-model="currentStep"  non-linear>
 
           <v-stepper-header>
+            <v-btn id="findings-button" :class="{'is-active': showFindings}" @click="clickFindings">Findings</v-btn>
+
             <v-btn v-show="isMinimized" :disabled="currentStep == 1" class="stepper-btn" flat small @click="currentStep = currentStep - 1">
               <v-icon>chevron_left</v-icon>
             </v-btn>
@@ -787,52 +819,46 @@
     v-show="isAuthenticated " >
       <v-card  class="clin-card"
         v-if="analysis && workflow"
-        v-show="currentStep == 1"
+        v-show="showFindings"
       >
-        <setup
+        <findings
+        ref="findingsRef"
         :workflow="workflow"
         :analysis="analysis"
+        :caseSummary="caseSummary"
         :modelInfos="modelInfos"
         :pedigree="hubSession ? hubSession.pedigreeSamples : null"
-        :sampleId="paramSampleId">
-        </setup>
+        :sampleId="paramSampleId"
+        :phenotypes="analysis.phenotypes"
+        :genes="analysis.genes"
+        :variants="variants.gene"
+        :variantsFullAnalysis="variants.genefull"
+        :filters="analysis.filters">
+        </findings>
       </v-card>
 
 
-      <div id="gene-panel-iframe" v-show="!isAuthenticated || currentStep == 2">
+      <div id="gene-panel-iframe" v-show="!isAuthenticated || (currentStep == 1 && !showFindings)">
         <iframe
         :src="apps.genepanel.url + '&iobio_source=' + iobioSource"
         style="width:100%;height:100%" frameBorder="0">
         </iframe>
       </div>
 
-      <div id="gene-iframe" v-show="!isAuthenticated || currentStep == 3">
+      <div id="gene-iframe" v-show="!isAuthenticated ||  (currentStep == 2 && !showFindings)">
         <iframe
         :src="apps.gene.url"
         style="width:100%;height:100%" frameBorder="0">
         </iframe>
       </div>
 
-      <div id="genefull-iframe" v-show="!isAuthenticated || currentStep == 4">
+      <div id="genefull-iframe" v-show="!isAuthenticated ||  (currentStep == 3 && !showFindings)">
         <iframe
         :src="apps.gene.url + '&mode=full'"
         style="width:100%;height:100%" frameBorder="0">
         </iframe>
       </div>
 
-      <v-card  class="clin-card"
-        v-show="currentStep == 5"
-      >
-        <report
-        ref="reportRef"
-        v-if="analysis"
-        :phenotypes="analysis.phenotypes"
-        :genes="analysis.genes"
-        :variants="variants.gene"
-        :variantsFullAnalysis="variants.genefull"
-        :filters="analysis.filters">
-        </report>
-      </v-card>
 
     </div>
 
@@ -844,8 +870,7 @@
 
 <script>
 
-import Setup from  '../viz/Setup.vue'
-import Report from '../viz/Report.vue'
+import Findings from  '../viz/Findings.vue'
 import Login from  '../partials/Login.vue'
 import LoginMosaic from  '../partials/LoginMosaic.vue'
 import PreferencesMenu from  '../partials/PreferencesMenu.vue'
@@ -858,10 +883,9 @@ import HubSession  from  '../../models/HubSession.js'
 export default {
   name: 'home',
   components: {
-    Setup,
     Login,
     LoginMosaic,
-    Report,
+    Findings,
     PreferencesMenu
   },
   props: {
@@ -891,6 +915,8 @@ export default {
       userSession:  null,
       hubSession: null,
       modelInfos: null,
+
+      showFindings: false,
 
       iobioSource: self.paramIobioSource ? self.paramIobioSource : 'hub-chpc.iobio.io',
 
@@ -958,7 +984,7 @@ export default {
       let self = this;
       if (self.isAuthenticated && self.workflow && self.analysis && self.currentStep) {
         var theApp = null;
-
+        self.showFindings = false;
 
 
 
@@ -1049,6 +1075,11 @@ export default {
     },
     switchMinimized: function(isMinimized) {
       this.isMinimized = isMinimized
+    },
+
+    clickFindings: function() {
+      this.currentStep = 0;
+      this.showFindings = true;
     },
 
     onAuthenticated: function(researcher, project, clearSavedData) {
@@ -1736,8 +1767,8 @@ export default {
       let variantsToRemove = self.analysisModel.getObsoleteVariants(variants, self.variants[app]);
 
       self.variants[app] = variants;
-      if (self.$refs.reportRef) {
-        self.$refs.reportRef.refreshReport();
+      if (self.$refs.findingsRef) {
+        self.$refs.findingsRef.refreshReport();
       }
       return self.analysisModel.promiseUpdateVariants(app, self.analysis.id, variants, variantsToRemove);
     },
@@ -1745,8 +1776,8 @@ export default {
     promiseUpdateVariants: function(app, variants) {
       let self = this;
       self.analysisModel.replaceMatchingVariants(variants, self.variants[app]);
-      if (self.$refs.reportRef) {
-        self.$refs.reportRef.refreshReport();
+      if (self.$refs.findingsRef) {
+        self.$refs.findingsRef.refreshReport();
       }
       return self.analysisModel.promiseUpdateVariants(app, self.analysis.id, variants);
     },
