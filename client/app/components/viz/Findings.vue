@@ -386,14 +386,14 @@
 
             <div class="card-metric">
               <v-avatar class="big">
-                <span class="headline">{{ variants.length }}</span>
+                <span class="headline">{{ variants ? variants.length : 0 }}</span>
               </v-avatar>
               <div class="card-heading-metric">filtered variants in candidate genes</div>
             </div>
 
             <div class="card-metric">
               <v-avatar class="big">
-                <span class="headline">{{ variantsFullAnalysis.length }}</span>
+                <span class="headline">{{ variantsFullAnalysis ? variantsFullAnalysis.length  : 0 }}</span>
               </v-avatar>
               <div class="card-heading-metric">filtered variants in all genes</div>
             </div>

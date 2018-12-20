@@ -494,7 +494,7 @@
   &.dark
 
     #findings-button
-      background-color: #d7d7d7
+      background-color: white
       color:  $dark-nav-background-color
 
       &.is-active
