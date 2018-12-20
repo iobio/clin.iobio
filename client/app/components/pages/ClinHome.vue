@@ -911,7 +911,7 @@ export default {
       isSidebar: false,
       isMinimized: false,
 
-      persistCache: {'gene': false, 'genefull': false},
+      persistCache: {'gene': false, 'genefull': true},
 
       isAuthenticated: false,
       userSession:  null,
