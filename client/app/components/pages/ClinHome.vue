@@ -906,10 +906,12 @@ export default {
   data() {
     let self = this;
     return {
-      greeting: 'clin.iobio.io',
+
       theme:    self.paramTheme && self.paramTheme.length > 0 ? self.paramTheme : 'dark',
       isSidebar: false,
       isMinimized: false,
+
+      persistCache: {'gene': false, 'genefull': false},
 
       isAuthenticated: false,
       userSession:  null,
@@ -937,9 +939,9 @@ export default {
 
       apps: {
         'bam':       {url: null, isLoaded: false, step: 0, iframeSelector: '#bam-iframe iframe'},
-        'genepanel': {url: null, isLoaded: false, step: 2, iframeSelector: '#gene-panel-iframe iframe'},
-        'gene':      {url: null, isLoaded: false, step: 3, iframeSelector: '#gene-iframe iframe'},
-        'genefull':  {url: null, isLoaded: false, step: 4, iframeSelector: '#genefull-iframe iframe'}
+        'genepanel': {url: null, isLoaded: false, step: 1, iframeSelector: '#gene-panel-iframe iframe'},
+        'gene':      {url: null, isLoaded: false, step: 2, iframeSelector: '#gene-iframe iframe'},
+        'genefull':  {url: null, isLoaded: false, step: 3, iframeSelector: '#genefull-iframe iframe'}
       },
 
       currentStep: -1,
@@ -1309,7 +1311,11 @@ export default {
           return self.promiseGetVariantData(appName)
         })
         .then(function() {
-          return self.promiseGetCache(appName)
+          if (self.persistCache[appName]) {
+            return self.promiseGetCache(appName)
+          } else {
+            return Promise.resolve();
+          }
         })
         .then(function() {
           let app = self.apps[appName];
@@ -1328,9 +1334,10 @@ export default {
               'genesGtr':             self.analysis.genesGtr,
               'genesPhenolyzer':      self.analysis.genesPhenolyzer,
               'genesManual':          self.analysis.genesManual,
+              'persistCache':         self.persistCache,
               'variants':             appName == 'gene' || appName == 'genefull'  ? self.variants[appName] : null,
               'variantData':          appName == 'genefull' && self.variantData.genefull && self.variantData.genefull.length > 0 ? self.analysisModel.parseVariantData(self.variantData.genefull) : null,
-              'cache':                self.analysisCache[appName] ? self.analysisCache[appName] : null
+              'cache':                self.persistCache[appName] && self.analysisCache[appName] ? self.analysisCache[appName] : null
           };
           if (self.paramGeneBatchSize && (appName == 'gene' || appName == 'genefull')) {
             msgObject.batchSize = +self.paramGeneBatchSize;
@@ -1407,7 +1414,9 @@ export default {
           this.promiseDeleteVariants(messageObject.app, messageObject.variants)
         }
       } else if (messageObject.type == "save-cache") {
-        this.promiseUpdateCache(messageObject.app, messageObject.cache);
+        if (this.persistCache[messageObject.app]) {
+          this.promiseUpdateCache(messageObject.app, messageObject.cache);
+        }
       } else if (messageObject.type == "save-filters") {
         this.promiseUpdateFilters(messageObject.filters);
       }
