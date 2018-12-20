@@ -8,12 +8,13 @@
   height: -webkit-fill-available
   height: -moz-available
   height: 100%
-  background-color: white
+  background-color: $light-grey
 
   .avatar.big
     border: #d5d5d5 solid thin
     background-color: white
     color: $text-color
+    margin-right: 7px
 
   .phenotype-search-terms
     margin-top: -15px
@@ -25,13 +26,30 @@
     white-space: normal
     font-style: italic
 
+
+
+  .sample
+    line-height: 15px
+    font-size: 13px
+    .rel
+      display: inline-block
+      width: 70px
+    .name
+      display: inline-block
+      width: 100px
+
   .findings-section
     margin-bottom: 30px
+    padding-bottom: 15px
+
+    .subsection
+      margin-right: 50px
 
   .pedigree-graph
+    margin-left: -5px !important
+    margin-top:  5px !important
     svg
       g
-        transform: translate(85px,-35px)
 
         rect
           stroke: gray !important
@@ -48,7 +66,27 @@
     color:  $app-header-color
     margin-bottom: 10px
 
+  .card-subheading
+    display: inline-block
+    font-size: 14px
+    color:  $app-header-color
 
+
+  .card-metric
+    display: flex
+    margin-right: 30px
+
+    .avatar
+      margin-right: 7px
+
+    .card-heading-metric
+      display: inline-block
+      font-size: 14px
+      color:  $app-header-color
+      width: 120px
+      white-space: normal
+      line-height: 15px
+      align-self: center
 
   i.material-icons.sig
     color: $significant-color !important
@@ -202,135 +240,166 @@
 
       <span class="card-title">Findings</span>
 
-      <div class="findings-section">
+      <v-card class="findings-section">
+        <span class="card-heading">Summary</span>
 
-        <div style="display:flex;flex-direction:row">
-          <div  v-if="pedigree" style="margin-top:-10px;margin-left:-20px;max-width:200px;max-height:140px;text-align:left">
-            <pedigree-graph
-              :height="140"
-              :data="pedigree"
-              :uuid="sampleId"
-              :width="200"
-            />
-          </div>
-          <div>
-            <span class="card-heading"> {{ caseSummary.name }}</span>
-
-            <div style="font-size:13px;line-height:15px;width:400px;white-space: normal">
-              {{ caseSummary.phenotypes }}
-            </div>
-         </div>
-          <div >
-            <v-avatar class="big">
-              <span class="headline">{{ genes.length }}</span>
-            </v-avatar>
-            <div class="card-heading">candidate genes</div>
-            <div class="phenotype-search-terms">
-              <div v-for="(phenotype, index) in phenotypeList" class="phenotype-search-term">
-                {{phenotype}}
+        <div style="display:flex;flex-direction:row;justify-content:flex-start">
+          <div  class="subsection"  >
+            <span class="card-subheading">Pedigree</span>
+            <div style="display:flex">
+              <pedigree-graph
+                v-if="pedigree"
+                :height="60"
+                :data="pedigree"
+                :uuid="sampleId"
+                :width="80"
+              />
+              <div style="margin-left:15px">
+                <div  class="sample" v-for="modelInfo in modelInfos" :key="modelInfo.sample">
+                  <span class="rel">{{ modelInfo.relationship }}</span>
+                  <span class="name">{{ modelInfo.sample }}</span>
+                </div>
               </div>
             </div>
           </div>
 
-        </div>
-      </div>
 
-      <div class="findings-section" >
+          <div class="subsection">
+            <div class="card-subheading">Description</div>
+            <div style="font-size:13px;line-height:15px;width:400px;white-space: normal">
+              {{ caseSummary.phenotypes }}
+            </div>
+          </div>
 
-          <div class="mt-1 mb-3" v-for="interpretation in variantsByInterpretation" :key="interpretation.key">
-
-            <div
-            class="interpretation-list"
-            >
-             <v-avatar class="big">
-              <span class="headline">{{ interpretation.variantCount }}</span>
-            </v-avatar>
-              <span class="card-heading">
-                {{ interpretation.display }}
-              </span>
-
+          <div class="subsection">
+            <div class="card-subheading">Condition / Phenotype Search Terms</div>
+            <div v-for="(phenotype, index) in phenotypeList" class="phenotype-search-term">
+              {{phenotype}}
             </div>
 
+          </div>
 
 
-            <template v-for="geneList in interpretation.organizedVariants">
-              <v-list three-line>
-                <template
-                 v-for="geneObject in geneList.genes">
+        </div>
 
-                  <div v-for="(variant, index) in geneObject.variants">
+      </v-card>
 
-                    <v-list-tile ripple
-                    @click="onVariantSelected(variant)"
-                    :key="variant.start + ' ' + variant.ref + ' ' + variant.alt">
+      <v-card class="findings-section" v-for="interpretation in variantsByInterpretation" :key="interpretation.key" >
 
 
+        <div
+        class="interpretation-list"
+        >
+         <v-avatar class="big">
+          <span class="headline">{{ interpretation.variantCount }}</span>
+        </v-avatar>
+          <span class="card-heading">
+            {{ interpretation.display }}
+          </span>
 
-                      <v-list-tile-content>
-
-                        <v-list-tile-title>
-
-                          <div class="variant-symbols">
-
-                            <span class="gene-name"> {{ variant.gene }}</span>
-
-
-                            <span class="inheritance">
-                               <app-icon
-                               :icon="variant.inheritance"
-                               v-if="variant.inheritance && variant.inheritance != '' && variant.inheritance != 'none'"
-                               class="inheritance-badge" height="15" width="15">
-                              </app-icon>
+        </div>
 
 
-                              {{ variant.inheritance }}
 
-                            </span>
+        <template v-for="geneList in interpretation.organizedVariants">
+          <v-list three-line>
+            <template
+             v-for="geneObject in geneList.genes">
 
+              <div v-for="(variant, index) in geneObject.variants">
 
-                            <span class="vep-consequence">{{ vepConsequence(variant) }}</span>
+                <v-list-tile ripple
+                @click="onVariantSelected(variant)"
+                :key="variant.start + ' ' + variant.ref + ' ' + variant.alt">
 
-                            <span class="clinvar">
-                              <app-icon
-                               icon="clinvar"
-                               v-if="clinvar(variant) == 'clinvar_path' || clinvar(variant) == 'clinvar_lpath'"
-                               :level="clinvar(variant) == 'clinvar_path' ? 'high' : 'likely-high'"
-                               class="clinvar-badge" height="13" width="13">
-                              </app-icon>
-                              {{ variant.clinvarClinSig }}
-                            </span>
+                  <v-list-tile-content>
 
-                            <span class="clinvar-trait"> {{ variant.clinvarTrait }} </span>
+                    <v-list-tile-title>
 
+                      <div class="variant-symbols">
 
-                            <span class="hgvs">  {{ hgvsP(variant) }} </span>
+                        <span class="gene-name"> {{ variant.gene }}</span>
 
 
-                            <div class="variant-notes" v-if="variant.notes && variant.notes.length > 0">
-                              {{ variant.notes }}
-                            </div>
+                        <span class="inheritance">
+                           <app-icon
+                           :icon="variant.inheritance"
+                           v-if="variant.inheritance && variant.inheritance != '' && variant.inheritance != 'none'"
+                           class="inheritance-badge" height="15" width="15">
+                          </app-icon>
 
-                          </div>
-
-                        </v-list-tile-title>
-
-                        <v-list-tile-sub-title >
-                        </v-list-tile-sub-title>
-
-                      </v-list-tile-content>
-
-                    </v-list-tile>
+                          {{ variant.inheritance }}
+                        </span>
 
 
-                  </div>
+                        <span class="vep-consequence">{{ vepConsequence(variant) }}</span>
+                        <span class="hgvs">  {{ hgvsP(variant) }} </span>
 
-                </template>
-              </v-list>
+                        <span class="clinvar">
+                          <app-icon
+                           icon="clinvar"
+                           v-if="clinvar(variant) == 'clinvar_path' || clinvar(variant) == 'clinvar_lpath'"
+                           :level="clinvar(variant) == 'clinvar_path' ? 'high' : 'likely-high'"
+                           class="clinvar-badge" height="13" width="13">
+                          </app-icon>
+                          {{ variant.clinvarClinSig }}
+                        </span>
+
+                        <span class="clinvar-trait"> {{ variant.clinvarTrait }} </span>
+
+
+                        <div class="variant-notes" v-if="variant.notes && variant.notes.length > 0">
+                          {{ variant.notes }}
+                        </div>
+
+                      </div>
+
+                    </v-list-tile-title>
+
+                    <v-list-tile-sub-title >
+                    </v-list-tile-sub-title>
+
+                  </v-list-tile-content>
+
+                </v-list-tile>
+
+              </div>
+
             </template>
+          </v-list>
+        </template>
+
+
+      </v-card>
+
+      <v-card class="findings-section">
+
+          <span class="card-heading">Analysis Summary</span>
+
+          <div style="display: flex">
+            <div class="card-metric">
+              <v-avatar class="big">
+                <span class="headline">{{ genes.length }}</span>
+              </v-avatar>
+              <div class="card-heading-metric">candidate genes</div>
+            </div>
+
+            <div class="card-metric">
+              <v-avatar class="big">
+                <span class="headline">{{ variants.length }}</span>
+              </v-avatar>
+              <div class="card-heading-metric">filtered variants in candidate genes</div>
+            </div>
+
+            <div class="card-metric">
+              <v-avatar class="big">
+                <span class="headline">{{ variantsFullAnalysis.length }}</span>
+              </v-avatar>
+              <div class="card-heading-metric">filtered variants in all genes</div>
+            </div>
 
           </div>
-      </div>
-
+      </v-card>
 
   </div>
 </template>

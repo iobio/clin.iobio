@@ -916,7 +916,7 @@ export default {
       hubSession: null,
       modelInfos: null,
 
-      showFindings: false,
+      showFindings: true,
 
       iobioSource: self.paramIobioSource ? self.paramIobioSource : 'hub-chpc.iobio.io',
 
@@ -942,7 +942,7 @@ export default {
         'genefull':  {url: null, isLoaded: false, step: 4, iframeSelector: '#genefull-iframe iframe'}
       },
 
-      currentStep: 0,
+      currentStep: -1,
 
       analysisModel: null,
 
@@ -1079,6 +1079,9 @@ export default {
 
     clickFindings: function() {
       this.currentStep = 0;
+      if (this.$refs.findingsRef) {
+        this.$refs.findingsRef.refreshReport();
+      }
       this.showFindings = true;
     },
 
