@@ -62,7 +62,6 @@ const routes = [
 
         paramIobioSource:           route.query.iobio_source,
         paramGeneBatchSize:         route.query.gene_batch_size,
-        paramGeneIgnoreAlignments:  route.query.gene_ignore_alignments,
 
         paramTheme:                 route.query.theme
     })

@@ -831,33 +831,28 @@
         :sampleId="paramSampleId"
         :phenotypes="analysis.phenotypes"
         :genes="analysis.genes"
-        :variants="variants.gene"
-        :variantsFullAnalysis="variants.genefull"
+        :variants="variants"
         :filters="analysis.filters">
         </findings>
       </v-card>
 
 
-      <div id="gene-panel-iframe" v-show="!isAuthenticated || (currentStep == 1 && !showFindings)">
+      <div id="gene-panel-iframe"
+        v-show="!isAuthenticated || (currentStep == 1  && !showFindings)">
         <iframe
         :src="apps.genepanel.url + '&iobio_source=' + iobioSource"
         style="width:100%;height:100%" frameBorder="0">
         </iframe>
       </div>
 
-      <div id="gene-iframe" v-show="!isAuthenticated ||  (currentStep == 2 && !showFindings)">
+      <div id="gene-iframe" v-show="!isAuthenticated || ((currentStep == 2 || currentStep == 3) && !showFindings)">
         <iframe
         :src="apps.gene.url"
         style="width:100%;height:100%" frameBorder="0">
         </iframe>
       </div>
 
-      <div id="genefull-iframe" v-show="!isAuthenticated ||  (currentStep == 3 && !showFindings)">
-        <iframe
-        :src="apps.gene.url + '&mode=full'"
-        style="width:100%;height:100%" frameBorder="0">
-        </iframe>
-      </div>
+
 
 
     </div>
@@ -891,16 +886,14 @@ export default {
   props: {
     paramDebug:  null,
 
-    paramProjectId:   null,
-    paramSampleId:    null,
-    paramAnalysisId:  null,
-    paramTokenType:   null,
-    paramToken:       null,
-    paramSource:      null,
-    paramIobioSource: null,
-    paramGeneBatchSize:        null,
-    paramGeneIgnoreAlignments: null,
-
+    paramProjectId:      null,
+    paramSampleId:       null,
+    paramAnalysisId:     null,
+    paramTokenType:      null,
+    paramToken:          null,
+    paramSource:         null,
+    paramIobioSource:    null,
+    paramGeneBatchSize:  null,
     paramTheme: null
   },
   data() {
@@ -911,7 +904,7 @@ export default {
       isSidebar: false,
       isMinimized: false,
 
-      persistCache: {'gene': false, 'genefull': true},
+      persistCache: {'gene': false, 'genefull': false},
 
       isAuthenticated: false,
       userSession:  null,
@@ -925,13 +918,13 @@ export default {
       appUrls: {
         'localhost': {
             'gene':      'http://localhost:4026/?launchedFromClin=true',
-            'genefull':  'http://localhost:4026/?launchedFromClin=true&mode=full',
+            'genefull':  'http://localhost:4026/?launchedFromClin=true',
             'genepanel': 'http://localhost:4024/?launchedFromClin=true',
             'bam':       'http://localhost:4027'
         },
         'dev': {
             'gene':      'https://dev.gene.iobio.io/?launchedFromClin=true',
-            'genefull':  'https://dev.gene.iobio.io/?launchedFromClin=true&mode=full',
+            'genefull':  'https://dev.gene.iobio.io/?launchedFromClin=true',
             'genepanel': 'https://dev.panel.iobio.io/?launchedFromClin=true',
             'bam':       'https://newbam.iobio.io'
         },
@@ -941,7 +934,7 @@ export default {
         'bam':       {url: null, isLoaded: false, step: 0, iframeSelector: '#bam-iframe iframe'},
         'genepanel': {url: null, isLoaded: false, step: 1, iframeSelector: '#gene-panel-iframe iframe'},
         'gene':      {url: null, isLoaded: false, step: 2, iframeSelector: '#gene-iframe iframe'},
-        'genefull':  {url: null, isLoaded: false, step: 3, iframeSelector: '#genefull-iframe iframe'}
+        'genefull':  {url: null, isLoaded: true, step: 3, iframeSelector: '#gene-iframe iframe'}
       },
 
       currentStep: -1,
@@ -954,10 +947,9 @@ export default {
       caseSummary: null,
       analysisCache:     {'gene': null, 'genefull': null},
       analysisCacheKeys: {'gene': null, 'genefull': null},
-      variants:          {'gene': null, 'genefull': null},
-      variantData:       {'gene': null, 'genefull': null},
 
-      geneIgnoreAlignments: false,
+      variants:          [],
+      variantData:       null,
 
 
       clearSavedAnalysis: false
@@ -1042,9 +1034,6 @@ export default {
       self.apps.genepanel.url = self.appUrls[appTarget].genepanel;
       self.apps.gene.url      = self.appUrls[appTarget].gene;
 
-      if (self.paramGeneIgnoreAlignments != null && self.paramGeneIgnoreAlignments.length > 0) {
-        self.geneIgnoreAlignments = self.paramGeneIgnoreAlignments == 'true' ? true : false;
-      }
 
 
       if (localStorage.getItem('hub-iobio-tkn') && localStorage.getItem('hub-iobio-tkn').length > 0
@@ -1127,24 +1116,24 @@ export default {
               'sample':  modelInfo.sampleId.proband,
               'vcf':     modelInfo.vcf,
               'tbi':     modelInfo.tbi,
-              'bam':     !self.geneIgnoreAlignments && modelInfo.bam ? modelInfo.bam.proband : null,
-              'bai':     !self.geneIgnoreAlignments && modelInfo.bai ? modelInfo.bai.proband : null, },
+              'bam':     modelInfo.bam ? modelInfo.bam.proband : null,
+              'bai':     modelInfo.bai ? modelInfo.bai.proband : null, },
              {'relationship': 'mother',
               'affectedStatus': 'unaffected',
               'name':    modelInfo.sampleId.mother,
               'sample':  modelInfo.sampleId.mother,
               'vcf':     modelInfo.vcf,
               'tbi':     modelInfo.tbi,
-              'bam':     !self.geneIgnoreAlignments && modelInfo.bam ? modelInfo.bam.mother : null,
-              'bai':     !self.geneIgnoreAlignments && modelInfo.bai ? modelInfo.bai.mother : null},
+              'bam':     modelInfo.bam ? modelInfo.bam.mother : null,
+              'bai':     modelInfo.bai ? modelInfo.bai.mother : null},
              {'relationship': 'father',
               'affectedStatus': 'unaffected',
               'name':    modelInfo.sampleId.father,
               'sample':  modelInfo.sampleId.father,
               'vcf':     modelInfo.vcf,
               'tbi':     modelInfo.tbi,
-              'bam':     !self.geneIgnoreAlignments && modelInfo.bam ? modelInfo.bam.father : null,
-              'bai':     !self.geneIgnoreAlignments && modelInfo.bai ? modelInfo.bai.father : null },
+              'bam':     modelInfo.bam ? modelInfo.bam.father : null,
+              'bai':     modelInfo.bai ? modelInfo.bai.father : null },
             ];
 
           }
@@ -1208,6 +1197,11 @@ export default {
           {'createIfEmpty': true, 'getCache': true} )
         .then(function() {
 
+          return self.promiseGetVariants()
+        })
+        .then(function() {
+
+          self.promiseGetVariantData()
 
           // Send message to set the data in the iobio apps
           for (var appName in self.apps) {
@@ -1306,19 +1300,18 @@ export default {
           return;
         }
 
-        self.promiseGetVariants(appName)
-        .then(function() {
-          return self.promiseGetVariantData(appName)
-        })
-        .then(function() {
-          if (self.persistCache[appName]) {
-            return self.promiseGetCache(appName)
-          } else {
-            return Promise.resolve();
-          }
-        })
+
+        let promise = null;
+        if (self.persistCache[appName]) {
+          promise = self.promiseGetCache(appName)
+        } else {
+          promise = Promise.resolve();
+        }
+
+        promise
         .then(function() {
           let app = self.apps[appName];
+
 
           var msgObject = {
               type:                  'set-data',
@@ -1328,6 +1321,7 @@ export default {
               'isFrameVisible':       app.step == self.currentStep,
               'modelInfo':            probandModelInfo[0],
               'modelInfos':           self.modelInfos,
+              'genesToAnalyze':       self.analysis.genesToAnalyze,
               'phenotypes':           self.analysis.phenotypes,
               'genes':                self.analysis.genes,
               'genesReport':          self.analysis.genesReport,
@@ -1335,8 +1329,8 @@ export default {
               'genesPhenolyzer':      self.analysis.genesPhenolyzer,
               'genesManual':          self.analysis.genesManual,
               'persistCache':         self.persistCache,
-              'variants':             appName == 'gene' || appName == 'genefull'  ? self.variants[appName] : null,
-              'variantData':          appName == 'genefull' && self.variantData.genefull && self.variantData.genefull.length > 0 ? self.analysisModel.parseVariantData(self.variantData.genefull) : null,
+              'variants':             self.variants,
+              'variantData':          self.variantData,
               'cache':                self.persistCache[appName] && self.analysisCache[appName] ? self.analysisCache[appName] : null
           };
           if (self.paramGeneBatchSize && (appName == 'gene' || appName == 'genefull')) {
@@ -1403,15 +1397,13 @@ export default {
         this.promiseUpdateGenesData(messageObject);
         this.promiseCompleteStepTask('genes', taskMap[messageObject.source]);
         this.sendAppMessage('gene', messageObject);
-      } if (messageObject.type == "apply-genes" && messageObject.sender == 'gene.iobio.io') {
-        this.promiseUpdateGenes(messageObject.genes);
       } else if (messageObject.type == "save-variants") {
         if (messageObject.action == "update") {
-          this.promiseUpdateVariants(messageObject.app, messageObject.variants)
+          this.promiseUpdateVariants(messageObject.variants)
         } if (messageObject.action == "replace") {
-          this.promiseReplaceVariants(messageObject.app, messageObject.variants)
+          this.promiseReplaceVariants(messageObject.variants)
         } else if (messageObject.action == "delete") {
-          this.promiseDeleteVariants(messageObject.app, messageObject.variants)
+          this.promiseDeleteVariants(messageObject.variants)
         }
       } else if (messageObject.type == "save-cache") {
         if (this.persistCache[messageObject.app]) {
@@ -1461,13 +1453,21 @@ export default {
               self.analysis = analyses[0];
               self.idAnalysis = self.analysis.id;
 
+              if (self.analysis.genesToAnalyze == null || self.analysis.genesToAnalyze.length == 0) {
+                self.analysis.genesToAnalyze = self.analysis.genes.map(function(geneName) {
+                  return {name: geneName, analysisMode: {gene: true, genefull: false}}
+                })
+              }
+
               if (self.clearSavedAnalysis) {
+                self.analysis.genesToAnalyze = [];
                 self.analysis.genes = [];
                 self.analysis.genesGtr = [];
                 self.analysis.genesPhenolyzer = [];
                 self.analysis.genesManual = [];
                 self.analysis.genesReport = [];
                 self.analysis.phenotypes = [];
+                self.genes = [];
               }
 
 
@@ -1482,8 +1482,10 @@ export default {
               self.analysis.project_id = idProject;
               self.analysis.sample_id = idSample;
               self.analysis.workflow_id = workflow.id;
+              self.analysis.genesToAnalyze = [];
               self.analysis.genes = [];
               self.analysis.phenotypes = [];
+
               self.analysis.steps = workflow.steps.map(function(step) {
                 let stepObject = {
                   key: step.key,
@@ -1523,6 +1525,12 @@ export default {
 
               self.analysis = theAnalysis;
               self.idAnalysis = self.analysis.id;
+
+              if (self.analysis.genesToAnalyze == null || self.analysis.genesToAnalyze.length == 0) {
+                self.analysis.genesToAnalyze = self.analysis.genes.map(function(geneName) {
+                  return {name: geneName, analysisMode: {gene: true, genefull: false}}
+                })
+              }
               resolve();
           })
           .catch(function(err) {
@@ -1560,9 +1568,9 @@ export default {
                 self.analysis.phenotypes = [];
               }
 
-              self.analysisModel.promiseGetVariants('gene', self.analysis.id)
+              self.analysisModel.promiseGetVariants(self.analysis.id)
               .then(function(data) {
-                return self.promiseDeleteVariants('gene', data);
+                return self.promiseDeleteVariants(data);
               })
               .then(function(data) {
                 return self.analysisModel.promiseGetCache('gene', self.analysis.id);
@@ -1572,11 +1580,6 @@ export default {
                   return cacheItem.cache_key;
                 })
                 return self.analysisModel.promiseDeleteCache('gene', self.analysis.id, cache_keys)
-              })
-
-              self.analysisModel.promiseGetVariants('genefull', self.analysis.id)
-              .then(function(data) {
-                return self.promiseDeleteVariants('genefull', data);
               })
               .then(function(data) {
                 return self.analysisModel.promiseGetCache('genefull', self.analysis.id);
@@ -1608,56 +1611,48 @@ export default {
       });
     },
 
-    promiseGetVariantData: function(app) {
+    promiseGetVariantData: function() {
       let self = this;
       return new Promise(function(resolve, reject) {
-        if (app == 'genefull') {
-          self.analysisModel.promiseGetVariantData(app, self.analysis.project_id)
-          .then(function(variantData) {
-            if (variantData && variantData.data) {
-              self.variantData[app] = variantData.data;
-            } else {
-              self.variantData[app] = null;
-            }
-            resolve();
-          })
-        } else {
-          self.variantData[app] = null;
+        self.analysisModel.promiseGetVariantData(self.analysis.project_id)
+        .then(function(variantData) {
+          if (variantData && variantData.data) {
+            self.variantData = self.analysisModel.parseVariantData(variantData.data, self.analysis);
+          } else {
+            self.variantData = null;
+          }
           resolve();
-        }
+        })
       })
     },
 
-    promiseGetVariants: function(app) {
+    promiseGetVariants: function() {
       let self = this;
 
       return new Promise(function(resolve, reject) {
-        if ( app == 'genefull' || app == 'gene') {
 
-          self.analysisModel.promiseGetVariants(app, self.analysis.id)
-          .then(function(data) {
 
-            if (self.clearSavedAnalysis) {
-              self.promiseDeleteVariants(app, data)
-              .then(function() {
-                self.variants = [];
-                resolve();
-              })
-            } else {
-              self.variants[app] = data;
+        self.analysisModel.promiseGetVariants(self.analysis.id)
+        .then(function(data) {
+
+          if (self.clearSavedAnalysis) {
+            self.promiseDeleteVariants(data)
+            .then(function() {
+              self.variants = [];
               resolve();
-            }
-          })
-          .catch(function(error) {
-            let msg = "Problem in ClinHome.promiseGetVariants() for " + app + ": " + error;
-            console.log(msg);
-            reject(msg);
-          })
+            })
+          } else {
+            self.variants = data;
+            resolve();
+          }
+        })
+        .catch(function(error) {
+          let msg = "Problem in ClinHome.promiseGetVariants() : " + error;
+          console.log(msg);
+          reject(msg);
+        })
 
-        } else {
-          self.variants[app] = null;
-          resolve();
-        }
+
 
       })
     },
@@ -1755,16 +1750,23 @@ export default {
       self.analysis.genesManual     = messageObject.genesManual;
       self.analysis.genes           = messageObject.genes;
       self.analysis.phenotypes      = messageObject.searchTerms;
+
+      messageObject.genes.forEach(function(geneName) {
+        let matchingGenes = self.analysis.genesToAnalyze.filter(function(geneObject) {
+          return geneObject.name == geneName;
+        })
+        if (matchingGenes.length > 0) {
+          matchingGenes[0].analysisMode.gene = true;
+        } else {
+          self.analysis.genesToAnalyze.push({name: geneName, analysisMode: {gene: true, genefull: false}});
+        }
+      })
+      messageObject.genesToAnalyze = self.analysis.genesToAnalyze;
+
       self.analysis.datetime_last_modified = self.getCurrentDateTime();
       return self.analysisModel.promiseUpdateGenesData(self.analysis);
     },
 
-    promiseUpdateGenes: function(genes) {
-      let self = this;
-      self.analysis.genes = genes;
-      self.analysis.datetime_last_modified = self.getCurrentDateTime();
-      return self.analysisModel.promiseUpdateGenes(self.analysis);
-    },
 
     promiseUpdatePhenotypes: function(phenotypes) {
       let self = this;
@@ -1773,32 +1775,32 @@ export default {
       return self.analysisModel.promiseUpdatePhenotypes(self.analysis);
     },
 
-    promiseReplaceVariants: function(app, variants) {
+    promiseReplaceVariants: function(variants) {
       let self = this;
-      self.analysisModel.replaceMatchingVariants(variants, self.variants[app]);
-      let variantsToRemove = self.analysisModel.getObsoleteVariants(variants, self.variants[app]);
+      self.analysisModel.replaceMatchingVariants(variants, self.variants);
+      let variantsToRemove = self.analysisModel.getObsoleteVariants(variants, self.variants);
 
-      self.variants[app] = variants;
+      self.variants = variants;
       if (self.$refs.findingsRef) {
         self.$refs.findingsRef.refreshReport();
       }
-      return self.analysisModel.promiseUpdateVariants(app, self.analysis.id, variants, variantsToRemove);
+      return self.analysisModel.promiseUpdateVariants(self.analysis.id, variants, variantsToRemove);
     },
 
-    promiseUpdateVariants: function(app, variants) {
+    promiseUpdateVariants: function(variants) {
       let self = this;
-      self.analysisModel.replaceMatchingVariants(variants, self.variants[app]);
+      self.analysisModel.replaceMatchingVariants(variants, self.variants);
       if (self.$refs.findingsRef) {
         self.$refs.findingsRef.refreshReport();
       }
-      return self.analysisModel.promiseUpdateVariants(app, self.analysis.id, variants);
+      return self.analysisModel.promiseUpdateVariants(self.analysis.id, variants);
     },
 
 
-    promiseDeleteVariants: function(app, variants) {
+    promiseDeleteVariants: function(variants) {
       let self = this;
       self.analysis.datetime_last_modified = self.getCurrentDateTime();
-      return self.analysisModel.promiseDeleteVariants(app, self.analysis.id, variants);
+      return self.analysisModel.promiseDeleteVariants(self.analysis.id, variants);
     },
 
     promiseUpdateWorkflow: function() {

@@ -386,7 +386,7 @@
 
             <div class="card-metric">
               <v-avatar class="big">
-                <span class="headline">{{ variants ? variants.length : 0 }}</span>
+                <span class="headline">{{ variantsCandidateGenes ? variantsCandidateGenes.length : 0 }}</span>
               </v-avatar>
               <div class="card-heading-metric">filtered variants in candidate genes</div>
             </div>
@@ -425,7 +425,6 @@ export default {
     phenotypes:  null,
     genes:       null,
     variants:    null,
-    variantsFullAnalysis: null,
     filters:     null
   },
   data() {
@@ -491,14 +490,7 @@ export default {
           variant.candidateGene = true;
         }
       })
-      if (this.variantsFullAnalysis) {
-        this.variantsFullAnalysis.forEach(function(variant) {
-          if (variant.interpretation == interpretation) {
-            theVariants.push(variant);
-            variant.candidateGene = true;
-          }
-        })
-      }
+
       if (theVariants.length > 0) {
         let theGenes   = [];
         theVariants.forEach(function(variant) {
@@ -588,6 +580,22 @@ export default {
     }
   },
   computed: {
+    variantsCandidateGenes: function() {
+      let self = this;
+      if (self.variants) {
+        return self.variants.filter(function(variant) {
+          return variant.analysisMode.gene == true;
+        })
+      }
+    },
+    variantsFullAnalysis: function() {
+      let self = this;
+      if (self.variants) {
+        return self.variants.filter(function(variant) {
+          return variant.analysisMode.genefull == true;
+        })
+      }
+    },
     pedigreeCoverageQuartiles: function() {
       let self = this;
       let coverageQuartiles = [];

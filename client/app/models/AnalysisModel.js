@@ -1,18 +1,15 @@
 export default class AnalysisModel {
   constructor(userSession) {
-    this.userSession = userSession;
-    this.analysisTable = "clin.iobio.analysis";
-    this.variantTable  = {
-      'gene':     "clin.iobio.variant.gene",
-      'genefull': "clin.iobio.variant.gene.full" }
+    this.userSession       = userSession;
+    this.analysisTable     =  "clin.iobio.analysis";
+    this.variantTable      =  "clin.iobio.variant.gene";
+    this.variantDataTable  =  "clin.iobio.variant.data.gene.full";
+    this.workflowTable     =  "clin.iobio.workflow";
+    this.modelInfoTable    =  "clin.iobio.model.info";
+
     this.analysisCacheTable  = {
       'gene':     "clin.iobio.cache.gene",
       'genefull': "clin.iobio.cache.gene.full" }
-    this.variantDataTable  = {
-      'gene':     null,
-      'genefull': "clin.iobio.variant.data.gene.full" }
-    this.workflowTable = "clin.iobio.workflow";
-    this.modelInfoTable = "clin.iobio.model.info";
 
     this.DELIM = "^";
   }
@@ -117,14 +114,14 @@ export default class AnalysisModel {
     });
   }
 
-  promiseGetVariantData(app, id) {
+  promiseGetVariantData(id) {
     let self = this;
 
 
     return new Promise(function(resolve, reject) {
-      if (self.variantDataTable[app]) {
+      if (self.variantDataTable) {
         var params = {
-          TableName: self.variantDataTable[app],
+          TableName: self.variantDataTable,
           Key:{
               "id": id
           }
@@ -142,26 +139,46 @@ export default class AnalysisModel {
           }
         });
       } else {
-        reject("No variant data table exists for app " + app);
+        reject("No variant data table exists");
       }
     })
 
   }
 
-  parseVariantData(variantData) {
+
+
+  parseVariantData(variantData, analysis) {
+    let firstTime = false;
+    let geneFieldIdx = -1;
+    let buf = "";
+
     if (variantData != null && variantData.length > 0) {
-      let buf = "";
       variantData.forEach(function(rec) {
         if (buf.length > 0) {
           buf += "\n";
         }
         buf += rec.split(",").join("\t");
-      });
-      return buf;
 
-    } else {
-      return null;
+
+        if (firstTime) {
+          geneFieldIdx = rec.split(",").indexOf("gene");
+          firstTime = false;
+        } else if (geneFieldIdx != -1) {
+          let fields = rec.split(",");
+          let geneName = fields[geneFieldIdx];
+          let matchingGenes = analysis.genesToAnalyze.filter(function(geneObject) {
+            return geneObject.name == geneName;
+          })
+          if (matchingGenes.length() > 0) {
+            matchingGenes[0].analysisMode.genefull = true;
+          } else {
+            genes.push({name: geneName, analysisMode: {gene: false, genefull: true}})
+          }
+        }
+      });
     }
+
+    return buf;
   }
 
   promiseGetAnalysesForSample(idWorkflow, idProject, idSample ) {
@@ -224,8 +241,9 @@ export default class AnalysisModel {
         Key:{
             "id": analysis.id
         },
-        UpdateExpression: "set genesReport = :genesReport, genesGtr = :genesGtr, genesPhenolyzer = :genesPhenolyzer, genesManual = :genesManual, genes = :genes, phenotypes = :phenotypes, datetime_last_modified = :datetime_last_modified",
+        UpdateExpression: "set genesToAnalyze = :genesToAnalyze, genesReport = :genesReport, genesGtr = :genesGtr, genesPhenolyzer = :genesPhenolyzer, genesManual = :genesManual, genes = :genes, phenotypes = :phenotypes, datetime_last_modified = :datetime_last_modified",
         ExpressionAttributeValues:{
+            ":genesToAnalyze": analysis.genesToAnalyze,
             ":genes": analysis.genes,
             ":phenotypes": analysis.phenotypes,
             ":genesReport": analysis.genesReport,
@@ -249,7 +267,7 @@ export default class AnalysisModel {
   }
 
 
-  promiseUpdateGenes(analysis) {
+  promiseUpdateGenesToAnalyze(analysis) {
     let self = this;
 
     return new Promise(function(resolve, reject) {
@@ -258,9 +276,9 @@ export default class AnalysisModel {
         Key:{
             "id": analysis.id
         },
-        UpdateExpression: "set genes = :genes, datetime_last_modified = :datetime_last_modified",
+        UpdateExpression: "set genesToAnalyze = :genesToAnalyze, datetime_last_modified = :datetime_last_modified",
         ExpressionAttributeValues:{
-            ":genes": analysis.genes,
+            ":genesToAnalyze": analysis.genesToAnalyze ? analysis.genesToAnalyze : [],
              ":datetime_last_modified": analysis.datetime_last_modified
         },
         ReturnValues:"UPDATED_NEW"
@@ -306,7 +324,7 @@ export default class AnalysisModel {
   }
 
 
-  promiseGetVariants(app, idAnalysis) {
+  promiseGetVariants(idAnalysis) {
     let self = this;
 
     return new Promise(function(resolve, reject) {
@@ -315,7 +333,7 @@ export default class AnalysisModel {
       let variants = [];
 
       var params = {
-        TableName: self.variantTable[app],
+        TableName: self.variantTable,
         FilterExpression: "#analysis_id = :analysis_id",
         ExpressionAttributeNames: {
             "#analysis_id": "analysis_id"
@@ -403,7 +421,7 @@ export default class AnalysisModel {
     return matchingIdx;
   }
 
-  promiseUpdateVariants(app, idAnalysis, variants, variantsToDelete) {
+  promiseUpdateVariants(idAnalysis, variants, variantsToDelete) {
     let self = this;
     return new Promise(function(resolve, reject) {
       let promises = [];
@@ -412,12 +430,12 @@ export default class AnalysisModel {
       variants.forEach(function(variant) {
         variant.analysis_id = idAnalysis;
         variant.variant_id  = variant.gene + self.DELIM + variant.start + self.DELIM + variant.ref + self.DELIM + variant.alt;
-        var p = self._promisePutVariant(app, variant);
+        var p = self._promisePutVariant(variant);
         promises.push(p);
       })
 
       if (variantsToDelete && variantsToDelete.length > 0) {
-        var p = self.promiseDeleteVariants(app, idAnalysis, variantsToDelete);
+        var p = self.promiseDeleteVariants(idAnalysis, variantsToDelete);
         promises.push(p);
       }
 
@@ -435,11 +453,11 @@ export default class AnalysisModel {
   }
 
 
-  _promisePutVariant(app, variant) {
+  _promisePutVariant(variant) {
     let self = this;
     return new Promise(function(resolve, reject) {
       var params = {
-          TableName: self.variantTable[app],
+          TableName: self.variantTable,
           Item: variant,
           Key:{
             "variant_id": variant.variant_id,
@@ -460,7 +478,7 @@ export default class AnalysisModel {
     })
   }
 
-  promiseDeleteVariants(app, idAnalysis, variants) {
+  promiseDeleteVariants(idAnalysis, variants) {
     let self = this;
     return new Promise(function(resolve, reject) {
       let promises = [];
@@ -468,7 +486,7 @@ export default class AnalysisModel {
 
       variants.forEach(function(variant) {
         let idVariant  = variant.gene + self.DELIM + variant.start + self.DELIM + variant.ref + self.DELIM + variant.alt;
-        var p = self._promiseDeleteVariant(app, idVariant, idAnalysis);
+        var p = self._promiseDeleteVariant(idVariant, idAnalysis);
         promises.push(p);
       })
 
@@ -486,11 +504,11 @@ export default class AnalysisModel {
   }
 
 
-  _promiseDeleteVariant(app, idVariant, idAnalysis) {
+  _promiseDeleteVariant(idVariant, idAnalysis) {
     let self = this;
     return new Promise(function(resolve, reject) {
       var params = {
-        TableName: self.variantTable[app],
+        TableName: self.variantTable,
         Key:{
             "variant_id": idVariant,
             "analysis_id": idAnalysis
