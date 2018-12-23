@@ -584,17 +584,12 @@ export default {
       let self = this;
       if (self.variants) {
         return self.variants.filter(function(variant) {
-          return variant.analysisMode.gene == true;
+          return self.genes.indexOf(variant.gene) >= 0;
         })
       }
     },
     variantsFullAnalysis: function() {
-      let self = this;
-      if (self.variants) {
-        return self.variants.filter(function(variant) {
-          return variant.analysisMode.genefull == true;
-        })
-      }
+      return self.variants;
     },
     pedigreeCoverageQuartiles: function() {
       let self = this;
