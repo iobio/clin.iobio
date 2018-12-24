@@ -589,7 +589,12 @@ export default {
       }
     },
     variantsFullAnalysis: function() {
-      return self.variants;
+      let self = this;
+      if (self.variants) {
+        return self.variants.filter(function(variant) {
+          return self.genes.indexOf(variant.gene) == -1;
+        })
+      }
     },
     pedigreeCoverageQuartiles: function() {
       let self = this;
@@ -624,9 +629,6 @@ export default {
   },
   watch: {
     variants: function() {
-      this.organizeVariantsByInterpretation();
-    },
-    variantsFullAnalysis: function() {
       this.organizeVariantsByInterpretation();
     }
   },

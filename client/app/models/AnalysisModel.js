@@ -166,8 +166,8 @@ export default class AnalysisModel {
         } else if (geneFieldIdx != -1) {
           let fields = rec.split(",");
           let geneName = fields[geneFieldIdx];
-          let matchingGenes = analysis.genesToAnalyze.filter(function(geneObject) {
-            return geneObject.name == geneName;
+          let matchingGenes = analysis.genes.filter(function(gene) {
+            return gene == geneName;
           })
           if (matchingGenes.length() > 0) {
             matchingGenes[0].analysisMode.genefull = true;
@@ -241,9 +241,8 @@ export default class AnalysisModel {
         Key:{
             "id": analysis.id
         },
-        UpdateExpression: "set genesToAnalyze = :genesToAnalyze, genesReport = :genesReport, genesGtr = :genesGtr, genesPhenolyzer = :genesPhenolyzer, genesManual = :genesManual, genes = :genes, phenotypes = :phenotypes, datetime_last_modified = :datetime_last_modified",
+        UpdateExpression: "set genesReport = :genesReport, genesGtr = :genesGtr, genesPhenolyzer = :genesPhenolyzer, genesManual = :genesManual, genes = :genes, phenotypes = :phenotypes, datetime_last_modified = :datetime_last_modified",
         ExpressionAttributeValues:{
-            ":genesToAnalyze": analysis.genesToAnalyze,
             ":genes": analysis.genes,
             ":phenotypes": analysis.phenotypes,
             ":genesReport": analysis.genesReport,
@@ -267,7 +266,7 @@ export default class AnalysisModel {
   }
 
 
-  promiseUpdateGenesToAnalyze(analysis) {
+  promiseUpdateGenes(analysis) {
     let self = this;
 
     return new Promise(function(resolve, reject) {
@@ -276,9 +275,9 @@ export default class AnalysisModel {
         Key:{
             "id": analysis.id
         },
-        UpdateExpression: "set genesToAnalyze = :genesToAnalyze, datetime_last_modified = :datetime_last_modified",
+        UpdateExpression: "set genes = :genes datetime_last_modified = :datetime_last_modified",
         ExpressionAttributeValues:{
-            ":genesToAnalyze": analysis.genesToAnalyze ? analysis.genesToAnalyze : [],
+            ":genes": analysis.genes ? analysis.genes : [],
              ":datetime_last_modified": analysis.datetime_last_modified
         },
         ReturnValues:"UPDATED_NEW"

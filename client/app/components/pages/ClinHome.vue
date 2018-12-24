@@ -913,7 +913,7 @@ export default {
 
       showFindings: true,
 
-      iobioSource: self.paramIobioSource ? self.paramIobioSource : 'hub-chpc.iobio.io',
+      iobioSource: self.paramIobioSource ? self.paramIobioSource : 'mosiaic.chpc.utah.edu',
 
       appUrls: {
         'localhost': {
@@ -1321,7 +1321,6 @@ export default {
               'isFrameVisible':       app.step == self.currentStep,
               'modelInfo':            probandModelInfo[0],
               'modelInfos':           self.modelInfos,
-              'genesToAnalyze':       self.analysis.genesToAnalyze,
               'phenotypes':           self.analysis.phenotypes,
               'genes':                self.analysis.genes,
               'genesReport':          self.analysis.genesReport,
@@ -1335,7 +1334,7 @@ export default {
           };
           if (self.paramGeneBatchSize && (appName == 'gene' || appName == 'genefull')) {
             msgObject.batchSize = +self.paramGeneBatchSize;
-          } else if ((appName == 'gene' || appName == 'genefull') && msgObject.iobioSource == 'hub-chpc.iobio.io') {
+          } else if ((appName == 'gene' || appName == 'genefull') && msgObject.iobioSource != 'nv-prod.iobio.io') {
             msgObject.batchSize = 3;
           }
 
@@ -1453,14 +1452,7 @@ export default {
               self.analysis = analyses[0];
               self.idAnalysis = self.analysis.id;
 
-              if (self.analysis.genesToAnalyze == null || self.analysis.genesToAnalyze.length == 0) {
-                self.analysis.genesToAnalyze = self.analysis.genes.map(function(geneName) {
-                  return {name: geneName, analysisMode: {gene: true, genefull: false}}
-                })
-              }
-
               if (self.clearSavedAnalysis) {
-                self.analysis.genesToAnalyze = [];
                 self.analysis.genes = [];
                 self.analysis.genesGtr = [];
                 self.analysis.genesPhenolyzer = [];
@@ -1482,7 +1474,6 @@ export default {
               self.analysis.project_id = idProject;
               self.analysis.sample_id = idSample;
               self.analysis.workflow_id = workflow.id;
-              self.analysis.genesToAnalyze = [];
               self.analysis.genes = [];
               self.analysis.phenotypes = [];
 
@@ -1526,11 +1517,6 @@ export default {
               self.analysis = theAnalysis;
               self.idAnalysis = self.analysis.id;
 
-              if (self.analysis.genesToAnalyze == null || self.analysis.genesToAnalyze.length == 0) {
-                self.analysis.genesToAnalyze = self.analysis.genes.map(function(geneName) {
-                  return {name: geneName, analysisMode: {gene: true, genefull: false}}
-                })
-              }
               resolve();
           })
           .catch(function(err) {
@@ -1751,17 +1737,6 @@ export default {
       self.analysis.genes           = messageObject.genes;
       self.analysis.phenotypes      = messageObject.searchTerms;
 
-      messageObject.genes.forEach(function(geneName) {
-        let matchingGenes = self.analysis.genesToAnalyze.filter(function(geneObject) {
-          return geneObject.name == geneName;
-        })
-        if (matchingGenes.length > 0) {
-          matchingGenes[0].analysisMode.gene = true;
-        } else {
-          self.analysis.genesToAnalyze.push({name: geneName, analysisMode: {gene: true, genefull: false}});
-        }
-      })
-      messageObject.genesToAnalyze = self.analysis.genesToAnalyze;
 
       self.analysis.datetime_last_modified = self.getCurrentDateTime();
       return self.analysisModel.promiseUpdateGenesData(self.analysis);
