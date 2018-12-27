@@ -904,7 +904,7 @@ export default {
       isSidebar: false,
       isMinimized: false,
 
-      persistCache: {'gene': false, 'genefull': false},
+      persistCache: true,
 
       isAuthenticated: false,
       userSession:  null,
@@ -945,8 +945,8 @@ export default {
       workflow: null,
       analysis: null,
       caseSummary: null,
-      analysisCache:     {'gene': null, 'genefull': null},
-      analysisCacheKeys: {'gene': null, 'genefull': null},
+      analysisCache:     null,
+      analysisCacheKeys: null,
 
       variants:          [],
       variantData:       null,
@@ -1302,8 +1302,8 @@ export default {
 
 
         let promise = null;
-        if (self.persistCache[appName]) {
-          promise = self.promiseGetCache(appName)
+        if (self.persistCache && (appName == 'gene' || appName == 'genefull')) {
+          promise = self.promiseGetCache()
         } else {
           promise = Promise.resolve();
         }
@@ -1330,7 +1330,7 @@ export default {
               'persistCache':         self.persistCache,
               'variants':             self.variants,
               'variantData':          self.variantData,
-              'cache':                self.persistCache[appName] && self.analysisCache[appName] ? self.analysisCache[appName] : null
+              'cache':                self.analysisCache ? self.analysisCache : null
           };
           if (self.paramGeneBatchSize && (appName == 'gene' || appName == 'genefull')) {
             msgObject.batchSize = +self.paramGeneBatchSize;
@@ -1405,8 +1405,8 @@ export default {
           this.promiseDeleteVariants(messageObject.variants)
         }
       } else if (messageObject.type == "save-cache") {
-        if (this.persistCache[messageObject.app]) {
-          this.promiseUpdateCache(messageObject.app, messageObject.cache);
+        if (this.persistCache) {
+          this.promiseUpdateCache(messageObject.cache);
         }
       } else if (messageObject.type == "save-filters") {
         this.promiseUpdateFilters(messageObject.filters);
@@ -1559,22 +1559,22 @@ export default {
                 return self.promiseDeleteVariants(data);
               })
               .then(function(data) {
-                return self.analysisModel.promiseGetCache('gene', self.analysis.id);
+                return self.analysisModel.promiseGetCache(self.analysis.id);
               })
               .then(function(data) {
                 let cache_keys = data.map(function(cacheItem) {
                   return cacheItem.cache_key;
                 })
-                return self.analysisModel.promiseDeleteCache('gene', self.analysis.id, cache_keys)
+                return self.analysisModel.promiseDeleteCache(self.analysis.id, cache_keys)
               })
               .then(function(data) {
-                return self.analysisModel.promiseGetCache('genefull', self.analysis.id);
+                return self.analysisModel.promiseGetCache(self.analysis.id);
               })
               .then(function(data) {
                 let cache_keys = data.map(function(cacheItem) {
                   return cacheItem.cache_key;
                 })
-                return self.analysisModel.promiseDeleteCache('genefull', self.analysis.id, cache_keys)
+                return self.analysisModel.promiseDeleteCache(self.analysis.id, cache_keys)
               })
               .then(function() {
                 resolve();
@@ -1644,86 +1644,76 @@ export default {
     },
 
 
-    promiseGetCache: function(app) {
+    promiseGetCache: function() {
       let self = this;
 
       return new Promise(function(resolve, reject) {
-        if (app == 'gene' || app == 'genefull') {
 
-          let cacheItems = [];
-          let cacheKeysToDelete = [];
 
-          self.analysisModel.promiseGetCache(app, self.analysis.id)
-          .then(function(data) {
-            if (self.clearSavedAnalysis) {
-              let cache_keys = data.map(function(cacheItem) {
-                return cacheItem.cache_key;
-              })
-              return self.analysisModel.promiseDeleteCache(app, self.analysis.id, cache_keys);
-            } else {
-              return Promise.resolve(data);
-            }
+        let cacheItems = [];
+        let cacheKeysToDelete = [];
 
-          })
-          .then(function(data) {
-            if (self.clearSavedAnalysis) {
-              self.analysisCache[app] = null;
-              self.analysisCacheKeys[app] = null;
-              resolve();
-            } else {
-              // For candidate gene variant analysis, we only want to keep cache items
-              // for relevant genes
-              let applicableGenes = [];
-              if (app == 'gene') {
-                applicableGenes = self.analysis.genes;
-              } else if (app == 'genefull') {
-                let geneMap = {};
-                self.variants.genefull.forEach(function(v) {
-                  geneMap[v.gene] = true;
-                })
-                for (var geneName in geneMap) {
-                  applicableGenes.push(geneName);
+        self.analysisModel.promiseGetCache(self.analysis.id)
+        .then(function(data) {
+          if (self.clearSavedAnalysis) {
+            let cache_keys = data.map(function(cacheItem) {
+              return cacheItem.cache_key;
+            })
+            return self.analysisModel.promiseDeleteCache(self.analysis.id, cache_keys);
+          } else {
+            return Promise.resolve(data);
+          }
+
+        })
+        .then(function(data) {
+          if (self.clearSavedAnalysis) {
+            self.analysisCache = null;
+            self.analysisCacheKeys = null;
+            resolve();
+          } else {
+            // For candidate gene variant analysis, we only want to keep cache items
+            // for relevant genes
+            let applicableGenes = self.analysis.genes.slice();
+            self.variants.forEach(function(v) {
+              if (applicableGenes.indexOf(v.gene) == -1) {
+                applicableGenes.push(v.gene);
+              }
+            })
+
+            data.forEach(function(cacheItem) {
+              var keyTokens = cacheItem.cache_key.split(self.analysisModel.DELIM);
+              // TODO:  Use common class cache helper to parse key
+              if (keyTokens.length > 2) {
+                let gene = keyTokens[2];
+                if (applicableGenes.indexOf(gene) >= 0) {
+                  cacheItems.push(cacheItem);
+                } else {
+                  cacheKeysToDelete.push(cacheItem.cache_key);
                 }
               }
-              data.forEach(function(cacheItem) {
-                var keyTokens = cacheItem.cache_key.split(self.analysisModel.DELIM);
-                // TODO:  Use common class cache helper to parse key
-                if (keyTokens.length > 2) {
-                  let gene = keyTokens[2];
-                  if (applicableGenes.indexOf(gene) >= 0) {
-                    cacheItems.push(cacheItem);
-                  } else {
-                    cacheKeysToDelete.push(cacheItem.cache_key);
-                  }
-                }
-              })
-              self.analysisCache[app] = cacheItems;
+            })
+            self.analysisCache = cacheItems;
 
 
 
-              self.analysisCacheKeys[app] = data.map(function(cacheItem) {
-                return cacheItem.cache_key;
-              });
+            self.analysisCacheKeys = data.map(function(cacheItem) {
+              return cacheItem.cache_key;
+            });
 
 
-              self.analysisModel.promiseDeleteCache(app, self.analysis.id, cacheKeysToDelete)
-              .then(function() {
-                resolve();
-              })
-            }
+            self.analysisModel.promiseDeleteCache(self.analysis.id, cacheKeysToDelete)
+            .then(function() {
+              resolve();
+            })
+          }
 
-          })
-          .catch(function(error) {
-            let msg = "Problem in ClinHome.promiseGetCache(): " + error;
-            console.log(msg);
-            reject(msg);
-          })
+        })
+        .catch(function(error) {
+          let msg = "Problem in ClinHome.promiseGetCache(): " + error;
+          console.log(msg);
+          reject(msg);
+        })
 
-        } else {
-          self.analysisCache[app] = null;
-          self.analysisCacheKeys[app] = null;
-          resolve();
-        }
 
       })
     },
@@ -1791,9 +1781,9 @@ export default {
       return self.analysisModel.promiseUpdateFilters(self.analysis);
     },
 
-    promiseUpdateCache: function(app, cacheItems) {
+    promiseUpdateCache: function(cacheItems) {
       let self = this;
-      return self.analysisModel.promiseUpdateCache(app, self.analysis.id, cacheItems);
+      return self.analysisModel.promiseUpdateCache(self.analysis.id, cacheItems);
     },
 
     promiseCompleteStepTask: function(stepKey, taskKey) {

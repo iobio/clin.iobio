@@ -1,15 +1,12 @@
 export default class AnalysisModel {
   constructor(userSession) {
-    this.userSession       = userSession;
-    this.analysisTable     =  "clin.iobio.analysis";
-    this.variantTable      =  "clin.iobio.variant.gene";
-    this.variantDataTable  =  "clin.iobio.variant.data.gene.full";
-    this.workflowTable     =  "clin.iobio.workflow";
-    this.modelInfoTable    =  "clin.iobio.model.info";
-
-    this.analysisCacheTable  = {
-      'gene':     "clin.iobio.cache.gene",
-      'genefull': "clin.iobio.cache.gene.full" }
+    this.userSession        = userSession;
+    this.analysisTable      =  "clin.iobio.analysis";
+    this.variantTable       =  "clin.iobio.variant.gene";
+    this.variantDataTable   =  "clin.iobio.variant.data.gene.full";
+    this.workflowTable      =  "clin.iobio.workflow";
+    this.modelInfoTable     =  "clin.iobio.model.info";
+    this.analysisCacheTable = "clin.iobio.cache.gene";
 
     this.DELIM = "^";
   }
@@ -585,7 +582,7 @@ export default class AnalysisModel {
 
 
 
-  promiseGetCache(app, idAnalysis) {
+  promiseGetCache(idAnalysis) {
     let self = this;
 
     return new Promise(function(resolve, reject) {
@@ -594,7 +591,7 @@ export default class AnalysisModel {
       let cacheItems = [];
 
       var params = {
-        TableName: self.analysisCacheTable[app],
+        TableName: self.analysisCacheTable,
         FilterExpression: "#analysis_id = :analysis_id",
         ExpressionAttributeNames: {
             "#analysis_id": "analysis_id"
@@ -636,7 +633,7 @@ export default class AnalysisModel {
 
   }
 
-  promiseUpdateCache(app, idAnalysis, cacheItems) {
+  promiseUpdateCache(idAnalysis, cacheItems) {
     let self = this;
    return new Promise(function(resolve, reject) {
       let promises = [];
@@ -644,7 +641,7 @@ export default class AnalysisModel {
 
       cacheItems.forEach(function(cacheItem) {
         cacheItem.analysis_id = idAnalysis;
-        var p = self._promisePutCacheItem(app, cacheItem);
+        var p = self._promisePutCacheItem(cacheItem);
         promises.push(p);
       })
 
@@ -660,11 +657,11 @@ export default class AnalysisModel {
   }
 
 
-  _promisePutCacheItem(app, cacheItem) {
+  _promisePutCacheItem(cacheItem) {
     let self = this;
     return new Promise(function(resolve, reject) {
       var params = {
-          TableName: self.analysisCacheTable[app],
+          TableName: self.analysisCacheTable,
           Item: cacheItem,
           ProvisionedThroughput: {
             ReadCapacityUnits: 6,
@@ -681,13 +678,13 @@ export default class AnalysisModel {
     })
   }
 
-  promiseDeleteCache(app, idAnalysis, cacheKeys) {
+  promiseDeleteCache(idAnalysis, cacheKeys) {
     let self = this;
     return new Promise(function(resolve, reject) {
       let promises = [];
 
       cacheKeys.forEach(function(cacheKey) {
-        var p = self._promiseDeleteCacheItem(app, idAnalysis, cacheKey);
+        var p = self._promiseDeleteCacheItem(idAnalysis, cacheKey);
         promises.push(p);
       })
 
@@ -702,11 +699,11 @@ export default class AnalysisModel {
 
   }
 
-  _promiseDeleteCacheItem(app, idAnalysis, cacheKey) {
+  _promiseDeleteCacheItem(idAnalysis, cacheKey) {
     let self = this;
     return new Promise(function(resolve, reject) {
       var params = {
-        TableName: self.analysisCacheTable[app],
+        TableName: self.analysisCacheTable,
         Key:{
             "cache_key": cacheKey,
             "analysis_id": idAnalysis
