@@ -913,7 +913,8 @@ export default {
 
       showFindings: true,
 
-      iobioSource: self.paramIobioSource ? self.paramIobioSource : 'mosiaic.chpc.utah.edu',
+//      iobioSource: self.paramIobioSource ? self.paramIobioSource : 'mosaic.chpc.utah.edu',
+      iobioSource: self.paramIobioSource ? self.paramIobioSource : 'hub-chpc.iobio.io',
 
       appUrls: {
         'localhost': {

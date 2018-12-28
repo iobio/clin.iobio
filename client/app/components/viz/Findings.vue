@@ -580,22 +580,6 @@ export default {
     }
   },
   computed: {
-    variantsCandidateGenes: function() {
-      let self = this;
-      if (self.variants) {
-        return self.variants.filter(function(variant) {
-          return self.genes.indexOf(variant.gene) >= 0;
-        })
-      }
-    },
-    variantsFullAnalysis: function() {
-      let self = this;
-      if (self.variants) {
-        return self.variants.filter(function(variant) {
-          return self.genes.indexOf(variant.gene) == -1;
-        })
-      }
-    },
     pedigreeCoverageQuartiles: function() {
       let self = this;
       let coverageQuartiles = [];
