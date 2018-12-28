@@ -609,7 +609,24 @@ export default {
       }
 
       return phenotypeList;
+    },
+    variantsCandidateGenes: function() {
+      let self = this;
+      if (self.variants) {
+        return self.variants.filter(function(variant) {
+          return self.genes.indexOf(variant.gene) >= 0;
+        })
+      }
+    },
+    variantsFullAnalysis: function() {
+      let self = this;
+      if (self.variants) {
+        return self.variants.filter(function(variant) {
+          return self.genes.indexOf(variant.gene) == -1;
+        })
+      }
     }
+
   },
   watch: {
     variants: function() {

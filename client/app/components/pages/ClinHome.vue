@@ -904,7 +904,7 @@ export default {
       isSidebar: false,
       isMinimized: false,
 
-      persistCache: true,
+      persistCache: false,
 
       isAuthenticated: false,
       userSession:  null,
