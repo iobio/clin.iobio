@@ -8,6 +8,7 @@
 
 $light-grey-background: #f1f1f1
 $dark-grey-background: #cbc9c9
+$subheading-color: #a5dfea
 
 #clin-container
   background-color: $dark-grey-background
@@ -156,7 +157,7 @@ $dark-grey-background: #cbc9c9
 
     h5
         margin-bottom: 10px
-        color: $app-color
+        color: $subheading-color
 
     .phenotype-summary-title
       font-size: 16px
@@ -570,9 +571,15 @@ $dark-grey-background: #cbc9c9
 
   &.dark
 
+    .app-title
+      color: white
+
     #findings-button
       background-color: white
       color:  $dark-nav-background-color
+
+      .btn__content
+        color: $dark-nav-background-color
 
       &.is-active
         background-color:  $dark-app-color
@@ -584,12 +591,26 @@ $dark-grey-background: #cbc9c9
       .btn__content
         .material-icons
           color: white
+    .workflow-summary-panel
+      background-color: $dark-nav-background-color
+
+      .workflow-summary-description
+        div
+          color: $dark-text-color
+
+    .phenotype-summary-panel
+      .phenotype-entry
+        color: $dark-text-color
+
+    .phenotype-summary-panel
+      background-color: $dark-nav-background-color
 
     .toolbar__content
-      background: $dark-nav-background-color
+      background:  $dark-grey-background
 
     .workflow-summary-description
       color: $dark-text-color
+
 
     .input-group--selection-controls.accent--text
       .icon--selection-control
@@ -618,7 +639,8 @@ $dark-grey-background: #cbc9c9
       color: $dark-text-color !important
 
     h5
-      color:  $dark-text-color
+      color:  $subheading-color
+
 
     .split-btn .btn__content
       color: $dark-text-color
@@ -629,7 +651,7 @@ $dark-grey-background: #cbc9c9
 
     .horizontal-dashboard-card
       color: $dark-text-color
-      border-bottom: $dark-nav-border-color solid 1px
+
 
       .stepper.stepper--non-linear
         background-color: $dark-nav-background-color
@@ -986,7 +1008,7 @@ export default {
     let self = this;
     return {
 
-      theme:    self.paramTheme && self.paramTheme.length > 0 ? self.paramTheme : 'light',
+      theme:    self.paramTheme && self.paramTheme.length > 0 ? self.paramTheme : 'dark',
       isSidebar: false,
       isMinimized: false,
 
