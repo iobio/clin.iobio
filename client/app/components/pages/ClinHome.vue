@@ -7,9 +7,10 @@
 @import ../../../assets/sass/variables
 
 $light-grey-background: #f1f1f1
+$dark-grey-background: #cbc9c9
 
 #clin-container
-  background-color: $light-grey-background
+  background-color: $dark-grey-background
   height: -webkit-fill-available
 
 .clin-card
@@ -23,7 +24,7 @@ $light-grey-background: #f1f1f1
   -webkit-box-shadow: 0px 0px 12px 0px rgba(0, 0, 0, 0.49) !important
 
 .app-content
-  margin-top: 145px
+  margin-top: 140px
   margin-left: 0px
   border-top: $divider-color
   border-top-width: .5px
@@ -55,12 +56,18 @@ $light-grey-background: #f1f1f1
         min-height: 0px !important
 
 .toolbar__content
-  background: $light-grey-background
-  -webkit-box-shadow: none !important
-  box-shadow: none !important
+  background: $dark-grey-background
+  -webkit-box-shadow: 0px 2px 1px -1px rgba(0, 0, 0, 0.05), 0px 1px 1px 0px rgba(0, 0, 0, 0.03), 0px 1px 3px 0px rgba(0, 0, 0, 0.01) !important
+  box-shadow: 0px 2px 1px -1px rgba(0, 0, 0, 0.05), 0px 1px 1px 0px rgba(0, 0, 0, 0.03), 0px 1px 3px 0px rgba(0, 0, 0, 0.01) !important
+
 
 #clin-container
   font-size: 14px
+
+  .app-title
+    font-size: 20px
+    color: $app-color
+    margin-bottom: 3px
 
   .navigation-drawer--fixed
     overflow-y: auto
@@ -70,8 +77,11 @@ $light-grey-background: #f1f1f1
     padding: 4px;
     max-height: 30px;
     margin-left: 0px
-    margin-top: 0px
-    margin-bottom: 0px
+    margin-top: 5px
+    margin-bottom: 5px
+
+    .btn__content
+      color: $app-color
 
     &.is-active
       background-color:  $app-color
@@ -108,11 +118,13 @@ $light-grey-background: #f1f1f1
     color: $text-color
     display: flex
     flex-direction: column
-    justify-content: space-between
+    justify-content: flex-start
 
   .workflow-summary-title
-    font-size: 16px
     padding-top: 0px
+    margin-bottom: 4px
+    font-size: 16px
+    color: $app-color
 
 
   .workflow-summary-description
@@ -120,13 +132,25 @@ $light-grey-background: #f1f1f1
     line-height: 15px
     font-size: 13px
 
+    h5
+      font-size: 14px
+      margin-bottom: 0px
+      margin-top: 0px
+
+    div
+      font-size: 13px
+      font-family: $app-text-font
+      color: $text-color
+      max-height: 45px
+      overflow: auto
+
   .phenotype-summary-panel
     color: $text-color
     display: flex
     flex-direction: column
     justify-content: flex-start
     background-color: $nav-background-color
-    margin-right: 10px
+    margin-right: 2px
     width: 200px
     padding: 5px 5px 5px 10px
 
@@ -137,6 +161,11 @@ $light-grey-background: #f1f1f1
     .phenotype-summary-title
       font-size: 16px
       padding-top: 0x
+
+    .phenotype-entry
+      font-family: $app-text-font
+      line-height: 15px
+      font-size: 13px
 
 
   .step-summary-panel
@@ -205,7 +234,7 @@ $light-grey-background: #f1f1f1
     .stepper__label
       line-height: 17px !important
       text-shadow: none !important
-      font-size: 16px
+      font-size: 14px
 
     hr.divider
       background-color: $text-color !important
@@ -221,10 +250,15 @@ $light-grey-background: #f1f1f1
       -webkit-box-shadow: none
       box-shadow: none
       font-size: 14px
-      justify-content: space-between;
+      justify-content: flex-start;
       height: 100%;
       flex-flow: column;
-      margin-right: 40px
+      margin-right: 10px
+
+      h5
+        font-size: 16px
+        padding-left: 10px
+        margin-bottom: 5px
 
 
     .stepper.stepper--non-linear
@@ -233,6 +267,8 @@ $light-grey-background: #f1f1f1
       display: flex
       flex-direction: row
       flex-grow: 2
+      box-shadow: none
+      -webkit-box-shadow: none
 
     .stepper-btn-panel
       height: 30px
@@ -264,16 +300,13 @@ $light-grey-background: #f1f1f1
       display: none
 
     .workflow-summary-panel
-      width: 270px
-      padding: 5px 5px 5px 10px
+      width: 360px
+      padding: 0px 5px 5px 10px
       overflow-y: auto
       margin-left: 0px
-      margin-right: 10px
+      margin-right: 2px
       height: -webkit-fill-available
       background-color: $nav-background-color
-
-      h5
-        margin-bottom: 10px
 
     .stepper__content
       padding: 0px 0px 0px 0px
@@ -284,18 +317,21 @@ $light-grey-background: #f1f1f1
         justify-content: center
 
     .stepper__step
-      padding-top: 5px
-      padding-bottom: 10px
+      padding-top: 6px
+      padding-bottom: 1px
       margin-left: 0px
       margin-right: 0px
+      padding-right: 0px
+      padding-left: 10px
 
     .stepper__items
       display: flex
       margin-left: 5px
       min-width: 480px
+      margin-top: 15px
 
     .step-summary-panel
-      width: 300px
+      width: 230px
       display: inline-block
       padding: 15px 15px 5px 5px
       overflow-y: auto
@@ -383,7 +419,7 @@ $light-grey-background: #f1f1f1
 
     .stepper__label
       color: $text-color
-      font-size: 16px
+      font-size: 14px
 
 
     .stepper__step--active
@@ -477,7 +513,7 @@ $light-grey-background: #f1f1f1
   .horizontal-dashboard-card.minimized
 
     #findings-button
-      margin-top: 10px
+      margin-top: 5px
 
     .preferences-button
       top: 0px
@@ -660,20 +696,19 @@ $light-grey-background: #f1f1f1
             @switch-minimized="switchMinimized">
           </preferences-menu>
 
-          <div class="workflow-summary-panel major-shadow" v-show="!isMinimized">
+          <div class="workflow-summary-panel" v-show="!isMinimized">
 
 
-              <h5 v-if="!caseSummary" class="workflow-summary-title"> {{ workflow.title }} </h5>
-              <div v-if="!caseSummary" class="workflow-summary-description">
-                {{ workflow.summary}}
-              </div>
+              <div class="app-title"> clin.iobio </div>
 
 
-              <h5 v-if="caseSummary" class="workflow-summary-title"> {{ caseSummary.name }} </h5>
 
 
               <div v-if="caseSummary" class="workflow-summary-description">
-                {{ caseSummary.phenotypes}}
+                <h5 v-if="caseSummary" class="workflow-summary-title"> {{ caseSummary.name }} </h5>
+                <div>
+                  {{ caseSummary.description }}
+                </div>
               </div>
 
               <div>
@@ -682,19 +717,19 @@ $light-grey-background: #f1f1f1
 
           </div>
 
-          <div class="phenotype-summary-panel major-shadow" v-show="!isMinimized">
+          <div class="phenotype-summary-panel " v-show="!isMinimized">
             <h5  class="phenotype-summary-title"> Phenotypes </h5>
-            <div v-for="phenotype in phenotypeList" :key="phenotype" style="font-size:14px">
+            <div v-for="phenotype in phenotypeList" :key="phenotype" class="phenotype-entry">
               {{ phenotype }}
             </div>
           </div>
 
 
 
-        <v-stepper class="major-shadow" v-model="currentStep"   non-linear>
+        <v-stepper class="" v-model="currentStep"   non-linear>
 
           <v-stepper-header vertical>
-            <h5 style="font-size: 16px;padding-left: 10px;margin-bottom: 0px;">Worflow Steps</h5>
+            <h5>Worflow Steps</h5>
             <v-btn v-show="isMinimized" :disabled="currentStep == 1" class="stepper-btn" flat small @click="currentStep = currentStep - 1">
               <v-icon>chevron_left</v-icon>
             </v-btn>
@@ -800,7 +835,7 @@ $light-grey-background: #f1f1f1
 
               <h5 v-if="caseSummary" class="workflow-title"> {{ caseSummary.name }} </h5>
               <div v-if="caseSummary"  class="workflow-summary-description" v-show="!isMinimized">
-                {{ caseSummary.phenotypes}}
+                {{ caseSummary.description}}
               </div>
             </div>
           </div>
@@ -866,7 +901,7 @@ $light-grey-background: #f1f1f1
 
 
     <div style="width:100%;height:100%;padding: 0px"
-    :class="{'app-content': true, 'major-shadow': true, 'sidebar': isSidebar, 'minimized': isMinimized}"
+    :class="{'app-content': true,  'sidebar': isSidebar, 'minimized': isMinimized}"
     v-show="isAuthenticated " >
       <v-card  class="clin-card"
         v-if="analysis && workflow"
@@ -964,8 +999,7 @@ export default {
 
       showFindings: true,
 
-//      iobioSource: self.paramIobioSource ? self.paramIobioSource : 'mosaic.chpc.utah.edu',
-      iobioSource: self.paramIobioSource ? self.paramIobioSource : 'hub-chpc.iobio.io',
+      iobioSource: self.paramIobioSource ? self.paramIobioSource : 'mosaic.chpc.utah.edu',
 
       appUrls: {
         'localhost': {
@@ -1117,7 +1151,7 @@ export default {
           .then(function(project) {
             self.caseSummary = {};
             self.caseSummary.name = project.name;
-            self.caseSummary.phenotypes = project.description;
+            self.caseSummary.description = project.description && project.description.length > 0 ? project.description : "A summary of the trio goes here....";
           })
         })
 
@@ -1330,6 +1364,8 @@ export default {
 
     isS3() {
       let self = this;
+      return false;
+      /*
       let S3_URL = "https://s3.amazonaws.com";
       return self.modelInfos.filter(function(modelInfo) {
 
@@ -1353,6 +1389,7 @@ export default {
 
         return vcfS3 && bamS3;
       }).length > 0;
+      */
     },
 
 
