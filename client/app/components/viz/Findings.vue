@@ -8,7 +8,7 @@
   height: -webkit-fill-available
   height: -moz-available
   height: 100%
-  background-color: $light-grey
+  background-color: white
 
   .avatar.big
     border: #d5d5d5 solid thin
@@ -240,7 +240,7 @@
 
       <span class="card-title">Findings</span>
 
-      <v-card class="findings-section">
+      <div class="findings-section">
         <span class="card-heading">Summary</span>
 
         <div style="display:flex;flex-direction:row;justify-content:flex-start">
@@ -282,9 +282,9 @@
 
         </div>
 
-      </v-card>
+      </div>
 
-      <v-card class="findings-section" v-for="interpretation in variantsByInterpretation" :key="interpretation.key" >
+      <div class="findings-section" v-for="interpretation in variantsByInterpretation" :key="interpretation.key" >
 
 
         <div
@@ -370,9 +370,9 @@
         </template>
 
 
-      </v-card>
+      </div>
 
-      <v-card class="findings-section">
+      <div class="findings-section">
 
           <span class="card-heading">Analysis Summary</span>
 
@@ -399,7 +399,7 @@
             </div>
 
           </div>
-      </v-card>
+      </div>
 
   </div>
 </template>

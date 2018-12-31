@@ -6,6 +6,11 @@
 
 @import ../../../assets/sass/variables
 
+$light-grey-background: #f1f1f1
+
+#clin-container
+  background-color: $light-grey-background
+  height: -webkit-fill-available
 
 .clin-card
   background-color: rgb(250, 250, 250)
@@ -13,6 +18,9 @@
   padding: 0px
 
 
+.major-shadow
+  box-shadow: 0px 0px 12px 0px rgba(0, 0, 0, 0.49) !important
+  -webkit-box-shadow: 0px 0px 12px 0px rgba(0, 0, 0, 0.49) !important
 
 .app-content
   margin-top: 145px
@@ -20,6 +28,8 @@
   border-top: $divider-color
   border-top-width: .5px
   border-top-style: none
+
+
 
 .app-content.sidebar
   margin-top: 0px
@@ -45,7 +55,9 @@
         min-height: 0px !important
 
 .toolbar__content
-  background: $nav-background-color
+  background: $light-grey-background
+  -webkit-box-shadow: none !important
+  box-shadow: none !important
 
 #clin-container
   font-size: 14px
@@ -57,9 +69,9 @@
   #findings-button
     padding: 4px;
     max-height: 30px;
-    margin-left: 10px
+    margin-left: 0px
     margin-top: 0px
-    margin-bottom: 10px
+    margin-bottom: 0px
 
     &.is-active
       background-color:  $app-color
@@ -94,16 +106,37 @@
 
   .workflow-summary-panel
     color: $text-color
+    display: flex
+    flex-direction: column
+    justify-content: space-between
 
   .workflow-summary-title
     font-size: 16px
-    padding-top: 3px
+    padding-top: 0px
 
 
   .workflow-summary-description
     font-family: $app-text-font
     line-height: 15px
     font-size: 13px
+
+  .phenotype-summary-panel
+    color: $text-color
+    display: flex
+    flex-direction: column
+    justify-content: flex-start
+    background-color: $nav-background-color
+    margin-right: 10px
+    width: 200px
+    padding: 5px 5px 5px 10px
+
+    h5
+        margin-bottom: 10px
+        color: $app-color
+
+    .phenotype-summary-title
+      font-size: 16px
+      padding-top: 0x
 
 
   .step-summary-panel
@@ -121,12 +154,12 @@
     color: $text-color !important
 
   h5
-    color:  $text-color
     margin-top: 2px
     margin-bottom: 5px
     margin-left: 0px
     font-size: 18px
     display: inline-block
+    color: $app-color
 
 
 
@@ -161,7 +194,8 @@
     margin: 0px
     width: 100%
     color: $text-color
-    border-bottom: $nav-border-color solid 1px
+    display: flex
+    flex-direction: row
 
     .split-btn
       top: 10px
@@ -175,6 +209,7 @@
 
     hr.divider
       background-color: $text-color !important
+      display: none
 
     .stepper__step--active
       .stepper__label
@@ -186,13 +221,18 @@
       -webkit-box-shadow: none
       box-shadow: none
       font-size: 14px
-      justify-content: space-between
-      height: 30px
+      justify-content: space-between;
+      height: 100%;
+      flex-flow: column;
+      margin-right: 40px
+
 
     .stepper.stepper--non-linear
-      height: 145px
-      -webkit-box-shadow: none !important
+      height: 135px
       background-color: $nav-background-color
+      display: flex
+      flex-direction: row
+      flex-grow: 2
 
     .stepper-btn-panel
       height: 30px
@@ -221,15 +261,16 @@
       margin-bottom: 5px
       margin-left: 10px
       margin-right: 0px
+      display: none
 
     .workflow-summary-panel
       width: 270px
-      float: left
-      display: inline-block
       padding: 5px 5px 5px 10px
       overflow-y: auto
-      margin-left: 4px
-      margin-right: 0px
+      margin-left: 0px
+      margin-right: 10px
+      height: -webkit-fill-available
+      background-color: $nav-background-color
 
       h5
         margin-bottom: 10px
@@ -244,7 +285,7 @@
 
     .stepper__step
       padding-top: 5px
-      padding-bottom: 5px
+      padding-bottom: 10px
       margin-left: 0px
       margin-right: 0px
 
@@ -605,10 +646,11 @@
 
 
     <v-toolbar  v-if="!isSidebar && isAuthenticated && workflow && analysis "
-        light  fixed flat  :height="isMinimized ? 60 : 145">
+        light  fixed flat  :height="isMinimized ? 60 : 135">
       <div v-show="isAuthenticated"  :class="{'horizontal-dashboard-card': true, 'minimized': isMinimized}">
 
           <preferences-menu
+            v-if="false"
             class="preferences-button"
             :isSidebar="isSidebar"
             :isMinimized="isMinimized"
@@ -618,10 +660,10 @@
             @switch-minimized="switchMinimized">
           </preferences-menu>
 
-          <div class="workflow-summary-panel" v-show="!isMinimized">
-            <div>
+          <div class="workflow-summary-panel major-shadow" v-show="!isMinimized">
 
-              <h5 v-if="!caseSummary"class="workflow-summary-title"> {{ workflow.title }} </h5>
+
+              <h5 v-if="!caseSummary" class="workflow-summary-title"> {{ workflow.title }} </h5>
               <div v-if="!caseSummary" class="workflow-summary-description">
                 {{ workflow.summary}}
               </div>
@@ -633,17 +675,26 @@
               <div v-if="caseSummary" class="workflow-summary-description">
                 {{ caseSummary.phenotypes}}
               </div>
+
+              <div>
+                <v-btn id="findings-button" :class="{'is-active': showFindings}" @click="clickFindings">Findings</v-btn>
+              </div>
+
+          </div>
+
+          <div class="phenotype-summary-panel major-shadow" v-show="!isMinimized">
+            <h5  class="phenotype-summary-title"> Phenotypes </h5>
+            <div v-for="phenotype in phenotypeList" :key="phenotype" style="font-size:14px">
+              {{ phenotype }}
             </div>
           </div>
 
-          <div class="vertical-divider" ></div>
 
 
-        <v-stepper v-model="currentStep"  non-linear>
+        <v-stepper class="major-shadow" v-model="currentStep"   non-linear>
 
-          <v-stepper-header>
-            <v-btn id="findings-button" :class="{'is-active': showFindings}" @click="clickFindings">Findings</v-btn>
-
+          <v-stepper-header vertical>
+            <h5 style="font-size: 16px;padding-left: 10px;margin-bottom: 0px;">Worflow Steps</h5>
             <v-btn v-show="isMinimized" :disabled="currentStep == 1" class="stepper-btn" flat small @click="currentStep = currentStep - 1">
               <v-icon>chevron_left</v-icon>
             </v-btn>
@@ -656,7 +707,7 @@
             <v-btn v-show="isMinimized" :disabled="currentStep == analysis.steps.length" class="stepper-btn" flat small @click="currentStep = currentStep + 1">
               <v-icon>chevron_right</v-icon>
             </v-btn>
-            <div v-show="!isMinimized" class="stepper-btn-panel">
+            <div v-show="false && !isMinimized" class="stepper-btn-panel">
               <v-btn :disabled="currentStep == 1" class="stepper-btn" flat  @click="currentStep = currentStep - 1">
               <v-icon>chevron_left</v-icon>
               Previous
@@ -815,7 +866,7 @@
 
 
     <div style="width:100%;height:100%;padding: 0px"
-    :class="{'app-content': true, 'sidebar': isSidebar, 'minimized': isMinimized}"
+    :class="{'app-content': true, 'major-shadow': true, 'sidebar': isSidebar, 'minimized': isMinimized}"
     v-show="isAuthenticated " >
       <v-card  class="clin-card"
         v-if="analysis && workflow"
@@ -900,7 +951,7 @@ export default {
     let self = this;
     return {
 
-      theme:    self.paramTheme && self.paramTheme.length > 0 ? self.paramTheme : 'dark',
+      theme:    self.paramTheme && self.paramTheme.length > 0 ? self.paramTheme : 'light',
       isSidebar: false,
       isMinimized: false,
 
@@ -971,6 +1022,22 @@ export default {
   },
 
   computed: {
+    phenotypeList: function() {
+      let self = this;
+      let phenotypeList = [];
+
+      if (self.analysis.phenotypes) {
+        self.analysis.phenotypes.forEach(function(phenotypeArray) {
+          if (phenotypeArray) {
+            phenotypeArray.forEach(function(phenotype) {
+              phenotypeList.push(phenotype);
+            })
+          }
+        })
+      }
+
+      return phenotypeList;
+    },
 
   },
 
