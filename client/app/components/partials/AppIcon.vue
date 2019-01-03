@@ -376,6 +376,13 @@
           <path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/>
       </svg>
 
+      <v-icon v-if="icon == 'sig'" :style="materialIconStyle">
+        verified_user
+      </v-icon>
+
+      <v-icon v-if="icon == 'unknown-sig'" :style="materialIconStyle" >
+        help
+      </v-icon>
 
       <v-icon v-if="icon == 'called-variant'" class="called-variant">
         check_circle
@@ -432,6 +439,9 @@ export default {
 
     iconStyle: function() {
       return 'width:' + this.width + 'px;height:' + this.height + 'px';
+    },
+    materialIconStyle: function() {
+      return 'font-size:' + this.width + 'px;'
     },
     containerStyle: function() {
       return 'display: inline-block;vertical-align: top; width:' + this.width + 'px;height:' + this.height + 'px';

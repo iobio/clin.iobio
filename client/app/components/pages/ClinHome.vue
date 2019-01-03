@@ -9,6 +9,9 @@
 $light-grey-background: #f1f1f1
 $dark-grey-background: #cbc9c9
 $subheading-color: #a5dfea
+$horizontal-dashboard-height: 140px
+
+
 
 #clin-container
   background-color: $dark-grey-background
@@ -18,6 +21,7 @@ $subheading-color: #a5dfea
   background-color: rgb(250, 250, 250)
   min-height: 600px
   padding: 0px
+
 
 
 .major-shadow
@@ -69,17 +73,43 @@ $subheading-color: #a5dfea
     font-size: 20px
     color: $app-color
     margin-bottom: 3px
+    margin-top: 2px
 
   .navigation-drawer--fixed
     overflow-y: auto
 
 
+  .sig i.material-icons
+    color: $sig-color !important
+    font-size: 17px
+
+  .unknown-sig i.material-icons
+    color: $unknown-sig-color !important
+    font-size: 17px
+
+  .gene-chip, .phenotype-chip
+    padding: 0px
+    display: inline-block
+    line-height: 20px
+    color: white
+
+    span
+      display: inline-block
+      padding-top: 2px
+      font-size: 12px
+      margin-left: -2px
+  .gene-chip
+    margin-right: 8px
+
+
+
+
   #findings-button
     padding: 4px;
-    max-height: 30px;
+    max-height: 24px
     margin-left: 0px
-    margin-top: 5px
-    margin-bottom: 5px
+    margin-top: 10px
+    margin-bottom: 2px
 
     .btn__content
       color: $app-color
@@ -124,7 +154,7 @@ $subheading-color: #a5dfea
   .workflow-summary-title
     padding-top: 0px
     margin-bottom: 4px
-    font-size: 16px
+    font-size: 13px
     color: $app-color
 
 
@@ -132,18 +162,20 @@ $subheading-color: #a5dfea
     font-family: $app-text-font
     line-height: 15px
     font-size: 13px
+    overflow: hidden
 
     h5
-      font-size: 14px
-      margin-bottom: 0px
+      font-size: 13px
       margin-top: 0px
 
     div
       font-size: 13px
       font-family: $app-text-font
       color: $text-color
-      max-height: 45px
-      overflow: auto
+      max-height: 70px
+      font-size: 11px
+      line-height: 13px
+      overflow-y: scroll
 
   .phenotype-summary-panel
     color: $text-color
@@ -152,7 +184,7 @@ $subheading-color: #a5dfea
     justify-content: flex-start
     background-color: $nav-background-color
     margin-right: 2px
-    width: 200px
+    width: 160px
     padding: 5px 5px 5px 10px
 
     h5
@@ -165,8 +197,36 @@ $subheading-color: #a5dfea
 
     .phenotype-entry
       font-family: $app-text-font
+      font-size: 13px
+      display: inline-block
+      margin-bottom: 6px
+
+  .findings-summary-panel
+    color: $text-color
+    display: flex
+    flex-direction: column
+    justify-content: flex-start
+    background-color: $nav-background-color
+    margin-right: 2px
+    width: 200px
+    padding: 5px 5px 5px 10px
+    margin-bottom: 6px
+
+    h5
+        margin-bottom: 10px
+        color: $subheading-color
+
+    .findings-summary-title
+      font-size: 16px
+      padding-top: 0x
+
+    .findings-entry
+      font-family: $app-text-font
       line-height: 15px
       font-size: 13px
+      display: inline-block
+      width: 24px
+
 
 
   .step-summary-panel
@@ -230,6 +290,8 @@ $subheading-color: #a5dfea
     .split-btn
       top: 10px
 
+    .workflow-summary-panel, .phenotype-summary-panel, .findings-summary-panel, .stepper.stepper--non-linear
+      height: $horizontal-dashboard-height
 
 
     .stepper__label
@@ -263,7 +325,6 @@ $subheading-color: #a5dfea
 
 
     .stepper.stepper--non-linear
-      height: 135px
       background-color: $nav-background-color
       display: flex
       flex-direction: row
@@ -301,12 +362,11 @@ $subheading-color: #a5dfea
       display: none
 
     .workflow-summary-panel
-      width: 360px
+      width: 220px
       padding: 0px 5px 5px 10px
       overflow-y: auto
       margin-left: 0px
       margin-right: 2px
-      height: -webkit-fill-available
       background-color: $nav-background-color
 
     .stepper__content
@@ -605,6 +665,13 @@ $subheading-color: #a5dfea
     .phenotype-summary-panel
       background-color: $dark-nav-background-color
 
+    .findings-summary-panel
+      background-color: $dark-nav-background-color
+
+      .findings-entry
+        color: $dark-text-color
+
+
     .toolbar__content
       background:  $dark-grey-background
 
@@ -733,18 +800,43 @@ $subheading-color: #a5dfea
                 </div>
               </div>
 
-              <div>
-                <v-btn id="findings-button" :class="{'is-active': showFindings}" @click="clickFindings">Findings</v-btn>
-              </div>
 
           </div>
+
 
           <div class="phenotype-summary-panel " v-show="!isMinimized">
             <h5  class="phenotype-summary-title"> Phenotypes </h5>
             <div v-for="phenotype in phenotypeList" :key="phenotype" class="phenotype-entry">
-              {{ phenotype }}
+              <span class="phenotype-chip">{{ phenotype }}</span>
             </div>
           </div>
+
+          <div class="findings-summary-panel " v-show="!isMinimized">
+            <h5  class="findings-summary-title"> Variants </h5>
+              <div style="flex-grow:2;display:flex;flex-direction:column;justify-content:space-between">
+
+                <div v-for="interpretation in variantsByInterpretation" :key="interpretation.key" >
+
+                  <div class="gene-chip" v-for="gene in interpretation.genes" :key="gene">
+
+                      <app-icon :class="interpretation.key" :icon="interpretation.key" height="17" width="17">
+                      </app-icon>
+
+                      <span>{{ gene }}</span>
+                  </div>
+
+                </div>
+
+
+                <v-btn id="findings-button" :class="{'is-active': showFindings}" @click="clickFindings">
+                  Show Findings
+                </v-btn>
+
+              </div>
+
+          </div>
+
+
 
 
 
@@ -927,10 +1019,12 @@ $subheading-color: #a5dfea
     v-show="isAuthenticated " >
       <v-card  class="clin-card"
         v-if="analysis && workflow"
-        v-show="showFindings"
+        v-show="analysis && workflow && showFindings"
       >
         <findings
         ref="findingsRef"
+        v-if="analysis && workflow"
+        v-show="analysis && workflow && showFindings"
         :workflow="workflow"
         :analysis="analysis"
         :caseSummary="caseSummary"
@@ -940,6 +1034,7 @@ $subheading-color: #a5dfea
         :phenotypes="analysis.phenotypes"
         :genes="analysis.genes"
         :variants="variants"
+        :variantsByInterpretation="variantsByInterpretation"
         :filters="analysis.filters">
         </findings>
       </v-card>
@@ -977,6 +1072,7 @@ import Findings from  '../viz/Findings.vue'
 import Login from  '../partials/Login.vue'
 import LoginMosaic from  '../partials/LoginMosaic.vue'
 import PreferencesMenu from  '../partials/PreferencesMenu.vue'
+import AppIcon from  '../partials/AppIcon.vue'
 
 import AnalysisModel from  '../../models/AnalysisModel.js'
 import UserSession  from  '../../models/UserSession.js'
@@ -989,7 +1085,8 @@ export default {
     Login,
     LoginMosaic,
     Findings,
-    PreferencesMenu
+    PreferencesMenu,
+    AppIcon
   },
   props: {
     paramDebug:  null,
@@ -1018,6 +1115,12 @@ export default {
       userSession:  null,
       hubSession: null,
       modelInfos: null,
+
+
+      variantsByInterpretation: [
+       { key: 'sig',         display: 'Significant Variants',  abbrev: 'Significant', organizedVariants: []},
+       { key: 'unknown-sig', display: 'Variants of Unknown Significance', abbrev: 'Unknown Sig', organizedVariants: []}
+      ],
 
       showFindings: true,
 
@@ -1136,6 +1239,10 @@ export default {
           self.promiseUpdateWorkflow();
         }
       }
+    },
+
+    variants: function() {
+      this.organizeVariantsByInterpretation();
     }
   },
 
@@ -1194,9 +1301,7 @@ export default {
 
     clickFindings: function() {
       this.currentStep = 0;
-      if (this.$refs.findingsRef) {
-        this.$refs.findingsRef.refreshReport();
-      }
+      this.organizeVariantsByInterpretation();
       this.showFindings = true;
     },
 
@@ -1873,18 +1978,14 @@ export default {
       let variantsToRemove = self.analysisModel.getObsoleteVariants(variants, self.variants);
 
       self.variants = variants;
-      if (self.$refs.findingsRef) {
-        self.$refs.findingsRef.refreshReport();
-      }
+      self.organizeVariantsByInterpretation();
       return self.analysisModel.promiseUpdateVariants(self.analysis.id, variants, variantsToRemove);
     },
 
     promiseUpdateVariants: function(variants) {
       let self = this;
       self.analysisModel.replaceMatchingVariants(variants, self.variants);
-      if (self.$refs.findingsRef) {
-        self.$refs.findingsRef.refreshReport();
-      }
+      self.organizeVariantsByInterpretation();
       return self.analysisModel.promiseUpdateVariants(self.analysis.id, variants);
     },
 
@@ -1967,8 +2068,110 @@ export default {
     formatCurrentDateTime: function(time) {
       var dateObject = new Date(time);
       return dateObject.toString();
-    }
+    },
 
+    organizeVariantsByInterpretation: function() {
+      let self = this;
+
+      self.variantsByInterpretation.forEach(function(interpretation) {
+        interpretation.organizedVariants = self.organizeVariantsByFilter(interpretation.key);
+        interpretation.variantCount      = self.getVariantCount(interpretation.organizedVariants);
+        interpretation.genes             = self.getUniqueGenes(interpretation.organizedVariants);
+      })
+    },
+    organizeVariantsByFilter: function(interpretation) {
+      let self = this;
+      let filterList = [];
+
+      for (var filterName in self.analysis.filters) {
+        let filterObject = self.analysis.filters[filterName];
+        var sortedGenes = self.organizeVariantsByGene(filterName, filterObject.userFlagged, interpretation);
+        if (sortedGenes.length > 0) {
+          filterList.push({key: filterName, filter: filterObject, genes: sortedGenes});
+        }
+      }
+
+      let organizedVariants = filterList.sort(function(filterObject1, filterObject2) {
+        return filterObject1.filter.order > filterObject2.filter.order;
+      })
+
+      var variantIndex = 0;
+      organizedVariants.forEach(function(filterObject) {
+        filterObject.genes.forEach(function(geneList) {
+          geneList.variants.forEach(function(variant) {
+            variant.index = variantIndex++;
+          })
+        })
+      })
+
+      return organizedVariants;
+    },
+    getVariantCount: function(organizedVariants) {
+      let self = this;
+      let count = 0;
+      if (organizedVariants) {
+        organizedVariants.forEach(function(geneList) {
+          geneList.genes.forEach(function(gene) {
+            count += gene.variants.length;
+          })
+        })
+      }
+
+      return count;
+    },
+    getUniqueGenes: function(organizedVariants) {
+      let self = this;
+      let uniqueGenes = [];
+      if (organizedVariants) {
+        organizedVariants.forEach(function(geneList) {
+          geneList.genes.forEach(function(geneObject) {
+            if (uniqueGenes.indexOf(geneObject.gene) == -1) {
+              uniqueGenes.push(geneObject.gene);
+            }
+          })
+        })
+      }
+
+      return uniqueGenes;
+    },
+
+    organizeVariantsByGene: function(filterName, userFlagged, interpretation) {
+      let self = this;
+      let theVariants = [];
+
+
+      this.variants.forEach(function(variant) {
+        if (variant.interpretation == interpretation) {
+          theVariants.push(variant);
+          variant.candidateGene = true;
+        }
+      })
+
+      if (theVariants.length > 0) {
+        let theGenes   = [];
+        theVariants.forEach(function(variant) {
+          if ((userFlagged && variant.isUserFlagged) ||
+            (filterName && variant.filtersPassed && variant.filtersPassed.indexOf(filterName) >= 0)) {
+
+            let theGene = null;
+            var idx = theGenes.indexOf(variant.gene);
+            if (idx >= 0) {
+              theGene = theGenes[idx];
+            } else {
+              theGene = {};
+              theGene.gene = variant.gene;
+              theGene.variants = [];
+              theGenes.push(theGene);
+            }
+            theGene.variants.push(variant);
+
+          }
+        })
+        return theGenes;
+      } else {
+        return [];
+      }
+    }
 
   }
 }

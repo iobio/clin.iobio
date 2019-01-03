@@ -8,7 +8,7 @@
   height: -webkit-fill-available
   height: -moz-available
   height: 100%
-  background-color: white
+  background-color:  #f0f0f0
 
   .avatar.big
     border: #d5d5d5 solid thin
@@ -240,12 +240,12 @@
 
       <span class="card-title">Findings</span>
 
-      <div class="findings-section">
+      <v-card class="findings-section">
         <span class="card-heading">Summary</span>
 
         <div style="display:flex;flex-direction:row;justify-content:flex-start">
           <div  class="subsection"  >
-            <span class="card-subheading">Pedigree</span>
+            <span class="card-subheading">{{ caseSummary.name }} </span>
             <div style="display:flex">
               <pedigree-graph
                 v-if="pedigree"
@@ -267,7 +267,7 @@
           <div class="subsection">
             <div class="card-subheading">Description</div>
             <div style="font-size:13px;line-height:15px;width:400px;white-space: normal">
-              {{ caseSummary.phenotypes }}
+              {{ caseSummary.description }}
             </div>
           </div>
 
@@ -282,17 +282,19 @@
 
         </div>
 
-      </div>
+      </v-card>
 
-      <div class="findings-section" v-for="interpretation in variantsByInterpretation" :key="interpretation.key" >
+      <v-card class="findings-section" v-for="interpretation in variantsByInterpretation" :key="interpretation.key" >
 
 
         <div
         class="interpretation-list"
         >
-         <v-avatar class="big">
-          <span class="headline">{{ interpretation.variantCount }}</span>
-        </v-avatar>
+
+          <app-icon
+            :class="interpretation.key"
+            :icon="interpretation.key" height="22" width="22">
+          </app-icon>
           <span class="card-heading">
             {{ interpretation.display }}
           </span>
@@ -370,9 +372,9 @@
         </template>
 
 
-      </div>
+      </v-card>
 
-      <div class="findings-section">
+      <v-card class="findings-section">
 
           <span class="card-heading">Analysis Summary</span>
 
@@ -399,7 +401,7 @@
             </div>
 
           </div>
-      </div>
+      </v-card>
 
   </div>
 </template>
@@ -425,117 +427,37 @@ export default {
     phenotypes:  null,
     genes:       null,
     variants:    null,
-    filters:     null
+    filters:     null,
+    variantsByInterpretation: null
   },
   data() {
     return {
-      variantsByInterpretation: [
-       { key: 'sig',         display: 'Significant Variants',             organizedVariants: []},
-       { key: 'unknown-sig', display: 'Variants of Unknown Significance', organizedVariants: []}
-      ]
-    };
+
+    }
+
   },
   methods: {
     mappedReadsPercent: function(sample) {
-      return this.globalApp.utility.percentage(sample.metrics.mapped_reads / sample.metrics.total_reads);
+      if (sample) {
+        return this.percentage(sample.metrics.mapped_reads / sample.metrics.total_reads);
+      } else {
+        return "";
+      }
     },
     duplicatesPercent: function(sample) {
-      return this.globalApp.utility.percentage(sample.metrics.duplicates / sample.metrics.total_reads);
-    },
-    organizeVariantsByInterpretation: function() {
-      let self = this;
-
-      self.variantsByInterpretation.forEach(function(interpretation) {
-        interpretation.organizedVariants = self.organizeVariantsByFilter(interpretation.key);
-        interpretation.variantCount      = self.getVariantCount(interpretation.organizedVariants);
-      })
-    },
-    organizeVariantsByFilter: function(interpretation) {
-      let self = this;
-      let filterList = [];
-
-      for (var filterName in self.filters) {
-        let filterObject = self.filters[filterName];
-        var sortedGenes = self.organizeVariantsByGene(filterName, filterObject.userFlagged, interpretation);
-        if (sortedGenes.length > 0) {
-          filterList.push({key: filterName, filter: filterObject, genes: sortedGenes});
-        }
-      }
-
-      let organizedVariants = filterList.sort(function(filterObject1, filterObject2) {
-        return filterObject1.filter.order > filterObject2.filter.order;
-      })
-
-      var variantIndex = 0;
-      organizedVariants.forEach(function(filterObject) {
-        filterObject.genes.forEach(function(geneList) {
-          geneList.variants.forEach(function(variant) {
-            variant.index = variantIndex++;
-          })
-        })
-      })
-
-      return organizedVariants;
-    },
-
-
-    organizeVariantsByGene: function(filterName, userFlagged, interpretation) {
-      let self = this;
-      let theVariants = [];
-
-
-      this.variants.forEach(function(variant) {
-        if (variant.interpretation == interpretation) {
-          theVariants.push(variant);
-          variant.candidateGene = true;
-        }
-      })
-
-      if (theVariants.length > 0) {
-        let theGenes   = [];
-        theVariants.forEach(function(variant) {
-          if ((userFlagged && variant.isUserFlagged) ||
-            (filterName && variant.filtersPassed && variant.filtersPassed.indexOf(filterName) >= 0)) {
-
-            let theGene = null;
-            var idx = theGenes.indexOf(variant.gene);
-            if (idx >= 0) {
-              theGene = theGenes[idx];
-            } else {
-              theGene = {};
-              theGene.gene = variant.gene;
-              theGene.variants = [];
-              theGenes.push(theGene);
-            }
-            theGene.variants.push(variant);
-
-          }
-        })
-        return theGenes;
+      if (sample) {
+        return this.percentage(sample.metrics.duplicates / sample.metrics.total_reads);
       } else {
-        return [];
+        return "";
       }
     },
+
     onVariantSelected: function(variant) {
       this.$emit("flagged-variant-selected", variant);
     },
     refreshReport: function() {
-      this.organizeVariantsByInterpretation();
-    },
-    getVariantCount: function(organizedVariants) {
-      let self = this;
-      let count = 0;
-      if (organizedVariants) {
-        organizedVariants.forEach(function(geneList) {
-          geneList.genes.forEach(function(gene) {
-            count += gene.variants.length;
-          })
-        })
-      }
 
-      return count;
     },
-
 
     clinvar: function(variant) {
       if (variant.clinvarClinSig == "pathogenic") {
@@ -575,8 +497,29 @@ export default {
         return buf;
       }
     },
-    endsWith(str, suffix) {
+    endsWith: function(str, suffix) {
       return str.indexOf(suffix, str.length - suffix.length) !== -1;
+    },
+    percentage: function(a, showSign=true) {
+      let self = this;
+      var pct = a * 100;
+      var places = 0;
+      if (pct < .001) {
+        places = 4;
+      } else if (pct < .01) {
+        places = 3;
+      } else if (pct < .1) {
+        places = 2
+      } else if (pct < 1) {
+        places = 1;
+      } else {
+        places = 0;
+      }
+      return self.round(pct, places) + (showSign ? "%" : "");
+    },
+
+    round: function(value, places) {
+      return +(Math.round(value + "e+" + places)  + "e-" + places);
     }
   },
   computed: {
@@ -629,9 +572,6 @@ export default {
 
   },
   watch: {
-    variants: function() {
-      this.organizeVariantsByInterpretation();
-    }
   },
 }
 </script>

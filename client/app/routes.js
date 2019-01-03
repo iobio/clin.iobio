@@ -82,6 +82,7 @@ const router = new VueRouter({
 
 
 // define a globals mixin object
+/*
 Vue.mixin({
   data: function() {
     return {
@@ -95,6 +96,7 @@ Vue.mixin({
 
   }
 })
+*/
 
 window.vm = new Vue({
   el: '#app',
