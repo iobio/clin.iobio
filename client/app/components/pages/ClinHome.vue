@@ -244,7 +244,7 @@ $horizontal-dashboard-height: 140px
     color: $text-color !important
 
   h5
-    margin-top: 2px
+    margin-top: 5px
     margin-bottom: 5px
     margin-left: 0px
     font-size: 18px
@@ -363,7 +363,7 @@ $horizontal-dashboard-height: 140px
 
     .workflow-summary-panel
       width: 220px
-      padding: 0px 5px 5px 10px
+      padding: 2px 5px 5px 10px
       overflow-y: auto
       margin-left: 0px
       margin-right: 2px
