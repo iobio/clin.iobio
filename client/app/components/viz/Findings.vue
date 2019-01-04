@@ -70,6 +70,7 @@
     display: inline-block
     font-size: 14px
     color:  $app-header-color
+    margin-bottom: 10px
 
 
   .card-metric
@@ -265,13 +266,13 @@
 
 
           <div class="subsection">
-            <div class="card-subheading">Description</div>
-            <div style="font-size:13px;line-height:15px;width:400px;white-space: normal">
+            <div v-if="false" class="card-subheading">Description</div>
+            <div style="margin-top:30px;font-size:13px;line-height:15px;width:400px;white-space: normal">
               {{ caseSummary.description }}
             </div>
           </div>
 
-          <div class="subsection">
+          <div v-if="false" class="subsection">
             <div class="card-subheading">Condition / Phenotype Search Terms</div>
             <div v-for="(phenotype, index) in phenotypeList" class="phenotype-search-term">
               {{phenotype}}
