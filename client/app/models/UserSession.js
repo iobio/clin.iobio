@@ -23,7 +23,7 @@ export default class UserSession {
     self.authenticate(userName, password, callback, callbackNewPassword);
   }
 
-  authenticate(userName, password, callback, callbackNewPassword) {
+  authenticate(userName, password, callback, callbackNewPassword, callbackResetPassword) {
     let self = this;
 
     AWSCognito.config.region = self.region;
@@ -69,8 +69,17 @@ export default class UserSession {
       },
 
       onFailure: function(err) {
-        console.log(err);
-        callback(false);
+        if (err.code == "PasswordResetRequiredException") {
+          if (callbackResetPassword) {
+            callbackResetPassword();
+          } else {
+            console.log(err);
+            callback(false, err);
+          }
+        } else {
+          console.log(err);
+          callback(false, err);
+        }
       },
 
       newPasswordRequired: function(userAttributes, requiredAttributes) {
@@ -117,6 +126,20 @@ export default class UserSession {
           callback(false);
         }
       });
+  }
+
+  authenticateResetPassword(verificationCode, newPassword, callback) {
+    let self = this;
+
+    self.cognitoUser.confirmPassword(verificationCode, newPassword, {
+      onSuccess() {
+        callback(true);
+      },
+      onFailure(err) {
+
+      }
+    });
+
   }
 
 }

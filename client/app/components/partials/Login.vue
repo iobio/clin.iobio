@@ -41,6 +41,11 @@
                 </v-text-field>
               </v-flex>
 
+              <v-flex xs12  v-if="!isAuthenticated && newPasswordRequired && resetPasswordRequired && !showNewPasswordMessage">
+                <v-text-field v-model="verificationCode" label="Enter verification code" >
+                </v-text-field>
+              </v-flex>
+
               <v-flex v-if="!isAuthenticated && !newPasswordRequired && !showNewPasswordMessage" xs12>
                 <v-text-field v-model="password" label="Enter your password" type="password">
                 </v-text-field>
@@ -54,6 +59,7 @@
               <v-flex xs12 class="new-password-hint" v-if="!isAuthenticated && newPasswordRequired && !showNewPasswordMessage" >
                 You are required to set a new password.
               </v-flex>
+
 
 
               <v-flex xs12 v-if="isAuthenticated && !newPasswordRequired">
@@ -85,8 +91,15 @@
 
 
               <v-flex xs12 v-if="!isAuthenticated">
-                <v-btn v-if="!newPasswordRequired" :disabled="userName == null  || password == null ? true : false" @click="authenticate">Login</v-btn>
-                <v-btn v-if="newPasswordRequired && !showNewPasswordMessage" :disabled="userName == null  || newPassword == null  ? true : false" @click="authenticateNewPassword">Change Password</v-btn>
+                <v-btn v-if="!newPasswordRequired" :disabled="userName == null  || password == null ? true : false" @click="authenticate">
+                  Login
+                </v-btn>
+                <v-btn v-if="newPasswordRequired && !resetPasswordRequired && !showNewPasswordMessage" :disabled="userName == null  || newPassword == null  ? true : false" @click="authenticateNewPassword">
+                    Change Password
+                </v-btn>
+                <v-btn v-if="newPasswordRequired && resetPasswordRequired && !showNewPasswordMessage" :disabled="userName == null  || newPassword == null || verificationCode == null ? true : false" @click="authenticateResetPassword">
+                    Change Reset Password
+                </v-btn>
               </v-flex>
 
              <div style="margin-top: 10px;font-size: 16px"
@@ -119,12 +132,14 @@ export default {
     return {
       userName: null,
       password: null,
+      verificationCode: null,
       project: null,
       projects: [
         "platinum"
       ],
 
       newPasswordRequired: false,
+      resetPasswordRequired: false,
       newPassword: null,
       showNewPasswordMessage: false,
       launchUrl: false,
@@ -160,8 +175,15 @@ export default {
           self.isAuthenticated = true;
         }
       },
-      function() {
+      // New password required
+      function(err) {
         self.newPasswordRequired = true;
+
+      },
+      // Reset password required
+      function(err) {
+        self.newPasswordRequired = true;
+        self.resetPasswordRequired = true;
 
       })
     },
@@ -169,6 +191,17 @@ export default {
     authenticateNewPassword: function() {
       let self = this;
       self.userSession.authenticateNewPassword(self.newPassword,
+      function(success) {
+        if (success) {
+          self.showNewPasswordMessage = true;
+        }
+      });
+    },
+
+
+    authenticateResetPassword: function() {
+      let self = this;
+      self.userSession.authenticateResetPassword(self.verificationCode, self.newPassword,
       function(success) {
         if (success) {
           self.showNewPasswordMessage = true;
