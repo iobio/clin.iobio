@@ -18,10 +18,40 @@ export default class UserSession {
     this.userAttributes           = null;
   }
 
+  canAuthenticatePrevSession() {
+    let self = this;
+    let block1 = localStorage.getItem("clin.iobio.block1");
+    let block2 = localStorage.getItem("clin.iobio.block2");
+    return block1 && block2;
+  }
+
+  authenticatePrevSession(callback) {
+    let self = this;
+    let block1 = localStorage.getItem("clin.iobio.block1");
+    let block2 = localStorage.getItem("clin.iobio.block2");
+    return self.authenticate(block1, block2, function(success) {
+      if (callback) {
+        callback(success, block1);
+      }
+    });
+  }
+
+  setSession(block1, block2) {
+    localStorage.setItem("clin.iobio.block1", block1);
+    localStorage.setItem("clin.iobio.block2", block2);
+  }
+
+  clearPrevSession() {
+    let self = this;
+    localStorage.removeItem("clin.iobio.block1");
+    localStorage.removeItem("clin.iobio.block2");
+  }
+
   authenticateMosaic(userName, password, callback, callbackNewPassword) {
     let self = this;
     self.authenticate(userName, password, callback, callbackNewPassword);
   }
+
 
   authenticate(userName, password, callback, callbackNewPassword, callbackResetPassword) {
     let self = this;
@@ -64,7 +94,16 @@ export default class UserSession {
         });
         self.dynamodb = new AWS.DynamoDB.DocumentClient({convertEmptyValues: true});
         AWS.config.credentials.get(function(err) {
-          callback(true);
+          if (err) {
+            console.log(err);
+            self.clearPrevSession()
+            if (callback) {
+              callback(false);
+            }
+          } else if (callback) {
+            self.setSession(userName, password);
+            callback(true);
+          }
         });
       },
 

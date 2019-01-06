@@ -14,8 +14,20 @@ $horizontal-dashboard-height: 140px
 
 
 #clin-container
-  background-color: $dark-grey-background
+  background-color: $light-grey-background
   height: -webkit-fill-available
+
+  &.authenticated
+    background-color: $dark-grey-background
+
+  #splash-screen
+    background-color: $light-grey-background
+    width: 100%
+    display: flex
+    justify-content: center
+
+    .progress-circular
+      color: $app-color !important
 
 .clin-card
   background-color: rgb(250, 250, 250)
@@ -756,21 +768,30 @@ $horizontal-dashboard-height: 140px
 
 <template>
 
-  <div id="clin-container" style="display:flex" :class="theme">
+  <div id="clin-container" style="display:flex" :class="{authenticated: isAuthenticated, dark: theme == 'dark', light: theme == 'light'}">
+
+    <div id="splash-screen" v-if="showSplash">
+      <v-card style="text-align:center;margin-top:100px;width:400px;height:75px">
+        <v-progress-circular id="overall-progress"  :size="22"  :width="4" color="teal accent-4"
+          :indeterminate="true">
+        </v-progress-circular>
+        <h3 style="display:inline-block;margin-left: 10px" >Initializing clin.iobio</h3>
+      </v-card>
+    </div>
     <login
-      v-if="!hubSession && !isAuthenticated"
+      v-if="!showSplash && !hubSession && !isAuthenticated"
       :userSession="userSession"
       @authenticated="onAuthenticated">
     </login>
 
     <login-mosaic
-      v-if="hubSession && !isAuthenticated"
+      v-if="!showSplash && hubSession && !isAuthenticated"
       :userSession="userSession"
       @authenticated-mosaic="onAuthenticatedMosaic">
     </login-mosaic>
 
 
-    <v-toolbar  v-if="!isSidebar && isAuthenticated && workflow && analysis "
+    <v-toolbar  v-if="!showSplash && !isSidebar && isAuthenticated && workflow && analysis "
         light  fixed flat  :height="isMinimized ? 60 : 135">
       <div v-show="isAuthenticated"  :class="{'horizontal-dashboard-card': true, 'minimized': isMinimized}">
 
@@ -918,7 +939,7 @@ $horizontal-dashboard-height: 140px
     </v-toolbar>
 
     <v-navigation-drawer
-      v-if="isSidebar && isAuthenticated "
+      v-if="!showSplash && isSidebar && isAuthenticated "
 
       :hide-overlay="true"
       fixed
@@ -1016,7 +1037,7 @@ $horizontal-dashboard-height: 140px
 
     <div style="width:100%;height:100%;padding: 0px"
     :class="{'app-content': true,  'sidebar': isSidebar, 'minimized': isMinimized}"
-    v-show="isAuthenticated " >
+    v-show="!showSplash && isAuthenticated " >
       <v-card  class="clin-card"
         v-if="analysis && workflow"
         v-show="analysis && workflow && showFindings"
@@ -1104,6 +1125,7 @@ export default {
   data() {
     let self = this;
     return {
+      showSplash: true,
 
       theme:    self.paramTheme && self.paramTheme.length > 0 ? self.paramTheme : 'dark',
       isSidebar: false,
@@ -1251,7 +1273,8 @@ export default {
     init: function() {
       let self = this;
 
-      self.userSession = new UserSession();
+      self.initUserSession();
+
       window.addEventListener("message", self.receiveAppMessage, false);
 
 
@@ -1289,6 +1312,27 @@ export default {
 
     },
 
+    initUserSession: function() {
+      let self = this;
+
+      self.userSession = new UserSession();
+
+      if (self.userSession.canAuthenticatePrevSession()) {
+        self.userSession.authenticatePrevSession(function(success, userName) {
+          if (success) {
+            self.onAuthenticatedMosaic(userName);
+          } else {
+            self.showSplash = false;
+            self.userSession.clearPrevSession();
+            alert("Unable to authenticate user from previous session.")
+          }
+
+        })
+      } else {
+        self.showSplash = false;
+      }
+    },
+
     switchTheme: function(theme) {
       this.theme = theme;
     },
@@ -1308,6 +1352,7 @@ export default {
     onAuthenticated: function(researcher, project, clearSavedData) {
       let self = this;
       self.isAuthenticated = true;
+      self.showSpash = false;
       self.analysisModel = new AnalysisModel(self.userSession);
       self.clearSavedAnalysis = clearSavedData;
 
@@ -1417,6 +1462,7 @@ export default {
       self.promiseGetWorkflow(self.idWorkflow)
       .then(function() {
 
+        self.showSplash = false;
 
         self.promiseGetAnalysis(
           self.paramProjectId,
@@ -1440,6 +1486,8 @@ export default {
                 app.isLoaded = true;
             }
           }
+
+
 
         })
 
@@ -1566,8 +1614,6 @@ export default {
           };
           if (self.paramGeneBatchSize && (appName == 'gene' || appName == 'genefull')) {
             msgObject.batchSize = +self.paramGeneBatchSize;
-          } else if ((appName == 'gene' || appName == 'genefull') && msgObject.iobioSource != 'nv-prod.iobio.io') {
-            msgObject.batchSize = 3;
           }
 
 

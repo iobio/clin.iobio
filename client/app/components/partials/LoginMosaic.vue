@@ -41,12 +41,12 @@
               </v-flex>
 
               <v-flex xs12>
-                <v-text-field v-model="researcher" label="Enter your name" type="text">
+                <v-text-field v-model="researcher" label="Enter clin.iobio user name" type="text">
                 </v-text-field>
               </v-flex>
 
               <v-flex v-if="!isAuthenticated " xs12>
-                <v-text-field v-model="password" label="Enter workshop password" type="password">
+                <v-text-field v-model="password" label="Enter clin.iobio password" type="password">
                 </v-text-field>
               </v-flex>
 
