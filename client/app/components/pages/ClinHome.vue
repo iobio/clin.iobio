@@ -1539,8 +1539,7 @@ export default {
 
     isS3() {
       let self = this;
-      return false;
-      /*
+
       let S3_URL = "https://s3.amazonaws.com";
       return self.modelInfos.filter(function(modelInfo) {
 
@@ -1564,7 +1563,7 @@ export default {
 
         return vcfS3 && bamS3;
       }).length > 0;
-      */
+
     },
 
 
