@@ -7,7 +7,7 @@
 @import ../../../assets/sass/variables
 
 $light-grey-background: #f1f1f1
-$dark-grey-background: #cbc9c9
+$dark-grey-background: #858585
 $subheading-color: #a5dfea
 $horizontal-dashboard-height: 140px
 
@@ -102,7 +102,7 @@ $horizontal-dashboard-height: 140px
   .gene-chip, .phenotype-chip
     padding: 0px
     display: inline-block
-    line-height: 20px
+    line-height: 12px
     color: white
 
     span
@@ -122,6 +122,7 @@ $horizontal-dashboard-height: 140px
     margin-left: 0px
     margin-top: 10px
     margin-bottom: 2px
+    width: 100px
 
     .btn__content
       color: $app-color
@@ -195,9 +196,11 @@ $horizontal-dashboard-height: 140px
     flex-direction: column
     justify-content: flex-start
     background-color: $nav-background-color
-    margin-right: 2px
+    margin-right: 5px
+    margin-left: 5px
     width: 160px
     padding: 5px 5px 5px 10px
+    overflow-y: hidden
 
     h5
         margin-bottom: 10px
@@ -209,9 +212,14 @@ $horizontal-dashboard-height: 140px
 
     .phenotype-entry
       font-family: $app-text-font
-      font-size: 13px
+      font-size: 12px
       display: inline-block
-      margin-bottom: 6px
+      margin-bottom: 2px
+      margin-right: 2px
+      border: solid #ffffff7a
+      border-width: .5px
+      padding-left: 4px
+      padding-right: 4px
 
   .findings-summary-panel
     color: $text-color
@@ -219,7 +227,6 @@ $horizontal-dashboard-height: 140px
     flex-direction: column
     justify-content: flex-start
     background-color: $nav-background-color
-    margin-right: 2px
     width: 200px
     padding: 5px 5px 5px 10px
     margin-bottom: 6px
@@ -374,11 +381,11 @@ $horizontal-dashboard-height: 140px
       display: none
 
     .workflow-summary-panel
-      width: 220px
+      width: 170px
       padding: 2px 5px 5px 10px
       overflow-y: auto
       margin-left: 0px
-      margin-right: 2px
+      margin-right: 5px
       background-color: $nav-background-color
 
     .stepper__content
@@ -816,46 +823,14 @@ $horizontal-dashboard-height: 140px
 
               <div v-if="caseSummary" class="workflow-summary-description">
                 <h5 v-if="caseSummary" class="workflow-summary-title"> {{ caseSummary.name }} </h5>
-                <div>
-                  {{ caseSummary.description }}
-                </div>
               </div>
-
-
-          </div>
-
-
-          <div class="phenotype-summary-panel " v-show="!isMinimized">
-            <h5  class="phenotype-summary-title"> Phenotypes </h5>
-            <div v-for="phenotype in phenotypeList" :key="phenotype" class="phenotype-entry">
-              <span class="phenotype-chip">{{ phenotype }}</span>
-            </div>
-          </div>
-
-          <div class="findings-summary-panel " v-show="!isMinimized">
-            <h5  class="findings-summary-title"> Variants </h5>
-              <div style="flex-grow:2;display:flex;flex-direction:column;justify-content:space-between">
-
-                <div v-for="interpretation in variantsByInterpretation" :key="interpretation.key" >
-
-                  <div class="gene-chip" v-for="gene in interpretation.genes" :key="gene">
-
-                      <app-icon :class="interpretation.key" :icon="interpretation.key" height="17" width="17">
-                      </app-icon>
-
-                      <span>{{ gene }}</span>
-                  </div>
-
-                </div>
-
 
                 <v-btn id="findings-button" :class="{'is-active': showFindings}" @click="clickFindings">
-                  Show Findings
+                  Findings
                 </v-btn>
 
-              </div>
-
           </div>
+
 
 
 
@@ -934,6 +909,39 @@ $horizontal-dashboard-height: 140px
         </v-stepper>
 
 
+
+
+          <div class="phenotype-summary-panel " v-show="!isMinimized">
+            <h5  class="phenotype-summary-title"> Phenotypes </h5>
+            <div style="display:flex;flex-flow:row;flex-wrap:wrap;overflow-y:hidden">
+              <span v-for="phenotype in phenotypeList" :key="phenotype" class="phenotype-entry">
+                <span class="phenotype-chip">{{ phenotype }}</span>
+              </span>
+            </div>
+          </div>
+
+          <div class="findings-summary-panel " v-show="!isMinimized">
+            <h5  class="findings-summary-title"> Variants </h5>
+              <div style="flex-grow:2;display:flex;flex-direction:column;justify-content:space-between">
+
+                <div v-for="interpretation in variantsByInterpretation" :key="interpretation.key" >
+
+                  <div class="gene-chip" v-for="gene in interpretation.genes" :key="gene">
+
+                      <app-icon :class="interpretation.key" :icon="interpretation.key" height="17" width="17">
+                      </app-icon>
+
+                      <span>{{ gene }}</span>
+                  </div>
+
+                </div>
+
+
+
+
+              </div>
+
+          </div>
 
       </div>
     </v-toolbar>
@@ -1317,7 +1325,7 @@ export default {
 
       self.userSession = new UserSession();
 
-      if (self.userSession.canAuthenticatePrevSession()) {
+      if (localStorage.getItem('hub-iobio-tkn') && localStorage.getItem('hub-iobio-tkn').length > 0 && self.userSession.canAuthenticatePrevSession()) {
         self.userSession.authenticatePrevSession(function(success, userName) {
           if (success) {
             self.onAuthenticatedMosaic(userName);
