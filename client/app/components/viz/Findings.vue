@@ -7,7 +7,6 @@
   overflow-y: auto
   height: -webkit-fill-available
   height: -moz-available
-  height: 100%
   background-color:  #f0f0f0
 
   .avatar.big
@@ -75,7 +74,7 @@
 
   .card-metric
     display: flex
-    margin-right: 30px
+    margin-right: 10px
 
     .avatar
       margin-right: 7px
@@ -84,7 +83,7 @@
       display: inline-block
       font-size: 14px
       color:  $app-header-color
-      width: 120px
+      width: 90px
       white-space: normal
       line-height: 15px
       align-self: center
@@ -241,49 +240,83 @@
 
       <span class="card-title">Findings</span>
 
-      <v-card class="findings-section">
-        <span class="card-heading">Summary</span>
+      <div style="display:flex;flex-flow:row">
 
-        <div style="display:flex;flex-direction:row;justify-content:flex-start">
-          <div  class="subsection"  >
-            <span class="card-subheading">{{ caseSummary.name }} </span>
-            <div style="display:flex">
-              <pedigree-graph
-                v-if="pedigree"
-                :height="60"
-                :data="pedigree"
-                :uuid="sampleId"
-                :width="80"
-              />
-              <div style="margin-left:15px">
-                <div  class="sample" v-for="modelInfo in modelInfos" :key="modelInfo.sample">
-                  <span class="rel">{{ modelInfo.relationship }}</span>
-                  <span class="name">{{ modelInfo.sample }}</span>
+
+        <v-card class="findings-section">
+          <span class="card-heading">Summary</span>
+
+          <div style="display:flex;flex-direction:row;justify-content:flex-start">
+            <div  class="subsection"  >
+              <span class="card-subheading">{{ caseSummary.name }} </span>
+              <div style="display:flex">
+                <pedigree-graph
+                  v-if="pedigree"
+                  :height="60"
+                  :data="pedigree"
+                  :uuid="sampleId"
+                  :width="80"
+                />
+                <div style="margin-left:15px">
+                  <div  class="sample" v-for="modelInfo in modelInfos" :key="modelInfo.sample">
+                    <span class="rel">{{ modelInfo.relationship }}</span>
+                    <span class="name">{{ modelInfo.sample }}</span>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
 
 
-          <div class="subsection">
-            <div v-if="false" class="card-subheading">Description</div>
-            <div style="margin-top:30px;font-size:13px;line-height:15px;width:400px;white-space: normal">
-              {{ caseSummary.description }}
-            </div>
-          </div>
-
-          <div v-if="false" class="subsection">
-            <div class="card-subheading">Condition / Phenotype Search Terms</div>
-            <div v-for="(phenotype, index) in phenotypeList" class="phenotype-search-term">
-              {{phenotype}}
+            <div class="subsection">
+              <div v-if="false" class="card-subheading">Description</div>
+              <div style="margin-top:30px;font-size:13px;line-height:15px;width:400px;white-space: normal">
+                {{ caseSummary.description }}
+              </div>
             </div>
 
+            <div v-if="false" class="subsection">
+              <div class="card-subheading">Condition / Phenotype Search Terms</div>
+              <div v-for="(phenotype, index) in phenotypeList" class="phenotype-search-term">
+                {{phenotype}}
+              </div>
+
+            </div>
+
+
           </div>
 
+        </v-card>
 
-        </div>
+        <v-card class="findings-section" style="margin-left:10px;max-width:480px">
 
-      </v-card>
+            <span class="card-heading">Analysis Summary</span>
+
+            <div style="display: flex">
+              <div class="card-metric">
+                <v-avatar class="big">
+                  <span class="headline">{{ genes.length }}</span>
+                </v-avatar>
+                <div class="card-heading-metric">candidate genes</div>
+              </div>
+
+              <div class="card-metric">
+                <v-avatar class="big">
+                  <span class="headline">{{ variantsCandidateGenes ? variantsCandidateGenes.length : 0 }}</span>
+                </v-avatar>
+                <div class="card-heading-metric">filtered variants in candidate genes</div>
+              </div>
+
+              <div class="card-metric">
+                <v-avatar class="big">
+                  <span class="headline">{{ variantsFullAnalysis ? variantsFullAnalysis.length  : 0 }}</span>
+                </v-avatar>
+                <div class="card-heading-metric">filtered variants in all genes</div>
+              </div>
+
+            </div>
+        </v-card>
+      </div>
+
 
       <v-card class="findings-section" v-for="interpretation in variantsByInterpretation" :key="interpretation.key" >
 
@@ -375,34 +408,7 @@
 
       </v-card>
 
-      <v-card class="findings-section">
 
-          <span class="card-heading">Analysis Summary</span>
-
-          <div style="display: flex">
-            <div class="card-metric">
-              <v-avatar class="big">
-                <span class="headline">{{ genes.length }}</span>
-              </v-avatar>
-              <div class="card-heading-metric">candidate genes</div>
-            </div>
-
-            <div class="card-metric">
-              <v-avatar class="big">
-                <span class="headline">{{ variantsCandidateGenes ? variantsCandidateGenes.length : 0 }}</span>
-              </v-avatar>
-              <div class="card-heading-metric">filtered variants in candidate genes</div>
-            </div>
-
-            <div class="card-metric">
-              <v-avatar class="big">
-                <span class="headline">{{ variantsFullAnalysis ? variantsFullAnalysis.length  : 0 }}</span>
-              </v-avatar>
-              <div class="card-heading-metric">filtered variants in all genes</div>
-            </div>
-
-          </div>
-      </v-card>
 
   </div>
 </template>
