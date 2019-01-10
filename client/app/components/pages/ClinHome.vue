@@ -16,6 +16,7 @@ $horizontal-dashboard-height: 140px
 #clin-container
   background-color: $light-grey-background
   height: -webkit-fill-available
+  height: -moz-available
 
   &.authenticated
     background-color: $dark-grey-background
