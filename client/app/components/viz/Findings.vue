@@ -238,13 +238,15 @@
 
 
 
-      <span class="card-title">Findings</span>
+      <span class="card-title">
+        {{ genes && genes.length > 0 ? 'Report' : '' }}
+      </span>
 
       <div style="display:flex;flex-flow:row">
 
 
         <v-card class="findings-section">
-          <span class="card-heading">Summary</span>
+          <span class="card-heading">Case summary</span>
 
           <div style="display:flex;flex-direction:row;justify-content:flex-start">
             <div  class="subsection"  >
@@ -287,7 +289,7 @@
 
         </v-card>
 
-        <v-card class="findings-section" style="margin-left:10px;max-width:480px">
+        <v-card v-show="genes && genes.length > 0" class="findings-section" style="margin-left:10px;max-width:480px">
 
             <span class="card-heading">Analysis Summary</span>
 
@@ -318,7 +320,7 @@
       </div>
 
 
-      <v-card class="findings-section" v-for="interpretation in variantsByInterpretation" :key="interpretation.key" >
+      <v-card v-show="genes && genes.length > 0" class="findings-section" v-for="interpretation in variantsByInterpretation" :key="interpretation.key" >
 
 
         <div

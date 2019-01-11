@@ -123,7 +123,7 @@ $horizontal-dashboard-height: 140px
     margin-left: 0px
     margin-top: 10px
     margin-bottom: 2px
-    width: 100px
+    width: 140px
 
     .btn__content
       color: $app-color
@@ -197,7 +197,6 @@ $horizontal-dashboard-height: 140px
     flex-direction: column
     justify-content: flex-start
     background-color: $nav-background-color
-    margin-right: 5px
     margin-left: 5px
     width: 160px
     padding: 5px 5px 5px 10px
@@ -229,6 +228,7 @@ $horizontal-dashboard-height: 140px
     justify-content: flex-start
     background-color: $nav-background-color
     width: 200px
+    margin-left: 5px
     padding: 5px 5px 5px 10px
     margin-bottom: 6px
 
@@ -826,9 +826,6 @@ $horizontal-dashboard-height: 140px
                 <h5 v-if="caseSummary" class="workflow-summary-title"> {{ caseSummary.name }} </h5>
               </div>
 
-                <v-btn id="findings-button" :class="{'is-active': showFindings}" @click="clickFindings">
-                  Findings
-                </v-btn>
 
           </div>
 
@@ -840,7 +837,7 @@ $horizontal-dashboard-height: 140px
         <v-stepper class="" v-model="currentStep"   non-linear>
 
           <v-stepper-header vertical>
-            <h5>Worflow Steps</h5>
+            <h5>Analysis Steps</h5>
             <v-btn v-show="isMinimized" :disabled="currentStep == 1" class="stepper-btn" flat small @click="currentStep = currentStep - 1">
               <v-icon>chevron_left</v-icon>
             </v-btn>
@@ -912,8 +909,8 @@ $horizontal-dashboard-height: 140px
 
 
 
-          <div class="phenotype-summary-panel " v-show="!isMinimized">
-            <h5  class="phenotype-summary-title"> Phenotypes </h5>
+          <div v-show="false && !isMinimized && analysis && phenotypeList.length > 0" class="phenotype-summary-panel ">
+            <h5  class="phenotype-summary-title"> Phenotype search terms </h5>
             <div style="display:flex;flex-flow:row;flex-wrap:wrap;overflow-y:hidden">
               <span v-for="phenotype in phenotypeList" :key="phenotype" class="phenotype-entry">
                 <span class="phenotype-chip">{{ phenotype }}</span>
@@ -922,8 +919,14 @@ $horizontal-dashboard-height: 140px
           </div>
 
           <div class="findings-summary-panel " v-show="!isMinimized">
-            <h5  class="findings-summary-title"> Variants </h5>
-              <div style="flex-grow:2;display:flex;flex-direction:column;justify-content:space-between">
+            <center>
+              <v-btn  id="findings-button" :class="{'is-active': showFindings}" @click="clickFindings">
+              {{ analysis && analysis.genes && analysis.genes.length > 0 ? 'Report' : 'Case summary' }}
+              </v-btn>
+            </center>
+
+            <h5  v-show="hasVariants" class="findings-summary-title"> Variants </h5>
+              <div style="padding-top:10px;display:flex;flex-direction:column;justify-content:space-between">
 
                 <div v-for="interpretation in variantsByInterpretation" :key="interpretation.key" >
 
@@ -938,9 +941,8 @@ $horizontal-dashboard-height: 140px
                 </div>
 
 
-
-
               </div>
+
 
           </div>
 
@@ -1159,10 +1161,10 @@ export default {
 
       appUrls: {
         'localhost': {
-            'gene':      'http://localhost:4026/?launchedFromClin=true',
-            'genefull':  'http://localhost:4026/?launchedFromClin=true',
-            'genepanel': 'http://localhost:4024/?launchedFromClin=true',
-            'bam':       'http://localhost:4027'
+            'gene':      'http://tony.iobio.io:4026/?launchedFromClin=true',
+            'genefull':  'http://tony.iobio.io:4026/?launchedFromClin=true',
+            'genepanel': 'http://tony.iobio.io:4024/?launchedFromClin=true',
+            'bam':       'http://tony.iobio.io:4027'
         },
         'dev': {
             'gene':      'https://dev.gene.iobio.io/?launchedFromClin=true',
@@ -1228,6 +1230,17 @@ export default {
 
       return phenotypeList;
     },
+
+    hasVariants: function() {
+      let self = this;
+      let count = 0;
+      if (self.variantsByInterpretation) {
+        self.variantsByInterpretation.forEach(function(interpretation) {
+          count += interpretation.variantCount;
+        });
+      }
+      return count > 0;
+    }
 
   },
 
