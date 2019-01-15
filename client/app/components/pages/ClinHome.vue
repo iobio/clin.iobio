@@ -1161,6 +1161,12 @@ export default {
 
       appUrls: {
         'localhost': {
+            'gene':      'http://localhost:4026/?launchedFromClin=true',
+            'genefull':  'http://localhost:4026/?launchedFromClin=true',
+            'genepanel': 'http://localhost:4024/?launchedFromClin=true',
+            'bam':       'http://localhost:4027'
+        },
+        'tony.iobio.io': {
             'gene':      'http://tony.iobio.io:4026/?launchedFromClin=true',
             'genefull':  'http://tony.iobio.io:4026/?launchedFromClin=true',
             'genepanel': 'http://tony.iobio.io:4024/?launchedFromClin=true',
@@ -1303,6 +1309,8 @@ export default {
       var appTarget = null;
       if (window.document.URL.indexOf("localhost") > 0) {
         appTarget = "localhost";
+      } if (window.document.URL.indexOf("tony.iobio.io") > 0) {
+        appTarget = "tony.iobio.io";
       } else {
         appTarget = "dev";
       }
