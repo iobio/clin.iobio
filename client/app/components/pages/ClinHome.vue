@@ -1164,27 +1164,27 @@ export default {
             'gene':      'http://localhost:4026/?launchedFromClin=true',
             'genefull':  'http://localhost:4026/?launchedFromClin=true',
             'genepanel': 'http://localhost:4024/?launchedFromClin=true',
-            'bam':       'http://localhost:4027'
+            //'bam':       'http://localhost:4027'
         },
         'tony.iobio.io': {
             'gene':      'http://tony.iobio.io:4026/?launchedFromClin=true',
             'genefull':  'http://tony.iobio.io:4026/?launchedFromClin=true',
             'genepanel': 'http://tony.iobio.io:4024/?launchedFromClin=true',
-            'bam':       'http://tony.iobio.io:4027'
+            //'bam':       'http://tony.iobio.io:4027'
         },
         'dev': {
             'gene':      'https://dev.gene.iobio.io/?launchedFromClin=true',
             'genefull':  'https://dev.gene.iobio.io/?launchedFromClin=true',
             'genepanel': 'https://dev.panel.iobio.io/?launchedFromClin=true',
-            'bam':       'https://newbam.iobio.io'
+            //'bam':       'https://newbam.iobio.io'
         },
       },
 
       apps: {
-        'bam':       {url: null, isLoaded: false, step: 0, iframeSelector: '#bam-iframe iframe'},
+        //'bam':       {url: null, isLoaded: false, step: 0, iframeSelector: '#bam-iframe iframe'},
         'genepanel': {url: null, isLoaded: false, step: 1, iframeSelector: '#gene-panel-iframe iframe'},
         'gene':      {url: null, isLoaded: false, step: 2, iframeSelector: '#gene-iframe iframe'},
-        'genefull':  {url: null, isLoaded: true, step: 3, iframeSelector: '#gene-iframe iframe'}
+        'genefull':  {url: null, isLoaded: true, step:  3, iframeSelector: '#gene-iframe iframe'}
       },
 
       currentStep: -1,
@@ -1301,11 +1301,7 @@ export default {
     init: function() {
       let self = this;
 
-      self.initUserSession();
-
       window.addEventListener("message", self.receiveAppMessage, false);
-
-
       var appTarget = null;
       if (window.document.URL.indexOf("localhost") > 0) {
         appTarget = "localhost";
@@ -1314,10 +1310,9 @@ export default {
       } else {
         appTarget = "dev";
       }
-      self.apps.bam.url       = self.appUrls[appTarget].bam;
+      //self.apps.bam.url       = self.appUrls[appTarget].bam;
       self.apps.genepanel.url = self.appUrls[appTarget].genepanel;
       self.apps.gene.url      = self.appUrls[appTarget].gene;
-
 
 
       if (localStorage.getItem('hub-iobio-tkn') && localStorage.getItem('hub-iobio-tkn').length > 0
@@ -1334,33 +1329,53 @@ export default {
             self.caseSummary = {};
             self.caseSummary.name = project.name;
             self.caseSummary.description = project.description && project.description.length > 0 ? project.description : "A summary of the trio goes here....";
+
+
+            self.promiseInitUserSession();
+
           })
         })
-
+      } else {
+        self.promiseInitUserSession();
       }
+
+
+
+
+
+
+
 
 
     },
 
-    initUserSession: function() {
+    promiseInitUserSession: function() {
       let self = this;
 
-      self.userSession = new UserSession();
+      return new Promise(function(resolve, reject) {
+        self.userSession = new UserSession();
 
-      if (localStorage.getItem('hub-iobio-tkn') && localStorage.getItem('hub-iobio-tkn').length > 0 && self.userSession.canAuthenticatePrevSession()) {
-        self.userSession.authenticatePrevSession(function(success, userName) {
-          if (success) {
-            self.onAuthenticatedMosaic(userName);
-          } else {
-            self.showSplash = false;
-            self.userSession.clearPrevSession();
-            alert("Unable to authenticate user from previous session.")
-          }
+        if (self.userSession.canAuthenticatePrevSession() && localStorage.getItem('hub-iobio-tkn') && localStorage.getItem('hub-iobio-tkn').length > 0 && self.paramSampleId && self.paramSource) {
+          self.userSession.authenticatePrevSession(function(success, userName) {
+            if (success) {
+              self.onAuthenticatedMosaic(userName, false, function() {
+                resolve();
+              });
+            } else {
+              self.showSplash = false;
+              self.userSession.clearPrevSession();
+              alert("Unable to authenticate user from previous session.")
+              reject();
+            }
 
-        })
-      } else {
-        self.showSplash = false;
-      }
+          })
+        } else {
+          self.showSplash = false;
+          resolve();
+        }
+
+      })
+
     },
 
     switchTheme: function(theme) {
@@ -1469,7 +1484,7 @@ export default {
                 let app = self.apps[appName];
                 if (!app.isLoaded) {
                     self.setData(appName, 500);
-                    app.isLoaded = true;
+
                 }
               }
 
@@ -1483,7 +1498,7 @@ export default {
 
     },
 
-    onAuthenticatedMosaic: function(researcher, clearSavedData) {
+    onAuthenticatedMosaic: function(researcher, clearSavedData, callback) {
       let self = this;
       self.isAuthenticated = true;
       self.analysisModel = new AnalysisModel(self.userSession);
@@ -1505,20 +1520,36 @@ export default {
           return self.promiseGetVariants()
         })
         .then(function() {
+          return self.promiseGetVariantData()
 
-          self.promiseGetVariantData()
+        })
+        .then(function() {
+
 
           // Send message to set the data in the iobio apps
           for (var appName in self.apps) {
             let app = self.apps[appName];
             if (!app.isLoaded) {
-                self.setData(appName, 500);
-                app.isLoaded = true;
+              console.log("****** clin.iobio set-data for " + appName + " *********")
+              self.setData(appName, 500);
+            } else {
+              console.log("****** BYPASSING clin.iobio set-data for " + appName + ", already loaded *********")
+
             }
+          }
+
+          if (callback) {
+            callback();
           }
 
 
 
+        })
+        .catch(function(error) {
+          console.log("Error occurred in onAuthenticatedMosaic: " + error);
+          if (callback) {
+            callback();
+          }
         })
 
       })
@@ -1692,9 +1723,10 @@ export default {
       }
 
 
-
-
-      if (messageObject.type == "apply-genes" && messageObject.sender == 'genepanel.iobio.io') {
+      if (messageObject.type == 'confirm-set-data') {
+        console.log("****** confirming set data " + messageObject.app + " *******");
+        self.apps[messageObject.app].isLoaded = true;
+      } else if (messageObject.type == "apply-genes" && messageObject.sender == 'genepanel.iobio.io') {
         var taskMap = {
           'gtr':              'gtr-genes',
           'phenotype-driven': 'phenotype-genes',
