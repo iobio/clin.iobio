@@ -13,7 +13,7 @@
 
 .login-toolbar
   .toolbar__content
-    background-color: $login-nav-color !important
+    background-color: $nav-background-color !important
 .new-password-hint
   font-size: 15px
   padding: 10px

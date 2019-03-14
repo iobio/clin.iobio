@@ -8,7 +8,7 @@
 
 $light-grey-background: #f1f1f1
 $dark-grey-background: #858585
-$subheading-color: #a5dfea
+$subheading-color: white
 $horizontal-dashboard-height: 140px
 
 
@@ -28,7 +28,7 @@ $horizontal-dashboard-height: 140px
     justify-content: center
 
     .progress-circular
-      color: $app-color !important
+      color: $navy-blue !important
 
 .clin-card
   background-color: rgb(250, 250, 250)
@@ -84,7 +84,7 @@ $horizontal-dashboard-height: 140px
 
   .app-title
     font-size: 20px
-    color: $app-color
+    color: $text-color
     margin-bottom: 3px
     margin-top: 2px
 
@@ -125,14 +125,15 @@ $horizontal-dashboard-height: 140px
     margin-bottom: 2px
     width: 140px
 
+
     .btn__content
-      color: $app-color
+      color: $nav-background-color
 
     &.is-active
-      background-color:  $app-color
+      background-color:  $app-color-darker
 
       .btn__content
-        color: white
+        color: $text-color
 
   .input-group--selection-controls.accent--text
     .icon--selection-control
@@ -146,13 +147,14 @@ $horizontal-dashboard-height: 140px
     .stepper__label
       color: $text-color
       line-height: 16px
-
+    .stepper__step__step
+      background-color: $default-badge-color
 
   .stepper__step.stepper__step--active
     .stepper__label
       color: $app-color
     .stepper__step__step.primary
-      background-color: $app-color !important
+      background-color: $app-color-darker !important
 
   .toolbar--fixed.elevation-0
     box-shadow: none !important
@@ -169,7 +171,7 @@ $horizontal-dashboard-height: 140px
     padding-top: 0px
     margin-bottom: 4px
     font-size: 13px
-    color: $app-color
+    color: $text-color
 
 
   .workflow-summary-description
@@ -269,7 +271,7 @@ $horizontal-dashboard-height: 140px
     margin-left: 0px
     font-size: 18px
     display: inline-block
-    color: $app-color
+    color: $subheading-color
 
 
 
@@ -458,316 +460,9 @@ $horizontal-dashboard-height: 140px
       margin-top: 5px
 
 
-  .vertical-dashboard-card
-    height: 100%
 
 
-    .preferences-button
-      top: 4px
-      right: 0px
-      left: initial
 
-    h5.workflow-title
-      font-size: 16px
-      margin-top: 0px
-
-    .workflow-summary-panel
-      padding: 13px 10px 10px 10px
-
-    .split-btn
-      right: 34px
-      left: initial
-
-    .stepper--vertical
-      height: calc(100% + 110px)
-      background-color: $nav-background-color
-      .stepper__step
-        width: 100%
-        padding: 14px 10px 14px 5px
-        margin-bottom: 0px
-        margin-top: 8px
-      .stepper__header
-        height: initial
-        -webkit-box-shadow: none
-        box-shadow: none
-        font-size: 14px
-      .stepper__content
-        margin: -8px -36px -16px 16px
-        padding: 8px 50px 16px 8px
-
-      .stepper__content:not(:last-child)
-        border-left: 1px solid $text-color
-
-    .stepper__label
-      color: $text-color
-      font-size: 14px
-
-
-    .stepper__step--active
-      .stepper__label
-        font-weight: 600
-        text-shadow: none !important
-
-    .step-summary-panel
-      width: 220px
-      word-wrap: break-word
-      margin-bottom: 10px
-
-    .tasks-panel
-      width: 220px
-
-
-
-    .task-name
-      display: inline-block
-      vertical-align: bottom
-      width: 170px
-      cursor: pointer
-      line-height: 15px
-      padding-bottom: 8px
-      padding-top: 3px
-
-    .task-switch
-      display: inline-block !important
-      width: 24px !important
-      height: 30px !important
-      margin-left: 20px
-      margin-right: 0px
-      margin-bottom: 0px
-      vertical-align: top
-      margin-top: 0px !important
-
-
-    .task-checkbox-header1
-      margin-left: 95px
-      display: inline-block
-      width: 74px
-      margin-top: 5px
-      font-size: 12px
-
-    .task-checkbox-header2
-      display: inline-block
-      margin-top: 5px
-      font-size: 12px
-
-
-
-  .vertical-dashboard-card.minimized
-
-    .workflow-title
-      width: 105px
-
-
-    .stepper--vertical
-      .stepper__step
-        width: 100%
-        padding: 14px 5px 14px 3px
-      .stepper__content
-        margin:  0px -36px -6px 6px
-        padding: 8px 50px 0px 8px
-      .stepper__header
-        padding-left: 2px
-      .stepper__step__step
-        margin-right: 6px
-
-      .step-summary-panel
-        width: 100px
-        word-wrap: break-word
-
-      .stepper__content:not(:last-child)
-        border-left: none !important
-
-    .task-entry
-      display: flex
-    .tasks-panel
-      width: 100px
-    .task-switch
-      margin-left: 0px
-      margin-bottom: 10px
-      margin-right: 4px
-    .task-name
-      width: 80px
-      padding-right: 10px
-      padding-bottom: 0px
-
-
-  .horizontal-dashboard-card.minimized
-
-    #findings-button
-      margin-top: 5px
-
-    .preferences-button
-      top: 0px
-      left: 0px
-      right: initial
-
-    .stepper.stepper--non-linear
-      height: 60px
-      display: flex
-    .stepper__header
-      height: 60px
-      margin-right: 30px
-      margin-top: 0px
-      margin-left: 30px
-    .stepper__step
-      padding: 16px 5px 24px 5px
-    .stepper__items
-      display: flex
-    .stepper-btn
-      min-width: 40px
-      margin-top: 10px
-    .stepper-btn .btn__content
-        max-width: 40px
-
-    .tasks-panel
-      padding-top: 12px
-      display: flex
-      width: initial
-      margin-top: 0px
-    .task-name
-      width: initial
-      padding-top: 5px
-      padding-right: 5px
-    .task-entry
-      display: flex
-      clear: initial
-      margin-right: 30px
-    .task-switch
-      display: flex
-      width: 40px !important
-      margin-left: 0px
-
-    .vertical-divider
-      height: 50px
-      display: none
-
-
-
-
-
-
-
-#clin-container
-
-  &.dark
-
-    .app-title
-      color: white
-
-    #findings-button
-      background-color: white
-      color:  $dark-nav-background-color
-
-      .btn__content
-        color: $dark-nav-background-color
-
-      &.is-active
-        background-color:  $dark-app-color
-
-        .btn__content
-          color: white
-
-    .preferences-button
-      .btn__content
-        .material-icons
-          color: white
-    .workflow-summary-panel
-      background-color: $dark-nav-background-color
-
-      .workflow-summary-description
-        div
-          color: $dark-text-color
-
-    .phenotype-summary-panel
-      .phenotype-entry
-        color: $dark-text-color
-
-    .phenotype-summary-panel
-      background-color: $dark-nav-background-color
-
-    .findings-summary-panel
-      background-color: $dark-nav-background-color
-
-      .findings-entry
-        color: $dark-text-color
-
-
-    .toolbar__content
-      background:  $dark-grey-background
-
-    .workflow-summary-description
-      color: $dark-text-color
-
-
-    .input-group--selection-controls.accent--text
-      .icon--selection-control
-        color: $dark-text-color
-
-
-    .input-group--selection-controls.accent--text.input-group--active
-      .icon--selection-control
-        color: $dark-app-color
-
-
-    .stepper__step__step
-      background-color: $dark-stepper-color
-
-    .stepper__step.stepper__step
-      .stepper__label
-        color: $dark-text-color
-
-    .stepper__step.stepper__step--active
-      .stepper__label
-        color: $dark-app-color
-      .stepper__step__step.primary
-        background-color: $dark-app-color !important
-
-    .stepper__content
-      color: $dark-text-color !important
-
-    h5
-      color:  $subheading-color
-
-
-    .split-btn .btn__content
-      color: $dark-text-color
-
-    .split-btn .btn__content .material-icons
-      color: $dark-text-color
-
-
-    .horizontal-dashboard-card
-      color: $dark-text-color
-
-
-      .stepper.stepper--non-linear
-        background-color: $dark-nav-background-color
-
-      .stepper-btn
-        color: $dark-app-color
-
-
-      .expansion-btn
-        color: $dark-app-color
-
-      .expansion-btn .btn__content .material-icons
-        color: $dark-app-color
-
-      hr.divider
-        background-color: $dark-text-color !important
-
-    .vertical-dashboard-card
-      .stepper--vertical
-        background-color: $dark-nav-background-color
-
-      .stepper__label
-        color: $dark-text-color
-
-      .expansion-btn .btn__content
-        color: $dark-app-color !important
-
-      .expansion-btn .btn__content .material-icons
-        color: $dark-app-color
 
 
 </style>
@@ -949,101 +644,6 @@ $horizontal-dashboard-height: 140px
       </div>
     </v-toolbar>
 
-    <v-navigation-drawer
-      v-if="!showSplash && isSidebar && isAuthenticated "
-
-      :hide-overlay="true"
-      fixed
-      light
-      flat
-      :width="isMinimized ? 150 : 270"
-      mini-variant-width="150">
-      <div v-show="isAuthenticated && workflow && analysis"  light :class="{'vertical-dashboard-card': true, 'minimized': isMinimized}">
-
-        <preferences-menu
-          class="preferences-button"
-          :isSidebar="isSidebar"
-          :isMinimized="isMinimized"
-          :theme="theme"
-          @switch-theme="switchTheme"
-          @switch-sidebar="switchSidebar"
-          @switch-minimized="switchMinimized">
-        </preferences-menu>
-
-        <v-stepper v-model="currentStep" vertical non-linear >
-          <div class="workflow-summary-panel" >
-            <div>
-
-              <h5 v-if="!caseSummary" class="workflow-title"> {{ workflow.title }} </h5>
-              <div v-if="!caseSummary" class="workflow-summary-description" v-show="!isMinimized">
-                {{ workflow.summary}}
-              </div>
-
-              <h5 v-if="caseSummary" class="workflow-title"> {{ caseSummary.name }} </h5>
-              <div v-if="caseSummary"  class="workflow-summary-description" v-show="!isMinimized">
-                {{ caseSummary.description}}
-              </div>
-            </div>
-          </div>
-
-
-
-
-            <template v-for="step in analysis.steps">
-              <v-stepper-step v-show="!isMinimized || isSidebar || step.number == currentStep"
-              :key="`step` + step.key"
-              editable
-              :step="getStepNumber(step.key)"
-              :complete="step.complete">
-                 {{ getStepTitle(step.key) }}
-              </v-stepper-step>
-              <v-stepper-content :key="`content` + step.key" :step="getStepNumber(step.key)">
-                <div class="step-summary-panel" v-if="!isMinimized">
-                    {{ getStepSummary(step.key) }}
-                </div>
-
-                <div class="tasks-panel" v-if="step.tasks">
-                  <div  v-show="!isMinimized">
-                    <span v-if="false" class="task-checkbox-header1">Complete</span>
-                    <span v-if="false" class="task-checkbox-header2">Passed</span>
-
-                  </div>
-                  <div class="task-entry"
-                   v-for="task in step.tasks"
-                   :key="task.key"
-                   >
-                    <v-checkbox class="task-switch"
-                      v-model="task.complete"
-                      v-tooltip.right="`Completed`"
-                    ></v-checkbox>
-                    <v-switch  small class="task-switch"
-                      v-if="false && task.complete"
-                      v-model="task.pass"
-                      v-tooltip.right="`Passed`"
-                    ></v-switch>
-                    <span class="task-name"
-                    v-tooltip.left="getTaskName(step.key, task.key)"
-                    @mouseover="onMouseOverTask(step, task)"
-                    @mouseleave="onMouseLeaveTask(step, task)">
-                    {{ getTaskName(step.key, task.key) }}
-                    </span>
-                  </div>
-
-                </div>
-              </v-stepper-content>
-            </template>
-
-
-
-
-
-
-        </v-stepper>
-
-
-
-      </div>
-    </v-navigation-drawer>
 
 
     <div style="width:100%;height:100%;padding: 0px"
@@ -1173,8 +773,8 @@ export default {
             //'bam':       'http://tony.iobio.io:4027'
         },
         'dev': {
-            'gene':      'https://dev.gene.iobio.io/?launchedFromClin=true',
-            'genefull':  'https://dev.gene.iobio.io/?launchedFromClin=true',
+            'gene':      'https://stage.gene.iobio.io/?launchedFromClin=true',
+            'genefull':  'https://stage.gene.iobio.io/?launchedFromClin=true',
             'genepanel': 'https://dev.panel.iobio.io/?launchedFromClin=true',
             //'bam':       'https://newbam.iobio.io'
         },
