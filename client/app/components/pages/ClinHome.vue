@@ -1667,6 +1667,8 @@ export default {
               'genesGtr':             self.analysis.genesGtr,
               'genesPhenolyzer':      self.analysis.genesPhenolyzer,
               'genesManual':          self.analysis.genesManual,
+              'gtrFullList':          self.analysis.gtrFullList,
+              'phenolyzerFullList':   self.analysis.phenolyzerFullList,
               'persistCache':         self.persistCache,
               'variants':             self.variants,
               'variantData':          self.variantData,
@@ -1798,6 +1800,8 @@ export default {
                 self.analysis.genesManual = [];
                 self.analysis.genesReport = [];
                 self.analysis.phenotypes = [];
+                self.analysis.gtrFullList = [];
+                self.analysis.phenolyzerFullList = [];
                 self.genes = [];
               }
 
@@ -1815,6 +1819,8 @@ export default {
               self.analysis.workflow_id = workflow.id;
               self.analysis.genes = [];
               self.analysis.phenotypes = [];
+              self.analysis.gtrFullList = [];
+              self.analysis.phenolyzerFullList = [];
 
               self.analysis.steps = workflow.steps.map(function(step) {
                 let stepObject = {
@@ -2059,12 +2065,14 @@ export default {
 
     promiseUpdateGenesData: function(messageObject) {
       let self = this;
-      self.analysis.genesReport     = messageObject.genesReport;
-      self.analysis.genesGtr        = messageObject.genesGtr;
-      self.analysis.genesPhenolyzer = messageObject.genesPhenolyzer;
-      self.analysis.genesManual     = messageObject.genesManual;
-      self.analysis.genes           = messageObject.genes;
-      self.analysis.phenotypes      = messageObject.searchTerms;
+      self.analysis.genesReport        = messageObject.genesReport;
+      self.analysis.genesGtr           = messageObject.genesGtr;
+      self.analysis.genesPhenolyzer    = messageObject.genesPhenolyzer;
+      self.analysis.genesManual        = messageObject.genesManual;
+      self.analysis.gtrFullList        = messageObject.gtrFullList;
+      self.analysis.phenolyzerFullList = messageObject.phenolyzerFullList;
+      self.analysis.genes              = messageObject.genes;
+      self.analysis.phenotypes         = messageObject.searchTerms;
 
 
       self.analysis.datetime_last_modified = self.getCurrentDateTime();
