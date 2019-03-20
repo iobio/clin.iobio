@@ -7,7 +7,7 @@
   overflow-y: auto
   height: -webkit-fill-available
   height: -moz-available
-  background-color:  #f0f0f0
+  background-color:  white
 
   .avatar.big
     border: #d5d5d5 solid thin

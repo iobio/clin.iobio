@@ -6,11 +6,11 @@
 
 @import ../../../assets/sass/variables
 
-$light-grey-background: #f1f1f1
-$dark-grey-background: #858585
-$subheading-color: white
+$light-grey-background: #eaeaea
 $horizontal-dashboard-height: 140px
 
+.application--wrap
+  background-color: $light-grey-background
 
 
 #clin-container
@@ -19,7 +19,7 @@ $horizontal-dashboard-height: 140px
   height: -moz-available
 
   &.authenticated
-    background-color: $dark-grey-background
+    background-color: white
 
   #splash-screen
     background-color: $light-grey-background
@@ -31,7 +31,7 @@ $horizontal-dashboard-height: 140px
       color: $navy-blue !important
 
 .clin-card
-  background-color: rgb(250, 250, 250)
+  background-color: white
   min-height: 600px
   padding: 0px
 
@@ -42,7 +42,7 @@ $horizontal-dashboard-height: 140px
   -webkit-box-shadow: 0px 0px 12px 0px rgba(0, 0, 0, 0.49) !important
 
 .app-content
-  margin-top: 140px
+  margin-top: 0px
   margin-left: 0px
   border-top: $divider-color
   border-top-width: .5px
@@ -50,417 +50,8 @@ $horizontal-dashboard-height: 140px
 
 
 
-.app-content.sidebar
-  margin-top: 0px
-  margin-left: 270px
-
-.app-content.minimized
-  margin-top: 60px
-  margin-left: 0px
-
-.app-content.minimized.sidebar
-  margin-top: 0px
-  margin-left: 150px
-
-
-.task-entry
-  .task-switch
-    height: 30px !important
-    .input-group--selection-controls__ripple
-      height: 30px !important
-    &.input-group--hide-details
-      .input-group__details
-        display: none !important
-        min-height: 0px !important
-
-.toolbar__content
-  background: $dark-grey-background
-  -webkit-box-shadow: 0px 2px 1px -1px rgba(0, 0, 0, 0.05), 0px 1px 1px 0px rgba(0, 0, 0, 0.03), 0px 1px 3px 0px rgba(0, 0, 0, 0.01) !important
-  box-shadow: 0px 2px 1px -1px rgba(0, 0, 0, 0.05), 0px 1px 1px 0px rgba(0, 0, 0, 0.03), 0px 1px 3px 0px rgba(0, 0, 0, 0.01) !important
-
-
 #clin-container
   font-size: 14px
-
-  .app-title
-    font-size: 20px
-    color: $text-color
-    margin-bottom: 3px
-    margin-top: 2px
-
-  .navigation-drawer--fixed
-    overflow-y: auto
-
-
-  .sig i.material-icons
-    color: $sig-color !important
-    font-size: 17px
-
-  .unknown-sig i.material-icons
-    color: $unknown-sig-color !important
-    font-size: 17px
-
-  .gene-chip, .phenotype-chip
-    padding: 0px
-    display: inline-block
-    line-height: 12px
-    color: white
-
-    span
-      display: inline-block
-      padding-top: 2px
-      font-size: 12px
-      margin-left: -2px
-  .gene-chip
-    margin-right: 8px
-
-
-
-
-  #findings-button
-    padding: 4px;
-    max-height: 24px
-    margin-left: 0px
-    margin-top: 10px
-    margin-bottom: 2px
-    width: 140px
-
-
-    .btn__content
-      color: $nav-background-color
-
-    &.is-active
-      background-color:  $app-color-darker
-
-      .btn__content
-        color: $text-color
-
-  .input-group--selection-controls.accent--text
-    .icon--selection-control
-      color: $text-color
-
-  .input-group--selection-controls.accent--text.input-group--active
-    .icon--selection-control
-      color: $app-color
-
-  .stepper__step
-    .stepper__label
-      color: $text-color
-      line-height: 16px
-    .stepper__step__step
-      background-color: $default-badge-color
-
-  .stepper__step.stepper__step--active
-    .stepper__label
-      color: $app-color
-    .stepper__step__step.primary
-      background-color: $app-color-darker !important
-
-  .toolbar--fixed.elevation-0
-    box-shadow: none !important
-    -webkit-box-shadow: none !important
-
-
-  .workflow-summary-panel
-    color: $text-color
-    display: flex
-    flex-direction: column
-    justify-content: flex-start
-
-  .workflow-summary-title
-    padding-top: 0px
-    margin-bottom: 4px
-    font-size: 13px
-    color: $text-color
-
-
-  .workflow-summary-description
-    font-family: $app-text-font
-    line-height: 15px
-    font-size: 13px
-    overflow: hidden
-
-    h5
-      font-size: 13px
-      margin-top: 0px
-
-    div
-      font-size: 13px
-      font-family: $app-text-font
-      color: $text-color
-      max-height: 70px
-      font-size: 11px
-      line-height: 13px
-      overflow-y: scroll
-
-  .phenotype-summary-panel
-    color: $text-color
-    display: flex
-    flex-direction: column
-    justify-content: flex-start
-    background-color: $nav-background-color
-    margin-left: 5px
-    width: 160px
-    padding: 5px 5px 5px 10px
-    overflow-y: hidden
-
-    h5
-        margin-bottom: 10px
-        color: $subheading-color
-
-    .phenotype-summary-title
-      font-size: 16px
-      padding-top: 0x
-
-    .phenotype-entry
-      font-family: $app-text-font
-      font-size: 12px
-      display: inline-block
-      margin-bottom: 2px
-      margin-right: 2px
-      border: solid #ffffff7a
-      border-width: .5px
-      padding-left: 4px
-      padding-right: 4px
-
-  .findings-summary-panel
-    color: $text-color
-    display: flex
-    flex-direction: column
-    justify-content: flex-start
-    background-color: $nav-background-color
-    width: 200px
-    margin-left: 5px
-    padding: 5px 5px 5px 10px
-    margin-bottom: 6px
-
-    h5
-        margin-bottom: 10px
-        color: $subheading-color
-
-    .findings-summary-title
-      font-size: 16px
-      padding-top: 0x
-
-    .findings-entry
-      font-family: $app-text-font
-      line-height: 15px
-      font-size: 13px
-      display: inline-block
-      width: 24px
-
-
-
-  .step-summary-panel
-    font-family: $app-text-font
-    line-height: 16px
-    font-size: 14px
-
-  .task-name
-    font-family: $app-text-font
-    font-size: 14px
-
-
-
-  .stepper__content
-    color: $text-color !important
-
-  h5
-    margin-top: 5px
-    margin-bottom: 5px
-    margin-left: 0px
-    font-size: 18px
-    display: inline-block
-    color: $subheading-color
-
-
-
-
-  .preferences-button
-    position: absolute
-    top: 0px
-    left: 240px
-    display: inline-block
-    margin: 0px
-    padding: 0px
-    min-width: 20px
-    height: 20px
-    z-index: 1
-
-  .preferences-button .btn__content
-    max-width: 20px
-    padding: 0px
-    margin: 0px
-    height: 20px
-    color: $text-color
-    font-weight: 600
-
-  .preferences-button .btn__content .material-icons
-    font-size: 20px
-    color: $text-color
-    height: 20px
-    width: 20px
-
-  .horizontal-dashboard-card
-    padding: 0px
-    margin: 0px
-    width: 100%
-    color: $text-color
-    display: flex
-    flex-direction: row
-
-    .split-btn
-      top: 10px
-
-    .workflow-summary-panel, .phenotype-summary-panel, .findings-summary-panel, .stepper.stepper--non-linear
-      height: $horizontal-dashboard-height
-
-
-    .stepper__label
-      line-height: 17px !important
-      text-shadow: none !important
-      font-size: 14px
-
-    hr.divider
-      background-color: $text-color !important
-      display: none
-
-    .stepper__step--active
-      .stepper__label
-        font-weight: 600
-        text-shadow: none !important
-
-    .stepper__header
-      margin-top: 5px
-      -webkit-box-shadow: none
-      box-shadow: none
-      font-size: 14px
-      justify-content: flex-start;
-      height: 100%;
-      flex-flow: column;
-      margin-right: 10px
-
-      h5
-        font-size: 16px
-        padding-left: 10px
-        margin-bottom: 5px
-
-
-    .stepper.stepper--non-linear
-      background-color: $nav-background-color
-      display: flex
-      flex-direction: row
-      flex-grow: 2
-      box-shadow: none
-      -webkit-box-shadow: none
-
-    .stepper-btn-panel
-      height: 30px
-      vertical-align: top
-
-    .stepper-btn
-      color: $app-color
-      display: inline-block
-      margin: 0px
-      margin-top: 0px
-      padding: 0px
-      height: 30px
-
-    .stepper-btn .btn__content
-      max-width: 110px
-      padding: 0px
-      margin: 0px
-      height: 30px
-
-
-    .vertical-divider
-      border-left: 1px solid $divider-color
-      height: 120px
-      float: left
-      margin-top: 5px
-      margin-bottom: 5px
-      margin-left: 10px
-      margin-right: 0px
-      display: none
-
-    .workflow-summary-panel
-      width: 170px
-      padding: 2px 5px 5px 10px
-      overflow-y: auto
-      margin-left: 0px
-      margin-right: 5px
-      background-color: $nav-background-color
-
-    .stepper__content
-      padding: 0px 0px 0px 0px
-
-      .stepper__wrapper
-        display: flex
-        flex-direction: row
-        justify-content: center
-
-    .stepper__step
-      padding-top: 6px
-      padding-bottom: 1px
-      margin-left: 0px
-      margin-right: 0px
-      padding-right: 0px
-      padding-left: 10px
-
-    .stepper__items
-      display: flex
-      margin-left: 5px
-      min-width: 480px
-      margin-top: 15px
-
-    .step-summary-panel
-      width: 230px
-      display: inline-block
-      padding: 15px 15px 5px 5px
-      overflow-y: auto
-
-    .tasks-panel
-      display: inline-block
-      padding-top: 0px
-      margin-top: 10px
-
-    .task-entry
-      clear: both
-      overflow: auto
-      display: flex
-
-
-    .task-name
-      display: flex
-      vertical-align: top
-      cursor: pointer
-      padding-top: 6px
-
-    .task-switch
-      display: flex
-      max-width: 24px !important
-      height: 25px
-      margin-left: 20px
-      margin-right: 5px
-      margin-bottom: 0px
-      vertical-align: top
-      margin-top: 0px !important
-
-
-    .task-checkbox-header1
-      margin-left: 150px
-      display: inline-block
-      float: left
-      width: 74px
-      margin-top: 5px
-
-    .task-checkbox-header2
-      display: inline-block
-      float: left
-      margin-top: 5px
-
-
-
 
 
 
@@ -470,8 +61,21 @@ $horizontal-dashboard-height: 140px
 
 
 <template>
+<div>
+  <navigation v-if="!showSplash && isAuthenticated  && workflow && analysis"
+   :caseSummary="caseSummary"
+   :analysis="analysis">
+  </navigation>
 
-  <div id="clin-container" style="display:flex" :class="{authenticated: isAuthenticated, dark: theme == 'dark', light: theme == 'light'}">
+  <workflow v-if="!showSplash && isAuthenticated && workflow && analysis"
+   :caseSummary="caseSummary"
+   :analysis="analysis"
+   :workflow="workflow"
+   @on-step-changed="onStepChanged"
+   @on-task-changed="onTaskChanged">
+  </workflow>
+
+  <div id="clin-container" style="display:flex" :class="{authenticated: isAuthenticated}">
 
     <div id="splash-screen" v-if="showSplash">
       <v-card style="text-align:center;margin-top:100px;width:400px;height:75px">
@@ -494,155 +98,7 @@ $horizontal-dashboard-height: 140px
     </login-mosaic>
 
 
-    <v-toolbar  v-if="!showSplash && !isSidebar && isAuthenticated && workflow && analysis "
-        light  fixed flat  :height="isMinimized ? 60 : 135">
-      <div v-show="isAuthenticated"  :class="{'horizontal-dashboard-card': true, 'minimized': isMinimized}">
 
-          <preferences-menu
-            v-if="false"
-            class="preferences-button"
-            :isSidebar="isSidebar"
-            :isMinimized="isMinimized"
-            :theme="theme"
-            @switch-theme="switchTheme"
-            @switch-sidebar="switchSidebar"
-            @switch-minimized="switchMinimized">
-          </preferences-menu>
-
-          <div class="workflow-summary-panel" v-show="!isMinimized">
-
-
-              <div class="app-title"> clin.iobio </div>
-
-
-
-
-              <div v-if="caseSummary" class="workflow-summary-description">
-                <h5 v-if="caseSummary" class="workflow-summary-title"> {{ caseSummary.name }} </h5>
-              </div>
-
-
-          </div>
-
-
-
-
-
-
-        <v-stepper class="" v-model="currentStep"   non-linear>
-
-          <v-stepper-header vertical>
-            <h5>Analysis Steps</h5>
-            <v-btn v-show="isMinimized" :disabled="currentStep == 1" class="stepper-btn" flat small @click="currentStep = currentStep - 1">
-              <v-icon>chevron_left</v-icon>
-            </v-btn>
-            <template v-for="step in analysis.steps">
-              <v-stepper-step v-show="!isMinimized || step.number == currentStep" :key="step.number" editable :step="step.number" :complete="step.complete">
-                {{ getStepTitle(step.key) }}
-              </v-stepper-step>
-              <v-divider v-show="step.number != analysis.steps.length  && !isMinimized "></v-divider>
-            </template>
-            <v-btn v-show="isMinimized" :disabled="currentStep == analysis.steps.length" class="stepper-btn" flat small @click="currentStep = currentStep + 1">
-              <v-icon>chevron_right</v-icon>
-            </v-btn>
-            <div v-show="false && !isMinimized" class="stepper-btn-panel">
-              <v-btn :disabled="currentStep == 1" class="stepper-btn" flat  @click="currentStep = currentStep - 1">
-              <v-icon>chevron_left</v-icon>
-              Previous
-              </v-btn>
-              <v-btn :disabled="currentStep == analysis.steps.length" class="stepper-btn" flat  @click="currentStep = currentStep + 1">
-                <v-icon>chevron_right</v-icon>
-                Next
-              </v-btn>
-            </div>
-          </v-stepper-header>
-
-
-
-
-          <v-stepper-items>
-            <template v-for="step in analysis.steps">
-
-              <v-stepper-content :key="step.key" :step="getStepNumber(step.key)">
-                <div class="step-summary-panel" v-if="!isMinimized">
-                  <h5 v-if="false">{{ getStepTitle(step.key) }}</h5>
-                  <div>
-                      {{ getStepSummary(step.key) }}
-                  </div>
-                </div>
-
-                <div class="tasks-panel" v-if="step.tasks">
-                  <div  v-show="!isMinimized">
-                    <span v-if="false"  class="task-checkbox-header1">Complete</span>
-                    <span v-if="false" class="task-checkbox-header2">Passed</span>
-
-                  </div>
-                  <div class="task-entry"
-                   v-for="task in step.tasks"
-                   :key="task.key"
-                   >
-                    <v-checkbox class="task-switch"
-                      v-model="task.complete"
-                      hide-details
-                    ></v-checkbox>
-                    <v-switch small class="task-switch"
-                      v-if="false && task.complete"
-                      v-model="task.pass"
-                      hide-details
-                    ></v-switch>
-                    <span class="task-name">
-                    {{ getTaskName(step.key, task.key) }}
-                    </span>
-                  </div>
-
-                </div>
-              </v-stepper-content>
-            </template>
-          </v-stepper-items>
-        </v-stepper>
-
-
-
-
-          <div v-show="false && !isMinimized && analysis && phenotypeList.length > 0" class="phenotype-summary-panel ">
-            <h5  class="phenotype-summary-title"> Phenotype search terms </h5>
-            <div style="display:flex;flex-flow:row;flex-wrap:wrap;overflow-y:hidden">
-              <span v-for="phenotype in phenotypeList" :key="phenotype" class="phenotype-entry">
-                <span class="phenotype-chip">{{ phenotype }}</span>
-              </span>
-            </div>
-          </div>
-
-          <div class="findings-summary-panel " v-show="!isMinimized">
-            <center>
-              <v-btn  id="findings-button" :class="{'is-active': showFindings}" @click="clickFindings">
-              {{ analysis && analysis.genes && analysis.genes.length > 0 ? 'Report' : 'Case summary' }}
-              </v-btn>
-            </center>
-
-            <h5  v-show="hasVariants" class="findings-summary-title"> Variants </h5>
-              <div style="padding-top:10px;display:flex;flex-direction:column;justify-content:space-between">
-
-                <div v-for="interpretation in variantsByInterpretation" :key="interpretation.key" >
-
-                  <div class="gene-chip" v-for="gene in interpretation.genes" :key="gene">
-
-                      <app-icon :class="interpretation.key" :icon="interpretation.key" height="17" width="17">
-                      </app-icon>
-
-                      <span>{{ gene }}</span>
-                  </div>
-
-                </div>
-
-
-              </div>
-
-
-          </div>
-
-      </div>
-    </v-toolbar>
 
 
 
@@ -673,14 +129,14 @@ $horizontal-dashboard-height: 140px
 
 
       <div id="gene-panel-iframe"
-        v-show="!isAuthenticated || (currentStep == 1  && !showFindings)">
+        v-show="!isAuthenticated || (currentStep == 2  && !showFindings)">
         <iframe
         :src="apps.genepanel.url + '&iobio_source=' + iobioSource"
         style="width:100%;height:100%" frameBorder="0">
         </iframe>
       </div>
 
-      <div id="gene-iframe" v-show="!isAuthenticated || ((currentStep == 2 || currentStep == 3) && !showFindings)">
+      <div id="gene-iframe" v-show="!isAuthenticated || ((currentStep == 3 || currentStep == 4) && !showFindings)">
         <iframe
         :src="apps.gene.url"
         style="width:100%;height:100%" frameBorder="0">
@@ -694,12 +150,14 @@ $horizontal-dashboard-height: 140px
 
 
   </div>
-
+</div>
 </template>
 
 
 <script>
 
+import Navigation from  '../pages/Navigation.vue'
+import Workflow from  '../pages/Workflow.vue'
 import Findings from  '../viz/Findings.vue'
 import Login from  '../partials/Login.vue'
 import LoginMosaic from  '../partials/LoginMosaic.vue'
@@ -714,6 +172,8 @@ import HubSession  from  '../../models/HubSession.js'
 export default {
   name: 'home',
   components: {
+    Navigation,
+    Workflow,
     Login,
     LoginMosaic,
     Findings,
@@ -782,16 +242,16 @@ export default {
 
       apps: {
         //'bam':       {url: null, isLoaded: false, step: 0, iframeSelector: '#bam-iframe iframe'},
-        'genepanel': {url: null, isLoaded: false, step: 1, iframeSelector: '#gene-panel-iframe iframe'},
-        'gene':      {url: null, isLoaded: false, step: 2, iframeSelector: '#gene-iframe iframe'},
-        'genefull':  {url: null, isLoaded: true, step:  3, iframeSelector: '#gene-iframe iframe'}
+        'genepanel': {url: null, isLoaded: false, step: 2, iframeSelector: '#gene-panel-iframe iframe'},
+        'gene':      {url: null, isLoaded: false, step: 3, iframeSelector: '#gene-iframe iframe'},
+        'genefull':  {url: null, isLoaded: true, step:  4, iframeSelector: '#gene-iframe iframe'}
       },
 
       currentStep: -1,
 
       analysisModel: null,
 
-      idWorkflow: "1",
+      idWorkflow: "2",
       workflow: null,
       analysis: null,
       caseSummary: null,
@@ -978,6 +438,18 @@ export default {
 
     },
 
+    onStepChanged: function(stepNumber) {
+      this.currentStep = stepNumber
+    },
+
+    onTaskChanged: function() {
+      let self = this;
+      // We have moved to a new step.  Save the workflow step.
+      if (self.analysis && self.analysis.id) {
+        self.promiseUpdateWorkflow();
+      }
+    },
+
     switchTheme: function(theme) {
       this.theme = theme;
     },
@@ -1066,6 +538,7 @@ export default {
       promiseModelInfo.then(function() {
         self.promiseGetWorkflow(self.idWorkflow)
         .then(function() {
+
 
           if (self.clearSavedAnalysis) {
             self.promiseClearAnalysis(projectId, sampleId, self.workflow)
