@@ -72,7 +72,8 @@ $horizontal-dashboard-height: 140px
    :analysis="analysis"
    :workflow="workflow"
    @on-step-changed="onStepChanged"
-   @on-task-changed="onTaskChanged">
+   @on-task-changed="onTaskChanged"
+   @on-task-completed="onTaskCompleted">
   </workflow>
 
   <div id="clin-container" style="display:flex" :class="{authenticated: isAuthenticated}">
@@ -442,7 +443,22 @@ export default {
       this.currentStep = stepNumber
     },
 
-    onTaskChanged: function() {
+    onTaskChanged: function(stepNumber, task) {
+      let self = this;
+      for (var appName in self.apps) {
+        let app = self.apps[appName];
+        if (app.step == stepNumber) {
+          var msgObject = {
+            type:                  'show-' + task.key,
+            sender:                'clin.iobio',
+            isFrameVisible:        true,
+            receiver:              appName };
+          self.sendAppMessage(appName, msgObject);
+        }
+      }
+    },
+
+    onTaskCompleted: function(task) {
       let self = this;
       // We have moved to a new step.  Save the workflow step.
       if (self.analysis && self.analysis.id) {

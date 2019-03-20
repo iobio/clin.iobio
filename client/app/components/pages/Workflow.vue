@@ -359,7 +359,7 @@ export default {
       let theComplete = self.currentTask.complete;
       if (theComplete != self.currentTaskComplete) {
         self.currentTask.complete = self.currentTaskComplete;
-        self.$emit("on-task-changed");
+        self.$emit("on-task-completed", self.currentTask);
       }
     }
   },
@@ -375,18 +375,24 @@ export default {
     },
     setStepAndTask: function(step, task) {
       let self = this;
-      let oldStep = self.currentStep;
+      let oldStepNumber = self.currentStep.number;
       self.currentStep = step;
+
       self.setTask(task);
-      if (oldStep.number != self.currentStep.number) {
+      if (oldStepNumber != self.currentStep.number) {
         self.$emit("on-step-changed", self.getStepNumber(self.currentStep.key))
       }
+
     },
     setTask: function(task) {
       let self = this;
+      let oldTaskKey = self.currentTask.key
       self.currentTask = task;
       self.currentTaskComplete = self.currentTask.complete;
       self.shiftButtons();
+      if (oldTaskKey != self.currentTask.key) {
+        self.$emit("on-task-changed", self.getStepNumber(self.currentStep.key), self.currentTask)
+      }
     },
     shiftButtons: function() {
       let self = this;
