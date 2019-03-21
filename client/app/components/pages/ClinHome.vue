@@ -840,6 +840,8 @@ export default {
         }
       } else if (messageObject.type == "save-filters") {
         this.promiseUpdateFilters(messageObject.filters);
+      } else if (messageObject.type == "insufficient-coverage") {
+        this.setCoverageTaskBadge(messageObject.geneCount);
       }
 
 
@@ -891,6 +893,19 @@ export default {
               task.badge =  variantsCandidateGenes.length
             } else if (task.key == 'review-full') {
               task.badge =  self.variants.length - variantsCandidateGenes.length;
+            }
+          })
+        })
+      }
+    },
+
+    setCoverageTaskBadge: function(geneCount) {
+      let self = this;
+      if (self.variants && self.variants.length > 0) {
+        self.analysis.steps.forEach(function(step) {
+          step.tasks.forEach(function(task) {
+            if (task.key == 'coverage') {
+              task.badge =  geneCount
             }
           })
         })

@@ -173,7 +173,6 @@ $badge-inactive-color:  #d8d3d3
           .task-label
             color: $workflow-active-color
             font-weight: bold
-            text-transform:  uppercase
           &.complete
             .avatar
               background-color:  $workflow-active-color !important
@@ -260,7 +259,7 @@ $badge-inactive-color:  #d8d3d3
         font-size:   11px
         line-height: 12px
         text-align:  center
-        min-height:  43px
+        min-height:  46px
 
       .avatar-button
         height:      24px !important
@@ -292,7 +291,7 @@ $badge-inactive-color:  #d8d3d3
 
 <template>
   <v-card light id="workflow-card" >
-    <div id="workflow-steps">
+    <div id="workflow-steps" v-if="analysis && analysis.steps">
       <div  v-for="(step, stepIndex) in analysis.steps" :key="step.key"
       :class="{'step-container': true, 'active' : currentStep && step.key == currentStep.key  ? true : false, 'complete': step.complete}">
 
