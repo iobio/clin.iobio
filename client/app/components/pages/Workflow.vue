@@ -359,7 +359,15 @@ export default {
       let theComplete = self.currentTask.complete;
       if (theComplete != self.currentTaskComplete) {
         self.currentTask.complete = self.currentTaskComplete;
-        self.$emit("on-task-completed", self.currentTask);
+        let completed = self.currentStep.tasks.filter(function(task) {
+          return task.complete;
+        })
+        if (completed.length == self.currentStep.tasks.length) {
+          self.currentStep.complete = true;
+        } else {
+          self.currentStep.complete = false;
+        }
+        self.$emit("on-task-completed", self.currentStep, self.currentTask);
       }
     }
   },
@@ -494,6 +502,7 @@ export default {
     let self = this;
     self.currentStep = self.analysis.steps[0];
     self.currentTask = self.currentStep.tasks[0];
+    self.currentTaskComplete = self.currentTask.complete;
     self.shiftButtons();
 
   },

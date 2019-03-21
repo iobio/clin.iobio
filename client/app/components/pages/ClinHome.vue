@@ -458,7 +458,7 @@ export default {
       }
     },
 
-    onTaskCompleted: function(task) {
+    onTaskCompleted: function(step, task) {
       let self = this;
       // We have moved to a new step.  Save the workflow step.
       if (self.analysis && self.analysis.id) {
