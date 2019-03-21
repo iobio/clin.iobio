@@ -387,6 +387,23 @@ export default class AnalysisModel {
     }
   }
 
+  removeMatchingVariants(variantsToRemove, existingVariants) {
+    let self = this;
+    let toRemove = [];
+    if (variantsToRemove && existingVariants) {
+      variantsToRemove.forEach(function(variantToRemove) {
+        let matchingIdx = self.findMatchingVariantIndex(variantToRemove, existingVariants);
+        if (matchingIdx != -1) {
+          toRemove.push($.extend({}, variantToRemove));
+        }
+      })
+    }
+    toRemove.forEach(function(v) {
+      let idx = self.findMatchingVariantIndex(v, existingVariants);
+      existingVariants.remove(idx);
+    })
+  }
+
   getObsoleteVariants(refreshedVariants, existingVariants) {
     let self = this;
     let unmatchedVariants = [];

@@ -23,6 +23,8 @@ nav.toolbar
     padding-right: 15px
     padding-bottom: 5px
 
+    .percent-label
+      font-size: 12px
 
 
     #workflow-progress
@@ -106,9 +108,9 @@ nav.toolbar
 
 
       <span id="workflow-progress">
-        <v-progress-linear class="primary--text" :value="progress" style="margin-bottom:0px;width:120px" height="16" >
+        <v-progress-linear class="primary--text" :value="percentComplete" style="margin-bottom:0px;width:120px" height="16" >
         </v-progress-linear>
-        {{ progress }}% complete
+        <span class="percent-label">{{ percentComplete }}% complete</span>
       </span>
 
       <v-spacer></v-spacer>
@@ -210,7 +212,6 @@ export default {
     let self = this;
     return {
       title: 'clin.iobio',
-      progress: 30,
       clipped: false,
       showCaseMenu: false,
       showPhenotypesMenu: false,
@@ -223,12 +224,30 @@ export default {
   watch: {
   },
   methods: {
+    round(value, places) {
+      return +(Math.round(value + "e+" + places)  + "e-" + places);
+    }
   },
   created: function() {
   },
   mounted: function() {
+
   },
   computed:  {
+    percentComplete: function() {
+      let self = this;
+      let taskCount = 0;
+      let completeTaskCount = 0;
+      self.analysis.steps.forEach(function(step) {
+        step.tasks.forEach(function(task) {
+          taskCount++;
+          if (task.complete) {
+            completeTaskCount++;
+          }
+        })
+      })
+      return self.round(completeTaskCount / taskCount, 2) * 100;
+    }
   }
 }
 

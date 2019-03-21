@@ -2,6 +2,7 @@
 
 @import ../../../assets/sass/variables
 
+$badge-inactive-color:  #d8d3d3
 
 
 #workflow-card
@@ -15,6 +16,9 @@
   padding-left: 10px
   text-align: left
 
+
+
+
   #workflow-steps
     text-align: center
     width: fit-content
@@ -27,15 +31,24 @@
     text-align: left
     width: 240px
     font-size: 12px
-    margin-left: 40px
-    margin-left: 20px
+    margin-left: 0px
     margin-right: 5px
 
     .current-step-label
       font-size: 14px
       text-transform: uppercase
       color:  $workflow-active-color
-      margin-bottom: 5px
+      font-weight: 600
+      font-family: Raleway
+
+  .vertical-divider
+    border-left: 1px solid #ded9d9
+    height: 120px
+    float: right
+    margin-top: 5px
+    margin-bottom: 5px
+    margin-left: 20px
+    margin-right: 10px
 
 
   .input-group--selection-controls.accent--text
@@ -44,7 +57,7 @@
 
   .input-group--selection-controls.accent--text.input-group--active
     .icon--selection-control
-      color: $workflow-active-color
+      color: $text-color
 
 
   .button-panel
@@ -62,7 +75,7 @@
     vertical-align: middle
     margin-left: 0px
     margin-right: 0px
-    margin-top: -15px
+    margin-top: -7px
 
     .checkbox
       margin: 0px
@@ -76,6 +89,26 @@
   .task
     display: inline-block
     text-align: center
+
+    .task-badge
+      display: inline-block
+      position: relative
+      font-size: 10px
+      padding: 3px 7px
+      right: -35px
+      top: -5px
+      color: white
+      background-color:  $badge-inactive-color
+
+      &.active
+        background-color:  $text-color
+
+      &.empty
+        visibility:  hidden
+        height: 16px
+
+    .task-text
+      margin-top: -10px
 
   .avatar-button
     position: relative
@@ -100,24 +133,21 @@
 
       .step-label
         color:  $workflow-active-color
+
       .step
         .avatar-button
-          height:      48px
-          min-width:   48px
+          height:      40px
+          min-width:   40px
 
           .avatar
-            width:     48px !important
-            height:    48px !important
+            width:     40px !important
+            height:    40px !important
             border: solid 2px $workflow-active-color
 
             .headline
               font-size: 20px !important
               color: $workflow-active-color !important
 
-        .task
-          .avatar
-            border-color:  $text-color !important
-            background-color: white !important
 
       &.active.complete
         .step
@@ -140,6 +170,10 @@
             border-color: $workflow-active-color  !important
             .material-icons
               color: white !important
+          .task-label
+            color: $workflow-active-color
+            font-weight: bold
+            text-transform:  uppercase
           &.complete
             .avatar
               background-color:  $workflow-active-color !important
@@ -151,17 +185,18 @@
           color: $text-color
 
         .avatar-button
-          height:    24px !important
-          min-width: 24px !important
+          height:    20px !important
+          min-width: 20px !important
           .avatar
-            width: 24px !important
-            height: 24px !important
+            width: 20px !important
+            height: 20px !important
             border: solid 2px $text-color
             background-color:  white
+            margin-top: 0px
 
             .material-icons
               color: $text-color
-              font-size: 18px
+              font-size: 14px
               font-weight: bold
 
 
@@ -172,37 +207,40 @@
       display: inline-block
 
     .divider
-      width: 26px
+      width: 42px
       margin: 0px
       display: inline-block
       height: 2px
 
       &.short
-        width: 26px
+        width: 24px
 
       &.long
-        width: 60px
+        width: 76px
 
     .step-label
-      margin-bottom: 5px
+      margin-bottom: 10px
       color:  $text-color
       text-transform: uppercase
+      font-weight: 600
+      font-family: Raleway
+
 
     .step
       display: inline-block
       text-align: center
 
       .avatar-button
-        height:    48px
-        min-width: 48px
+        height:    32px
+        min-width: 32px
         margin-left: 3px
 
         .avatar
-          width:   48px !important
-          height:  48px !important
+          width:   32px !important
+          height:  32px !important
 
           .headline
-            font-size: 12px !important
+            font-size: 14px !important
     &.complete
       .avatar
         background-color: $workflow-inactive-color
@@ -222,14 +260,16 @@
         font-size:   11px
         line-height: 12px
         text-align:  center
-        min-height:  40px
+        min-height:  43px
 
       .avatar-button
-        height:      16px
-        min-width:   16px
+        height:      24px !important
+        min-width:   24px !important
         .avatar
-          width:             16px !important
-          height:            16px !important
+          width:             14px !important
+          height:            14px !important
+          display:           inline-block
+          margin-top:        3px
           border: solid 2px  $workflow-inactive-color
           background-color:  white
 
@@ -241,22 +281,6 @@
             height: 16px
 
 
-      &.active
-        .task-label
-          color: $workflow-active-color
-        .avatar-button
-          height:    24px
-          min-width: 24px
-          .avatar
-            width: 24px !important
-            height: 24px !important
-            border: solid 2px $workflow-active-color
-            background-color:  $workflow-active-color
-
-            .material-icons
-              color: white
-              font-size: 20px
-              font-weight: bold
 
 
 
@@ -289,7 +313,13 @@
           :class="{'task': true, 'active' : currentTask && task.key == currentTask.key  ? true : false, 'complete': task.complete}">
             <v-divider :class="{'short': taskIndex == 0}"></v-divider>
             <div style="display:inline-block">
-              <div class="task-label">{{ getTaskName(step.key, task.key) }}</div>
+              <div class="task-label">
+                <v-badge  right
+                 :class="{'task-badge': true, 'empty': task.badge == null, 'active': currentStep && step.key == currentStep.key  ? true : false}">{{ task.badge }}</v-badge>
+                <div class="task-text">
+                  {{ getTaskName(step.key, task.key) }}
+                </div>
+              </div>
               <v-btn class="avatar-button"  flat  @click="onTaskClick(step, task)">
                   <v-avatar >
                     <v-icon v-if="false && task.complete">check</v-icon>
@@ -315,12 +345,14 @@
       </div>
     </div>
 
+
     <div id="current-step-summary">
       <div class="current-step-label">{{ getStepTitle(currentStep.key) }}</div>
       <div>
           {{ getStepSummary(currentStep.key) }}
       </div>
     </div>
+    <div class="vertical-divider"></div>
 
   </v-card>
 </template>
@@ -404,23 +436,29 @@ export default {
     },
     shiftButtons: function() {
       let self = this;
-      self.$nextTick(function() {
-        self.currentTaskLeft = $('.task.active')[0].offsetLeft + 20 + 'px';
+      setTimeout(function() {
+        self.$nextTick(function() {
 
-        let stepIdx = self.currentStep.number - 1;
-        let taskIdx =  self.currentStep.tasks.indexOf(self.currentTask);
-        if (taskIdx == self.currentStep.tasks.length - 1 && stepIdx == self.analysis.steps.length - 1) {
-          self.disableNext = true;
-        } else {
-          self.disableNext = false;
-        }
+          let stepIdx = self.currentStep.number - 1;
+          let taskIdx =  self.currentStep.tasks.indexOf(self.currentTask);
 
-        if (stepIdx == 0 && taskIdx == 0) {
-          self.disablePrev = true;
-        } else {
-          self.disablePrev = false;
-        }
-      })
+          let offset = taskIdx == 0 ? 17 : 36;
+          self.currentTaskLeft = $('.task.active')[0].offsetLeft + offset + 'px';
+
+          if (taskIdx == self.currentStep.tasks.length - 1 && stepIdx == self.analysis.steps.length - 1) {
+            self.disableNext = true;
+          } else {
+            self.disableNext = false;
+          }
+
+          if (stepIdx == 0 && taskIdx == 0) {
+            self.disablePrev = true;
+          } else {
+            self.disablePrev = false;
+          }
+        })
+
+      }, 200)
     },
     onNextTask: function() {
       let self = this;
@@ -446,12 +484,12 @@ export default {
         let stepIdx = self.currentStep.number - 1;
         if (stepIdx > 0) {
           let theStep = self.analysis.steps[stepIdx-1];
-          selt.setStepAndTask(theStep, theStep.tasks[theStep.tasks.length - 1]);
+          self.setStepAndTask(theStep, theStep.tasks[theStep.tasks.length - 1]);
         }
 
       } else {
         // Go to prev task in same step
-        set.setTask(tasks[taskIdx-1]);
+        self.setTask(self.currentStep.tasks[taskIdx-1]);
       }
 
     },

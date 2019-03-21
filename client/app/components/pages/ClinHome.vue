@@ -864,6 +864,39 @@ export default {
       })
     },
 
+    setGeneTaskBadges: function() {
+      let self = this;
+      self.analysis.steps.forEach(function(step) {
+        step.tasks.forEach(function(task) {
+          if (task.key == 'gtr-genes' && self.analysis.genesGtr && self.analysis.genesGtr.length > 0) {
+            task.badge = self.analysis.genesGtr.length;
+          } else if (task.key == 'phenotype-genes' && self.analysis.genesPhenolyzer && self.analysis.genesPhenolyzer.length > 0) {
+            task.badge = self.analysis.genesPhenolyzer.length;
+          } else if (task.key == 'summary-genes' && self.analysis.genes && self.analysis.genes.length > 0) {
+            task.badge = self.analysis.genes.length;
+          }
+        })
+      })
+    },
+
+   setVariantTaskBadges: function() {
+      let self = this;
+      if (self.variants && self.variants.length > 0) {
+        let variantsCandidateGenes = self.variants.filter(function(variant) {
+          return self.analysis.genes && self.analysis.genes.length > 0 && self.analysis.genes.indexOf(variant.gene) >= 0;
+        })
+        self.analysis.steps.forEach(function(step) {
+          step.tasks.forEach(function(task) {
+            if (task.key == 'review' && variantsCandidateGenes.length > 0) {
+              task.badge =  variantsCandidateGenes.length
+            } else if (task.key == 'review-full') {
+              task.badge =  self.variants.length - variantsCandidateGenes.length;
+            }
+          })
+        })
+      }
+    },
+
 
     promiseGetAnalysis: function(idProject, idSample, idAnalysis, workflow, options={}) {
       let self = this;
@@ -895,6 +928,7 @@ export default {
               }
 
 
+              self.setGeneTaskBadges();
               resolve();
 
             } else if (createIfEmpty) {
@@ -950,6 +984,8 @@ export default {
 
               self.analysis = theAnalysis;
               self.idAnalysis = self.analysis.id;
+
+              self.setGeneTaskBadges();
 
               resolve();
           })
@@ -1063,6 +1099,7 @@ export default {
             })
           } else {
             self.variants = data;
+            self.setVariantTaskBadges();
             resolve();
           }
         })
@@ -1162,6 +1199,7 @@ export default {
       self.analysis.phenolyzerFullList = messageObject.phenolyzerFullList;
       self.analysis.genes              = messageObject.genes;
       self.analysis.phenotypes         = messageObject.searchTerms;
+      self.setGeneTaskBadges();
 
 
       self.analysis.datetime_last_modified = self.getCurrentDateTime();
@@ -1183,6 +1221,7 @@ export default {
 
       self.variants = variants;
       self.organizeVariantsByInterpretation();
+      self.setVariantTaskBadges();
       return self.analysisModel.promiseUpdateVariants(self.analysis.id, variants, variantsToRemove);
     },
 
@@ -1190,12 +1229,17 @@ export default {
       let self = this;
       self.analysisModel.replaceMatchingVariants(variants, self.variants);
       self.organizeVariantsByInterpretation();
+      self.setVariantTaskBadges();
       return self.analysisModel.promiseUpdateVariants(self.analysis.id, variants);
     },
 
 
     promiseDeleteVariants: function(variants) {
       let self = this;
+
+      self.analysisModel.removeMatchingVariants(variants, self.variants);
+      self.setVariantTaskBadges();
+
       self.analysis.datetime_last_modified = self.getCurrentDateTime();
       return self.analysisModel.promiseDeleteVariants(self.analysis.id, variants);
     },
