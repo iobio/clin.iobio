@@ -79,11 +79,11 @@ $horizontal-dashboard-height: 140px
   <div id="clin-container" style="display:flex" :class="{authenticated: isAuthenticated}">
 
     <div id="splash-screen" v-if="showSplash">
-      <v-card style="text-align:center;margin-top:100px;width:400px;height:75px">
-        <v-progress-circular id="overall-progress"  :size="22"  :width="4" color="teal accent-4"
+      <v-card :style="showSplashProgress ? 'text-align:center;margin-top:100px;width:400px;height:75px' : 'text-align:left;margin-top:100px;width:400px;height:125px'">
+        <v-progress-circular id="overall-progress"  v-if="showSplashProgress" :size="22"  :width="4" color="teal accent-4"
           :indeterminate="true">
         </v-progress-circular>
-        <h3 style="display:inline-block;margin-left: 10px" >Initializing clin.iobio</h3>
+        <h3  style="display:inline-block;margin-left: 10px" > {{ splashMessage }} </h3>
       </v-card>
     </div>
     <login
@@ -198,6 +198,8 @@ export default {
     let self = this;
     return {
       showSplash: true,
+      splashMessage: "Initializing clin.iobio",
+      showSplashProgress: true,
 
       theme:    self.paramTheme && self.paramTheme.length > 0 ? self.paramTheme : 'dark',
       isSidebar: false,
@@ -395,6 +397,10 @@ export default {
             self.promiseInitUserSession();
 
           })
+        })
+        .catch(function(error) {
+          self.showSplashProgress = false;
+          self.splashMessage = error;
         })
       } else {
         self.promiseInitUserSession();

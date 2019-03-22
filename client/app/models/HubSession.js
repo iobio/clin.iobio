@@ -95,6 +95,9 @@ export default class HubSession {
 
 
       })
+      .catch(function(error) {
+        reject(error);
+      })
     })
 
 
@@ -154,24 +157,28 @@ export default class HubSession {
       self.getPedigreeForSample(project_id, sample_id)
       .done(data => {
         let pedigree = self.parsePedigree(data, sample_id)
-        self.pedigreeSamples = [];
+          if (pedigree) {
+          self.pedigreeSamples = [];
 
-        // Temporary workaround until we can use latest PedigreeChart
-        for (var rel in pedigree) {
-          if (Array.isArray(pedigree[rel])) {
-            pedigree[rel].forEach(function(sample) {
+          // Temporary workaround until we can use latest PedigreeChart
+          for (var rel in pedigree) {
+            if (Array.isArray(pedigree[rel])) {
+              pedigree[rel].forEach(function(sample) {
+                sample.uuid = sample.id;
+                sample.relationship = rel;
+                self.pedigreeSamples.push(sample);
+              })
+            } else {
+              let sample = (pedigree[rel]);
               sample.uuid = sample.id;
               sample.relationship = rel;
               self.pedigreeSamples.push(sample);
-            })
-          } else {
-            let sample = (pedigree[rel]);
-            sample.uuid = sample.id;
-            sample.relationship = rel;
-            self.pedigreeSamples.push(sample);
+            }
           }
+          resolve(pedigree);
+        } else {
+          reject("To run clin.iobio, please select the appropriate proband sample.")
         }
-        resolve(pedigree);
       })
       .fail(error => {
         reject("Error getting pedigree for sample " + sample_id + ": " + error);
@@ -219,24 +226,27 @@ export default class HubSession {
       if (fatherIndex != -1) {
         pedigree['father'] = raw_pedigree.splice(fatherIndex, 1)[0]
       }
+
+
+      raw_pedigree.forEach(sample => {
+        if (sample.pedigree.maternal_id != null || sample.pedigree.paternal_id != null
+            && sample.pedigree.id != pedigree.proband.id) {
+          pedigree['siblings'] = (pedigree['siblings'] || [] )
+          pedigree['siblings'].push(sample);
+        } else {
+          pedigree['unparsed'] = (pedigree['siblings'] || []).push(sample)
+        }
+      })
+      return pedigree;
+
     } else {
       console.log("Cannot find proband for pedigree of sample " + sample_id);
       console.log("raw pedigree");
       console.log(raw_pedigree);
+      return null;
     }
 
-    raw_pedigree.forEach(sample => {
-      if (sample.pedigree.maternal_id != null || sample.pedigree.paternal_id != null
-          && sample.pedigree.id != pedigree.proband.id) {
-        pedigree['siblings'] = (pedigree['siblings'] || [] )
-        pedigree['siblings'].push(sample);
-      } else {
-        pedigree['unparsed'] = (pedigree['siblings'] || []).push(sample)
-      }
-    })
 
-
-    return pedigree;
   }
 
   getPedigreeForSample(project_id, sample_id) {
