@@ -17,7 +17,15 @@ $badge-inactive-color:  #d8d3d3
   text-align: left
 
 
+  #ab-switch
+    position: absolute
+    top: 145px
+    right: 20px
+    width: 97px
 
+    label
+      font-size: 12px
+      margin-left: -4px
 
   #workflow-steps
     text-align: center
@@ -61,7 +69,7 @@ $badge-inactive-color:  #d8d3d3
 
 
   .button-panel
-    margin-top: -37px
+    margin-top: -2px
 
     .nav-btn
       margin: 0px
@@ -70,7 +78,7 @@ $badge-inactive-color:  #d8d3d3
       color: $text-color
       height: 22px
       padding: 0px
-      margin-bottom: 10px
+      margin-bottom: 7px
       margin-top: 10px
 
       .material-icons
@@ -82,7 +90,7 @@ $badge-inactive-color:  #d8d3d3
     vertical-align: middle
     margin-left: 0px
     margin-right: 0px
-    margin-top: -7px
+    margin-top: -12px
 
     .checkbox
       margin: 0px
@@ -287,17 +295,45 @@ $badge-inactive-color:  #d8d3d3
             height: 16px
 
 
+#workflow-card.task-is-checkbox
+
+  .input-group--selection-controls.accent--text
+    .icon--selection-control
+      color: $workflow-active-color
+
+  .input-group--selection-controls.accent--text.input-group--active
+    .icon--selection-control
+      color: $workflow-active-color
 
 
+  .button-panel
+    margin-top: 0px
 
+  #current-checkbox-container
+    margin-top: -38px
+    max-width: 30px
 
+    label
+      display: none
 
+  .step-container
+    display: inline-block
+    vertical-align: top
+
+    &.active
+      .task
+        &.active
+          .avatar-button
+            visibility: hidden
+
+  #ab-switch
+    top: 125px
 
 
 </style>
 
 <template>
-  <v-card light id="workflow-card" >
+  <v-card light id="workflow-card" :class="{'task-is-checkbox': taskIsCheckbox}" >
     <div id="workflow-steps" v-if="analysis && analysis.steps">
       <div  v-for="(step, stepIndex) in analysis.steps" :key="step.key"
       :class="{'step-container': true, 'active' : currentStep && step.key == currentStep.key  ? true : false, 'complete': step.complete}">
@@ -340,7 +376,7 @@ $badge-inactive-color:  #d8d3d3
       </div>
 
       <div id="current-checkbox-container" v-if="currentTask" :style="{left: currentTaskLeft, position: 'relative'}">
-       <v-checkbox id="current-task-checkbox"  label="Complete" :hide-details="false"
+       <v-checkbox id="current-task-checkbox"  label="complete" hide-details="false"
           v-model="currentTaskComplete"
           light></v-checkbox>
       </div>
@@ -352,13 +388,17 @@ $badge-inactive-color:  #d8d3d3
     </div>
 
 
-    <div id="current-step-summary">
+    <div id="current-step-summary" >
       <div class="current-step-label">{{ getStepTitle(currentStep.key) }}</div>
       <div>
           {{ getStepSummary(currentStep.key) }}
       </div>
     </div>
     <div class="vertical-divider"></div>
+
+    <div id="ab-switch">
+       <v-switch label="alternate" v-model="taskIsCheckbox"></v-switch>
+    </div>
 
   </v-card>
 </template>
@@ -384,7 +424,8 @@ export default {
       currentTaskComplete: null,
       currentTaskLeft: '0px',
       disableNext: false,
-      disablePrev: false
+      disablePrev: false,
+      taskIsCheckbox: false
     }
   },
   watch: {
