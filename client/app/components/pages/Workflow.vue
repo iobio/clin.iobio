@@ -65,10 +65,17 @@ $badge-inactive-color:  #d8d3d3
 
     .nav-btn
       margin: 0px
+      margin-left: 10px
+      margin-right: 20px
+      color: $text-color
+      height: 22px
+      padding: 0px
+      margin-bottom: 10px
+      margin-top: 10px
 
       .material-icons
         color:  $text-color
-        font-size: 24px
+        font-size: 20px
         font-weight: bold
 
   #current-checkbox-container
@@ -339,8 +346,8 @@ $badge-inactive-color:  #d8d3d3
       </div>
 
       <div class="button-panel"  style="text-align:center" >
-        <v-btn :class="{'nav-btn': true, 'disabled': disablePrev}" icon flat @click="onPrevTask"><v-icon>arrow_back</v-icon></v-btn>
-        <v-btn :class="{'nav-btn': true, 'disabled': disableNext}"icon flat @click="onNextTask"><v-icon>arrow_forward</v-icon></v-btn>
+        <v-btn :class="{'nav-btn': true, 'disabled': disablePrev}"  small  @click="onPrevTask">prev <v-icon>arrow_back</v-icon></v-btn>
+        <v-btn :class="{'nav-btn': true, 'disabled': disableNext}"  small  @click="onNextTask">next <v-icon>arrow_forward</v-icon></v-btn>
       </div>
     </div>
 
