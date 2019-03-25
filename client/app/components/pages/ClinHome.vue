@@ -108,12 +108,30 @@ $horizontal-dashboard-height: 140px
     v-show="!showSplash && isAuthenticated " >
       <v-card  class="clin-card"
         v-if="analysis && workflow"
-        v-show="analysis && workflow && showFindings"
+        v-show="analysis && workflow && currentStep == 1 && !showFindings"
+      >
+        <review-case
+        ref="reviewCaseRef"
+        v-if="analysis && workflow"
+        v-show="analysis && workflow"
+        :workflow="workflow"
+        :analysis="analysis"
+        :caseSummary="caseSummary"
+        :modelInfos="modelInfos"
+        :pedigree="hubSession ? hubSession.pedigreeSamples : null"
+        :sampleId="paramSampleId">
+        </review-case>
+      </v-card>
+
+
+      <v-card  class="clin-card"
+        v-if="analysis && workflow"
+        v-show="analysis && workflow && currentStep == 5 && !showFindings "
       >
         <findings
         ref="findingsRef"
         v-if="analysis && workflow"
-        v-show="analysis && workflow && showFindings"
+        v-show="analysis && workflow"
         :workflow="workflow"
         :analysis="analysis"
         :caseSummary="caseSummary"
@@ -159,6 +177,7 @@ $horizontal-dashboard-height: 140px
 
 import Navigation from  '../pages/Navigation.vue'
 import Workflow from  '../pages/Workflow.vue'
+import ReviewCase from  '../viz/ReviewCase.vue'
 import Findings from  '../viz/Findings.vue'
 import Login from  '../partials/Login.vue'
 import LoginMosaic from  '../partials/LoginMosaic.vue'
@@ -177,6 +196,7 @@ export default {
     Workflow,
     Login,
     LoginMosaic,
+    ReviewCase,
     Findings,
     PreferencesMenu,
     AppIcon
@@ -218,7 +238,7 @@ export default {
        { key: 'unknown-sig', display: 'Variants of Unknown Significance', abbrev: 'Unknown Sig', organizedVariants: []}
       ],
 
-      showFindings: true,
+      showFindings: false,
 
       iobioSource: self.paramIobioSource ? self.paramIobioSource : 'mosaic.chpc.utah.edu',
 
@@ -250,7 +270,7 @@ export default {
         'genefull':  {url: null, isLoaded: true, step:  4, iframeSelector: '#gene-iframe iframe'}
       },
 
-      currentStep: -1,
+      currentStep: 1,
 
       analysisModel: null,
 
@@ -830,6 +850,10 @@ export default {
           'all':              'export-genes'
         }
         this.promiseUpdateGenesData(messageObject);
+        this.setGeneTaskBadges();
+        if (this.analysis.genes.length == 0) {
+          this.clearVariantTaskBadges();
+        }
         this.promiseCompleteStepTask('genes', taskMap[messageObject.source]);
         this.sendAppMessage('gene', messageObject);
       } else if (messageObject.type == "save-variants") {
@@ -876,12 +900,24 @@ export default {
       let self = this;
       self.analysis.steps.forEach(function(step) {
         step.tasks.forEach(function(task) {
-          if (task.key == 'gtr-genes' && self.analysis.genesGtr && self.analysis.genesGtr.length > 0) {
-            task.badge = self.analysis.genesGtr.length;
-          } else if (task.key == 'phenotype-genes' && self.analysis.genesPhenolyzer && self.analysis.genesPhenolyzer.length > 0) {
-            task.badge = self.analysis.genesPhenolyzer.length;
-          } else if (task.key == 'summary-genes' && self.analysis.genes && self.analysis.genes.length > 0) {
-            task.badge = self.analysis.genes.length;
+          if (task.key == 'gtr-genes' && self.analysis.genesGtr) {
+            if  (self.analysis.genesGtr.length > 0) {
+              task.badge = self.analysis.genesGtr.length;
+            } else {
+              delete task.badge;
+            }
+          } else if (task.key == 'phenotype-genes' && self.analysis.genesPhenolyzer) {
+            if (self.analysis.genesPhenolyzer.length > 0) {
+              task.badge = self.analysis.genesPhenolyzer.length;
+            } else {
+              delete task.badge;
+            }
+          } else if (task.key == 'summary-genes' && self.analysis.genes ) {
+            if (self.analysis.genes.length > 0) {
+              task.badge = self.analysis.genes.length;
+            } else {
+              delete task.badge;
+            }
           }
         })
       })
@@ -889,20 +925,46 @@ export default {
 
    setVariantTaskBadges: function() {
       let self = this;
-      if (self.variants && self.variants.length > 0) {
+      if (self.variants) {
         let variantsCandidateGenes = self.variants.filter(function(variant) {
           return self.analysis.genes && self.analysis.genes.length > 0 && self.analysis.genes.indexOf(variant.gene) >= 0;
         })
         self.analysis.steps.forEach(function(step) {
           step.tasks.forEach(function(task) {
-            if (task.key == 'review' && variantsCandidateGenes.length > 0) {
-              task.badge =  variantsCandidateGenes.length
+            if (task.key == 'review' ) {
+              if (variantsCandidateGenes.length > 0) {
+                task.badge =  variantsCandidateGenes.length;
+              } else {
+                delete task.badge;
+              }
+            } else if (task.key == 'coverage' ) {
+              if (variantsCandidateGenes.length == 0) {
+                delete task.badge;
+              }
             } else if (task.key == 'review-full') {
-              task.badge =  self.variants.length - variantsCandidateGenes.length;
+              let fullAnalysisCount = self.variants.length - variantsCandidateGenes.length;
+              if (fullAnalysisCount > 0) {
+                task.badge =  fullAnalysisCount;
+              } else {
+                delete task.badge;
+              }
             }
           })
         })
       }
+    },
+
+    clearVariantTaskBadges: function() {
+      let self = this;
+      self.analysis.steps.forEach(function(step) {
+        step.tasks.forEach(function(task) {
+          if (task.key == 'review' ) {
+              delete task.badge;
+          } else if (task.key == 'coverage') {
+              delete task.badge;
+          }
+        })
+      })
     },
 
     setCoverageTaskBadge: function(geneCount) {

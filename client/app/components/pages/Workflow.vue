@@ -69,7 +69,7 @@ $badge-inactive-color:  #d8d3d3
 
 
   .button-panel
-    margin-top: -2px
+    margin-top: -27px
 
     .nav-btn
       margin: 0px
@@ -80,6 +80,7 @@ $badge-inactive-color:  #d8d3d3
       padding: 0px
       margin-bottom: 7px
       margin-top: 10px
+      min-width: 50px
 
       .material-icons
         color:  $text-color
@@ -376,19 +377,19 @@ $badge-inactive-color:  #d8d3d3
       </div>
 
       <div id="current-checkbox-container" v-if="currentTask" :style="{left: currentTaskLeft, position: 'relative'}">
-       <v-checkbox id="current-task-checkbox"  label="complete" hide-details="false"
+       <v-checkbox id="current-task-checkbox"  label="complete" :hide-details="false"
           v-model="currentTaskComplete"
           light></v-checkbox>
       </div>
 
       <div class="button-panel"  style="text-align:center" >
-        <v-btn :class="{'nav-btn': true, 'disabled': disablePrev}"  small  @click="onPrevTask">prev <v-icon>arrow_back</v-icon></v-btn>
-        <v-btn :class="{'nav-btn': true, 'disabled': disableNext}"  small  @click="onNextTask">next <v-icon>arrow_forward</v-icon></v-btn>
+        <v-btn :class="{'nav-btn': true, 'disabled': disablePrev}"  small  @click="onPrevTask"><v-icon>arrow_back</v-icon></v-btn>
+        <v-btn :class="{'nav-btn': true, 'disabled': disableNext}"  small  @click="onNextTask"><v-icon>arrow_forward</v-icon></v-btn>
       </div>
     </div>
 
 
-    <div id="current-step-summary" >
+    <div id="current-step-summary" v-if="currentStep">
       <div class="current-step-label">{{ getStepTitle(currentStep.key) }}</div>
       <div>
           {{ getStepSummary(currentStep.key) }}

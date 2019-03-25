@@ -88,12 +88,15 @@
       line-height: 15px
       align-self: center
 
-  i.material-icons.sig
-    color: $significant-color !important
-    margin-right: 3px
-  i.material-icons.unknown-sig
-    color: $significant-color !important
-    margin-right: 3px
+
+  .sig
+    i.material-icons
+      color: $sig-color !important
+      margin-right: 3px
+  .unknown-sig
+    i.material-icons
+      color: $unknown-sig-color !important
+      margin-right: 3px
 
   .card
     min-height: 70px !important
@@ -239,57 +242,12 @@
 
 
       <span class="card-title">
-        {{ genes && genes.length > 0 ? 'Report' : '' }}
+        Review results
       </span>
 
       <div style="display:flex;flex-flow:row">
 
-
-        <v-card class="findings-section">
-          <span class="card-heading">Case summary</span>
-
-          <div style="display:flex;flex-direction:row;justify-content:flex-start">
-            <div  class="subsection"  >
-              <span class="card-subheading">{{ caseSummary.name }} </span>
-              <div style="display:flex">
-                <pedigree-graph
-                  v-if="pedigree"
-                  :height="60"
-                  :data="pedigree"
-                  :uuid="sampleId"
-                  :width="80"
-                />
-                <div style="margin-left:15px">
-                  <div  class="sample" v-for="modelInfo in modelInfos" :key="modelInfo.sample">
-                    <span class="rel">{{ modelInfo.relationship }}</span>
-                    <span class="name">{{ modelInfo.sample }}</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-
-            <div class="subsection">
-              <div v-if="false" class="card-subheading">Description</div>
-              <div style="margin-top:30px;font-size:13px;line-height:15px;width:400px;white-space: normal">
-                {{ caseSummary.description }}
-              </div>
-            </div>
-
-            <div v-if="false" class="subsection">
-              <div class="card-subheading">Condition / Phenotype Search Terms</div>
-              <div v-for="(phenotype, index) in phenotypeList" class="phenotype-search-term">
-                {{phenotype}}
-              </div>
-
-            </div>
-
-
-          </div>
-
-        </v-card>
-
-        <v-card v-show="genes && genes.length > 0" class="findings-section" style="margin-left:10px;max-width:480px">
+        <v-card v-show="false && genes && genes.length > 0" class="findings-section" style="margin-left:10px;max-width:480px">
 
             <span class="card-heading">Analysis Summary</span>
 
