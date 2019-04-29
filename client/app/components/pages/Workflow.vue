@@ -31,19 +31,19 @@ $badge-inactive-color:  #d8d3d3
     text-align: center
     width: fit-content
     display: inline-block
-    margin-right: 10px
+    margin-right: 0px
 
 
   #current-step-summary
     float: right
     text-align: left
-    width: 240px
+    width: calc(100% - 870px)
     font-size: 12px
-    margin-left: 0px
-    margin-right: 5px
+    margin-left: 20px
+    margin-right: 0px
 
     .current-step-label
-      font-size: 14px
+      font-size: 13px
       text-transform: uppercase
       color:  $workflow-active-color
       font-weight: 600
@@ -144,6 +144,7 @@ $badge-inactive-color:  #d8d3d3
   .step-container
     display: inline-block
     vertical-align: top
+    text-align: left
 
     &.active
 
@@ -222,16 +223,16 @@ $badge-inactive-color:  #d8d3d3
       display: inline-block
 
     .divider
-      width: 42px
+      width: 34px
       margin: 0px
       display: inline-block
       height: 2px
 
       &.short
-        width: 24px
+        width: 14px
 
       &.long
-        width: 76px
+        width: 46px
 
     .step-label
       margin-bottom: 10px
@@ -239,6 +240,8 @@ $badge-inactive-color:  #d8d3d3
       text-transform: uppercase
       font-weight: 600
       font-family: Raleway
+      font-size: 13px
+      text-align: center
 
 
     .step
@@ -320,6 +323,7 @@ $badge-inactive-color:  #d8d3d3
   .step-container
     display: inline-block
     vertical-align: top
+    text-align: left
 
     &.active
       .task
@@ -331,6 +335,14 @@ $badge-inactive-color:  #d8d3d3
     top: 125px
 
 
+</style>
+
+<style>
+@media only screen and (max-width: 1010px) {
+  .right-panel {
+    display: none !important
+  }
+}
 </style>
 
 <template>
@@ -389,13 +401,12 @@ $badge-inactive-color:  #d8d3d3
     </div>
 
 
-    <div id="current-step-summary" v-if="currentStep">
-      <div class="current-step-label">{{ getStepTitle(currentStep.key) }}</div>
-      <div>
+    <div id="current-step-summary" class="right-panel" v-if="false && currentStep">
+      <div class="current-step-label" style="font-size:11px">{{ getStepTitle(currentStep.key) }}</div>
+      <div style="font-size: 11px">
           {{ getStepSummary(currentStep.key) }}
       </div>
     </div>
-    <div class="vertical-divider"></div>
 
     <div id="ab-switch">
        <v-switch label="alternate" v-model="taskIsCheckbox"></v-switch>
@@ -490,7 +501,7 @@ export default {
           let stepIdx = self.currentStep.number - 1;
           let taskIdx =  self.currentStep.tasks.indexOf(self.currentTask);
 
-          let offset = taskIdx == 0 ? 17 : 36;
+          let offset = taskIdx == 0 ? 8 : 28;
           self.currentTaskLeft = $('.task.active')[0].offsetLeft + offset + 'px';
 
           if (taskIdx == self.currentStep.tasks.length - 1 && stepIdx == self.analysis.steps.length - 1) {
