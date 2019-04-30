@@ -119,14 +119,14 @@
 <script>
 
 
-import UserSession  from  '../../models/UserSession.js'
+import AWSSession  from  '../../models/AWSSession.js'
 
 export default {
   name: 'login-deprecated',
   components: {
   },
   props: {
-    userSession: null
+    awsSession: null
   },
   data() {
     return {
@@ -169,7 +169,7 @@ export default {
 
     authenticate: function() {
       let self = this;
-      self.userSession.authenticate(self.userName, self.password,
+      self.awsSession.authenticate(self.userName, self.password,
       function(success) {
         if (success) {
           self.isAuthenticated = true;
@@ -190,7 +190,7 @@ export default {
 
     authenticateNewPassword: function() {
       let self = this;
-      self.userSession.authenticateNewPassword(self.newPassword,
+      self.awsSession.authenticateNewPassword(self.newPassword,
       function(success) {
         if (success) {
           self.showNewPasswordMessage = true;
@@ -201,7 +201,7 @@ export default {
 
     authenticateResetPassword: function() {
       let self = this;
-      self.userSession.authenticateResetPassword(self.verificationCode, self.newPassword,
+      self.awsSession.authenticateResetPassword(self.verificationCode, self.newPassword,
       function(success) {
         if (success) {
           self.showNewPasswordMessage = true;

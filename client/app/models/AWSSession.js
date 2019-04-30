@@ -1,7 +1,7 @@
 //import {Config, CognitoIdentityCredentials} from 'aws-sdk'
 //import {CognitoToIdentity, CognitoUserPool, CognitoUser, AuthenticationDetails} from 'amazon-cognito-identity-js'
 
-export default class UserSession {
+export default class AWSSession {
   constructor() {
     this.region                   = 'us-east-1';
     this.cognitoPoolId            = 'us-east-1:1a31765e-26e2-4d81-beac-83158ab212d6'
@@ -16,6 +16,7 @@ export default class UserSession {
 
     this.cognitoUser              = null;
     this.userAttributes           = null;
+    this.workflowTable            =  "clin.iobio.workflow";
   }
 
   canAuthenticatePrevSession() {
@@ -180,5 +181,32 @@ export default class UserSession {
     });
 
   }
+
+  promiseGetWorkflow(idWorkflow) {
+    let self = this;
+
+    return new Promise(function(resolve, reject) {
+      var params = {
+        TableName: self.workflowTable,
+        Key:{
+            "id": idWorkflow
+        }
+      };
+
+      self.dynamodb.get(params, function(err, data) {
+        if (err) {
+          reject(err);
+        } else {
+          if (data && data.Item) {
+            resolve(data.Item);
+          } else {
+            resolve(null);
+          }
+        }
+      });
+    })
+
+  }
+
 
 }

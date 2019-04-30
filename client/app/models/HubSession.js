@@ -6,6 +6,8 @@ export default class HubSession {
     this.url = null;
     this.apiVersion =  '/apiv1';
     this.pedigreeSamples = null;
+    this.client_application_id = 'YeJHRul3';
+
   }
 
   promiseInit(sampleId, source, isPedigree, projectId ) {
@@ -357,6 +359,7 @@ export default class HubSession {
       }
     });
   }
+
   getProject(projectId) {
     let self = this;
     return $.ajax({
@@ -369,4 +372,84 @@ export default class HubSession {
     });
   }
 
+
+  promiseGetAnalysis(projectId, analysisId) {
+    return new Promise(function(resolve, reject) {
+      self.getAnalysis(projectId, analysisId)
+      .done(response => {
+        resolve(response.data)
+      })
+      .fail(error => {
+        reject("Error getting analysis " + analysisId + ": " + error);
+      })
+    })
+
+  }
+  promiseAddAnalysis(projectId, analysis) {
+    return new Promise(function(resolve, reject) {
+      self.addAnalysis(projectId, analysis)
+      .done(response => {
+        resolve(response.data)
+      })
+      .fail(error => {
+        reject("Error adding analysis for project " + projectId + ": " + error);
+      })
+    })
+
+  }
+
+  promiseUpdateAnalysis(projectId, analysisId, analysis) {
+    return new Promise(function(resolve, reject) {
+      self.updateAnalysis(projectId, analysisId, analysis)
+      .done(response => {
+        resolve(response.data)
+      })
+      .fail(error => {
+        reject("Error updating analysis " + analysisId + " for project " + projectId + ": " + error);
+      })
+    })
+
+  }
+
+  getAnalysis(projectId, analysisId) {
+    let self = this;
+    return $.ajax({
+      url: elf.api + '/projects/' + projectId + '/projects/'  + projectId + '/analyses/' + analysisId,
+      type: 'GET',
+      contentType: 'application/json',
+      headers: {
+        Authorization: localStorage.getItem('hub-iobio-tkn'),
+      },
+    })
+  }
+
+
+
+
+  addAnalysis(projectId, newAnalysisData) {
+    let self = this;
+    return $.ajax({
+      url: self.api + '/projects/' + projectId + '/analyses/?client_application_id=' + self.client_application_id,
+      type: 'POST',
+      data: JSON.stringify(newAnalysisData),
+      contentType: 'application/json',
+      headers: {
+        Authorization: localStorage.getItem('hub-iobio-tkn'),
+      },
+    });
+  }
+
+
+  updateAnalysis(projectId, analysisId, newAnalysisData) {
+    let self = this;
+    return $.ajax({
+      url: self.api + '/projects/' + projectId + '/analyses/' + analysisId,
+      type: 'PUT',
+      data: JSON.stringify(newAnalysisData),
+      contentType: 'application/json',
+      headers: {
+        Authorization: localStorage.getItem('hub-iobio-tkn'),
+      },
+    });
+  }
 }

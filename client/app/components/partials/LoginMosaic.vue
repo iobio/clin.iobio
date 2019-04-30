@@ -32,13 +32,6 @@
         <v-card  light >
           <v-layout row wrap>
 
-              <v-flex xs12 v-if="false">
-                <v-switch class="clear-cache-switch"
-                  label="Clear saved data"
-                  v-model="clearSavedData"
-                  >
-                </v-switch>
-              </v-flex>
 
               <v-flex xs12>
                 <v-text-field v-model="researcher" label="Enter clin.iobio user name" type="text">
@@ -64,14 +57,14 @@
 <script>
 
 
-import UserSession  from  '../../models/UserSession.js'
+import AWSSession  from  '../../models/AWSSession.js'
 
 export default {
   name: 'login-mosaic',
   components: {
   },
   props: {
-    userSession: null
+    awsSession: null
   },
   data() {
     return {
@@ -88,10 +81,10 @@ export default {
   methods: {
     authenticate: function() {
       let self = this;
-      self.userSession.authenticateMosaic(self.researcher, self.password,
+      self.awsSession.authenticateMosaic(self.researcher, self.password,
         function(success) {
           if (success) {
-            self.$emit('authenticated-mosaic', self.researcher, self.clearSavedData);
+            self.$emit('authenticated-mosaic', self.researcher);
             self.isAuthenticated = true;
           }
         },

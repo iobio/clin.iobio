@@ -88,13 +88,13 @@ $horizontal-dashboard-height: 140px
     </div>
     <login
       v-if="!showSplash && !hubSession && !isAuthenticated"
-      :userSession="userSession"
+      :awsSession="awsSession"
       @authenticated="onAuthenticated">
     </login>
 
     <login-mosaic
       v-if="!showSplash && hubSession && !isAuthenticated"
-      :userSession="userSession"
+      :awsSession="awsSession"
       @authenticated-mosaic="onAuthenticatedMosaic">
     </login-mosaic>
 
@@ -184,8 +184,7 @@ import LoginMosaic from  '../partials/LoginMosaic.vue'
 import PreferencesMenu from  '../partials/PreferencesMenu.vue'
 import AppIcon from  '../partials/AppIcon.vue'
 
-import AnalysisModel from  '../../models/AnalysisModel.js'
-import UserSession  from  '../../models/UserSession.js'
+import AWSSession  from  '../../models/AWSSession.js'
 import HubSession  from  '../../models/HubSession.js'
 
 
@@ -203,7 +202,7 @@ export default {
   },
   props: {
     paramDebug:  null,
-
+    paramAnalysisId:     null,
     paramProjectId:      null,
     paramSampleId:       null,
     paramAnalysisId:     null,
@@ -221,14 +220,8 @@ export default {
       splashMessage: "Initializing clin.iobio",
       showSplashProgress: true,
 
-      theme:    self.paramTheme && self.paramTheme.length > 0 ? self.paramTheme : 'dark',
-      isSidebar: false,
-      isMinimized: false,
-
-      persistCache: false,
-
       isAuthenticated: false,
-      userSession:  null,
+      awsSession:  null,
       hubSession: null,
       modelInfos: null,
 
@@ -272,20 +265,10 @@ export default {
 
       currentStep: 1,
 
-      analysisModel: null,
-
       idWorkflow: "2",
       workflow: null,
       analysis: null,
-      caseSummary: null,
-      analysisCache:     null,
-      analysisCacheKeys: null,
-
-      variants:          [],
-      variantData:       null,
-
-
-      clearSavedAnalysis: false
+      caseSummary: null
 
     }
 
@@ -414,7 +397,7 @@ export default {
             self.caseSummary.description = project.description && project.description.length > 0 ? project.description : "A summary of the trio goes here....";
 
 
-            self.promiseInitUserSession();
+            self.promiseInitAWSSession();
 
           })
         })
@@ -423,7 +406,7 @@ export default {
           self.splashMessage = error;
         })
       } else {
-        self.promiseInitUserSession();
+        self.promiseInitAWSSession();
       }
 
 
@@ -436,21 +419,21 @@ export default {
 
     },
 
-    promiseInitUserSession: function() {
+    promiseInitAWSSession: function() {
       let self = this;
 
       return new Promise(function(resolve, reject) {
-        self.userSession = new UserSession();
+        self.awsSession = new AWSSession();
 
-        if (self.userSession.canAuthenticatePrevSession() && localStorage.getItem('hub-iobio-tkn') && localStorage.getItem('hub-iobio-tkn').length > 0 && self.paramSampleId && self.paramSource) {
-          self.userSession.authenticatePrevSession(function(success, userName) {
+        if (self.awsSession.canAuthenticatePrevSession() && localStorage.getItem('hub-iobio-tkn') && localStorage.getItem('hub-iobio-tkn').length > 0 && self.paramSampleId && self.paramSource) {
+          self.awsSession.authenticatePrevSession(function(success, userName) {
             if (success) {
-              self.onAuthenticatedMosaic(userName, false, function() {
+              self.onAuthenticatedMosaic(userName, function() {
                 resolve();
               });
             } else {
               self.showSplash = false;
-              self.userSession.clearPrevSession();
+              self.awsSession.clearPrevSession();
               alert("Unable to authenticate user from previous session.")
               reject();
             }
@@ -508,116 +491,15 @@ export default {
       this.showFindings = true;
     },
 
-    onAuthenticated: function(researcher, project, clearSavedData) {
+    onAuthenticated: function(researcher, project) {
       let self = this;
       self.isAuthenticated = true;
       self.showSpash = false;
-      self.analysisModel = new AnalysisModel(self.userSession);
-      self.clearSavedAnalysis = clearSavedData;
-
-      let sampleId = null;
-      if (researcher && researcher.length > 0) {
-        sampleId = researcher;
-      } else if (self.paramSampleId && self.paramSampleId.length > 0) {
-        sampleId = self.paramSampleId;
-      } else {
-        sampleId = 'test-sample';
-      }
-
-      let projectId = null;
-      if (project && project.length > 0) {
-        projectId = project;
-      } else if (self.paramProjectId && self.paramProjectId.length > 0) {
-        projectId = self.paramProjectId;
-      } else {
-        projectId = 'test-project';
-      }
-
-      let promiseModelInfo = null;
-      if (self.hubSession == null) {
-
-        promiseModelInfo = self.analysisModel.promiseGetModelInfo(projectId)
-        .then(function(modelInfo) {
-
-          self.caseSummary = modelInfo.summary;
-
-          if (self.hubSession == null) {
-            self.modelInfos = [
-             {'relationship': 'proband',
-              'affectedStatus': 'affected',
-              'name':    modelInfo.sampleId.proband,
-              'sample':  modelInfo.sampleId.proband,
-              'vcf':     modelInfo.vcf,
-              'tbi':     modelInfo.tbi,
-              'bam':     modelInfo.bam ? modelInfo.bam.proband : null,
-              'bai':     modelInfo.bai ? modelInfo.bai.proband : null, },
-             {'relationship': 'mother',
-              'affectedStatus': 'unaffected',
-              'name':    modelInfo.sampleId.mother,
-              'sample':  modelInfo.sampleId.mother,
-              'vcf':     modelInfo.vcf,
-              'tbi':     modelInfo.tbi,
-              'bam':     modelInfo.bam ? modelInfo.bam.mother : null,
-              'bai':     modelInfo.bai ? modelInfo.bai.mother : null},
-             {'relationship': 'father',
-              'affectedStatus': 'unaffected',
-              'name':    modelInfo.sampleId.father,
-              'sample':  modelInfo.sampleId.father,
-              'vcf':     modelInfo.vcf,
-              'tbi':     modelInfo.tbi,
-              'bam':     modelInfo.bam ? modelInfo.bam.father : null,
-              'bai':     modelInfo.bai ? modelInfo.bai.father : null },
-            ];
-
-          }
-
-        })
-
-      } else {
-        promiseModelInfo = Promise.resolve();
-      }
-
-      promiseModelInfo.then(function() {
-        self.promiseGetWorkflow(self.idWorkflow)
-        .then(function() {
-
-
-          if (self.clearSavedAnalysis) {
-            self.promiseClearAnalysis(projectId, sampleId, self.workflow)
-          } else {
-            self.promiseGetAnalysis(
-              projectId,
-              sampleId,
-              self.paramAnalysisId,
-              self.workflow,
-              {'createIfEmpty': true, 'getCache': true} )
-            .then(function() {
-
-
-              // Send message to set the data in the iobio apps
-              for (var appName in self.apps) {
-                let app = self.apps[appName];
-                if (!app.isLoaded) {
-                    self.setData(appName, 500);
-
-                }
-              }
-
-            })
-
-          }
-
-
-        })
-      })
-
     },
 
-    onAuthenticatedMosaic: function(researcher, clearSavedData, callback) {
+    onAuthenticatedMosaic: function(researcher, callback) {
       let self = this;
       self.isAuthenticated = true;
-      self.analysisModel = new AnalysisModel(self.userSession);
-      self.clearSavedAnalysis = clearSavedData;
 
       self.promiseGetWorkflow(self.idWorkflow)
       .then(function() {
@@ -626,47 +508,35 @@ export default {
 
         self.promiseGetAnalysis(
           self.paramProjectId,
-          self.paramSampleId,
           self.paramAnalysisId,
           self.workflow,
-          {'createIfEmpty': true, 'getCache': true} )
-        .then(function() {
-
-          return self.promiseGetVariants()
-        })
-        .then(function() {
-          return self.promiseGetVariantData()
-
-        })
-        .then(function() {
+          {'createIfEmpty': true} )
+      })
+      .then(function() {
 
 
-          // Send message to set the data in the iobio apps
-          for (var appName in self.apps) {
-            let app = self.apps[appName];
-            if (!app.isLoaded) {
-              console.log("****** clin.iobio set-data for " + appName + " *********")
-              self.setData(appName, 500);
-            } else {
-              console.log("****** BYPASSING clin.iobio set-data for " + appName + ", already loaded *********")
+        // Send message to set the data in the iobio apps
+        for (var appName in self.apps) {
+          let app = self.apps[appName];
+          if (!app.isLoaded) {
+            self.setData(appName, 500);
+          } else {
 
-            }
           }
+        }
 
-          if (callback) {
-            callback();
-          }
+        if (callback) {
+          callback();
+        }
 
 
 
-        })
-        .catch(function(error) {
-          console.log("Error occurred in onAuthenticatedMosaic: " + error);
-          if (callback) {
-            callback();
-          }
-        })
-
+      })
+      .catch(function(error) {
+        console.log("Error occurred in onAuthenticatedMosaic: " + error);
+        if (callback) {
+          callback();
+        }
       })
 
 
@@ -785,9 +655,7 @@ export default {
               'gtrFullList':          self.analysis.gtrFullList,
               'phenolyzerFullList':   self.analysis.phenolyzerFullList,
               'persistCache':         self.persistCache,
-              'variants':             self.variants,
-              'variantData':          self.variantData,
-              'cache':                self.analysisCache ? self.analysisCache : null
+              'variants':             self.analysis.variants
           };
           if (self.paramGeneBatchSize && (appName == 'gene' || appName == 'genefull')) {
             msgObject.batchSize = +self.paramGeneBatchSize;
@@ -860,13 +728,9 @@ export default {
         if (messageObject.action == "update") {
           this.promiseUpdateVariants(messageObject.variants)
         } if (messageObject.action == "replace") {
-          this.promiseReplaceVariants(messageObject.variants)
+          this.promiseUpdateVariants(messageObject.variants)
         } else if (messageObject.action == "delete") {
           this.promiseDeleteVariants(messageObject.variants)
-        }
-      } else if (messageObject.type == "save-cache") {
-        if (this.persistCache) {
-          this.promiseUpdateCache(messageObject.cache);
         }
       } else if (messageObject.type == "save-filters") {
         this.promiseUpdateFilters(messageObject.filters);
@@ -877,6 +741,24 @@ export default {
 
     },
 
+    findMatchingVariantIndex(variant) {
+      let matchingIdx = -1;
+      let idx = 0;
+      let self = this;
+      if (self.analysis && self.analysis.variants) {
+        self.analysis.variants.forEach(function(v) {
+          if (matchingIdx == -1
+              && v.gene == variant.gene
+              && v.start == variant.start
+              && v.ref == variant.ref
+              && v.alt == variant.alt ) {
+            matchingIdx = idx;
+          }
+          idx++;
+        })
+      }
+      return matchingIdx;
+    },
 
     isValidAppOrigin: function(event) {
       return (this.apps.gene.url.indexOf(event.origin) >= 0 || this.apps.genepanel.url.indexOf(event.origin) >= 0);
@@ -981,72 +863,60 @@ export default {
     },
 
 
-    promiseGetAnalysis: function(idProject, idSample, idAnalysis, workflow, options={}) {
+    promiseGetAnalysis: function(idProject, idAnalysis, workflow, options={}) {
       let self = this;
       return new Promise(function(resolve, reject) {
 
         var createIfEmpty = options.hasOwnProperty("createIfEmpty") ? options.createIfEmpty : true;
 
 
-        if (idProject && idProject.length > 0 && idSample && idSample.length > 0) {
+        if (idAnalysis && idAnalysis.length > 0) {
 
-          self.analysisModel.promiseGetAnalysesForSample(workflow.id, idProject, idSample)
-          .then(function(analyses) {
-            if (analyses && analyses.length > 0) {
+          self.hubSession.promiseGetAnalysis(idProject, idAnalysis)
+          .then(function(analysis) {
+            if (analysis) {
 
-              // TODO:  get last analysis if there is more than one
-              self.analysis = analyses[0];
+              self.analysis = analysis;
               self.idAnalysis = self.analysis.id;
-
-              if (self.clearSavedAnalysis) {
-                self.analysis.genes = [];
-                self.analysis.genesGtr = [];
-                self.analysis.genesPhenolyzer = [];
-                self.analysis.genesManual = [];
-                self.analysis.genesReport = [];
-                self.analysis.phenotypes = [];
-                self.analysis.gtrFullList = [];
-                self.analysis.phenolyzerFullList = [];
-                self.genes = [];
-              }
-
 
               self.setGeneTaskBadges();
               resolve();
 
             } else if (createIfEmpty) {
 
-              self.idAnalysis = self.createUniqueId();
-              self.analysis = {};
-              self.analysis.id = self.idAnalysis;
-              self.analysis.datetime_created = self.getCurrentDateTime();
-              self.analysis.project_id = idProject;
-              self.analysis.sample_id = idSample;
-              self.analysis.workflow_id = workflow.id;
-              self.analysis.genes = [];
-              self.analysis.phenotypes = [];
-              self.analysis.gtrFullList = [];
-              self.analysis.phenolyzerFullList = [];
+              var newAnalysis = {};
+              newAnalysis.datetime_created = self.getCurrentDateTime();
+              newAnalysis.project_id = idProject;
+              newAnalysis.workflow_id = workflow.id;
+              newAnalysis.genes = [];
+              newAnalysis.phenotypes = [];
+              newAnalysis.gtrFullList = [];
+              newAnalysis.phenolyzerFullList = [];
+              newAnalysis.variants = [];
 
-              self.analysis.steps = workflow.steps.map(function(step) {
-                let stepObject = {
-                  key: step.key,
-                  number: step.number,
-                  complete: false
-                };
-                if (step.tasks) {
-                  stepObject.tasks = step.tasks.map(function(task) {
-                      return {
-                        key: task.key,
-                        complete: false,
-                        passed: false,
-                      }
-                  })
-                }
-                return stepObject;
-              }),
-              self.analysisModel.promiseAddAnalysis(self.analysis)
-              .then(function() {
+              self.hubSession.promiseAddAnalysis(idProject, newAnalysis)
+              .then(function(analysis) {
+
+                self.analysis = analysis;
+                self.idAnalysis = self.analysis.id;
+
+                self.analysis.steps = workflow.steps.map(function(step) {
+                  let stepObject = {
+                    key: step.key,
+                    number: step.number,
+                    complete: false
+                  };
+                  if (step.tasks) {
+                    stepObject.tasks = step.tasks.map(function(task) {
+                        return {
+                          key: task.key,
+                          complete: false,
+                          passed: false,
+                        }
+                    })
+                  }
+                  return stepObject;
+                })
                 resolve();
               })
               .catch(function(err) {
@@ -1062,7 +932,7 @@ export default {
           })
 
         } else {
-          self.analysisModel.promiseGetAnalysis(idAnalysis)
+          self.hubSession.promiseGetAnalysis(idProject, idAnalysis)
           .then( function(theAnalysis) {
 
               self.analysis = theAnalysis;
@@ -1073,75 +943,6 @@ export default {
               resolve();
           })
           .catch(function(err) {
-          reject(err);
-          })
-
-        }
-
-      });
-    },
-
-
-
-    promiseClearAnalysis: function(idProject, idSample, workflow) {
-      let self = this;
-      return new Promise(function(resolve, reject) {
-
-
-        if (idProject && idProject.length > 0 && idSample && idSample.length > 0) {
-
-          self.analysisModel.promiseGetAnalysesForSample(workflow.id, idProject, idSample)
-          .then(function(analyses) {
-            if (analyses && analyses.length > 0) {
-
-
-              self.analysis = analyses[0];
-              self.idAnalysis = self.analysis.id;
-
-              if (self.clearSavedAnalysis) {
-                self.analysis.genes = [];
-                self.analysis.genesGtr = [];
-                self.analysis.genesPhenolyzer = [];
-                self.analysis.genesManual = [];
-                self.analysis.genesReport = [];
-                self.analysis.phenotypes = [];
-              }
-
-              self.analysisModel.promiseGetVariants(self.analysis.id)
-              .then(function(data) {
-                return self.promiseDeleteVariants(data);
-              })
-              .then(function(data) {
-                return self.analysisModel.promiseGetCache(self.analysis.id);
-              })
-              .then(function(data) {
-                let cache_keys = data.map(function(cacheItem) {
-                  return cacheItem.cache_key;
-                })
-                return self.analysisModel.promiseDeleteCache(self.analysis.id, cache_keys)
-              })
-              .then(function(data) {
-                return self.analysisModel.promiseGetCache(self.analysis.id);
-              })
-              .then(function(data) {
-                let cache_keys = data.map(function(cacheItem) {
-                  return cacheItem.cache_key;
-                })
-                return self.analysisModel.promiseDeleteCache(self.analysis.id, cache_keys)
-              })
-              .then(function() {
-                resolve();
-              })
-              .catch(function(error) {
-                console.log("Unable to clear analysis " + error);
-                reject(error);
-              })
-            } else {
-              resolve();
-            }
-          })
-          .catch(function(err) {
-            console.log("Unable to get analysis " + err);
             reject(err);
           })
 
@@ -1150,127 +951,7 @@ export default {
       });
     },
 
-    promiseGetVariantData: function() {
-      let self = this;
-      return new Promise(function(resolve, reject) {
-        self.analysisModel.promiseGetVariantData(self.analysis.project_id)
-        .then(function(variantData) {
-          if (variantData && variantData.data) {
-            self.variantData = self.analysisModel.parseVariantData(variantData.data, self.analysis);
-          } else {
-            self.variantData = null;
-          }
-          resolve();
-        })
-      })
-    },
 
-    promiseGetVariants: function() {
-      let self = this;
-
-      return new Promise(function(resolve, reject) {
-
-
-        self.analysisModel.promiseGetVariants(self.analysis.id)
-        .then(function(data) {
-
-          if (self.clearSavedAnalysis) {
-            self.promiseDeleteVariants(data)
-            .then(function() {
-              self.variants = [];
-              resolve();
-            })
-          } else {
-            self.variants = data;
-            self.setVariantTaskBadges();
-            resolve();
-          }
-        })
-        .catch(function(error) {
-          let msg = "Problem in ClinHome.promiseGetVariants() : " + error;
-          console.log(msg);
-          reject(msg);
-        })
-
-
-
-      })
-    },
-
-
-    promiseGetCache: function() {
-      let self = this;
-
-      return new Promise(function(resolve, reject) {
-
-
-        let cacheItems = [];
-        let cacheKeysToDelete = [];
-
-        self.analysisModel.promiseGetCache(self.analysis.id)
-        .then(function(data) {
-          if (self.clearSavedAnalysis) {
-            let cache_keys = data.map(function(cacheItem) {
-              return cacheItem.cache_key;
-            })
-            return self.analysisModel.promiseDeleteCache(self.analysis.id, cache_keys);
-          } else {
-            return Promise.resolve(data);
-          }
-
-        })
-        .then(function(data) {
-          if (self.clearSavedAnalysis) {
-            self.analysisCache = null;
-            self.analysisCacheKeys = null;
-            resolve();
-          } else {
-            // For candidate gene variant analysis, we only want to keep cache items
-            // for relevant genes
-            let applicableGenes = self.analysis.genes.slice();
-            self.variants.forEach(function(v) {
-              if (applicableGenes.indexOf(v.gene) == -1) {
-                applicableGenes.push(v.gene);
-              }
-            })
-
-            data.forEach(function(cacheItem) {
-              var keyTokens = cacheItem.cache_key.split(self.analysisModel.DELIM);
-              // TODO:  Use common class cache helper to parse key
-              if (keyTokens.length > 2) {
-                let gene = keyTokens[2];
-                if (applicableGenes.indexOf(gene) >= 0) {
-                  cacheItems.push(cacheItem);
-                } else {
-                  cacheKeysToDelete.push(cacheItem.cache_key);
-                }
-              }
-            })
-            self.analysisCache = cacheItems;
-
-
-
-            self.analysisCacheKeys = data.map(function(cacheItem) {
-              return cacheItem.cache_key;
-            });
-
-
-            self.analysisModel.promiseDeleteCache(self.analysis.id, cacheKeysToDelete)
-            .then(function() {
-              resolve();
-            })
-          }
-
-        })
-        .catch(function(error) {
-          let msg = "Problem in ClinHome.promiseGetCache(): " + error;
-          console.log(msg);
-          reject(msg);
-        })
-
-
-      })
-    },
 
     promiseUpdateGenesData: function(messageObject) {
       let self = this;
@@ -1294,56 +975,53 @@ export default {
       let self = this;
       self.analysis.phenotypes = phenotypes;
       self.analysis.datetime_last_modified = self.getCurrentDateTime();
-      return self.analysisModel.promiseUpdatePhenotypes(self.analysis);
+      return self.hubSession.promiseUpdateAnalysis(self.projectId, self.analysisId, self.analysis);
     },
 
-    promiseReplaceVariants: function(variants) {
-      let self = this;
-      self.analysisModel.replaceMatchingVariants(variants, self.variants);
-      let variantsToRemove = self.analysisModel.getObsoleteVariants(variants, self.variants);
-
-      self.variants = variants;
-      self.organizeVariantsByInterpretation();
-      self.setVariantTaskBadges();
-      return self.analysisModel.promiseUpdateVariants(self.analysis.id, variants, variantsToRemove);
-    },
 
     promiseUpdateVariants: function(variants) {
       let self = this;
-      self.analysisModel.replaceMatchingVariants(variants, self.variants);
+      self.analysis.variants = variants;
+      self.analysis.datetime_last_modified = self.getCurrentDateTime();
       self.organizeVariantsByInterpretation();
       self.setVariantTaskBadges();
-      return self.analysisModel.promiseUpdateVariants(self.analysis.id, variants);
+      return self.hubSession.promiseUpdateAnalysis(self.projectId, self.analysisId, self.analysis);
     },
 
-
-    promiseDeleteVariants: function(variants) {
+    promiseDeleteVariants(variantsToRemove) {
       let self = this;
-
-      self.analysisModel.removeMatchingVariants(variants, self.variants);
-      self.setVariantTaskBadges();
-
+      let toRemove = [];
+      if (variantsToRemove && self.analysis.variants) {
+        variantsToRemove.forEach(function(variantToRemove) {
+          let matchingIdx = self.findMatchingVariantIndex(variantToRemove);
+          if (matchingIdx != -1) {
+            toRemove.push($.extend({}, variantToRemove));
+          }
+        })
+      }
+      toRemove.forEach(function(v) {
+        let idx = self.findMatchingVariantIndex(v, existingVariants);
+        self.analysis.variants.remove(idx);
+      })
       self.analysis.datetime_last_modified = self.getCurrentDateTime();
-      return self.analysisModel.promiseDeleteVariants(self.analysis.id, variants);
+      self.organizeVariantsByInterpretation();
+      self.setVariantTaskBadges();
+      return self.hubSession.promiseUpdateAnalysis(self.projectId, self.analysisId, self.analysis);
     },
 
     promiseUpdateWorkflow: function() {
       let self = this;
       self.analysis.datetime_last_modified = self.getCurrentDateTime();
-      return self.analysisModel.promiseUpdateSteps(self.analysis);
+      return self.hubSession.promiseUpdateAnalysis(self.projectId, self.analysisId, self.analysis);
     },
 
     promiseUpdateFilters: function(filters) {
       let self = this;
       self.analysis.filters = filters;
       self.analysis.datetime_last_modified = self.getCurrentDateTime();
-      return self.analysisModel.promiseUpdateFilters(self.analysis);
+      return self.hubSession.promiseUpdateAnalysis(self.projectId, self.analysisId, self.analysis);
     },
 
-    promiseUpdateCache: function(cacheItems) {
-      let self = this;
-      return self.analysisModel.promiseUpdateCache(self.analysis.id, cacheItems);
-    },
 
     promiseCompleteStepTask: function(stepKey, taskKey) {
       var filteredStep = this.analysis.steps.filter(function(step) {
@@ -1385,11 +1063,6 @@ export default {
       }
     },
 
-    createUniqueId: function() {
-      var uniqueId = Math.random().toString(36).substring(2)
-                 + (new Date()).getTime().toString(36);
-      return uniqueId;
-    },
 
     getCurrentDateTime: function() {
       var dateObj = new Date();
@@ -1471,7 +1144,7 @@ export default {
       let theVariants = [];
 
 
-      this.variants.forEach(function(variant) {
+      this.analysis.variants.forEach(function(variant) {
         if (variant.interpretation == interpretation) {
           theVariants.push(variant);
           variant.candidateGene = true;
