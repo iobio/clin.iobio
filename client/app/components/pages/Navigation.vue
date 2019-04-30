@@ -238,7 +238,7 @@ export default {
       let self = this;
       let taskCount = 0;
       let completeTaskCount = 0;
-      self.analysis.steps.forEach(function(step) {
+      self.analysis.payload.steps.forEach(function(step) {
         step.tasks.forEach(function(task) {
           taskCount++;
           if (task.complete) {

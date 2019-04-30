@@ -347,8 +347,8 @@ $badge-inactive-color:  #d8d3d3
 
 <template>
   <v-card light id="workflow-card" :class="{'task-is-checkbox': taskIsCheckbox}" >
-    <div id="workflow-steps" v-if="analysis && analysis.steps">
-      <div  v-for="(step, stepIndex) in analysis.steps" :key="step.key"
+    <div id="workflow-steps" v-if="analysisSteps">
+      <div  v-for="(step, stepIndex) in analysisSteps" :key="step.key"
       :class="{'step-container': true, 'active' : currentStep && step.key == currentStep.key  ? true : false, 'complete': step.complete}">
 
         <div class="step-label">
@@ -385,7 +385,7 @@ $badge-inactive-color:  #d8d3d3
 
         </div>
 
-        <v-divider class="long" v-if="stepIndex < analysis.steps.length-1"></v-divider>
+        <v-divider class="long" v-if="stepIndex < analysisSteps.length-1"></v-divider>
       </div>
 
       <div id="current-checkbox-container" v-if="currentTask" :style="{left: currentTaskLeft, position: 'relative'}">
@@ -424,7 +424,7 @@ export default {
   },
   props: {
     caseSummary: null,
-    analysis: null,
+    analysisSteps: null,
     workflow: null
 
   },
@@ -504,7 +504,7 @@ export default {
           let offset = taskIdx == 0 ? 8 : 28;
           self.currentTaskLeft = $('.task.active')[0].offsetLeft + offset + 'px';
 
-          if (taskIdx == self.currentStep.tasks.length - 1 && stepIdx == self.analysis.steps.length - 1) {
+          if (taskIdx == self.currentStep.tasks.length - 1 && stepIdx == self.analysisSteps.length - 1) {
             self.disableNext = true;
           } else {
             self.disableNext = false;
@@ -525,8 +525,8 @@ export default {
       if (taskIdx == self.currentStep.tasks.length - 1) {
         // Go to next step
         let stepIdx = self.currentStep.number;
-        if (stepIdx < self.analysis.steps.length) {
-          let theStep = self.analysis.steps[stepIdx];
+        if (stepIdx < self.analysisSteps.length) {
+          let theStep = self.analysisSteps[stepIdx];
           self.setStepAndTask(theStep, theStep.tasks[0]);
         }
 
@@ -542,7 +542,7 @@ export default {
         // Go to prev step
         let stepIdx = self.currentStep.number - 1;
         if (stepIdx > 0) {
-          let theStep = self.analysis.steps[stepIdx-1];
+          let theStep = self.analysisSteps[stepIdx-1];
           self.setStepAndTask(theStep, theStep.tasks[theStep.tasks.length - 1]);
         }
 
@@ -597,7 +597,7 @@ export default {
   },
   mounted: function() {
     let self = this;
-    self.currentStep = self.analysis.steps[0];
+    self.currentStep = self.analysisSteps[0];
     self.currentTask = self.currentStep.tasks[0];
     self.currentTaskComplete = self.currentTask.complete;
     self.shiftButtons();

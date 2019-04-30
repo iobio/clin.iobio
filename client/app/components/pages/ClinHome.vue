@@ -69,7 +69,7 @@ $horizontal-dashboard-height: 140px
 
   <workflow v-if="!showSplash && isAuthenticated && workflow && analysis"
    :caseSummary="caseSummary"
-   :analysis="analysis"
+   :analysisSteps="analysis.payload.steps"
    :workflow="workflow"
    @on-step-changed="onStepChanged"
    @on-task-changed="onTaskChanged"
@@ -86,14 +86,10 @@ $horizontal-dashboard-height: 140px
         <h3  style="display:inline-block;margin-left: 10px" > {{ splashMessage }} </h3>
       </v-card>
     </div>
-    <login
-      v-if="!showSplash && !hubSession && !isAuthenticated"
-      :awsSession="awsSession"
-      @authenticated="onAuthenticated">
-    </login>
+
 
     <login-mosaic
-      v-if="!showSplash && hubSession && !isAuthenticated"
+      v-if="!showSplash && mosaicSession && !isAuthenticated"
       :awsSession="awsSession"
       @authenticated-mosaic="onAuthenticatedMosaic">
     </login-mosaic>
@@ -104,7 +100,7 @@ $horizontal-dashboard-height: 140px
 
 
     <div style="width:100%;height:100%;padding: 0px"
-    :class="{'app-content': true,  'sidebar': isSidebar, 'minimized': isMinimized}"
+    :class="{'app-content': true}"
     v-show="!showSplash && isAuthenticated " >
       <v-card  class="clin-card"
         v-if="analysis && workflow"
@@ -115,10 +111,10 @@ $horizontal-dashboard-height: 140px
         v-if="analysis && workflow"
         v-show="analysis && workflow"
         :workflow="workflow"
-        :analysis="analysis"
+        :analysis="analysis.payload"
         :caseSummary="caseSummary"
         :modelInfos="modelInfos"
-        :pedigree="hubSession ? hubSession.pedigreeSamples : null"
+        :pedigree="mosaicSession ? mosaicSession.pedigreeSamples : null"
         :sampleId="paramSampleId">
         </review-case>
       </v-card>
@@ -133,16 +129,16 @@ $horizontal-dashboard-height: 140px
         v-if="analysis && workflow"
         v-show="analysis && workflow"
         :workflow="workflow"
-        :analysis="analysis"
+        :analysis="analysis.payload"
         :caseSummary="caseSummary"
         :modelInfos="modelInfos"
-        :pedigree="hubSession ? hubSession.pedigreeSamples : null"
+        :pedigree="mosaicSession ? mosaicSession.pedigreeSamples : null"
         :sampleId="paramSampleId"
-        :phenotypes="analysis.phenotypes"
-        :genes="analysis.genes"
-        :variants="variants"
+        :phenotypes="analysis.payload.phenotypes"
+        :genes="analysis.payload.genes"
+        :variants="analysis.payload.variants"
         :variantsByInterpretation="variantsByInterpretation"
-        :filters="analysis.filters">
+        :filters="analysis.payload.filters">
         </findings>
       </v-card>
 
@@ -175,17 +171,15 @@ $horizontal-dashboard-height: 140px
 
 <script>
 
-import Navigation from  '../pages/Navigation.vue'
-import Workflow from  '../pages/Workflow.vue'
-import ReviewCase from  '../viz/ReviewCase.vue'
-import Findings from  '../viz/Findings.vue'
-import Login from  '../partials/Login.vue'
-import LoginMosaic from  '../partials/LoginMosaic.vue'
-import PreferencesMenu from  '../partials/PreferencesMenu.vue'
-import AppIcon from  '../partials/AppIcon.vue'
+import Navigation    from  '../pages/Navigation.vue'
+import Workflow      from  '../pages/Workflow.vue'
+import ReviewCase    from  '../viz/ReviewCase.vue'
+import Findings      from  '../viz/Findings.vue'
+import LoginMosaic   from  '../partials/LoginMosaic.vue'
+import AppIcon       from  '../partials/AppIcon.vue'
 
-import AWSSession  from  '../../models/AWSSession.js'
-import HubSession  from  '../../models/HubSession.js'
+import AWSSession    from  '../../models/AWSSession.js'
+import MosaicSession from  '../../models/MosaicSession.js'
 
 
 export default {
@@ -193,15 +187,13 @@ export default {
   components: {
     Navigation,
     Workflow,
-    Login,
     LoginMosaic,
     ReviewCase,
     Findings,
-    PreferencesMenu,
     AppIcon
   },
   props: {
-    paramDebug:  null,
+    paramDebug:          null,
     paramAnalysisId:     null,
     paramProjectId:      null,
     paramSampleId:       null,
@@ -210,8 +202,7 @@ export default {
     paramToken:          null,
     paramSource:         null,
     paramIobioSource:    null,
-    paramGeneBatchSize:  null,
-    paramTheme: null
+    paramGeneBatchSize:  null
   },
   data() {
     let self = this;
@@ -222,7 +213,7 @@ export default {
 
       isAuthenticated: false,
       awsSession:  null,
-      hubSession: null,
+      mosaicSession: null,
       modelInfos: null,
 
 
@@ -290,8 +281,8 @@ export default {
       let self = this;
       let phenotypeList = [];
 
-      if (self.analysis.phenotypes) {
-        self.analysis.phenotypes.forEach(function(phenotypeArray) {
+      if (self.analysis.payload.phenotypes) {
+        self.analysis.payload.phenotypes.forEach(function(phenotypeArray) {
           if (phenotypeArray) {
             phenotypeArray.forEach(function(phenotype) {
               phenotypeList.push(phenotype);
@@ -384,13 +375,13 @@ export default {
       if (localStorage.getItem('hub-iobio-tkn') && localStorage.getItem('hub-iobio-tkn').length > 0
           && self.paramSampleId && self.paramSource) {
 
-        self.hubSession = new HubSession();
+        self.mosaicSession = new MosaicSession();
         // For now, just hardcode is_pedgree = true
-        self.hubSession.promiseInit(self.paramSampleId, self.paramSource, true, self.paramProjectId)
+        self.mosaicSession.promiseInit(self.paramSampleId, self.paramSource, true, self.paramProjectId)
         .then(modelInfos => {
           self.modelInfos = modelInfos;
 
-          self.hubSession.promiseGetProject(self.paramProjectId)
+          self.mosaicSession.promiseGetProject(self.paramProjectId)
           .then(function(project) {
             self.caseSummary = {};
             self.caseSummary.name = project.name;
@@ -475,15 +466,6 @@ export default {
       }
     },
 
-    switchTheme: function(theme) {
-      this.theme = theme;
-    },
-    switchSidebar: function(isSidebar) {
-      this.isSidebar = isSidebar
-    },
-    switchMinimized: function(isMinimized) {
-      this.isMinimized = isMinimized
-    },
 
     clickFindings: function() {
       this.currentStep = 0;
@@ -491,11 +473,7 @@ export default {
       this.showFindings = true;
     },
 
-    onAuthenticated: function(researcher, project) {
-      let self = this;
-      self.isAuthenticated = true;
-      self.showSpash = false;
-    },
+
 
     onAuthenticatedMosaic: function(researcher, callback) {
       let self = this;
@@ -509,8 +487,7 @@ export default {
         self.promiseGetAnalysis(
           self.paramProjectId,
           self.paramAnalysisId,
-          self.workflow,
-          {'createIfEmpty': true} )
+          self.workflow)
       })
       .then(function() {
 
@@ -583,35 +560,6 @@ export default {
       return theTask ? theTask.name : "";
     },
 
-    isS3() {
-      let self = this;
-
-      let S3_URL = "https://s3.amazonaws.com";
-      return self.modelInfos.filter(function(modelInfo) {
-
-        let vcfS3 = false;
-        let bamS3 = false;
-        if (modelInfo.vcf) {
-          if (modelInfo.vcf.indexOf(S3_URL) == 0) {
-            vcfS3 = true;
-          }
-        } else {
-          vcfS3 = true;
-        }
-
-        if (modelInfo.bam) {
-          if (modelInfo.vcf.indexOf(S3_URL) == 0) {
-           bamS3 = true;
-          }
-        } else {
-           bamS3 = true;
-        }
-
-        return vcfS3 && bamS3;
-      }).length > 0;
-
-    },
-
 
     setData: function(appName, pauseMillisec=0) {
       let self = this;
@@ -642,20 +590,20 @@ export default {
               type:                  'set-data',
               sender:                'clin.iobio',
               receiver:               appName,
-              'iobioSource':          self.isS3() ? 'nv-prod.iobio.io' : self.iobioSource,
+              'iobioSource':          self.iobioSource,
               'isFrameVisible':       app.step == self.currentStep,
               'modelInfo':            probandModelInfo[0],
               'modelInfos':           self.modelInfos,
-              'phenotypes':           self.analysis.phenotypes,
-              'genes':                self.analysis.genes,
-              'genesReport':          self.analysis.genesReport,
-              'genesGtr':             self.analysis.genesGtr,
-              'genesPhenolyzer':      self.analysis.genesPhenolyzer,
-              'genesManual':          self.analysis.genesManual,
-              'gtrFullList':          self.analysis.gtrFullList,
-              'phenolyzerFullList':   self.analysis.phenolyzerFullList,
+              'phenotypes':           self.analysis.payload.phenotypes,
+              'genes':                self.analysis.payload.genes,
+              'genesReport':          self.analysis.payload.genesReport,
+              'genesGtr':             self.analysis.payload.genesGtr,
+              'genesPhenolyzer':      self.analysis.payload.genesPhenolyzer,
+              'genesManual':          self.analysis.payload.genesManual,
+              'gtrFullList':          self.analysis.payload.gtrFullList,
+              'phenolyzerFullList':   self.analysis.payload.phenolyzerFullList,
               'persistCache':         self.persistCache,
-              'variants':             self.analysis.variants
+              'variants':             self.analysis.payload.variants
           };
           if (self.paramGeneBatchSize && (appName == 'gene' || appName == 'genefull')) {
             msgObject.batchSize = +self.paramGeneBatchSize;
@@ -719,7 +667,7 @@ export default {
         }
         this.promiseUpdateGenesData(messageObject);
         this.setGeneTaskBadges();
-        if (this.analysis.genes.length == 0) {
+        if (this.analysis.payload.genes.length == 0) {
           this.clearVariantTaskBadges();
         }
         this.promiseCompleteStepTask('genes', taskMap[messageObject.source]);
@@ -745,8 +693,8 @@ export default {
       let matchingIdx = -1;
       let idx = 0;
       let self = this;
-      if (self.analysis && self.analysis.variants) {
-        self.analysis.variants.forEach(function(v) {
+      if (self.analysis && self.analysis.payload.variants) {
+        self.analysis.payload.variants.forEach(function(v) {
           if (matchingIdx == -1
               && v.gene == variant.gene
               && v.start == variant.start
@@ -767,7 +715,7 @@ export default {
     promiseGetWorkflow: function(idWorkflow) {
       let self = this;
       return new Promise(function(resolve, reject) {
-        self.analysisModel.promiseGetWorkflow(idWorkflow)
+        self.awsSession.promiseGetWorkflow(idWorkflow)
         .then(function(theWorkflow) {
           self.workflow = theWorkflow;
           resolve();
@@ -780,23 +728,23 @@ export default {
 
     setGeneTaskBadges: function() {
       let self = this;
-      self.analysis.steps.forEach(function(step) {
+      self.analysis.payload.steps.forEach(function(step) {
         step.tasks.forEach(function(task) {
-          if (task.key == 'gtr-genes' && self.analysis.genesGtr) {
-            if  (self.analysis.genesGtr.length > 0) {
-              task.badge = self.analysis.genesGtr.length;
+          if (task.key == 'gtr-genes' && self.analysis.payload.genesGtr) {
+            if  (self.analysis.payload.genesGtr.length > 0) {
+              task.badge = self.analysis.payload.genesGtr.length;
             } else {
               delete task.badge;
             }
-          } else if (task.key == 'phenotype-genes' && self.analysis.genesPhenolyzer) {
-            if (self.analysis.genesPhenolyzer.length > 0) {
-              task.badge = self.analysis.genesPhenolyzer.length;
+          } else if (task.key == 'phenotype-genes' && self.analysis.payload.genesPhenolyzer) {
+            if (self.analysis.payload.genesPhenolyzer.length > 0) {
+              task.badge = self.analysis.payload.genesPhenolyzer.length;
             } else {
               delete task.badge;
             }
           } else if (task.key == 'summary-genes' && self.analysis.genes ) {
-            if (self.analysis.genes.length > 0) {
-              task.badge = self.analysis.genes.length;
+            if (self.analysis.payload.genes.length > 0) {
+              task.badge = self.analysis.payload.genes.length;
             } else {
               delete task.badge;
             }
@@ -807,11 +755,11 @@ export default {
 
    setVariantTaskBadges: function() {
       let self = this;
-      if (self.variants) {
-        let variantsCandidateGenes = self.variants.filter(function(variant) {
-          return self.analysis.genes && self.analysis.genes.length > 0 && self.analysis.genes.indexOf(variant.gene) >= 0;
+      if (self.analysis.payload.variants) {
+        let variantsCandidateGenes = self.analysis.payload.variants.filter(function(variant) {
+          return self.analysis.payload.genes && self.analysis.payload.genes.length > 0 && self.analysis.payload.genes.indexOf(variant.gene) >= 0;
         })
-        self.analysis.steps.forEach(function(step) {
+        self.analysis.payload.steps.forEach(function(step) {
           step.tasks.forEach(function(task) {
             if (task.key == 'review' ) {
               if (variantsCandidateGenes.length > 0) {
@@ -824,7 +772,7 @@ export default {
                 delete task.badge;
               }
             } else if (task.key == 'review-full') {
-              let fullAnalysisCount = self.variants.length - variantsCandidateGenes.length;
+              let fullAnalysisCount = self.analysis.payload.variants.length - variantsCandidateGenes.length;
               if (fullAnalysisCount > 0) {
                 task.badge =  fullAnalysisCount;
               } else {
@@ -838,7 +786,7 @@ export default {
 
     clearVariantTaskBadges: function() {
       let self = this;
-      self.analysis.steps.forEach(function(step) {
+      self.analysis.payload.steps.forEach(function(step) {
         step.tasks.forEach(function(task) {
           if (task.key == 'review' ) {
               delete task.badge;
@@ -851,8 +799,8 @@ export default {
 
     setCoverageTaskBadge: function(geneCount) {
       let self = this;
-      if (self.variants && self.variants.length > 0) {
-        self.analysis.steps.forEach(function(step) {
+      if (self.analysis.payload.variants && self.analysis.payload.variants.length > 0) {
+        self.analysis.payload.steps.forEach(function(step) {
           step.tasks.forEach(function(task) {
             if (task.key == 'coverage') {
               task.badge =  geneCount
@@ -867,12 +815,9 @@ export default {
       let self = this;
       return new Promise(function(resolve, reject) {
 
-        var createIfEmpty = options.hasOwnProperty("createIfEmpty") ? options.createIfEmpty : true;
-
-
         if (idAnalysis && idAnalysis.length > 0) {
 
-          self.hubSession.promiseGetAnalysis(idProject, idAnalysis)
+          self.mosaicSession.promiseGetAnalysis(idProject, idAnalysis)
           .then(function(analysis) {
             if (analysis) {
 
@@ -882,49 +827,8 @@ export default {
               self.setGeneTaskBadges();
               resolve();
 
-            } else if (createIfEmpty) {
-
-              var newAnalysis = {};
-              newAnalysis.datetime_created = self.getCurrentDateTime();
-              newAnalysis.project_id = idProject;
-              newAnalysis.workflow_id = workflow.id;
-              newAnalysis.genes = [];
-              newAnalysis.phenotypes = [];
-              newAnalysis.gtrFullList = [];
-              newAnalysis.phenolyzerFullList = [];
-              newAnalysis.variants = [];
-
-              self.hubSession.promiseAddAnalysis(idProject, newAnalysis)
-              .then(function(analysis) {
-
-                self.analysis = analysis;
-                self.idAnalysis = self.analysis.id;
-
-                self.analysis.steps = workflow.steps.map(function(step) {
-                  let stepObject = {
-                    key: step.key,
-                    number: step.number,
-                    complete: false
-                  };
-                  if (step.tasks) {
-                    stepObject.tasks = step.tasks.map(function(task) {
-                        return {
-                          key: task.key,
-                          complete: false,
-                          passed: false,
-                        }
-                    })
-                  }
-                  return stepObject;
-                })
-                resolve();
-              })
-              .catch(function(err) {
-                reject(err);
-              })
-
             } else {
-              reject("Unable to find/create an analysis");
+              reject("Unable to find/create an analysis " + idAnalysis);
             }
           })
           .catch(function(err) {
@@ -932,15 +836,43 @@ export default {
           })
 
         } else {
-          self.hubSession.promiseGetAnalysis(idProject, idAnalysis)
-          .then( function(theAnalysis) {
+          var newAnalysis = {};
+          newAnalysis.title = "clin.iobio analysis";
+          newAnalysis.description = "a description goes here";
+          newAnalysis.payload = {};
+          newAnalysis.payload.datetime_created = self.getCurrentDateTime();
+          newAnalysis.payload.workflow_id = workflow.id;
+          newAnalysis.payload.genes = [];
+          newAnalysis.payload.phenotypes = [];
+          newAnalysis.payload.gtrFullList = [];
+          newAnalysis.payload.phenolyzerFullList = [];
+          newAnalysis.payload.variants = [];
+          newAnalysis.payload.steps = workflow.steps.map(function(step) {
+            let stepObject = {
+              key: step.key,
+              number: step.number,
+              complete: false
+            };
+            if (step.tasks) {
+              stepObject.tasks = step.tasks.map(function(task) {
+                return {
+                  key: task.key,
+                  complete: false,
+                  passed: false,
+                }
+              })
+            }
+            return stepObject;
+          })
 
-              self.analysis = theAnalysis;
-              self.idAnalysis = self.analysis.id;
+          self.mosaicSession.promiseAddAnalysis(idProject, newAnalysis)
+          .then(function(analysis) {
+            console.log("**********  adding mosaic analysis " + analysis.id + " **************")
 
-              self.setGeneTaskBadges();
+            self.analysis = analysis;
+            self.setGeneTaskBadges();
+            resolve();
 
-              resolve();
           })
           .catch(function(err) {
             reject(err);
@@ -955,43 +887,44 @@ export default {
 
     promiseUpdateGenesData: function(messageObject) {
       let self = this;
-      self.analysis.genesReport        = messageObject.genesReport;
-      self.analysis.genesGtr           = messageObject.genesGtr;
-      self.analysis.genesPhenolyzer    = messageObject.genesPhenolyzer;
-      self.analysis.genesManual        = messageObject.genesManual;
-      self.analysis.gtrFullList        = messageObject.gtrFullList;
-      self.analysis.phenolyzerFullList = messageObject.phenolyzerFullList;
-      self.analysis.genes              = messageObject.genes;
-      self.analysis.phenotypes         = messageObject.searchTerms;
+      self.analysis.payload.genesReport        = messageObject.genesReport;
+      self.analysis.payload.genesGtr           = messageObject.genesGtr;
+      self.analysis.payload.genesPhenolyzer    = messageObject.genesPhenolyzer;
+      self.analysis.payload.genesManual        = messageObject.genesManual;
+      self.analysis.payload.gtrFullList        = messageObject.gtrFullList;
+      self.analysis.payload.phenolyzerFullList = messageObject.phenolyzerFullList;
+      self.analysis.payload.genes              = messageObject.genes;
+      self.analysis.payload.phenotypes         = messageObject.searchTerms;
       self.setGeneTaskBadges();
 
 
-      self.analysis.datetime_last_modified = self.getCurrentDateTime();
-      return self.analysisModel.promiseUpdateGenesData(self.analysis);
+      self.analysis.payload.datetime_last_modified = self.getCurrentDateTime();
+      self.analysis.title = self.analysis.title + self.getCurrentDateTime();
+      return self.mosaicSession.promiseUpdateAnalysis(self.analysis);
     },
 
 
     promiseUpdatePhenotypes: function(phenotypes) {
       let self = this;
-      self.analysis.phenotypes = phenotypes;
-      self.analysis.datetime_last_modified = self.getCurrentDateTime();
-      return self.hubSession.promiseUpdateAnalysis(self.projectId, self.analysisId, self.analysis);
+      self.analysis.payload.phenotypes = phenotypes;
+      self.analysis.payload.datetime_last_modified = self.getCurrentDateTime();
+      return self.mosaicSession.promiseUpdateAnalysis(self.analysis);
     },
 
 
     promiseUpdateVariants: function(variants) {
       let self = this;
-      self.analysis.variants = variants;
-      self.analysis.datetime_last_modified = self.getCurrentDateTime();
+      self.analysis.payload.variants = variants;
+      self.analysis.payload.datetime_last_modified = self.getCurrentDateTime();
       self.organizeVariantsByInterpretation();
       self.setVariantTaskBadges();
-      return self.hubSession.promiseUpdateAnalysis(self.projectId, self.analysisId, self.analysis);
+      return self.mosaicSession.promiseUpdateAnalysis(self.analysis);
     },
 
     promiseDeleteVariants(variantsToRemove) {
       let self = this;
       let toRemove = [];
-      if (variantsToRemove && self.analysis.variants) {
+      if (variantsToRemove && self.analysis.payload.variants) {
         variantsToRemove.forEach(function(variantToRemove) {
           let matchingIdx = self.findMatchingVariantIndex(variantToRemove);
           if (matchingIdx != -1) {
@@ -1000,31 +933,31 @@ export default {
         })
       }
       toRemove.forEach(function(v) {
-        let idx = self.findMatchingVariantIndex(v, existingVariants);
-        self.analysis.variants.remove(idx);
+        let idx = self.findMatchingVariantIndex(v, self.analysis.payload.variants);
+        self.analysis.payload.variants.remove(idx);
       })
-      self.analysis.datetime_last_modified = self.getCurrentDateTime();
+      self.analysis.payload.datetime_last_modified = self.getCurrentDateTime();
       self.organizeVariantsByInterpretation();
       self.setVariantTaskBadges();
-      return self.hubSession.promiseUpdateAnalysis(self.projectId, self.analysisId, self.analysis);
+      return self.mosaicSession.promiseUpdateAnalysis(self.analysis);
     },
 
     promiseUpdateWorkflow: function() {
       let self = this;
-      self.analysis.datetime_last_modified = self.getCurrentDateTime();
-      return self.hubSession.promiseUpdateAnalysis(self.projectId, self.analysisId, self.analysis);
+      self.analysis.payload.datetime_last_modified = self.getCurrentDateTime();
+      return self.mosaicSession.promiseUpdateAnalysis(self.analysis);
     },
 
     promiseUpdateFilters: function(filters) {
       let self = this;
-      self.analysis.filters = filters;
-      self.analysis.datetime_last_modified = self.getCurrentDateTime();
-      return self.hubSession.promiseUpdateAnalysis(self.projectId, self.analysisId, self.analysis);
+      self.analysis.payload.filters = filters;
+      self.analysis.payload.datetime_last_modified = self.getCurrentDateTime();
+      return self.mosaicSession.promiseUpdateAnalysis(self.analysis);
     },
 
 
     promiseCompleteStepTask: function(stepKey, taskKey) {
-      var filteredStep = this.analysis.steps.filter(function(step) {
+      var filteredStep = this.analysis.payload.steps.filter(function(step) {
         return step.key == stepKey;
       })
       if (filteredStep.length > 0) {
@@ -1087,8 +1020,8 @@ export default {
       let self = this;
       let filterList = [];
 
-      for (var filterName in self.analysis.filters) {
-        let filterObject = self.analysis.filters[filterName];
+      for (var filterName in self.analysis.payload.filters) {
+        let filterObject = self.analysis.payload.filters[filterName];
         var sortedGenes = self.organizeVariantsByGene(filterName, filterObject.userFlagged, interpretation);
         if (sortedGenes.length > 0) {
           filterList.push({key: filterName, filter: filterObject, genes: sortedGenes});
@@ -1144,7 +1077,7 @@ export default {
       let theVariants = [];
 
 
-      this.analysis.variants.forEach(function(variant) {
+      this.analysis.payload.variants.forEach(function(variant) {
         if (variant.interpretation == interpretation) {
           theVariants.push(variant);
           variant.candidateGene = true;

@@ -1,5 +1,4 @@
-
-export default class HubSession {
+export default class MosaicSession {
   constructor() {
     this.vcf = null;
     this.samples = null;
@@ -374,10 +373,11 @@ export default class HubSession {
 
 
   promiseGetAnalysis(projectId, analysisId) {
+    let self = this;
     return new Promise(function(resolve, reject) {
       self.getAnalysis(projectId, analysisId)
       .done(response => {
-        resolve(response.data)
+        resolve(response)
       })
       .fail(error => {
         reject("Error getting analysis " + analysisId + ": " + error);
@@ -386,10 +386,11 @@ export default class HubSession {
 
   }
   promiseAddAnalysis(projectId, analysis) {
+    let self = this;
     return new Promise(function(resolve, reject) {
       self.addAnalysis(projectId, analysis)
       .done(response => {
-        resolve(response.data)
+        resolve(response)
       })
       .fail(error => {
         reject("Error adding analysis for project " + projectId + ": " + error);
@@ -398,11 +399,12 @@ export default class HubSession {
 
   }
 
-  promiseUpdateAnalysis(projectId, analysisId, analysis) {
+  promiseUpdateAnalysis(analysis) {
+    let self = this;
     return new Promise(function(resolve, reject) {
-      self.updateAnalysis(projectId, analysisId, analysis)
+      self.updateAnalysis(analysis.project_id, analysis.id, analysis)
       .done(response => {
-        resolve(response.data)
+        resolve(response)
       })
       .fail(error => {
         reject("Error updating analysis " + analysisId + " for project " + projectId + ": " + error);
@@ -414,7 +416,7 @@ export default class HubSession {
   getAnalysis(projectId, analysisId) {
     let self = this;
     return $.ajax({
-      url: elf.api + '/projects/' + projectId + '/projects/'  + projectId + '/analyses/' + analysisId,
+      url: self.api + '/projects/' + projectId  + '/analyses/' + analysisId,
       type: 'GET',
       contentType: 'application/json',
       headers: {
@@ -429,7 +431,7 @@ export default class HubSession {
   addAnalysis(projectId, newAnalysisData) {
     let self = this;
     return $.ajax({
-      url: self.api + '/projects/' + projectId + '/analyses/?client_application_id=' + self.client_application_id,
+      url: self.api + '/projects/' + projectId + '/analyses/?client_application_id=1',
       type: 'POST',
       data: JSON.stringify(newAnalysisData),
       contentType: 'application/json',
