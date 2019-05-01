@@ -5,7 +5,7 @@ export default class MosaicSession {
     this.url = null;
     this.apiVersion =  '/apiv1';
     this.pedigreeSamples = null;
-    this.client_application_id = 'YeJHRul3';
+    this.client_application_id = '5';
 
   }
 
@@ -371,6 +371,26 @@ export default class MosaicSession {
     });
   }
 
+  getApplications() {
+    let self = this;
+    $.ajax({
+      url: self.api + '/client-applications',
+      type: 'GET',
+      contentType: 'application/json',
+      headers: {
+        Authorization: localStorage.getItem('hub-iobio-tkn'),
+      },
+    })
+    .done(response => {
+      console.log("applications");
+      console.log(response);
+    })
+    .fail(error => {
+      console.log("Error getting applications ");
+      console.log(error);
+    })
+  }
+
 
   promiseGetAnalysis(projectId, analysisId) {
     let self = this;
@@ -431,7 +451,7 @@ export default class MosaicSession {
   addAnalysis(projectId, newAnalysisData) {
     let self = this;
     return $.ajax({
-      url: self.api + '/projects/' + projectId + '/analyses/?client_application_id=1',
+      url: self.api + '/projects/' + projectId + '/analyses/?client_application_id=' + this.client_application_id,
       type: 'POST',
       data: JSON.stringify(newAnalysisData),
       contentType: 'application/json',
@@ -445,7 +465,8 @@ export default class MosaicSession {
   updateAnalysis(projectId, analysisId, newAnalysisData) {
     let self = this;
     return $.ajax({
-      url: self.api + '/projects/' + projectId + '/analyses/' + analysisId,
+      url: self.api + '/projects/' + projectId + '/analyses/' + analysisId
+            + '?client_application_id=' + this.client_application_id,
       type: 'PUT',
       data: JSON.stringify(newAnalysisData),
       contentType: 'application/json',
@@ -454,4 +475,5 @@ export default class MosaicSession {
       },
     });
   }
+
 }

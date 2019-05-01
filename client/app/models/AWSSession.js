@@ -182,31 +182,4 @@ export default class AWSSession {
 
   }
 
-  promiseGetWorkflow(idWorkflow) {
-    let self = this;
-
-    return new Promise(function(resolve, reject) {
-      var params = {
-        TableName: self.workflowTable,
-        Key:{
-            "id": idWorkflow
-        }
-      };
-
-      self.dynamodb.get(params, function(err, data) {
-        if (err) {
-          reject(err);
-        } else {
-          if (data && data.Item) {
-            resolve(data.Item);
-          } else {
-            resolve(null);
-          }
-        }
-      });
-    })
-
-  }
-
-
 }

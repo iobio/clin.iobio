@@ -1,0 +1,97 @@
+{
+  "workflow.clin.1.0": {
+      "description": "The variant report is used to search for causative variants in a proband, when sequencing data is present for the proband and both parents.  This report is comprised of the following steps:",
+      "id": "2",
+      "name": "variant-analysis",
+      "steps": [
+        {
+          "app": "review-case",
+          "description": "Review case.",
+          "key": "review-case",
+          "number": 1,
+          "summary": "Review case",
+          "tasks": [
+            {
+              "key": "review-patient",
+              "name": "Review patient"
+            }
+          ],
+          "title": "Review Case"
+        },
+        {
+          "app": "genepanel",
+          "description": "Generate candidate gene list based on patient's phenotype using commercially available tests and gene-to-phenotype associations.",
+          "key": "genes",
+          "number": 2,
+          "summary": "Generate candidate gene list based on patient's phenotype using commercially available tests and gene-to-phenotype associations.",
+          "tasks": [
+            {
+              "key": "gtr-genes",
+              "name": "Genes from GTR"
+            },
+            {
+              "key": "phenotype-genes",
+              "name": "Genes from Phenolyzer"
+            },
+            {
+              "key": "summary-genes",
+              "name": "Gene summary"
+            }
+          ],
+          "title": "Candidate genes"
+        },
+        {
+          "app": "gene",
+          "description": "The GENE.IOBIO app is used to interrogate proband variants in the identified gene list that could be candidates for causative variants.",
+          "key": "variants",
+          "number": 3,
+          "summary": "Look for known pathogenic for possible causative variants based on genes associated with proband's phenotypes. Review insufficient coverage in genes.",
+          "tasks": [
+            {
+              "key": "review",
+              "name": "Review variants",
+              "tooltip": "After the variants in the candidate genes are analyzed, the left side panel will show all variants that pass the preset filters.  Click on each variant in the list to examine the variant's annotations.  Upon reviewing the variant, designate the 'interpretation' from the dropdown and provide any additional notes."
+            },
+            {
+              "key": "coverage",
+              "name": "Review insufficient coverage",
+              "tooltip": "After genes are analyzed, the left side panel will show all genes with insufficient coverage.  Click on each gene to review the exons with insufficient coverage and indicate if further action should be taken."
+            }
+          ],
+          "title": "Variants in candidate genes"
+        },
+        {
+          "app": "genefull",
+          "description": "The GENE.IOBIO app is used to review variants from whole exome/genome variant analysis",
+          "key": "variants-full",
+          "number": 4,
+          "summary": "Review possible causative variants found in whole exome/genome of proband.",
+          "tasks": [
+            {
+              "key": "review-full",
+              "name": "Review variants",
+              "tooltip": "After the variants in all genes in the genome/exome are analyzed on the server, the left side panel will show all variants that pass the preset filters.  Click on each variant in the list to examine the variant's annotations.  Upon reviewing the variant, designate the 'interpretation' from the dropdown and provide any additional notes."
+            }
+          ],
+          "title": "All Variants"
+        },
+        {
+          "app": "review-findings",
+          "description": "Review findings",
+          "key": "review-findings",
+          "number": 5,
+          "summary": "Review findings",
+          "tasks": [
+            {
+              "key": "review-results",
+              "name": "Review results",
+              "tooltip": "tooltip"
+            }
+          ],
+          "title": "Review findings"
+        }
+      ],
+      "summary": "Review findings. ",
+      "title": "Review findings"
+  }
+}

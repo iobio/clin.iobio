@@ -181,6 +181,8 @@ import AppIcon       from  '../partials/AppIcon.vue'
 import AWSSession    from  '../../models/AWSSession.js'
 import MosaicSession from  '../../models/MosaicSession.js'
 
+import workflowData  from '../../../data/workflows.json'
+import variantData   from '../../../data/variants_mosaic_platinum.json'
 
 export default {
   name: 'home',
@@ -215,6 +217,9 @@ export default {
       awsSession:  null,
       mosaicSession: null,
       modelInfos: null,
+
+      workflows:        workflowData,
+      importedVariants: variantData,
 
 
       variantsByInterpretation: [
@@ -256,7 +261,7 @@ export default {
 
       currentStep: 1,
 
-      idWorkflow: "2",
+      idWorkflow: "workflow.clin.1.0",
       workflow: null,
       analysis: null,
       caseSummary: null
@@ -479,16 +484,21 @@ export default {
       let self = this;
       self.isAuthenticated = true;
 
-      self.promiseGetWorkflow(self.idWorkflow)
-      .then(function() {
+      self.workflow = self.workflows[self.idWorkflow];
 
-        self.showSplash = false;
+      if (self.workflow == null) {
+        alert("Unable to find workflow " + self.idWorkflow);
+        return;
+      }
 
-        self.promiseGetAnalysis(
-          self.paramProjectId,
-          self.paramAnalysisId,
-          self.workflow)
-      })
+      self.showSplash = false;
+
+      self.mosaicSession.getApplications();
+
+      self.promiseGetAnalysis(
+        self.paramProjectId,
+        self.paramAnalysisId,
+        self.workflow)
       .then(function() {
 
 
@@ -657,7 +667,6 @@ export default {
 
 
       if (messageObject.type == 'confirm-set-data') {
-        console.log("****** confirming set data " + messageObject.app + " *******");
         self.apps[messageObject.app].isLoaded = true;
       } else if (messageObject.type == "apply-genes" && messageObject.sender == 'genepanel.iobio.io') {
         var taskMap = {
@@ -673,9 +682,7 @@ export default {
         this.promiseCompleteStepTask('genes', taskMap[messageObject.source]);
         this.sendAppMessage('gene', messageObject);
       } else if (messageObject.type == "save-variants") {
-        if (messageObject.action == "update") {
-          this.promiseUpdateVariants(messageObject.variants)
-        } if (messageObject.action == "replace") {
+        if (messageObject.action == "replace" || messageObject.action == "update") {
           this.promiseUpdateVariants(messageObject.variants)
         } else if (messageObject.action == "delete") {
           this.promiseDeleteVariants(messageObject.variants)
@@ -710,20 +717,6 @@ export default {
 
     isValidAppOrigin: function(event) {
       return (this.apps.gene.url.indexOf(event.origin) >= 0 || this.apps.genepanel.url.indexOf(event.origin) >= 0);
-    },
-
-    promiseGetWorkflow: function(idWorkflow) {
-      let self = this;
-      return new Promise(function(resolve, reject) {
-        self.awsSession.promiseGetWorkflow(idWorkflow)
-        .then(function(theWorkflow) {
-          self.workflow = theWorkflow;
-          resolve();
-        })
-        .catch(function(error) {
-          reject(error);
-        })
-      })
     },
 
     setGeneTaskBadges: function() {
@@ -840,13 +833,15 @@ export default {
           newAnalysis.title = "clin.iobio analysis";
           newAnalysis.description = "a description goes here";
           newAnalysis.payload = {};
+          newAnalysis.payload.project_id = idProject;
+          newAnalysis.payload.sample_id = self.paramSampleId;
           newAnalysis.payload.datetime_created = self.getCurrentDateTime();
           newAnalysis.payload.workflow_id = workflow.id;
           newAnalysis.payload.genes = [];
           newAnalysis.payload.phenotypes = [];
           newAnalysis.payload.gtrFullList = [];
           newAnalysis.payload.phenolyzerFullList = [];
-          newAnalysis.payload.variants = [];
+          newAnalysis.payload.variants = self.importedVariants.variants;
           newAnalysis.payload.steps = workflow.steps.map(function(step) {
             let stepObject = {
               key: step.key,
@@ -912,9 +907,16 @@ export default {
     },
 
 
-    promiseUpdateVariants: function(variants) {
+    promiseUpdateVariants: function(variantsToReplace) {
       let self = this;
-      self.analysis.payload.variants = variants;
+      variantsToReplace.forEach(function(variant) {
+        let matchingIdx = self.findMatchingVariantIndex(variant);
+        if (matchingIdx != -1) {
+          self.analysis.payload.variants[matchingIdx] = variant;
+        } else {
+          self.analysis.payload.variants.push(variant);
+        }
+      })
       self.analysis.payload.datetime_last_modified = self.getCurrentDateTime();
       self.organizeVariantsByInterpretation();
       self.setVariantTaskBadges();
