@@ -2,15 +2,35 @@ html {
   -webkit-font-smoothing: auto;
 }
 
+.hide {
+  display: none !important;
+}
+
+.card {
+  border: none !important;
+}
+
+.full-width {
+  max-width: -moz-available !important;
+  max-width: -webkit-fill-available !important;
+}
+
+.container.fluid {
+  max-width: calc(100% - 10px);
+}
+
+
 .btn {
   text-transform: none;
 }
+
 
 .application.theme--light {
   background: #fafafa;
   color:  rgb(113,113,113);
   fill:  rgb(113,113,113);
 }
+
 
 .application.theme--light a {
   cursor: pointer;
@@ -28,26 +48,21 @@ html {
   fill:  rgb(113,113,113);
 }
 
+.input-group--text-field.input-group--prepend-icon .input-group__prepend-icon {
+  padding-right: 3px;
+  justify-content: flex-end;
+}
 
 .theme--light .list, .application .theme--light.list {
   color: rgb(113, 113, 113)
 }
-
-
-.theme--light .btn:not(.btn--icon):not(.btn--flat),
-.application .theme--light.btn:not(.btn--icon):not(.btn--flat) {
-  background-color: white;
-}
-
-
-
 .menu__content .list__tile__title a {
   color: rgb(113, 113, 113)
 }
 
-.input-group--text-field.input-group--prepend-icon .input-group__prepend-icon {
-  padding-right: 3px;
-  justify-content: flex-end;
+.theme--light .btn:not(.btn--icon):not(.btn--flat),
+.application .theme--light.btn:not(.btn--icon):not(.btn--flat) {
+  background-color: white;
 }
 
 .card {
@@ -127,7 +142,7 @@ html {
 }
 
 .menu__content--select.menuable__content__active {
-  z-index: 200 !important;
+  z-index: 204 !important;
 }
 
 .dropdown.open .dropdown-menu {
@@ -154,6 +169,38 @@ html {
   z-index: none;
 }
 
+
+.menu__content ul hr {
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
+
+.alertify .ajs-footer .ajs-buttons.ajs-auxiliary .ajs-button,
+.alertify .ajs-footer .ajs-buttons.ajs-primary .ajs-button {
+  margin: 8px;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.alertify .ajs-footer {
+  border-top: none;
+}
+
+.alertify .ajs-header {
+  border-bottom: none;
+  color: #7f7f7f;
+}
+.alertify .ajs-body {
+  color: #7f7f7f;
+}
+.alertify .ajs-footer .ajs-buttons .ajs-button {
+  text-transform: none;
+  color: #7f7f7f;
+}
+.dialog__content.dialog__content__active {
+  height: initial !important;
+}
 
 
 

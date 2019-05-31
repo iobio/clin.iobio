@@ -14,7 +14,7 @@ $badge-inactive-color:  #d8d3d3
   padding-bottom: 0px
   padding-right: 10px
   padding-left: 10px
-  text-align: left
+  text-align: center
 
 
   #ab-switch
@@ -105,19 +105,21 @@ $badge-inactive-color:  #d8d3d3
   .task
     display: inline-block
     text-align: center
+    margin-left: 0px
 
     .task-badge
       display: inline-block
       position: relative
-      font-size: 10px
+      font-size: 11px
       padding: 3px 7px
       right: -35px
       top: -5px
-      color: white
-      background-color:  $badge-inactive-color
+      color: $workflow-inactive-color
+      background-color: transparent
 
       &.active
-        background-color:  $text-color
+        background-color:  transparent
+        color: $text-color
 
       &.empty
         visibility:  hidden
@@ -143,7 +145,6 @@ $badge-inactive-color:  #d8d3d3
 
   .step-container
     display: inline-block
-    vertical-align: top
     text-align: left
 
     &.active
@@ -229,10 +230,14 @@ $badge-inactive-color:  #d8d3d3
       height: 2px
 
       &.short
-        width: 14px
+        width: 30px
 
       &.long
-        width: 46px
+        width: 30px
+
+      &.invisible
+        visibility: hidden
+
 
     .step-label
       margin-bottom: 10px
@@ -242,6 +247,10 @@ $badge-inactive-color:  #d8d3d3
       font-family: Raleway
       font-size: 13px
       text-align: center
+      margin-left: 40px
+
+      &.first
+        margin-left: 5px
 
 
     .step
@@ -274,7 +283,7 @@ $badge-inactive-color:  #d8d3d3
             color: white !important
 
       .task-label
-        width:       24px
+        width:       80px
         font-size:   11px
         line-height: 12px
         text-align:  center
@@ -282,7 +291,7 @@ $badge-inactive-color:  #d8d3d3
 
       .avatar-button
         height:      24px !important
-        min-width:   24px !important
+        min-width:   15px !important
         .avatar
           width:             14px !important
           height:            14px !important
@@ -322,10 +331,12 @@ $badge-inactive-color:  #d8d3d3
 
   .step-container
     display: inline-block
-    vertical-align: top
     text-align: left
+    padding-bottom: 3px
+    padding-top: 3px
 
     &.active
+      background-color: #f4f4f4
       .task
         &.active
           .avatar-button
@@ -351,11 +362,12 @@ $badge-inactive-color:  #d8d3d3
       <div  v-for="(step, stepIndex) in analysisSteps" :key="step.key"
       :class="{'step-container': true, 'active' : currentStep && step.key == currentStep.key  ? true : false, 'complete': step.complete}">
 
-        <div class="step-label">
+        <div :class="{'step-label': true, 'first': stepIndex == 0}" >
           {{ getStepTitle(step.key) }}
         </div>
         <div class="step-buttons">
           <div class="step">
+            <v-divider v-if="stepIndex != 0" :class="{'long': true}"></v-divider>
             <v-btn class="avatar-button" flat  @click="onStepClick(step)">
               <v-avatar >
                 <span class="headline">{{ getStepNumber(step.key) }} </span>
@@ -366,7 +378,6 @@ $badge-inactive-color:  #d8d3d3
 
           <div v-for="(task, taskIndex) in step.tasks" :key="task.key"
           :class="{'task': true, 'active' : currentTask && task.key == currentTask.key  ? true : false, 'complete': task.complete}">
-            <v-divider :class="{'short': taskIndex == 0}"></v-divider>
             <div style="display:inline-block">
               <div class="task-label">
                 <v-badge  right
@@ -375,17 +386,19 @@ $badge-inactive-color:  #d8d3d3
                   {{ getTaskName(step.key, task.key) }}
                 </div>
               </div>
+              <v-divider :class="{'short': true}"></v-divider>
               <v-btn class="avatar-button"  flat  @click="onTaskClick(step, task)">
                   <v-avatar >
                     <v-icon v-if="false && task.complete">check</v-icon>
                   </v-avatar>
               </v-btn>
+              <v-divider
+              :class="{'short': true, 'invisible': stepIndex == analysisSteps.length-1  && taskIndex == step.tasks.length-1}"></v-divider>
             </div>
           </div>
 
         </div>
 
-        <v-divider class="long" v-if="stepIndex < analysisSteps.length-1"></v-divider>
       </div>
 
       <div id="current-checkbox-container" v-if="currentTask" :style="{left: currentTaskLeft, position: 'relative'}">
@@ -408,9 +421,6 @@ $badge-inactive-color:  #d8d3d3
       </div>
     </div>
 
-    <div id="ab-switch">
-       <v-switch label="alternate" v-model="taskIsCheckbox"></v-switch>
-    </div>
 
   </v-card>
 </template>
@@ -437,7 +447,7 @@ export default {
       currentTaskLeft: '0px',
       disableNext: false,
       disablePrev: false,
-      taskIsCheckbox: false
+      taskIsCheckbox: true
     }
   },
   watch: {
@@ -501,8 +511,10 @@ export default {
           let stepIdx = self.currentStep.number - 1;
           let taskIdx =  self.currentStep.tasks.indexOf(self.currentTask);
 
-          let offset = taskIdx == 0 ? 8 : 28;
-          self.currentTaskLeft = $('.task.active')[0].offsetLeft + offset + 'px';
+          let offsetLeft = $('#workflow-steps')[0].offsetLeft;
+
+          let offset = taskIdx == 0 ? 32 : 32;
+          self.currentTaskLeft = $('.task.active')[0].offsetLeft - offsetLeft + offset + 'px';
 
           if (taskIdx == self.currentStep.tasks.length - 1 && stepIdx == self.analysisSteps.length - 1) {
             self.disableNext = true;
