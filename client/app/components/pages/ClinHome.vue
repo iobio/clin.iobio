@@ -79,7 +79,7 @@ $horizontal-dashboard-height: 140px
   <div id="clin-container" style="display:flex" :class="{authenticated: isAuthenticated}">
 
     <div id="splash-screen" v-if="showSplash">
-      <v-card :style="showSplashProgress ? 'text-align:center;margin-top:100px;width:400px;height:75px' : 'text-align:left;margin-top:100px;width:400px;height:125px'">
+      <v-card :style="showSplashProgress ? 'padding-top:20px;text-align:center;margin-top:100px;width:400px;height:75px' : 'text-align:left;margin-top:100px;width:400px;height:125px'">
         <v-progress-circular id="overall-progress"  v-if="showSplashProgress" :size="22"  :width="4" color="teal accent-4"
           :indeterminate="true">
         </v-progress-circular>
