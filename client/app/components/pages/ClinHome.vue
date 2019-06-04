@@ -493,7 +493,7 @@ export default {
 
       self.showSplash = false;
 
-      self.mosaicSession.getApplications();
+      //self.mosaicSession.getApplications();
 
       self.promiseGetAnalysis(
         self.paramProjectId,
