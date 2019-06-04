@@ -367,7 +367,7 @@ export default {
       var appTarget = null;
       if (window.document.URL.indexOf("localhost") > 0) {
         appTarget = "localhost";
-      } if (window.document.URL.indexOf("tony.iobio.io") > 0) {
+      } else if (window.document.URL.indexOf("tony.iobio.io") > 0) {
         appTarget = "tony.iobio.io";
       } else {
         appTarget = "dev";
