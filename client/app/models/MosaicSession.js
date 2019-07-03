@@ -106,6 +106,28 @@ export default class MosaicSession {
 
   }
 
+  getApplications() {
+    let self = this;
+    $.ajax({
+      url: self.api + '/client-applications',
+      type: 'GET',
+      contentType: 'application/json',
+      headers: {
+        Authorization: localStorage.getItem('hub-iobio-tkn'),
+      },
+    })
+    .done(response => {
+      console.log("applications");
+      console.log(response);
+    })
+    .fail(error => {
+      console.log("Error getting applications ");
+      console.log(error);
+    })
+  }
+
+
+
 
   promiseGetProject(project_id) {
     let self = this;
@@ -465,8 +487,7 @@ export default class MosaicSession {
   updateAnalysis(projectId, analysisId, newAnalysisData) {
     let self = this;
     return $.ajax({
-      url: self.api + '/projects/' + projectId + '/analyses/' + analysisId
-            + '?client_application_id=' + this.client_application_id,
+      url: self.api + '/projects/' + projectId + '/analyses/' + analysisId,
       type: 'PUT',
       data: JSON.stringify(newAnalysisData),
       contentType: 'application/json',
