@@ -38,49 +38,30 @@
               "name": "Gene summary"
             }
           ],
-          "title": "Candidate genes"
+          "title": "Rank Associated Genes"
         },
-        {
-          "app": "gene",
-          "description": "The GENE.IOBIO app is used to interrogate proband variants in the identified gene list that could be candidates for causative variants.",
-          "key": "variants",
-          "number": 3,
-          "summary": "Look for known pathogenic for possible causative variants based on genes associated with proband's phenotypes. Review insufficient coverage in genes.",
-          "tasks": [
-            {
-              "key": "review",
-              "name": "Review variants",
-              "tooltip": "After the variants in the candidate genes are analyzed, the left side panel will show all variants that pass the preset filters.  Click on each variant in the list to examine the variant's annotations.  Upon reviewing the variant, designate the 'interpretation' from the dropdown and provide any additional notes."
-            },
-            {
-              "key": "coverage",
-              "name": "Review insufficient coverage",
-              "tooltip": "After genes are analyzed, the left side panel will show all genes with insufficient coverage.  Click on each gene to review the exons with insufficient coverage and indicate if further action should be taken."
-            }
-          ],
-          "title": "Variants in candidate genes"
-        },
+
         {
           "app": "genefull",
           "description": "The GENE.IOBIO app is used to review variants from whole exome/genome variant analysis",
           "key": "variants-full",
-          "number": 4,
+          "number": 3,
           "summary": "Review possible causative variants found in whole exome/genome of proband.",
           "tasks": [
             {
               "key": "review-full",
-              "name": "Review variants",
+              "name": "Review Variants",
               "tooltip": "After the variants in all genes in the genome/exome are analyzed on the server, the left side panel will show all variants that pass the preset filters.  Click on each variant in the list to examine the variant's annotations.  Upon reviewing the variant, designate the 'interpretation' from the dropdown and provide any additional notes."
             }
           ],
-          "title": "All Variants"
+          "title": "Review Variants"
         },
         {
           "app": "review-findings",
           "description": "Review findings",
           "key": "review-findings",
-          "number": 5,
-          "summary": "Review findings",
+          "number": 4,
+          "summary": "Show Findings",
           "tasks": [
             {
               "key": "review-results",
@@ -88,7 +69,7 @@
               "tooltip": "tooltip"
             }
           ],
-          "title": "Review findings"
+          "title": "Show Findings"
         }
       ],
       "summary": "Review findings. ",

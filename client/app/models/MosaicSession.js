@@ -4,9 +4,7 @@ export default class MosaicSession {
     this.samples = null;
     this.url = null;
     this.apiVersion =  '/apiv1';
-    this.pedigreeSamples = null;
-    this.client_application_id = '5';
-
+    this.client_application_id = null;
   }
 
   promiseInit(sampleId, source, isPedigree, projectId ) {
@@ -16,117 +14,135 @@ export default class MosaicSession {
     return new Promise((resolve, reject) => {
       let modelInfos = [];
 
-
-      self.promiseGetSampleInfo(projectId, sampleId, isPedigree).then( pedigree => {
-
-        let promises = [];
-
-        // Let's get the proband info first
-        let probandSample = pedigree.proband;
-        self.promiseGetFileMapForSample(projectId, probandSample, 'proband').then(data => {
-          probandSample.files = data.fileMap;
-        })
-        .then( () => {
-          for (var rel in pedigree) {
-            if (rel != 'unparsed') {
-              let samples = [];
-              if (Array.isArray(pedigree[rel])) {
-                samples = pedigree[rel];
-              } else {
-                samples = [pedigree[rel]];
-              }
-              samples.forEach(s => {
-                let p =  self.promiseGetFileMapForSample(projectId, s, rel).then(data => {
-                  let theSample = data.sample;
-                  theSample.files = data.fileMap;
+      self.promiseGetClientApplication()
+      .then(function() {
+        self.promiseGetSampleInfo(projectId, sampleId, isPedigree).then(data => {
 
 
-                  // gene.iobio only supports siblings in same multi-sample vcf as proband.
-                  // bypass siblings in their own vcf.
-                  let bypass = false;
-                  //if (data.relationship == 'siblings' && theSample.files.vcf != probandSample.files.vcf) {
-                  //  bypass = true;
-                  // console.log("Bypassing sibling " + theSample.id + ".  This sample must reside in the same vcf as the proband in order to be processed.")
-                  //}
+          let promises = [];
 
-                  if (!bypass) {
+          let pedigree    = data.pedigree;
+          let rawPedigree = data.rawPedigree;
 
-                    var modelInfo = {
-                      'relationship':   data.relationship == 'siblings' ? 'sibling' : data.relationship,
-                      'affectedStatus': theSample.pedigree.affection_status == 2 ? 'affected' : 'unaffected',
-                      'name':           theSample.name,
-                      'sample':         theSample.files.vcf ? theSample.vcf_sample_name : theSample.name,
-                      'vcf':            theSample.files.vcf,
-                      'tbi':            theSample.files.tbi == null || theSample.files.tbi.indexOf(theSample.files.vcf) == 0 ? null : theSample.files.tbi};
-                    modelInfos.push(modelInfo);
+          // Let's get the proband info first
+          let probandSample = pedigree.proband;
+          self.promiseGetFileMapForSample(projectId, probandSample, 'proband').then(data => {
+            probandSample.files = data.fileMap;
+          })
+          .then( () => {
+            for (var rel in pedigree) {
+              if (rel != 'unparsed') {
+                let samples = [];
+                if (Array.isArray(pedigree[rel])) {
+                  samples = pedigree[rel];
+                } else {
+                  samples = [pedigree[rel]];
+                }
+                samples.forEach(s => {
+                  let p =  self.promiseGetFileMapForSample(projectId, s, rel).then(data => {
+                    let theSample = data.sample;
+                    theSample.files = data.fileMap;
 
 
-                    if (theSample.files.bam != null) {
-                      modelInfo.bam = theSample.files.bam;
-                      if (theSample.files.bai) {
-                        modelInfo.bai = theSample.files.bai;
+
+                    // gene.iobio only supports siblings in same multi-sample vcf as proband.
+                    // bypass siblings in their own vcf.
+                    let bypass = false;
+                    // TODO:  Need to check if samples exist in proband vcf rather than checking file names
+                    // since mosaic generates different vcf url for sample physical file.
+                    //if (data.relationship == 'siblings' && theSample.files.vcf != probandSample.files.vcf) {
+                    //  bypass = true;
+                    //  console.log("Bypassing sibling " + theSample.id + ".  This sample must reside in the same vcf as the proband in order to be processed.")
+                    //}
+
+                    if (!bypass) {
+
+                      var modelInfo = {
+                        'relationship':   data.relationship == 'siblings' ? 'sibling' : data.relationship,
+                        'affectedStatus': theSample.pedigree.affection_status == 2 ? 'affected' : 'unaffected',
+                        'name':           theSample.name,
+                        'sample':         theSample.files.vcf ? theSample.vcf_sample_name : theSample.name,
+                        'vcf':            theSample.files.vcf,
+                        'tbi':            theSample.files.tbi == null || theSample.files.tbi.indexOf(theSample.files.vcf) == 0 ? null : theSample.files.tbi,
+                        'txt':            theSample.files.txt
                       }
 
-                    } else if (theSample.files.cram != null) {
-                      modelInfo.bam = theSample.files.cram;
-                      if (theSample.files.crai) {
-                        modelInfo.bai = theSample.files.crai;
+                      if (theSample.files.bam != null) {
+                        modelInfo.bam = theSample.files.bam;
+                        if (theSample.files.bai) {
+                          modelInfo.bai = theSample.files.bai;
+                        }
+
+                      } else if (theSample.files.cram != null) {
+                        modelInfo.bam = theSample.files.cram;
+                        if (theSample.files.crai) {
+                          modelInfo.bai = theSample.files.crai;
+                        }
                       }
+
+                      modelInfos.push(modelInfo);
                     }
 
-                  }
-
+                  })
+                  promises.push(p);
                 })
-                promises.push(p);
-              })
+              }
+
+
             }
+            Promise.all(promises).then(response => {
+              // Don't want to expose db info here?
+              //console.log(pedigree);
+
+              resolve({'modelInfos': modelInfos, 'rawPedigree': rawPedigree});
+            })
+            .catch(error => {
+              reject(error);
+            })
+          })
 
 
-          }
-          Promise.all(promises).then(response => {
-            console.log(pedigree);
-            resolve(modelInfos);
-          })
-          .catch(error => {
-            reject(error);
-          })
+
+
         })
+      })
 
+    })
 
+  }
 
+  promiseGetClientApplication() {
+    let self = this;
+    return new Promise(function(resolve, reject) {
+      $.ajax({
+        url: self.api + '/client-applications',
+        type: 'GET',
+        contentType: 'application/json',
+        headers: {
+          Authorization: localStorage.getItem('hub-iobio-tkn'),
+        },
+      })
+      .done(clientApps => {
+        console.log(clientApps)
+        let matchingApp = clientApps.filter(function(clientApp) {
+          return clientApp.uid == 'clin';
+        })
+        if (matchingApp.length > 0) {
+          self.client_application_id = matchingApp[0].id;
+          resolve();
+        } else {
+          reject("Cannot find Mosaic client_application for clin")
+        }
 
       })
-      .catch(function(error) {
+      .fail(error => {
+        console.log("Error getting applications ");
+        console.log(error);
         reject(error);
       })
-    })
 
-
-
-
-  }
-
-  getApplications() {
-    let self = this;
-    $.ajax({
-      url: self.api + '/client-applications',
-      type: 'GET',
-      contentType: 'application/json',
-      headers: {
-        Authorization: localStorage.getItem('hub-iobio-tkn'),
-      },
-    })
-    .done(response => {
-      console.log("applications");
-      console.log(response);
-    })
-    .fail(error => {
-      console.log("Error getting applications ");
-      console.log(error);
     })
   }
-
-
 
 
   promiseGetProject(project_id) {
@@ -178,29 +194,13 @@ export default class MosaicSession {
     return new Promise(function(resolve, reject) {
       // Get pedigree for sample
       self.getPedigreeForSample(project_id, sample_id)
-      .done(data => {
-        let pedigree = self.parsePedigree(data, sample_id)
-          if (pedigree) {
-          self.pedigreeSamples = [];
-
-          // Temporary workaround until we can use latest PedigreeChart
-          for (var rel in pedigree) {
-            if (Array.isArray(pedigree[rel])) {
-              pedigree[rel].forEach(function(sample) {
-                sample.uuid = sample.id;
-                sample.relationship = rel;
-                self.pedigreeSamples.push(sample);
-              })
-            } else {
-              let sample = (pedigree[rel]);
-              sample.uuid = sample.id;
-              sample.relationship = rel;
-              self.pedigreeSamples.push(sample);
-            }
-          }
-          resolve(pedigree);
+      .done(rawPedigree => {
+        const rawPedigreeOrig = $.extend({}, rawPedigree);
+        let pedigree = self.parsePedigree(rawPedigree, sample_id)
+        if (pedigree) {
+          resolve({pedigree: pedigree, rawPedigree: rawPedigreeOrig});
         } else {
-          reject("To run clin.iobio, please select the appropriate proband sample.")
+          reject("Error parsing pedigree");
         }
       })
       .fail(error => {
@@ -224,12 +224,12 @@ export default class MosaicSession {
     // If the sample selected doesn't have a mother and father (isn't a proband), find
     // the proband by looking for a child with mother and father filled in and affected status
     if (probandIndex == -1) {
-      probandIndex = raw_pedigree.findIndex(d => ( d.affection_status == 2 && d.pedigree.maternal_id && d.pedigree.paternal_id ) );
+      probandIndex = raw_pedigree.findIndex(d => ( d.pedigree.affection_status == 2 && d.pedigree.maternal_id && d.pedigree.paternal_id ) );
     }
     // If the sample selected doesn't have a mother and father (isn't a proband), find
     // the proband by looking for a child with mother and father filled in and unknown affected status
     if (probandIndex == -1) {
-      probandIndex = raw_pedigree.findIndex(d => ( d.affection_status == 0 && d.pedigree.maternal_id && d.pedigree.paternal_id ) );
+      probandIndex = raw_pedigree.findIndex(d => ( d.pedigree.affection_status == 0 && d.pedigree.maternal_id && d.pedigree.paternal_id ) );
     }
 
 
@@ -249,27 +249,26 @@ export default class MosaicSession {
       if (fatherIndex != -1) {
         pedigree['father'] = raw_pedigree.splice(fatherIndex, 1)[0]
       }
-
-
-      raw_pedigree.forEach(sample => {
-        if (sample.pedigree.maternal_id != null || sample.pedigree.paternal_id != null
-            && sample.pedigree.id != pedigree.proband.id) {
-          pedigree['siblings'] = (pedigree['siblings'] || [] )
-          pedigree['siblings'].push(sample);
-        } else {
-          pedigree['unparsed'] = (pedigree['siblings'] || []).push(sample)
-        }
-      })
-      return pedigree;
-
     } else {
       console.log("Cannot find proband for pedigree of sample " + sample_id);
       console.log("raw pedigree");
       console.log(raw_pedigree);
+      alertify.alert("Error", "Could not load the trio.  Unable to identify a proband (offspring) from this pedigree.")
       return null;
     }
 
+    raw_pedigree.forEach(sample => {
+      if (sample.pedigree.maternal_id != null || sample.pedigree.paternal_id != null
+          && sample.pedigree.id != pedigree.proband.id) {
+        pedigree['siblings'] = (pedigree['siblings'] || [] )
+        pedigree['siblings'].push(sample);
+      } else {
+        pedigree['unparsed'] = (pedigree['siblings'] || []).push(sample)
+      }
+    })
 
+
+    return pedigree;
   }
 
   getPedigreeForSample(project_id, sample_id) {
@@ -309,9 +308,19 @@ export default class MosaicSession {
         files.forEach(file => {
           var p = self.promiseGetSignedUrlForFile(project_id, currentSample.id, file)
           .then(signed => {
-            fileMap[file.type] = signed.url;
-            if (file.type == 'vcf') {
-              sample.vcf_sample_name = file.vcf_sample_name;
+            if (file.type == 'txt') {
+              var files = fileMap[file.type];
+              if (files == null) {
+                files = [];
+                fileMap[file.type] = files;
+              }
+              files.push({'url': signed.url, 'name': file.nickname});
+
+            } else {
+              fileMap[file.type] = signed.url
+              if (file.type == 'vcf') {
+                sample.vcf_sample_name = file.vcf_sample_name;
+              }
             }
           })
           promises.push(p);
@@ -356,6 +365,33 @@ export default class MosaicSession {
     });
   }
 
+  promiseGetFilesForProject(project_id) {
+      let self = this;
+      return new Promise((resolve,reject) => {
+          self.getFilesForProject(project_id)
+              .done(response => {
+                  resolve(response);
+              })
+              .fail(error => {
+                  console.log("Unable to get files for project " + project_id);
+                  reject(error);
+              })
+      })
+  }
+
+
+  getFilesForProject(project_id) {
+      let self = this;
+      return $.ajax({
+          url: self.api +  '/projects/' + project_id + '/files',
+          type: 'GET',
+          contentType: 'application/json',
+          headers: {
+              'Authorization': localStorage.getItem('hub-iobio-tkn')
+          }
+      });
+  }
+
   promiseGetSignedUrlForFile(project_id, sample_id, file) {
     let self = this;
     return new Promise((resolve, reject) => {
@@ -393,27 +429,6 @@ export default class MosaicSession {
     });
   }
 
-  getApplications() {
-    let self = this;
-    $.ajax({
-      url: self.api + '/client-applications',
-      type: 'GET',
-      contentType: 'application/json',
-      headers: {
-        Authorization: localStorage.getItem('hub-iobio-tkn'),
-      },
-    })
-    .done(response => {
-      console.log("applications");
-      console.log(response);
-    })
-    .fail(error => {
-      console.log("Error getting applications ");
-      console.log(error);
-    })
-  }
-
-
   promiseGetAnalysis(projectId, analysisId) {
     let self = this;
     return new Promise(function(resolve, reject) {
@@ -449,7 +464,21 @@ export default class MosaicSession {
         resolve(response)
       })
       .fail(error => {
-        reject("Error updating analysis " + analysisId + " for project " + projectId + ": " + error);
+        reject("Error updating analysis " + analysis.id  + ": " + error);
+      })
+    })
+
+  }
+
+  promiseUpdateAnalysisTitle(analysis) {
+    let self = this;
+    return new Promise(function(resolve, reject) {
+      self.updateAnalysisTitle(analysis.project_id, analysis.id, analysis)
+      .done(response => {
+        resolve(response)
+      })
+      .fail(error => {
+        reject("Error updating analysis title " + analysis.id + ": " + error);
       })
     })
 
@@ -483,11 +512,25 @@ export default class MosaicSession {
     });
   }
 
+  updateAnalysisTitle(projectId, analysisId, newAnalysisData) {
+    let self = this;
+    return $.ajax({
+      url: self.api + '/projects/' + projectId + '/analyses/' + analysisId,
+      type: 'PUT',
+      data: JSON.stringify(newAnalysisData),
+      contentType: 'application/json',
+      headers: {
+        Authorization: localStorage.getItem('hub-iobio-tkn'),
+      },
+    });
+  }
+
 
   updateAnalysis(projectId, analysisId, newAnalysisData) {
     let self = this;
     return $.ajax({
-      url: self.api + '/projects/' + projectId + '/analyses/' + analysisId,
+      url: self.api + '/projects/' + projectId + '/analyses/' + analysisId
+            + '?client_application_id=' + this.client_application_id,
       type: 'PUT',
       data: JSON.stringify(newAnalysisData),
       contentType: 'application/json',

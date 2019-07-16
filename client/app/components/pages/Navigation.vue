@@ -61,8 +61,14 @@ nav.toolbar
       height: 30px
       margin-left: 20px
       margin-bottom: 4px
+
       .btn__content
-        color: $nav-color
+        color: $workflow-active-color
+
+        i.material-icons
+          color: $workflow-active-color !important
+          font-size: 17px !important
+          padding-right: 2px
 
 
     i.material-icons
@@ -116,7 +122,7 @@ nav.toolbar
       <v-spacer></v-spacer>
 
       <v-menu
-      offset-y
+      offset-y v-if="false"
       :close-on-content-click="false"
       :nudge-width="350"
       v-model="showPhenotypesMenu"
@@ -143,7 +149,7 @@ nav.toolbar
         </v-card>
       </v-menu>
 
-      <v-menu
+      <v-menu v-if="false"
       offset-y
       :close-on-content-click="false"
       :nudge-width="350"
@@ -172,7 +178,7 @@ nav.toolbar
       </v-menu>
 
       <v-menu
-      offset-y
+      offset-y v-if="false"
       :close-on-content-click="false"
       :nudge-width="350"
       v-model="showInstructionsMenu"
@@ -186,6 +192,7 @@ nav.toolbar
       </v-menu>
 
       <v-btn id="report-button">
+        <v-icon>assignment</v-icon>
         Report
       </v-btn>
 

@@ -43,7 +43,7 @@ $badge-inactive-color:  #d8d3d3
     margin-right: 0px
 
     .current-step-label
-      font-size: 13px
+      font-size: 15px
       text-transform: uppercase
       color:  $workflow-active-color
       font-weight: 600
@@ -240,14 +240,14 @@ $badge-inactive-color:  #d8d3d3
 
 
     .step-label
-      margin-bottom: 10px
+      margin-bottom: 0px
       color:  $text-color
       text-transform: uppercase
       font-weight: 600
       font-family: Raleway
-      font-size: 13px
+      font-size: 15px
       text-align: center
-      margin-left: 40px
+
 
       &.first
         margin-left: 5px
@@ -320,7 +320,7 @@ $badge-inactive-color:  #d8d3d3
 
 
   .button-panel
-    margin-top: 0px
+    margin-top: -25px
 
   #current-checkbox-container
     margin-top: -38px
@@ -336,7 +336,8 @@ $badge-inactive-color:  #d8d3d3
     padding-top: 3px
 
     &.active
-      background-color: #f4f4f4
+      background-color: #f6f6f6
+      border: solid thin #dbd4d4
       .task
         &.active
           .avatar-button

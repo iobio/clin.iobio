@@ -165,6 +165,17 @@ $horizontal-dashboard-height: 140px
 
 
   </div>
+  <save-button
+  v-if="launchedFromMosaic"
+    :showing-save-modal="showSaveModal"
+    @save-modal:set-visibility="toggleSaveModal"
+  />
+  <save-analysis-popup
+    :showIt="showSaveModal"
+    :analysis="analysis"
+    @on-save-analysis="promiseSaveAnalysis"
+    @on-cancel-analysis="onCancelAnalysis">
+  </save-analysis-popup>
 </div>
 </template>
 
@@ -181,6 +192,10 @@ import AppIcon       from  '../partials/AppIcon.vue'
 import AWSSession    from  '../../models/AWSSession.js'
 import MosaicSession from  '../../models/MosaicSession.js'
 
+
+import SaveButton  from '../partials/SaveButton.vue'
+import SaveAnalysisPopup  from '../partials/SaveAnalysisPopup.vue'
+
 import workflowData  from '../../../data/workflows.json'
 import variantData   from '../../../data/variants_mosaic_platinum.json'
 
@@ -192,7 +207,9 @@ export default {
     LoginMosaic,
     ReviewCase,
     Findings,
-    AppIcon
+    AppIcon,
+    SaveButton,
+    SaveAnalysisPopup
   },
   props: {
     paramDebug:          null,
@@ -217,6 +234,8 @@ export default {
       awsSession:  null,
       mosaicSession: null,
       modelInfos: null,
+      launchedFromMosaic: false,
+      showSaveModal: false,
 
       workflows:        workflowData,
       importedVariants: variantData,
@@ -229,7 +248,14 @@ export default {
 
       showFindings: false,
 
-      iobioSource: self.paramIobioSource ? self.paramIobioSource : 'mosaic.chpc.utah.edu',
+      iobioSource: 'nv-prod.iobio.io',
+
+      iobioSourceMap: {
+        'https://staging.frameshift.io': 'nv-prod.iobio.io',
+        'https://mosaic.chpc.utah.edu':  'mosaic.chpc.utah.edu',
+        'https://mosaic-dev.genetics.utah.edu': 'mosaic.chpc.utah.edu',
+        'https://mosaic-stage.chpc.utah.edu': 'mosaic.chpc.utah.edu'
+      },
 
       appUrls: {
         'localhost': {
@@ -255,8 +281,8 @@ export default {
       apps: {
         //'bam':       {url: null, isLoaded: false, step: 0, iframeSelector: '#bam-iframe iframe'},
         'genepanel': {url: null, isLoaded: false, step: 2, iframeSelector: '#gene-panel-iframe iframe'},
-        'gene':      {url: null, isLoaded: false, step: 3, iframeSelector: '#gene-iframe iframe'},
-        'genefull':  {url: null, isLoaded: true, step:  4, iframeSelector: '#gene-iframe iframe'}
+        'gene':      {url: null, isLoaded: false, step: 5, iframeSelector: '#gene-iframe iframe'},
+        'genefull':  {url: null, isLoaded: true,  step: 3, iframeSelector: '#gene-iframe iframe'}
       },
 
       currentStep: 1,
@@ -380,11 +406,16 @@ export default {
       if (localStorage.getItem('hub-iobio-tkn') && localStorage.getItem('hub-iobio-tkn').length > 0
           && self.paramSampleId && self.paramSource) {
 
+        if (self.iobioSourceMap[self.paramSource]) {
+          self.iobioSource = self.iobioSourceMap[self.paramSource];
+        }
+
+        self.launchedFromMosaic = true;
         self.mosaicSession = new MosaicSession();
         // For now, just hardcode is_pedgree = true
         self.mosaicSession.promiseInit(self.paramSampleId, self.paramSource, true, self.paramProjectId)
-        .then(modelInfos => {
-          self.modelInfos = modelInfos;
+        .then(data => {
+          self.modelInfos = data.modelInfos;
 
           self.mosaicSession.promiseGetProject(self.paramProjectId)
           .then(function(project) {
@@ -803,6 +834,66 @@ export default {
       }
     },
 
+    toggleSaveModal(bool) {
+      this.showSaveModal = bool;
+    },
+
+    promiseSaveAnalysis: function(options) {
+      let self = this;
+
+      return new Promise(function(resolve, reject) {
+        if (self.analysis.id ) {
+
+          self.mosaicSession.promiseUpdateAnalysisTitle(self.analysis)
+          .then(function(analysis) {
+            self.showSaveModal = false;
+            return self.mosaicSession.promiseUpdateAnalysis(self.analysis)
+          })
+          .then(function(analysis) {
+            //self.onShowSnackbar( {message: 'Analysis  \'' + self.analysis.title + '\'  saved.', timeout: 3000});
+            self.analysis = analysis;
+            resolve();
+          })
+          .catch(function(error) {
+            //self.onShowSnackbar( {message: 'Unable to update analysis.', timeout: 6000});
+            reject(error);
+          })
+
+        } else {
+
+          self.mosaicSession.promiseAddAnalysis(self.analysis.project_id, self.analysis)
+          .then(function(analysis) {
+            console.log("**********  adding mosaic analysis " + self.analysis.id + " " + " **************")
+            //self.onShowSnackbar( {message: 'New analysis  \'' + self.analysis.title + '\'  saved.', timeout: 3000});
+            self.analysis = analysis;
+            resolve();
+          })
+          .catch(function(error) {
+            //self.onShowSnackbar( {message: 'Unable to add analysis.', timeout: 6000});
+            reject(error);
+          })
+        }
+
+      })
+
+
+    },
+
+    onCancelAnalysis: function() {
+      let self = this;
+      self.showSaveModal = false
+    },
+
+    promiseAutosaveAnalysis() {
+      let self = this;
+      if (self.analysis.id ) {
+        return self.promiseSaveAnalysis({notify: false});
+      } else {
+
+      }
+
+    },
+
 
     promiseGetAnalysis: function(idProject, idAnalysis, workflow, options={}) {
       let self = this;
@@ -832,6 +923,8 @@ export default {
           var newAnalysis = {};
           newAnalysis.title = "clin.iobio analysis";
           newAnalysis.description = "a description goes here";
+          newAnalysis.project_id = idProject;
+          newAnalysis.sample_id = self.paramSampleId;
           newAnalysis.payload = {};
           newAnalysis.payload.project_id = idProject;
           newAnalysis.payload.sample_id = self.paramSampleId;
@@ -859,19 +952,8 @@ export default {
             }
             return stepObject;
           })
-
-          self.mosaicSession.promiseAddAnalysis(idProject, newAnalysis)
-          .then(function(analysis) {
-            console.log("**********  adding mosaic analysis " + analysis.id + " **************")
-
-            self.analysis = analysis;
-            self.setGeneTaskBadges();
-            resolve();
-
-          })
-          .catch(function(err) {
-            reject(err);
-          })
+          self.analysis = newAnalysis;
+          resolve();
 
         }
 
@@ -894,8 +976,7 @@ export default {
 
 
       self.analysis.payload.datetime_last_modified = self.getCurrentDateTime();
-      self.analysis.title = self.analysis.title + self.getCurrentDateTime();
-      return self.mosaicSession.promiseUpdateAnalysis(self.analysis);
+      return self.promiseAutosaveAnalysis();
     },
 
 
@@ -903,7 +984,7 @@ export default {
       let self = this;
       self.analysis.payload.phenotypes = phenotypes;
       self.analysis.payload.datetime_last_modified = self.getCurrentDateTime();
-      return self.mosaicSession.promiseUpdateAnalysis(self.analysis);
+      return self.promiseAutosaveAnalysis();
     },
 
 
@@ -920,7 +1001,7 @@ export default {
       self.analysis.payload.datetime_last_modified = self.getCurrentDateTime();
       self.organizeVariantsByInterpretation();
       self.setVariantTaskBadges();
-      return self.mosaicSession.promiseUpdateAnalysis(self.analysis);
+      return self.promiseAutosaveAnalysis();
     },
 
     promiseDeleteVariants(variantsToRemove) {
@@ -941,20 +1022,20 @@ export default {
       self.analysis.payload.datetime_last_modified = self.getCurrentDateTime();
       self.organizeVariantsByInterpretation();
       self.setVariantTaskBadges();
-      return self.mosaicSession.promiseUpdateAnalysis(self.analysis);
+      return self.promiseAutosaveAnalysis();
     },
 
     promiseUpdateWorkflow: function() {
       let self = this;
       self.analysis.payload.datetime_last_modified = self.getCurrentDateTime();
-      return self.mosaicSession.promiseUpdateAnalysis(self.analysis);
+      return self.promiseAutosaveAnalysis();
     },
 
     promiseUpdateFilters: function(filters) {
       let self = this;
       self.analysis.payload.filters = filters;
       self.analysis.payload.datetime_last_modified = self.getCurrentDateTime();
-      return self.mosaicSession.promiseUpdateAnalysis(self.analysis);
+      return self.promiseAutosaveAnalysis();
     },
 
 
