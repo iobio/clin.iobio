@@ -7,13 +7,13 @@ mkdir deploy/app
 mkdir deploy/dist
 
 # build vue app
-if [[ $1 == "prod" ]]; then
-  echo "** Building prod **"
-  NODE_ENV=production npm run build
-else
-  echo "** Building dev **"
-  npm run build
-fi
+#if [[ $1 == "prod" ]]; then
+#  echo "** Building prod **"
+#  NODE_ENV=production npm run build
+#else
+#  echo "** Building dev **"
+#  npm run build
+#fi
 
 # link to files needed for static page
 ln -s ~/work/clin.iobio.vue/server/views/index.html ~/work/clin.iobio.vue/deploy/index.html

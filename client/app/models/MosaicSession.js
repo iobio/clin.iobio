@@ -5,6 +5,7 @@ export default class MosaicSession {
     this.url = null;
     this.apiVersion =  '/apiv1';
     this.client_application_id = null;
+    this.user = null;
   }
 
   promiseInit(sampleId, source, isPedigree, projectId ) {
@@ -16,6 +17,11 @@ export default class MosaicSession {
 
       self.promiseGetClientApplication()
       .then(function() {
+        return self.promiseGetUser();
+
+      })
+      .then(function(user) {
+        self.user = user;
         self.promiseGetSampleInfo(projectId, sampleId, isPedigree).then(data => {
 
 
@@ -94,7 +100,7 @@ export default class MosaicSession {
               // Don't want to expose db info here?
               //console.log(pedigree);
 
-              resolve({'modelInfos': modelInfos, 'rawPedigree': rawPedigree});
+              resolve({'modelInfos': modelInfos, 'rawPedigree': rawPedigree, 'user': self.user});
             })
             .catch(error => {
               reject(error);
@@ -141,6 +147,19 @@ export default class MosaicSession {
         reject(error);
       })
 
+    })
+  }
+
+  promiseGetUser() {
+    let self = this;
+    return new Promise(function(resolve, reject) {
+      self.getUser()
+      .done(data => {
+          resolve(data);
+      })
+      .fail(error => {
+        reject("Error getting user: " + error);
+      });
     })
   }
 
@@ -414,6 +433,18 @@ export default class MosaicSession {
       headers: {
         'Authorization': localStorage.getItem('hub-iobio-tkn')
       }
+    });
+  }
+
+  getUser() {
+    let self = this;
+    return $.ajax({
+        url: self.api + '/user',
+        type: 'GET',
+        contentType: 'application/json',
+        headers: {
+            'Authorization': localStorage.getItem('hub-iobio-tkn')
+        }
     });
   }
 

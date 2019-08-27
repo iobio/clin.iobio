@@ -151,9 +151,9 @@ $horizontal-dashboard-height: 140px
         </iframe>
       </div>
 
-      <div id="gene-iframe" v-show="!isAuthenticated || ((currentStep == 3 || currentStep == 4) && !showFindings)">
+      <div id="gene-iframe" v-show="!isAuthenticated || ((currentStep == 3) && !showFindings)">
         <iframe
-        :src="apps.gene.url"
+        :src="apps.genefull.url"
         style="width:100%;height:100%" frameBorder="0">
         </iframe>
       </div>
@@ -235,6 +235,7 @@ export default {
       mosaicSession: null,
       modelInfos: null,
       launchedFromMosaic: false,
+      user: null,
       showSaveModal: false,
 
       workflows:        workflowData,
@@ -281,7 +282,7 @@ export default {
       apps: {
         //'bam':       {url: null, isLoaded: false, step: 0, iframeSelector: '#bam-iframe iframe'},
         'genepanel': {url: null, isLoaded: false, step: 2, iframeSelector: '#gene-panel-iframe iframe'},
-        'gene':      {url: null, isLoaded: false, step: 5, iframeSelector: '#gene-iframe iframe'},
+        'gene':      {url: null, isLoaded: false, step: -1, iframeSelector: '#gene-iframe iframe'},
         'genefull':  {url: null, isLoaded: true,  step: 3, iframeSelector: '#gene-iframe iframe'}
       },
 
@@ -350,7 +351,7 @@ export default {
 
         // If we are going to gene.iobio (candidate genes), request
         // the genes from gene panel
-        let appGene = self.apps.gene;
+        let appGene = self.apps.genefull;
         if (appGene.step == self.currentStep && appGene.isLoaded) {
           var msgObject = {
             type:                  'request-genes',
@@ -399,8 +400,8 @@ export default {
         appTarget = "dev";
       }
       //self.apps.bam.url       = self.appUrls[appTarget].bam;
-      self.apps.genepanel.url = self.appUrls[appTarget].genepanel;
-      self.apps.gene.url      = self.appUrls[appTarget].gene;
+      self.apps.genepanel.url     = self.appUrls[appTarget].genepanel;
+      self.apps.genefull.url      = self.appUrls[appTarget].genefull;
 
 
       if (localStorage.getItem('hub-iobio-tkn') && localStorage.getItem('hub-iobio-tkn').length > 0
@@ -416,6 +417,8 @@ export default {
         self.mosaicSession.promiseInit(self.paramSampleId, self.paramSource, true, self.paramProjectId)
         .then(data => {
           self.modelInfos = data.modelInfos;
+          self.user       = data.user;
+
 
           self.mosaicSession.promiseGetProject(self.paramProjectId)
           .then(function(project) {
@@ -631,10 +634,12 @@ export default {
               type:                  'set-data',
               sender:                'clin.iobio',
               receiver:               appName,
+              'user':                 self.user,
               'iobioSource':          self.iobioSource,
               'isFrameVisible':       app.step == self.currentStep,
               'modelInfo':            probandModelInfo[0],
               'modelInfos':           self.modelInfos,
+              'analysis':             self.analysis,
               'phenotypes':           self.analysis.payload.phenotypes,
               'genes':                self.analysis.payload.genes,
               'genesReport':          self.analysis.payload.genesReport,
@@ -711,7 +716,7 @@ export default {
           this.clearVariantTaskBadges();
         }
         this.promiseCompleteStepTask('genes', taskMap[messageObject.source]);
-        this.sendAppMessage('gene', messageObject);
+        this.sendAppMessage('genefull', messageObject);
       } else if (messageObject.type == "save-variants") {
         if (messageObject.action == "replace" || messageObject.action == "update") {
           this.promiseUpdateVariants(messageObject.variants)
@@ -747,7 +752,7 @@ export default {
     },
 
     isValidAppOrigin: function(event) {
-      return (this.apps.gene.url.indexOf(event.origin) >= 0 || this.apps.genepanel.url.indexOf(event.origin) >= 0);
+      return (this.apps.genefull.url.indexOf(event.origin) >= 0 || this.apps.genepanel.url.indexOf(event.origin) >= 0);
     },
 
     setGeneTaskBadges: function() {
