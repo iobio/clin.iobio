@@ -67,7 +67,8 @@ $horizontal-dashboard-height: 140px
    :analysis="analysis">
   </navigation>
 
-  <workflow v-if="!showSplash && isAuthenticated && workflow && analysis"
+  <workflow v-if="iframesMounted && !showSplash && isAuthenticated && workflow && analysis"
+   ref="workflowRef"
    :caseSummary="caseSummary"
    :analysisSteps="analysis.payload.steps"
    :workflow="workflow"
@@ -230,6 +231,8 @@ export default {
       splashMessage: "Initializing clin.iobio",
       showSplashProgress: true,
 
+      iframesMounted: false,
+
       isAuthenticated: false,
       awsSession:  null,
       mosaicSession: null,
@@ -260,30 +263,30 @@ export default {
 
       appUrls: {
         'localhost': {
-            'gene':      'http://localhost:4026/?launchedFromClin=true',
-            'genefull':  'http://localhost:4026/?launchedFromClin=true',
-            'genepanel': 'http://localhost:4024/?launchedFromClin=true',
+            'gene':      'http://localhost:4026/?launchedFromClin=true&frame_source=' + window.document.URL,
+            'genefull':  'http://localhost:4026/?launchedFromClin=true&frame_source=' + window.document.URL,
+            'genepanel': 'http://localhost:4024/?launchedFromClin=true&frame_source=' + window.document.URL,
             //'bam':       'http://localhost:4027'
         },
         'tony.iobio.io': {
-            'gene':      'http://tony.iobio.io:4026/?launchedFromClin=true',
-            'genefull':  'http://tony.iobio.io:4026/?launchedFromClin=true',
-            'genepanel': 'http://tony.iobio.io:4024/?launchedFromClin=true',
+            'gene':      'http://tony.iobio.io:4026/?launchedFromClin=true&frame_source=' + window.document.URL,
+            'genefull':  'http://tony.iobio.io:4026/?launchedFromClin=true&frame_source=' + window.document.URL,
+            'genepanel': 'http://tony.iobio.io:4024/?launchedFromClin=true&frame_source=' + window.document.URL,
             //'bam':       'http://tony.iobio.io:4027'
         },
         'dev': {
-            'gene':      'https://stage.gene.iobio.io/?launchedFromClin=true',
-            'genefull':  'https://stage.gene.iobio.io/?launchedFromClin=true',
-            'genepanel': 'https://dev.panel.iobio.io/?launchedFromClin=true',
+            'gene':      'https://dev.gene.iobio.io/?launchedFromClin=true&frame_source=' + window.document.URL,
+            'genefull':  'https://dev.gene.iobio.io/?launchedFromClin=true&frame_source=' + window.document.URL,
+            'genepanel': 'https://dev.panel.iobio.io/?launchedFromClin=true&frame_source=' + window.document.URL,
             //'bam':       'https://newbam.iobio.io'
         },
       },
 
       apps: {
         //'bam':       {url: null, isLoaded: false, step: 0, iframeSelector: '#bam-iframe iframe'},
-        'genepanel': {url: null, isLoaded: false, step: 2, iframeSelector: '#gene-panel-iframe iframe'},
-        'gene':      {url: null, isLoaded: false, step: -1, iframeSelector: '#gene-iframe iframe'},
-        'genefull':  {url: null, isLoaded: true,  step: 3, iframeSelector: '#gene-iframe iframe'}
+        'genepanel': {url: null, isLoaded: false, isMounted: true,  step: 2,  iframeSelector: '#gene-panel-iframe iframe'},
+        'gene':      {url: null, isLoaded: false, isMounted: true,  step: -1, iframeSelector: '#gene-iframe iframe'},
+        'genefull':  {url: null, isLoaded: false, isMounted: false, step: 3,  iframeSelector: '#gene-iframe iframe'}
       },
 
       currentStep: 1,
@@ -298,13 +301,13 @@ export default {
   },
 
   created: function() {
-    this.init();
 
   },
 
 
 
   mounted: function() {
+    this.init();
 
   },
 
@@ -390,7 +393,6 @@ export default {
     init: function() {
       let self = this;
 
-      window.addEventListener("message", self.receiveAppMessage, false);
       var appTarget = null;
       if (window.document.URL.indexOf("localhost") > 0) {
         appTarget = "localhost";
@@ -403,51 +405,95 @@ export default {
       self.apps.genepanel.url     = self.appUrls[appTarget].genepanel;
       self.apps.genefull.url      = self.appUrls[appTarget].genefull;
 
+      window.addEventListener("message", self.receiveAppMessage, false);
 
-      if (localStorage.getItem('hub-iobio-tkn') && localStorage.getItem('hub-iobio-tkn').length > 0
-          && self.paramSampleId && self.paramSource) {
+      self.promiseIFramesMounted()
+      .then(function() {
 
-        if (self.iobioSourceMap[self.paramSource]) {
-          self.iobioSource = self.iobioSourceMap[self.paramSource];
-        }
+        if (localStorage.getItem('hub-iobio-tkn') && localStorage.getItem('hub-iobio-tkn').length > 0
+            && self.paramSampleId && self.paramSource) {
 
-        self.launchedFromMosaic = true;
-        self.mosaicSession = new MosaicSession();
-        // For now, just hardcode is_pedgree = true
-        self.mosaicSession.promiseInit(self.paramSampleId, self.paramSource, true, self.paramProjectId)
-        .then(data => {
-          self.modelInfos = data.modelInfos;
-          self.user       = data.user;
+          if (self.iobioSourceMap[self.paramSource]) {
+            self.iobioSource = self.iobioSourceMap[self.paramSource];
+          }
 
-
-          self.mosaicSession.promiseGetProject(self.paramProjectId)
-          .then(function(project) {
-            self.caseSummary = {};
-            self.caseSummary.name = project.name;
-            self.caseSummary.description = project.description && project.description.length > 0 ? project.description : "A summary of the trio goes here....";
+          self.launchedFromMosaic = true;
+          self.mosaicSession = new MosaicSession();
+          // For now, just hardcode is_pedgree = true
+          self.mosaicSession.promiseInit(self.paramSampleId, self.paramSource, true, self.paramProjectId)
+          .then(data => {
+            self.modelInfos = data.modelInfos;
+            self.user       = data.user;
 
 
-            self.promiseInitAWSSession();
+            self.mosaicSession.promiseGetProject(self.paramProjectId)
+            .then(function(project) {
+              self.caseSummary = {};
+              self.caseSummary.name = project.name;
+              self.caseSummary.description = project.description && project.description.length > 0 ? project.description : "A summary of the trio goes here....";
 
+
+              self.promiseInitAWSSession();
+
+            })
           })
+          .catch(function(error) {
+            self.showSplashProgress = false;
+            self.splashMessage = error;
+          })
+        } else {
+          self.promiseInitAWSSession();
+        }
+      })
+    },
+
+    promiseIFramesMounted: function() {
+      let self = this;
+      return new Promise(function(resolve, reject) {
+        let promises = [];
+        for (var appName in self.apps) {
+          if (self.apps[appName].currentStep != -1 && !self.apps[appName].mounted) {
+            let p = self.promiseIFrameMounted(appName);
+            promises.push(p);
+          }
+        }
+        Promise.all(promises)
+        .then(function() {
+          self.iframesMounted = true;
+          resolve();
         })
         .catch(function(error) {
-          self.showSplashProgress = false;
-          self.splashMessage = error;
+          reject(error)
         })
-      } else {
-        self.promiseInitAWSSession();
-      }
-
-
-
-
-
-
-
-
-
+      })
     },
+
+    promiseIFrameMounted: function(appName) {
+      let self = this;
+      return new Promise(function(resolve, reject) {
+        self.checkIFrameMounted(appName, function(mounted) {
+          if (mounted) {
+            resolve();
+          } else {
+            reject();
+          }
+        })
+      })
+    },
+
+    checkIFrameMounted: function(appName, callback) {
+      let self = this;
+
+      if (self.apps[appName].isMounted) {
+        callback(true)
+      } else {
+        // If we are here, it is not loaded. Set things up so we check   the status again in 100 milliseconds
+        window.setTimeout(function() {
+          self.checkIFrameMounted(appName, callback);
+        }, 100);
+      }
+    },
+
 
     promiseInitAWSSession: function() {
       let self = this;
@@ -535,6 +581,7 @@ export default {
         self.workflow)
       .then(function() {
 
+        console.log("ClinHome.onAuthenticatedMosaic  analysis:", self.analysis)
 
         // Send message to set the data in the iobio apps
         for (var appName in self.apps) {
@@ -608,6 +655,8 @@ export default {
     setData: function(appName, pauseMillisec=0) {
       let self = this;
 
+      console.log("ClinHome.setData")
+
       setTimeout( () => {
         var probandModelInfo = self.modelInfos.filter(function(modelInfo) {
           return modelInfo.relationship == 'proband';
@@ -629,6 +678,7 @@ export default {
         .then(function() {
           let app = self.apps[appName];
 
+          console.log("ClinHome.setData  sending data to " + appName)
 
           var msgObject = {
               type:                  'set-data',
@@ -686,6 +736,7 @@ export default {
     receiveAppMessage: function(event) {
       let self = this;
 
+
       // Do we trust the sender of this message?
       if (!this.isValidAppOrigin(event)) {
         if (this.paramDebug) {
@@ -693,7 +744,18 @@ export default {
         }
         return;
       }
-      var messageObject = JSON.parse(event.data);
+
+      var messageObject = null;
+      try {
+        messageObject = JSON.parse(event.data);
+      }
+      catch(error) {
+        return;
+      }
+
+      if (!messageObject.hasOwnProperty("type")) {
+        return;
+      }
 
       if (this.paramDebug) {
         alert("Clin received message:" + event.data);
@@ -701,9 +763,12 @@ export default {
         console.log(messageObject);
       }
 
-
-      if (messageObject.type == 'confirm-set-data') {
-        self.apps[messageObject.app].isLoaded = true;
+      if (messageObject.type == 'mounted') {
+        self.apps[messageObject.app].isMounted = true;
+      } else if (messageObject.type == 'confirm-set-data') {
+        if (!self.apps[messageObject.app].isLoaded ) {
+          self.apps[messageObject.app].isLoaded = true;
+        }
       } else if (messageObject.type == "apply-genes" && messageObject.sender == 'genepanel.iobio.io') {
         var taskMap = {
           'gtr':              'gtr-genes',

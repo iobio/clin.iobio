@@ -485,6 +485,7 @@ export default {
     },
     setStepAndTask: function(step, task) {
       let self = this;
+
       let oldStepNumber = self.currentStep.number;
       self.currentStep = step;
 
@@ -605,6 +606,7 @@ export default {
       return theTask ? theTask.name : "";
     }
 
+
   },
   created: function() {
   },
@@ -613,10 +615,9 @@ export default {
     self.currentStep = self.analysisSteps[0];
     self.currentTask = self.currentStep.tasks[0];
     self.currentTaskComplete = self.currentTask.complete;
+
     self.shiftButtons();
 
-  },
-  computed:  {
   }
 }
 
