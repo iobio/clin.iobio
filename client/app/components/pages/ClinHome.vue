@@ -355,7 +355,7 @@ export default {
         // If we are going to gene.iobio (candidate genes), request
         // the genes from gene panel
         let appGene = self.apps.genefull;
-        if (appGene.step == self.currentStep && appGene.isLoaded) {
+        if (appGene.step == self.currentStep && appGene.isMounted) {
           var msgObject = {
             type:                  'request-genes',
             sender:                'clin.iobio',
