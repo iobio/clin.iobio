@@ -1,6 +1,25 @@
 {
   "payload": {
-    "genes": [],
+    "genes": [
+      "MPZ",
+      "EGR2",
+      "PMP22",
+      "PRX",
+      "GDAP1",
+      "NEFL",
+      "GJB1",
+      "FGD4",
+      "DNM2",
+      "HSPB1",
+      "FIG4",
+      "DYNC1H1",
+      "MFN2",
+      "TSEN54",
+      "MTMR2",
+      "GAN",
+      "MED25",
+      "PHYH"
+    ],
     "steps": [
       {
         "key": "review-case",
@@ -32,11 +51,11 @@
           {
             "key": "summary-genes",
             "passed": false,
-            "complete": true
+            "complete": false
           }
         ],
         "number": 2,
-        "complete": true
+        "complete": false
       },
       {
         "key": "variants-full",
@@ -1051,7 +1070,7 @@
         "Dejerine-Sottas disease"
       ],
       [
-        "dejerine sottas disease"
+        "dejerine sottas"
       ]
     ],
     "project_id": "32",
@@ -1068,7 +1087,7 @@
         "genePanels": 31,
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 3,
             "score": 0.9035
           }
@@ -1094,7 +1113,7 @@
         "genePanels": 27,
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 1,
             "score": 1
           }
@@ -1120,7 +1139,7 @@
         "genePanels": 25,
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 2,
             "score": 0.9178
           }
@@ -1146,7 +1165,7 @@
         "genePanels": 21,
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 20,
             "score": 0.3499
           }
@@ -1172,7 +1191,7 @@
         "genePanels": 17,
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 5,
             "score": 0.7046
           }
@@ -1198,7 +1217,7 @@
         "genePanels": 16,
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 17,
             "score": 0.3657
           }
@@ -1224,7 +1243,7 @@
         "genePanels": 15,
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 24,
             "score": 0.3023
           }
@@ -1250,7 +1269,7 @@
         "genePanels": 15,
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 31,
             "score": 0.2406
           }
@@ -1276,7 +1295,7 @@
         "genePanels": 15,
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 15,
             "score": 0.3731
           }
@@ -1302,7 +1321,7 @@
         "genePanels": 14,
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 47,
             "score": 0.2167
           }
@@ -1328,7 +1347,7 @@
         "genePanels": 14,
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 6,
             "score": 0.6387
           }
@@ -1354,7 +1373,7 @@
         "genePanels": 14,
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 53,
             "score": 0.1899
           }
@@ -1380,7 +1399,7 @@
         "genePanels": 13,
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 13,
             "score": 0.3881
           }
@@ -1406,7 +1425,7 @@
         "genePanels": 13,
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 7,
             "score": 0.4429
           }
@@ -1432,7 +1451,7 @@
         "genePanels": 13,
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 21,
             "score": 0.3491
           }
@@ -1458,7 +1477,7 @@
         "genePanels": 13,
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 23,
             "score": 0.3247
           }
@@ -1484,7 +1503,7 @@
         "genePanels": 13,
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 19,
             "score": 0.3581
           }
@@ -1510,7 +1529,7 @@
         "genePanels": 12,
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 34,
             "score": 0.2389
           }
@@ -1536,7 +1555,7 @@
         "genePanels": 12,
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 18,
             "score": 0.3655
           }
@@ -1562,7 +1581,7 @@
         "genePanels": 12,
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 55,
             "score": 0.1836
           }
@@ -1588,7 +1607,7 @@
         "genePanels": 12,
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 56,
             "score": 0.1835
           }
@@ -1614,7 +1633,7 @@
         "genePanels": 12,
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 9,
             "score": 0.4232
           }
@@ -1640,7 +1659,7 @@
         "genePanels": 12,
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 52,
             "score": 0.1916
           }
@@ -1666,7 +1685,7 @@
         "genePanels": 10,
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 68,
             "score": 0.132
           }
@@ -1692,7 +1711,7 @@
         "genePanels": 7,
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 36,
             "score": 0.234
           }
@@ -1718,7 +1737,7 @@
         "genePanels": 3,
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 44,
             "score": 0.2184
           }
@@ -1744,7 +1763,7 @@
         "genePanels": 2,
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 48,
             "score": 0.2145
           }
@@ -1770,7 +1789,7 @@
         "genePanels": 1,
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 14,
             "score": 0.3786
           }
@@ -1796,7 +1815,7 @@
         "genePanels": 1,
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 10,
             "score": 0.423
           }
@@ -1822,7 +1841,7 @@
         "genePanels": 1,
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 42,
             "score": 0.2271
           }
@@ -1848,7 +1867,7 @@
         "genePanels": 1,
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 8,
             "score": 0.4257
           }
@@ -2595,7 +2614,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 4,
             "score": 0.8637
           }
@@ -2614,7 +2633,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 11,
             "score": 0.4146
           }
@@ -2633,7 +2652,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 12,
             "score": 0.4002
           }
@@ -2652,7 +2671,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 16,
             "score": 0.3692
           }
@@ -2671,7 +2690,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 22,
             "score": 0.3343
           }
@@ -2690,7 +2709,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 25,
             "score": 0.2665
           }
@@ -2709,7 +2728,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 26,
             "score": 0.2625
           }
@@ -2728,7 +2747,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 27,
             "score": 0.2625
           }
@@ -2747,7 +2766,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 28,
             "score": 0.2553
           }
@@ -2766,7 +2785,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 29,
             "score": 0.2501
           }
@@ -2785,7 +2804,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 30,
             "score": 0.2424
           }
@@ -2804,7 +2823,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 32,
             "score": 0.2394
           }
@@ -2823,7 +2842,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 33,
             "score": 0.239
           }
@@ -2842,7 +2861,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 35,
             "score": 0.2362
           }
@@ -2861,7 +2880,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 37,
             "score": 0.2333
           }
@@ -2880,7 +2899,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 38,
             "score": 0.2319
           }
@@ -2888,25 +2907,6 @@
         "searchTermsGtr": [],
         "geneRankGtr": -1,
         "geneRankPhenolyzer": 38
-      },
-      {
-        "name": "TSEN34",
-        "source": [
-          "Pheno"
-        ],
-        "geneId": "79042",
-        "score": 0.2286,
-        "genePanels": "",
-        "searchTermsPhenolyzer": [
-          {
-            "searchTerm": "dejerine sottas disease",
-            "rank": 39,
-            "score": 0.2286
-          }
-        ],
-        "searchTermsGtr": [],
-        "geneRankGtr": -1,
-        "geneRankPhenolyzer": 39
       },
       {
         "name": "TSEN2",
@@ -2918,7 +2918,26 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
+            "rank": 39,
+            "score": 0.2286
+          }
+        ],
+        "searchTermsGtr": [],
+        "geneRankGtr": -1,
+        "geneRankPhenolyzer": 39
+      },
+      {
+        "name": "TSEN34",
+        "source": [
+          "Pheno"
+        ],
+        "geneId": "79042",
+        "score": 0.2286,
+        "genePanels": "",
+        "searchTermsPhenolyzer": [
+          {
+            "searchTerm": "dejerine sottas",
             "rank": 40,
             "score": 0.2286
           }
@@ -2937,7 +2956,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 41,
             "score": 0.2282
           }
@@ -2956,7 +2975,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 43,
             "score": 0.2228
           }
@@ -2975,7 +2994,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 45,
             "score": 0.2178
           }
@@ -2994,7 +3013,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 46,
             "score": 0.2175
           }
@@ -3013,7 +3032,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 49,
             "score": 0.2076
           }
@@ -3032,7 +3051,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 50,
             "score": 0.2064
           }
@@ -3051,7 +3070,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 51,
             "score": 0.2056
           }
@@ -3070,7 +3089,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 54,
             "score": 0.185
           }
@@ -3089,7 +3108,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 57,
             "score": 0.1795
           }
@@ -3108,7 +3127,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 58,
             "score": 0.1725
           }
@@ -3127,7 +3146,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 59,
             "score": 0.1609
           }
@@ -3146,7 +3165,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 60,
             "score": 0.1556
           }
@@ -3165,7 +3184,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 61,
             "score": 0.1527
           }
@@ -3184,7 +3203,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 62,
             "score": 0.1469
           }
@@ -3203,7 +3222,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 63,
             "score": 0.1422
           }
@@ -3222,7 +3241,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 64,
             "score": 0.1403
           }
@@ -3241,7 +3260,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 65,
             "score": 0.1402
           }
@@ -3260,7 +3279,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 66,
             "score": 0.1359
           }
@@ -3279,7 +3298,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 67,
             "score": 0.1347
           }
@@ -3298,7 +3317,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 69,
             "score": 0.1285
           }
@@ -3317,7 +3336,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 70,
             "score": 0.1263
           }
@@ -3336,7 +3355,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 71,
             "score": 0.1256
           }
@@ -3355,7 +3374,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 72,
             "score": 0.1255
           }
@@ -3374,7 +3393,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 73,
             "score": 0.1253
           }
@@ -3393,7 +3412,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 74,
             "score": 0.1248
           }
@@ -3412,7 +3431,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 75,
             "score": 0.1226
           }
@@ -3431,7 +3450,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 76,
             "score": 0.1215
           }
@@ -3450,7 +3469,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 77,
             "score": 0.1209
           }
@@ -3469,7 +3488,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 78,
             "score": 0.1207
           }
@@ -3488,7 +3507,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 79,
             "score": 0.1207
           }
@@ -3507,7 +3526,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 80,
             "score": 0.1199
           }
@@ -3526,7 +3545,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 81,
             "score": 0.1193
           }
@@ -3545,7 +3564,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 82,
             "score": 0.1185
           }
@@ -3564,7 +3583,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 83,
             "score": 0.1183
           }
@@ -3583,7 +3602,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 84,
             "score": 0.1182
           }
@@ -3602,7 +3621,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 85,
             "score": 0.1182
           }
@@ -3621,7 +3640,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 86,
             "score": 0.1172
           }
@@ -3640,7 +3659,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 87,
             "score": 0.1171
           }
@@ -3659,7 +3678,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 88,
             "score": 0.1164
           }
@@ -3678,7 +3697,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 89,
             "score": 0.1163
           }
@@ -3686,25 +3705,6 @@
         "searchTermsGtr": [],
         "geneRankGtr": -1,
         "geneRankPhenolyzer": 89
-      },
-      {
-        "name": "PSMC3",
-        "source": [
-          "Pheno"
-        ],
-        "geneId": "5702",
-        "score": 0.1163,
-        "genePanels": "",
-        "searchTermsPhenolyzer": [
-          {
-            "searchTerm": "dejerine sottas disease",
-            "rank": 90,
-            "score": 0.1163
-          }
-        ],
-        "searchTermsGtr": [],
-        "geneRankGtr": -1,
-        "geneRankPhenolyzer": 90
       },
       {
         "name": "PSMC2",
@@ -3716,7 +3716,26 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
+            "rank": 90,
+            "score": 0.1163
+          }
+        ],
+        "searchTermsGtr": [],
+        "geneRankGtr": -1,
+        "geneRankPhenolyzer": 90
+      },
+      {
+        "name": "PSMC3",
+        "source": [
+          "Pheno"
+        ],
+        "geneId": "5702",
+        "score": 0.1163,
+        "genePanels": "",
+        "searchTermsPhenolyzer": [
+          {
+            "searchTerm": "dejerine sottas",
             "rank": 91,
             "score": 0.1163
           }
@@ -3735,7 +3754,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 92,
             "score": 0.116
           }
@@ -3754,7 +3773,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 93,
             "score": 0.1156
           }
@@ -3773,7 +3792,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 94,
             "score": 0.1142
           }
@@ -3792,7 +3811,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 95,
             "score": 0.113
           }
@@ -3811,7 +3830,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 96,
             "score": 0.1113
           }
@@ -3830,7 +3849,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 97,
             "score": 0.1111
           }
@@ -3849,7 +3868,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 98,
             "score": 0.1106
           }
@@ -3868,7 +3887,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 99,
             "score": 0.11
           }
@@ -3887,7 +3906,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 100,
             "score": 0.1099
           }
@@ -3906,7 +3925,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 101,
             "score": 0.1096
           }
@@ -3925,7 +3944,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 102,
             "score": 0.1086
           }
@@ -3944,7 +3963,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 103,
             "score": 0.1086
           }
@@ -3963,7 +3982,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 104,
             "score": 0.1083
           }
@@ -3982,7 +4001,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 105,
             "score": 0.1082
           }
@@ -4001,7 +4020,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 106,
             "score": 0.1077
           }
@@ -4020,7 +4039,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 107,
             "score": 0.1074
           }
@@ -4039,7 +4058,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 108,
             "score": 0.1067
           }
@@ -4058,7 +4077,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 109,
             "score": 0.1056
           }
@@ -4077,7 +4096,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 110,
             "score": 0.1056
           }
@@ -4096,7 +4115,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 111,
             "score": 0.1054
           }
@@ -4115,7 +4134,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 112,
             "score": 0.1049
           }
@@ -4134,7 +4153,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 113,
             "score": 0.1043
           }
@@ -4153,7 +4172,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 114,
             "score": 0.104
           }
@@ -4172,7 +4191,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 115,
             "score": 0.1037
           }
@@ -4191,7 +4210,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 116,
             "score": 0.1035
           }
@@ -4210,7 +4229,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 117,
             "score": 0.1034
           }
@@ -4229,7 +4248,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 118,
             "score": 0.1034
           }
@@ -4248,7 +4267,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 119,
             "score": 0.1033
           }
@@ -4267,7 +4286,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 120,
             "score": 0.1022
           }
@@ -4286,7 +4305,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 121,
             "score": 0.1018
           }
@@ -4305,7 +4324,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 122,
             "score": 0.1017
           }
@@ -4324,7 +4343,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 123,
             "score": 0.1015
           }
@@ -4343,7 +4362,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 124,
             "score": 0.1007
           }
@@ -4351,25 +4370,6 @@
         "searchTermsGtr": [],
         "geneRankGtr": -1,
         "geneRankPhenolyzer": 124
-      },
-      {
-        "name": "NUP43",
-        "source": [
-          "Pheno"
-        ],
-        "geneId": "348995",
-        "score": 0.1007,
-        "genePanels": "",
-        "searchTermsPhenolyzer": [
-          {
-            "searchTerm": "dejerine sottas disease",
-            "rank": 125,
-            "score": 0.1007
-          }
-        ],
-        "searchTermsGtr": [],
-        "geneRankGtr": -1,
-        "geneRankPhenolyzer": 125
       },
       {
         "name": "NUP37",
@@ -4381,7 +4381,26 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
+            "rank": 125,
+            "score": 0.1007
+          }
+        ],
+        "searchTermsGtr": [],
+        "geneRankGtr": -1,
+        "geneRankPhenolyzer": 125
+      },
+      {
+        "name": "NUP43",
+        "source": [
+          "Pheno"
+        ],
+        "geneId": "348995",
+        "score": 0.1007,
+        "genePanels": "",
+        "searchTermsPhenolyzer": [
+          {
+            "searchTerm": "dejerine sottas",
             "rank": 126,
             "score": 0.1007
           }
@@ -4400,7 +4419,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 127,
             "score": 0.1005
           }
@@ -4419,7 +4438,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 128,
             "score": 0.09993
           }
@@ -4429,16 +4448,16 @@
         "geneRankPhenolyzer": 128
       },
       {
-        "name": "PSMD12",
+        "name": "PSMD1",
         "source": [
           "Pheno"
         ],
-        "geneId": "5718",
+        "geneId": "5707",
         "score": 0.09971,
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 129,
             "score": 0.09971
           }
@@ -4457,7 +4476,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 130,
             "score": 0.09971
           }
@@ -4467,16 +4486,16 @@
         "geneRankPhenolyzer": 130
       },
       {
-        "name": "PSMD7",
+        "name": "PSMD12",
         "source": [
           "Pheno"
         ],
-        "geneId": "5713",
+        "geneId": "5718",
         "score": 0.09971,
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 131,
             "score": 0.09971
           }
@@ -4484,44 +4503,6 @@
         "searchTermsGtr": [],
         "geneRankGtr": -1,
         "geneRankPhenolyzer": 131
-      },
-      {
-        "name": "PSMD3",
-        "source": [
-          "Pheno"
-        ],
-        "geneId": "5709",
-        "score": 0.09971,
-        "genePanels": "",
-        "searchTermsPhenolyzer": [
-          {
-            "searchTerm": "dejerine sottas disease",
-            "rank": 132,
-            "score": 0.09971
-          }
-        ],
-        "searchTermsGtr": [],
-        "geneRankGtr": -1,
-        "geneRankPhenolyzer": 132
-      },
-      {
-        "name": "PSMD1",
-        "source": [
-          "Pheno"
-        ],
-        "geneId": "5707",
-        "score": 0.09971,
-        "genePanels": "",
-        "searchTermsPhenolyzer": [
-          {
-            "searchTerm": "dejerine sottas disease",
-            "rank": 133,
-            "score": 0.09971
-          }
-        ],
-        "searchTermsGtr": [],
-        "geneRankGtr": -1,
-        "geneRankPhenolyzer": 133
       },
       {
         "name": "PSMD14",
@@ -4533,7 +4514,45 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
+            "rank": 132,
+            "score": 0.09971
+          }
+        ],
+        "searchTermsGtr": [],
+        "geneRankGtr": -1,
+        "geneRankPhenolyzer": 132
+      },
+      {
+        "name": "PSMD3",
+        "source": [
+          "Pheno"
+        ],
+        "geneId": "5709",
+        "score": 0.09971,
+        "genePanels": "",
+        "searchTermsPhenolyzer": [
+          {
+            "searchTerm": "dejerine sottas",
+            "rank": 133,
+            "score": 0.09971
+          }
+        ],
+        "searchTermsGtr": [],
+        "geneRankGtr": -1,
+        "geneRankPhenolyzer": 133
+      },
+      {
+        "name": "PSMD7",
+        "source": [
+          "Pheno"
+        ],
+        "geneId": "5713",
+        "score": 0.09971,
+        "genePanels": "",
+        "searchTermsPhenolyzer": [
+          {
+            "searchTerm": "dejerine sottas",
             "rank": 134,
             "score": 0.09971
           }
@@ -4552,7 +4571,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 135,
             "score": 0.09971
           }
@@ -4571,7 +4590,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 136,
             "score": 0.09935
           }
@@ -4590,7 +4609,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 137,
             "score": 0.09917
           }
@@ -4609,7 +4628,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 138,
             "score": 0.09915
           }
@@ -4628,7 +4647,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 139,
             "score": 0.09915
           }
@@ -4647,7 +4666,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 140,
             "score": 0.09915
           }
@@ -4666,7 +4685,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 141,
             "score": 0.0988
           }
@@ -4685,7 +4704,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 142,
             "score": 0.09855
           }
@@ -4704,7 +4723,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 143,
             "score": 0.09852
           }
@@ -4723,7 +4742,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 144,
             "score": 0.09835
           }
@@ -4742,7 +4761,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 145,
             "score": 0.09834
           }
@@ -4761,7 +4780,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 146,
             "score": 0.09828
           }
@@ -4780,7 +4799,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 147,
             "score": 0.09798
           }
@@ -4799,7 +4818,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 148,
             "score": 0.09792
           }
@@ -4818,7 +4837,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 149,
             "score": 0.09775
           }
@@ -4837,7 +4856,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 150,
             "score": 0.09768
           }
@@ -4856,7 +4875,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 151,
             "score": 0.09746
           }
@@ -4875,7 +4894,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 152,
             "score": 0.09745
           }
@@ -4894,7 +4913,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 153,
             "score": 0.09717
           }
@@ -4913,7 +4932,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 154,
             "score": 0.09708
           }
@@ -4923,16 +4942,16 @@
         "geneRankPhenolyzer": 154
       },
       {
-        "name": "PSMC6",
+        "name": "PSMD8",
         "source": [
           "Pheno"
         ],
-        "geneId": "5706",
+        "geneId": "5714",
         "score": 0.09699,
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 155,
             "score": 0.09699
           }
@@ -4951,7 +4970,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 156,
             "score": 0.09699
           }
@@ -4959,44 +4978,6 @@
         "searchTermsGtr": [],
         "geneRankGtr": -1,
         "geneRankPhenolyzer": 156
-      },
-      {
-        "name": "PSMD8",
-        "source": [
-          "Pheno"
-        ],
-        "geneId": "5714",
-        "score": 0.09699,
-        "genePanels": "",
-        "searchTermsPhenolyzer": [
-          {
-            "searchTerm": "dejerine sottas disease",
-            "rank": 157,
-            "score": 0.09699
-          }
-        ],
-        "searchTermsGtr": [],
-        "geneRankGtr": -1,
-        "geneRankPhenolyzer": 157
-      },
-      {
-        "name": "PSMC5",
-        "source": [
-          "Pheno"
-        ],
-        "geneId": "5705",
-        "score": 0.09699,
-        "genePanels": "",
-        "searchTermsPhenolyzer": [
-          {
-            "searchTerm": "dejerine sottas disease",
-            "rank": 158,
-            "score": 0.09699
-          }
-        ],
-        "searchTermsGtr": [],
-        "geneRankGtr": -1,
-        "geneRankPhenolyzer": 158
       },
       {
         "name": "SHFM1",
@@ -5008,14 +4989,33 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
-            "rank": 159,
+            "searchTerm": "dejerine sottas",
+            "rank": 157,
             "score": 0.09699
           }
         ],
         "searchTermsGtr": [],
         "geneRankGtr": -1,
-        "geneRankPhenolyzer": 159
+        "geneRankPhenolyzer": 157
+      },
+      {
+        "name": "PSMC6",
+        "source": [
+          "Pheno"
+        ],
+        "geneId": "5706",
+        "score": 0.09699,
+        "genePanels": "",
+        "searchTermsPhenolyzer": [
+          {
+            "searchTerm": "dejerine sottas",
+            "rank": 158,
+            "score": 0.09699
+          }
+        ],
+        "searchTermsGtr": [],
+        "geneRankGtr": -1,
+        "geneRankPhenolyzer": 158
       },
       {
         "name": "PSMD4",
@@ -5027,7 +5027,26 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
+            "rank": 159,
+            "score": 0.09699
+          }
+        ],
+        "searchTermsGtr": [],
+        "geneRankGtr": -1,
+        "geneRankPhenolyzer": 159
+      },
+      {
+        "name": "PSMC5",
+        "source": [
+          "Pheno"
+        ],
+        "geneId": "5705",
+        "score": 0.09699,
+        "genePanels": "",
+        "searchTermsPhenolyzer": [
+          {
+            "searchTerm": "dejerine sottas",
             "rank": 160,
             "score": 0.09699
           }
@@ -5046,7 +5065,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 161,
             "score": 0.09679
           }
@@ -5065,7 +5084,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 162,
             "score": 0.09677
           }
@@ -5084,7 +5103,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 163,
             "score": 0.09673
           }
@@ -5103,7 +5122,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 164,
             "score": 0.09666
           }
@@ -5122,7 +5141,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 165,
             "score": 0.09658
           }
@@ -5141,7 +5160,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 166,
             "score": 0.09651
           }
@@ -5160,7 +5179,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 167,
             "score": 0.09649
           }
@@ -5179,7 +5198,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 168,
             "score": 0.09643
           }
@@ -5198,7 +5217,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 169,
             "score": 0.09643
           }
@@ -5206,120 +5225,6 @@
         "searchTermsGtr": [],
         "geneRankGtr": -1,
         "geneRankPhenolyzer": 169
-      },
-      {
-        "name": "PSMB11",
-        "source": [
-          "Pheno"
-        ],
-        "geneId": "122706",
-        "score": 0.09643,
-        "genePanels": "",
-        "searchTermsPhenolyzer": [
-          {
-            "searchTerm": "dejerine sottas disease",
-            "rank": 170,
-            "score": 0.09643
-          }
-        ],
-        "searchTermsGtr": [],
-        "geneRankGtr": -1,
-        "geneRankPhenolyzer": 170
-      },
-      {
-        "name": "PSMB10",
-        "source": [
-          "Pheno"
-        ],
-        "geneId": "5699",
-        "score": 0.09643,
-        "genePanels": "",
-        "searchTermsPhenolyzer": [
-          {
-            "searchTerm": "dejerine sottas disease",
-            "rank": 171,
-            "score": 0.09643
-          }
-        ],
-        "searchTermsGtr": [],
-        "geneRankGtr": -1,
-        "geneRankPhenolyzer": 171
-      },
-      {
-        "name": "PSMB9",
-        "source": [
-          "Pheno"
-        ],
-        "geneId": "5698",
-        "score": 0.09643,
-        "genePanels": "",
-        "searchTermsPhenolyzer": [
-          {
-            "searchTerm": "dejerine sottas disease",
-            "rank": 172,
-            "score": 0.09643
-          }
-        ],
-        "searchTermsGtr": [],
-        "geneRankGtr": -1,
-        "geneRankPhenolyzer": 172
-      },
-      {
-        "name": "PSMB4",
-        "source": [
-          "Pheno"
-        ],
-        "geneId": "5692",
-        "score": 0.09643,
-        "genePanels": "",
-        "searchTermsPhenolyzer": [
-          {
-            "searchTerm": "dejerine sottas disease",
-            "rank": 173,
-            "score": 0.09643
-          }
-        ],
-        "searchTermsGtr": [],
-        "geneRankGtr": -1,
-        "geneRankPhenolyzer": 173
-      },
-      {
-        "name": "PSMA4",
-        "source": [
-          "Pheno"
-        ],
-        "geneId": "5685",
-        "score": 0.09643,
-        "genePanels": "",
-        "searchTermsPhenolyzer": [
-          {
-            "searchTerm": "dejerine sottas disease",
-            "rank": 174,
-            "score": 0.09643
-          }
-        ],
-        "searchTermsGtr": [],
-        "geneRankGtr": -1,
-        "geneRankPhenolyzer": 174
-      },
-      {
-        "name": "LOC100506136",
-        "source": [
-          "Pheno"
-        ],
-        "geneId": "100506136",
-        "score": 0.09643,
-        "genePanels": "",
-        "searchTermsPhenolyzer": [
-          {
-            "searchTerm": "dejerine sottas disease",
-            "rank": 175,
-            "score": 0.09643
-          }
-        ],
-        "searchTermsGtr": [],
-        "geneRankGtr": -1,
-        "geneRankPhenolyzer": 175
       },
       {
         "name": "PSME3",
@@ -5331,109 +5236,14 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
-            "rank": 176,
+            "searchTerm": "dejerine sottas",
+            "rank": 170,
             "score": 0.09643
           }
         ],
         "searchTermsGtr": [],
         "geneRankGtr": -1,
-        "geneRankPhenolyzer": 176
-      },
-      {
-        "name": "PSMB2",
-        "source": [
-          "Pheno"
-        ],
-        "geneId": "5690",
-        "score": 0.09643,
-        "genePanels": "",
-        "searchTermsPhenolyzer": [
-          {
-            "searchTerm": "dejerine sottas disease",
-            "rank": 177,
-            "score": 0.09643
-          }
-        ],
-        "searchTermsGtr": [],
-        "geneRankGtr": -1,
-        "geneRankPhenolyzer": 177
-      },
-      {
-        "name": "PSME1",
-        "source": [
-          "Pheno"
-        ],
-        "geneId": "5720",
-        "score": 0.09643,
-        "genePanels": "",
-        "searchTermsPhenolyzer": [
-          {
-            "searchTerm": "dejerine sottas disease",
-            "rank": 178,
-            "score": 0.09643
-          }
-        ],
-        "searchTermsGtr": [],
-        "geneRankGtr": -1,
-        "geneRankPhenolyzer": 178
-      },
-      {
-        "name": "PSMD5",
-        "source": [
-          "Pheno"
-        ],
-        "geneId": "5711",
-        "score": 0.09643,
-        "genePanels": "",
-        "searchTermsPhenolyzer": [
-          {
-            "searchTerm": "dejerine sottas disease",
-            "rank": 179,
-            "score": 0.09643
-          }
-        ],
-        "searchTermsGtr": [],
-        "geneRankGtr": -1,
-        "geneRankPhenolyzer": 179
-      },
-      {
-        "name": "PSMB8",
-        "source": [
-          "Pheno"
-        ],
-        "geneId": "5696",
-        "score": 0.09643,
-        "genePanels": "",
-        "searchTermsPhenolyzer": [
-          {
-            "searchTerm": "dejerine sottas disease",
-            "rank": 180,
-            "score": 0.09643
-          }
-        ],
-        "searchTermsGtr": [],
-        "geneRankGtr": -1,
-        "geneRankPhenolyzer": 180
-      },
-      {
-        "name": "PSMA1",
-        "source": [
-          "Pheno"
-        ],
-        "geneId": "5682",
-        "score": 0.09643,
-        "genePanels": "",
-        "searchTermsPhenolyzer": [
-          {
-            "searchTerm": "dejerine sottas disease",
-            "rank": 181,
-            "score": 0.09643
-          }
-        ],
-        "searchTermsGtr": [],
-        "geneRankGtr": -1,
-        "geneRankPhenolyzer": 181
+        "geneRankPhenolyzer": 170
       },
       {
         "name": "PSMB6",
@@ -5445,33 +5255,71 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
-            "rank": 182,
+            "searchTerm": "dejerine sottas",
+            "rank": 171,
             "score": 0.09643
           }
         ],
         "searchTermsGtr": [],
         "geneRankGtr": -1,
-        "geneRankPhenolyzer": 182
+        "geneRankPhenolyzer": 171
       },
       {
-        "name": "PSMB5",
+        "name": "PSMB4",
         "source": [
           "Pheno"
         ],
-        "geneId": "5693",
+        "geneId": "5692",
         "score": 0.09643,
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
-            "rank": 183,
+            "searchTerm": "dejerine sottas",
+            "rank": 172,
             "score": 0.09643
           }
         ],
         "searchTermsGtr": [],
         "geneRankGtr": -1,
-        "geneRankPhenolyzer": 183
+        "geneRankPhenolyzer": 172
+      },
+      {
+        "name": "PSMD5",
+        "source": [
+          "Pheno"
+        ],
+        "geneId": "5711",
+        "score": 0.09643,
+        "genePanels": "",
+        "searchTermsPhenolyzer": [
+          {
+            "searchTerm": "dejerine sottas",
+            "rank": 173,
+            "score": 0.09643
+          }
+        ],
+        "searchTermsGtr": [],
+        "geneRankGtr": -1,
+        "geneRankPhenolyzer": 173
+      },
+      {
+        "name": "PSMB10",
+        "source": [
+          "Pheno"
+        ],
+        "geneId": "5699",
+        "score": 0.09643,
+        "genePanels": "",
+        "searchTermsPhenolyzer": [
+          {
+            "searchTerm": "dejerine sottas",
+            "rank": 174,
+            "score": 0.09643
+          }
+        ],
+        "searchTermsGtr": [],
+        "geneRankGtr": -1,
+        "geneRankPhenolyzer": 174
       },
       {
         "name": "PSMD9",
@@ -5483,14 +5331,147 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
-            "rank": 184,
+            "searchTerm": "dejerine sottas",
+            "rank": 175,
             "score": 0.09643
           }
         ],
         "searchTermsGtr": [],
         "geneRankGtr": -1,
-        "geneRankPhenolyzer": 184
+        "geneRankPhenolyzer": 175
+      },
+      {
+        "name": "PSMB11",
+        "source": [
+          "Pheno"
+        ],
+        "geneId": "122706",
+        "score": 0.09643,
+        "genePanels": "",
+        "searchTermsPhenolyzer": [
+          {
+            "searchTerm": "dejerine sottas",
+            "rank": 176,
+            "score": 0.09643
+          }
+        ],
+        "searchTermsGtr": [],
+        "geneRankGtr": -1,
+        "geneRankPhenolyzer": 176
+      },
+      {
+        "name": "PSMB5",
+        "source": [
+          "Pheno"
+        ],
+        "geneId": "5693",
+        "score": 0.09643,
+        "genePanels": "",
+        "searchTermsPhenolyzer": [
+          {
+            "searchTerm": "dejerine sottas",
+            "rank": 177,
+            "score": 0.09643
+          }
+        ],
+        "searchTermsGtr": [],
+        "geneRankGtr": -1,
+        "geneRankPhenolyzer": 177
+      },
+      {
+        "name": "PSMB2",
+        "source": [
+          "Pheno"
+        ],
+        "geneId": "5690",
+        "score": 0.09643,
+        "genePanels": "",
+        "searchTermsPhenolyzer": [
+          {
+            "searchTerm": "dejerine sottas",
+            "rank": 178,
+            "score": 0.09643
+          }
+        ],
+        "searchTermsGtr": [],
+        "geneRankGtr": -1,
+        "geneRankPhenolyzer": 178
+      },
+      {
+        "name": "PSMB9",
+        "source": [
+          "Pheno"
+        ],
+        "geneId": "5698",
+        "score": 0.09643,
+        "genePanels": "",
+        "searchTermsPhenolyzer": [
+          {
+            "searchTerm": "dejerine sottas",
+            "rank": 179,
+            "score": 0.09643
+          }
+        ],
+        "searchTermsGtr": [],
+        "geneRankGtr": -1,
+        "geneRankPhenolyzer": 179
+      },
+      {
+        "name": "PSMA1",
+        "source": [
+          "Pheno"
+        ],
+        "geneId": "5682",
+        "score": 0.09643,
+        "genePanels": "",
+        "searchTermsPhenolyzer": [
+          {
+            "searchTerm": "dejerine sottas",
+            "rank": 180,
+            "score": 0.09643
+          }
+        ],
+        "searchTermsGtr": [],
+        "geneRankGtr": -1,
+        "geneRankPhenolyzer": 180
+      },
+      {
+        "name": "PSMB8",
+        "source": [
+          "Pheno"
+        ],
+        "geneId": "5696",
+        "score": 0.09643,
+        "genePanels": "",
+        "searchTermsPhenolyzer": [
+          {
+            "searchTerm": "dejerine sottas",
+            "rank": 181,
+            "score": 0.09643
+          }
+        ],
+        "searchTermsGtr": [],
+        "geneRankGtr": -1,
+        "geneRankPhenolyzer": 181
+      },
+      {
+        "name": "PSME1",
+        "source": [
+          "Pheno"
+        ],
+        "geneId": "5720",
+        "score": 0.09643,
+        "genePanels": "",
+        "searchTermsPhenolyzer": [
+          {
+            "searchTerm": "dejerine sottas",
+            "rank": 182,
+            "score": 0.09643
+          }
+        ],
+        "searchTermsGtr": [],
+        "geneRankGtr": -1,
+        "geneRankPhenolyzer": 182
       },
       {
         "name": "PSMF1",
@@ -5502,14 +5483,33 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
-            "rank": 185,
+            "searchTerm": "dejerine sottas",
+            "rank": 183,
             "score": 0.09643
           }
         ],
         "searchTermsGtr": [],
         "geneRankGtr": -1,
-        "geneRankPhenolyzer": 185
+        "geneRankPhenolyzer": 183
+      },
+      {
+        "name": "LOC100506136",
+        "source": [
+          "Pheno"
+        ],
+        "geneId": "100506136",
+        "score": 0.09643,
+        "genePanels": "",
+        "searchTermsPhenolyzer": [
+          {
+            "searchTerm": "dejerine sottas",
+            "rank": 184,
+            "score": 0.09643
+          }
+        ],
+        "searchTermsGtr": [],
+        "geneRankGtr": -1,
+        "geneRankPhenolyzer": 184
       },
       {
         "name": "PSMA8",
@@ -5521,7 +5521,26 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
+            "rank": 185,
+            "score": 0.09643
+          }
+        ],
+        "searchTermsGtr": [],
+        "geneRankGtr": -1,
+        "geneRankPhenolyzer": 185
+      },
+      {
+        "name": "PSMA4",
+        "source": [
+          "Pheno"
+        ],
+        "geneId": "5685",
+        "score": 0.09643,
+        "genePanels": "",
+        "searchTermsPhenolyzer": [
+          {
+            "searchTerm": "dejerine sottas",
             "rank": 186,
             "score": 0.09643
           }
@@ -5540,7 +5559,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 187,
             "score": 0.09635
           }
@@ -5559,7 +5578,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 188,
             "score": 0.09626
           }
@@ -5578,7 +5597,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 189,
             "score": 0.09563
           }
@@ -5597,7 +5616,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 190,
             "score": 0.0955
           }
@@ -5616,7 +5635,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 191,
             "score": 0.09548
           }
@@ -5635,7 +5654,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 192,
             "score": 0.09506
           }
@@ -5654,7 +5673,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 193,
             "score": 0.09506
           }
@@ -5673,7 +5692,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 194,
             "score": 0.09497
           }
@@ -5692,7 +5711,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 195,
             "score": 0.09461
           }
@@ -5711,7 +5730,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 196,
             "score": 0.09423
           }
@@ -5730,7 +5749,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 197,
             "score": 0.09417
           }
@@ -5749,7 +5768,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 198,
             "score": 0.09371
           }
@@ -5768,7 +5787,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 199,
             "score": 0.09316
           }
@@ -5787,7 +5806,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 200,
             "score": 0.0931
           }
@@ -5806,7 +5825,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 201,
             "score": 0.09301
           }
@@ -5825,7 +5844,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 202,
             "score": 0.09293
           }
@@ -5844,7 +5863,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 203,
             "score": 0.09259
           }
@@ -5863,7 +5882,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 204,
             "score": 0.09253
           }
@@ -5882,7 +5901,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 205,
             "score": 0.09252
           }
@@ -5901,7 +5920,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 206,
             "score": 0.0924
           }
@@ -5920,7 +5939,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 207,
             "score": 0.09205
           }
@@ -5939,7 +5958,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 208,
             "score": 0.09179
           }
@@ -5958,7 +5977,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 209,
             "score": 0.0916
           }
@@ -5977,7 +5996,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 210,
             "score": 0.09143
           }
@@ -5996,7 +6015,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 211,
             "score": 0.09142
           }
@@ -6015,7 +6034,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 212,
             "score": 0.09058
           }
@@ -6034,7 +6053,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 213,
             "score": 0.09045
           }
@@ -6053,7 +6072,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 214,
             "score": 0.09001
           }
@@ -6072,7 +6091,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 215,
             "score": 0.08992
           }
@@ -6091,7 +6110,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 216,
             "score": 0.0899
           }
@@ -6110,7 +6129,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 217,
             "score": 0.08975
           }
@@ -6129,7 +6148,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 218,
             "score": 0.0897
           }
@@ -6148,7 +6167,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 219,
             "score": 0.08915
           }
@@ -6167,7 +6186,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 220,
             "score": 0.08915
           }
@@ -6186,7 +6205,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 221,
             "score": 0.0888
           }
@@ -6205,7 +6224,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 222,
             "score": 0.08866
           }
@@ -6224,7 +6243,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 223,
             "score": 0.08852
           }
@@ -6243,7 +6262,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 224,
             "score": 0.08843
           }
@@ -6262,7 +6281,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 225,
             "score": 0.08821
           }
@@ -6281,7 +6300,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 226,
             "score": 0.0879
           }
@@ -6300,7 +6319,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 227,
             "score": 0.08779
           }
@@ -6319,7 +6338,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 228,
             "score": 0.08761
           }
@@ -6338,7 +6357,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 229,
             "score": 0.08754
           }
@@ -6357,7 +6376,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 230,
             "score": 0.08747
           }
@@ -6376,7 +6395,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 231,
             "score": 0.08744
           }
@@ -6395,7 +6414,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 232,
             "score": 0.08728
           }
@@ -6414,7 +6433,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 233,
             "score": 0.08716
           }
@@ -6433,7 +6452,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 234,
             "score": 0.08707
           }
@@ -6452,7 +6471,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 235,
             "score": 0.08683
           }
@@ -6471,7 +6490,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 236,
             "score": 0.08678
           }
@@ -6490,7 +6509,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 237,
             "score": 0.08676
           }
@@ -6509,7 +6528,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 238,
             "score": 0.08676
           }
@@ -6528,7 +6547,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 239,
             "score": 0.08661
           }
@@ -6536,25 +6555,6 @@
         "searchTermsGtr": [],
         "geneRankGtr": -1,
         "geneRankPhenolyzer": 239
-      },
-      {
-        "name": "NUP107",
-        "source": [
-          "Pheno"
-        ],
-        "geneId": "57122",
-        "score": 0.08653,
-        "genePanels": "",
-        "searchTermsPhenolyzer": [
-          {
-            "searchTerm": "dejerine sottas disease",
-            "rank": 240,
-            "score": 0.08653
-          }
-        ],
-        "searchTermsGtr": [],
-        "geneRankGtr": -1,
-        "geneRankPhenolyzer": 240
       },
       {
         "name": "NUP160",
@@ -6566,7 +6566,26 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
+            "rank": 240,
+            "score": 0.08653
+          }
+        ],
+        "searchTermsGtr": [],
+        "geneRankGtr": -1,
+        "geneRankPhenolyzer": 240
+      },
+      {
+        "name": "NUP107",
+        "source": [
+          "Pheno"
+        ],
+        "geneId": "57122",
+        "score": 0.08653,
+        "genePanels": "",
+        "searchTermsPhenolyzer": [
+          {
+            "searchTerm": "dejerine sottas",
             "rank": 241,
             "score": 0.08653
           }
@@ -6585,7 +6604,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 242,
             "score": 0.08649
           }
@@ -6604,7 +6623,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 243,
             "score": 0.0861
           }
@@ -6623,7 +6642,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 244,
             "score": 0.086
           }
@@ -6642,7 +6661,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 245,
             "score": 0.08564
           }
@@ -6661,7 +6680,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 246,
             "score": 0.08564
           }
@@ -6680,7 +6699,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 247,
             "score": 0.08558
           }
@@ -6699,7 +6718,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 248,
             "score": 0.08502
           }
@@ -6718,7 +6737,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 249,
             "score": 0.08481
           }
@@ -6737,7 +6756,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 250,
             "score": 0.08459
           }
@@ -6756,7 +6775,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 251,
             "score": 0.08453
           }
@@ -6775,7 +6794,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 252,
             "score": 0.08433
           }
@@ -6794,7 +6813,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 253,
             "score": 0.08409
           }
@@ -6813,7 +6832,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 254,
             "score": 0.08362
           }
@@ -6832,7 +6851,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 255,
             "score": 0.08359
           }
@@ -6851,7 +6870,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 256,
             "score": 0.08357
           }
@@ -6870,7 +6889,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 257,
             "score": 0.08343
           }
@@ -6889,7 +6908,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 258,
             "score": 0.08333
           }
@@ -6908,7 +6927,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 259,
             "score": 0.08313
           }
@@ -6927,7 +6946,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 260,
             "score": 0.083
           }
@@ -6946,7 +6965,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 261,
             "score": 0.08294
           }
@@ -6965,7 +6984,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 262,
             "score": 0.08289
           }
@@ -6984,7 +7003,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 263,
             "score": 0.08287
           }
@@ -7003,7 +7022,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 264,
             "score": 0.08237
           }
@@ -7022,7 +7041,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 265,
             "score": 0.08221
           }
@@ -7041,7 +7060,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 266,
             "score": 0.08221
           }
@@ -7060,7 +7079,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 267,
             "score": 0.08218
           }
@@ -7070,16 +7089,16 @@
         "geneRankPhenolyzer": 267
       },
       {
-        "name": "HIST1H3H",
+        "name": "HIST1H3E",
         "source": [
           "Pheno"
         ],
-        "geneId": "8357",
+        "geneId": "8353",
         "score": 0.08201,
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 268,
             "score": 0.08201
           }
@@ -7098,7 +7117,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 269,
             "score": 0.08201
           }
@@ -7106,82 +7125,6 @@
         "searchTermsGtr": [],
         "geneRankGtr": -1,
         "geneRankPhenolyzer": 269
-      },
-      {
-        "name": "HIST2H3C",
-        "source": [
-          "Pheno"
-        ],
-        "geneId": "126961",
-        "score": 0.08201,
-        "genePanels": "",
-        "searchTermsPhenolyzer": [
-          {
-            "searchTerm": "dejerine sottas disease",
-            "rank": 270,
-            "score": 0.08201
-          }
-        ],
-        "searchTermsGtr": [],
-        "geneRankGtr": -1,
-        "geneRankPhenolyzer": 270
-      },
-      {
-        "name": "HIST1H3A",
-        "source": [
-          "Pheno"
-        ],
-        "geneId": "8350",
-        "score": 0.08201,
-        "genePanels": "",
-        "searchTermsPhenolyzer": [
-          {
-            "searchTerm": "dejerine sottas disease",
-            "rank": 271,
-            "score": 0.08201
-          }
-        ],
-        "searchTermsGtr": [],
-        "geneRankGtr": -1,
-        "geneRankPhenolyzer": 271
-      },
-      {
-        "name": "HIST1H3F",
-        "source": [
-          "Pheno"
-        ],
-        "geneId": "8968",
-        "score": 0.08201,
-        "genePanels": "",
-        "searchTermsPhenolyzer": [
-          {
-            "searchTerm": "dejerine sottas disease",
-            "rank": 272,
-            "score": 0.08201
-          }
-        ],
-        "searchTermsGtr": [],
-        "geneRankGtr": -1,
-        "geneRankPhenolyzer": 272
-      },
-      {
-        "name": "HIST1H3D",
-        "source": [
-          "Pheno"
-        ],
-        "geneId": "8351",
-        "score": 0.08201,
-        "genePanels": "",
-        "searchTermsPhenolyzer": [
-          {
-            "searchTerm": "dejerine sottas disease",
-            "rank": 273,
-            "score": 0.08201
-          }
-        ],
-        "searchTermsGtr": [],
-        "geneRankGtr": -1,
-        "geneRankPhenolyzer": 273
       },
       {
         "name": "HIST1H3I",
@@ -7193,14 +7136,71 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
-            "rank": 274,
+            "searchTerm": "dejerine sottas",
+            "rank": 270,
             "score": 0.08201
           }
         ],
         "searchTermsGtr": [],
         "geneRankGtr": -1,
-        "geneRankPhenolyzer": 274
+        "geneRankPhenolyzer": 270
+      },
+      {
+        "name": "HIST1H3H",
+        "source": [
+          "Pheno"
+        ],
+        "geneId": "8357",
+        "score": 0.08201,
+        "genePanels": "",
+        "searchTermsPhenolyzer": [
+          {
+            "searchTerm": "dejerine sottas",
+            "rank": 271,
+            "score": 0.08201
+          }
+        ],
+        "searchTermsGtr": [],
+        "geneRankGtr": -1,
+        "geneRankPhenolyzer": 271
+      },
+      {
+        "name": "HIST1H3A",
+        "source": [
+          "Pheno"
+        ],
+        "geneId": "8350",
+        "score": 0.08201,
+        "genePanels": "",
+        "searchTermsPhenolyzer": [
+          {
+            "searchTerm": "dejerine sottas",
+            "rank": 272,
+            "score": 0.08201
+          }
+        ],
+        "searchTermsGtr": [],
+        "geneRankGtr": -1,
+        "geneRankPhenolyzer": 272
+      },
+      {
+        "name": "HIST2H3C",
+        "source": [
+          "Pheno"
+        ],
+        "geneId": "126961",
+        "score": 0.08201,
+        "genePanels": "",
+        "searchTermsPhenolyzer": [
+          {
+            "searchTerm": "dejerine sottas",
+            "rank": 273,
+            "score": 0.08201
+          }
+        ],
+        "searchTermsGtr": [],
+        "geneRankGtr": -1,
+        "geneRankPhenolyzer": 273
       },
       {
         "name": "HIST1H3G",
@@ -7212,71 +7212,14 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
-            "rank": 275,
+            "searchTerm": "dejerine sottas",
+            "rank": 274,
             "score": 0.08201
           }
         ],
         "searchTermsGtr": [],
         "geneRankGtr": -1,
-        "geneRankPhenolyzer": 275
-      },
-      {
-        "name": "HIST1H3E",
-        "source": [
-          "Pheno"
-        ],
-        "geneId": "8353",
-        "score": 0.08201,
-        "genePanels": "",
-        "searchTermsPhenolyzer": [
-          {
-            "searchTerm": "dejerine sottas disease",
-            "rank": 276,
-            "score": 0.08201
-          }
-        ],
-        "searchTermsGtr": [],
-        "geneRankGtr": -1,
-        "geneRankPhenolyzer": 276
-      },
-      {
-        "name": "HIST1H3J",
-        "source": [
-          "Pheno"
-        ],
-        "geneId": "8356",
-        "score": 0.08201,
-        "genePanels": "",
-        "searchTermsPhenolyzer": [
-          {
-            "searchTerm": "dejerine sottas disease",
-            "rank": 277,
-            "score": 0.08201
-          }
-        ],
-        "searchTermsGtr": [],
-        "geneRankGtr": -1,
-        "geneRankPhenolyzer": 277
-      },
-      {
-        "name": "HIST2H3A",
-        "source": [
-          "Pheno"
-        ],
-        "geneId": "333932",
-        "score": 0.08201,
-        "genePanels": "",
-        "searchTermsPhenolyzer": [
-          {
-            "searchTerm": "dejerine sottas disease",
-            "rank": 278,
-            "score": 0.08201
-          }
-        ],
-        "searchTermsGtr": [],
-        "geneRankGtr": -1,
-        "geneRankPhenolyzer": 278
+        "geneRankPhenolyzer": 274
       },
       {
         "name": "HIST1H3C",
@@ -7288,7 +7231,83 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
+            "rank": 275,
+            "score": 0.08201
+          }
+        ],
+        "searchTermsGtr": [],
+        "geneRankGtr": -1,
+        "geneRankPhenolyzer": 275
+      },
+      {
+        "name": "HIST1H3F",
+        "source": [
+          "Pheno"
+        ],
+        "geneId": "8968",
+        "score": 0.08201,
+        "genePanels": "",
+        "searchTermsPhenolyzer": [
+          {
+            "searchTerm": "dejerine sottas",
+            "rank": 276,
+            "score": 0.08201
+          }
+        ],
+        "searchTermsGtr": [],
+        "geneRankGtr": -1,
+        "geneRankPhenolyzer": 276
+      },
+      {
+        "name": "HIST1H3D",
+        "source": [
+          "Pheno"
+        ],
+        "geneId": "8351",
+        "score": 0.08201,
+        "genePanels": "",
+        "searchTermsPhenolyzer": [
+          {
+            "searchTerm": "dejerine sottas",
+            "rank": 277,
+            "score": 0.08201
+          }
+        ],
+        "searchTermsGtr": [],
+        "geneRankGtr": -1,
+        "geneRankPhenolyzer": 277
+      },
+      {
+        "name": "HIST1H3J",
+        "source": [
+          "Pheno"
+        ],
+        "geneId": "8356",
+        "score": 0.08201,
+        "genePanels": "",
+        "searchTermsPhenolyzer": [
+          {
+            "searchTerm": "dejerine sottas",
+            "rank": 278,
+            "score": 0.08201
+          }
+        ],
+        "searchTermsGtr": [],
+        "geneRankGtr": -1,
+        "geneRankPhenolyzer": 278
+      },
+      {
+        "name": "HIST2H3A",
+        "source": [
+          "Pheno"
+        ],
+        "geneId": "333932",
+        "score": 0.08201,
+        "genePanels": "",
+        "searchTermsPhenolyzer": [
+          {
+            "searchTerm": "dejerine sottas",
             "rank": 279,
             "score": 0.08201
           }
@@ -7307,7 +7326,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 280,
             "score": 0.08189
           }
@@ -7326,7 +7345,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 281,
             "score": 0.08178
           }
@@ -7345,7 +7364,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 282,
             "score": 0.08159
           }
@@ -7364,7 +7383,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 283,
             "score": 0.08138
           }
@@ -7383,7 +7402,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 284,
             "score": 0.0812
           }
@@ -7393,16 +7412,16 @@
         "geneRankPhenolyzer": 284
       },
       {
-        "name": "POM121",
+        "name": "NUP50",
         "source": [
           "Pheno"
         ],
-        "geneId": "9883",
+        "geneId": "10762",
         "score": 0.08117,
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 285,
             "score": 0.08117
           }
@@ -7421,7 +7440,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 286,
             "score": 0.08117
           }
@@ -7431,16 +7450,16 @@
         "geneRankPhenolyzer": 286
       },
       {
-        "name": "NUP50",
+        "name": "POM121",
         "source": [
           "Pheno"
         ],
-        "geneId": "10762",
+        "geneId": "9883",
         "score": 0.08117,
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 287,
             "score": 0.08117
           }
@@ -7459,7 +7478,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 288,
             "score": 0.08114
           }
@@ -7478,7 +7497,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 289,
             "score": 0.0811
           }
@@ -7497,7 +7516,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 290,
             "score": 0.08101
           }
@@ -7516,7 +7535,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 291,
             "score": 0.08099
           }
@@ -7526,16 +7545,16 @@
         "geneRankPhenolyzer": 291
       },
       {
-        "name": "NUP62",
+        "name": "NUP35",
         "source": [
           "Pheno"
         ],
-        "geneId": "23636",
+        "geneId": "129401",
         "score": 0.08093,
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 292,
             "score": 0.08093
           }
@@ -7554,7 +7573,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 293,
             "score": 0.08093
           }
@@ -7573,7 +7592,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 294,
             "score": 0.08093
           }
@@ -7583,16 +7602,16 @@
         "geneRankPhenolyzer": 294
       },
       {
-        "name": "NUP188",
+        "name": "NUPL2",
         "source": [
           "Pheno"
         ],
-        "geneId": "23511",
+        "geneId": "11097",
         "score": 0.08093,
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 295,
             "score": 0.08093
           }
@@ -7602,16 +7621,16 @@
         "geneRankPhenolyzer": 295
       },
       {
-        "name": "NUP205",
+        "name": "NUPL1",
         "source": [
           "Pheno"
         ],
-        "geneId": "23165",
+        "geneId": "9818",
         "score": 0.08093,
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 296,
             "score": 0.08093
           }
@@ -7630,7 +7649,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 297,
             "score": 0.08093
           }
@@ -7640,16 +7659,16 @@
         "geneRankPhenolyzer": 297
       },
       {
-        "name": "NUP88",
+        "name": "NUP188",
         "source": [
           "Pheno"
         ],
-        "geneId": "4927",
+        "geneId": "23511",
         "score": 0.08093,
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 298,
             "score": 0.08093
           }
@@ -7668,7 +7687,7 @@
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 299,
             "score": 0.08093
           }
@@ -7678,16 +7697,16 @@
         "geneRankPhenolyzer": 299
       },
       {
-        "name": "NUP35",
+        "name": "NUP205",
         "source": [
           "Pheno"
         ],
-        "geneId": "129401",
+        "geneId": "23165",
         "score": 0.08093,
         "genePanels": "",
         "searchTermsPhenolyzer": [
           {
-            "searchTerm": "dejerine sottas disease",
+            "searchTerm": "dejerine sottas",
             "rank": 300,
             "score": 0.08093
           }
@@ -8212,11 +8231,11 @@
         "phenolyzerRank": 38
       },
       {
-        "name": "TSEN34",
+        "name": "TSEN2",
         "phenolyzerRank": 39
       },
       {
-        "name": "TSEN2",
+        "name": "TSEN34",
         "phenolyzerRank": 40
       },
       {
@@ -8416,11 +8435,11 @@
         "phenolyzerRank": 89
       },
       {
-        "name": "PSMC3",
+        "name": "PSMC2",
         "phenolyzerRank": 90
       },
       {
-        "name": "PSMC2",
+        "name": "PSMC3",
         "phenolyzerRank": 91
       },
       {
@@ -8556,11 +8575,11 @@
         "phenolyzerRank": 124
       },
       {
-        "name": "NUP43",
+        "name": "NUP37",
         "phenolyzerRank": 125
       },
       {
-        "name": "NUP37",
+        "name": "NUP43",
         "phenolyzerRank": 126
       },
       {
@@ -8572,7 +8591,7 @@
         "phenolyzerRank": 128
       },
       {
-        "name": "PSMD12",
+        "name": "PSMD1",
         "phenolyzerRank": 129
       },
       {
@@ -8580,19 +8599,19 @@
         "phenolyzerRank": 130
       },
       {
-        "name": "PSMD7",
+        "name": "PSMD12",
         "phenolyzerRank": 131
       },
       {
-        "name": "PSMD3",
+        "name": "PSMD14",
         "phenolyzerRank": 132
       },
       {
-        "name": "PSMD1",
+        "name": "PSMD3",
         "phenolyzerRank": 133
       },
       {
-        "name": "PSMD14",
+        "name": "PSMD7",
         "phenolyzerRank": 134
       },
       {
@@ -8676,7 +8695,7 @@
         "phenolyzerRank": 154
       },
       {
-        "name": "PSMC6",
+        "name": "PSMD8",
         "phenolyzerRank": 155
       },
       {
@@ -8684,19 +8703,19 @@
         "phenolyzerRank": 156
       },
       {
-        "name": "PSMD8",
+        "name": "SHFM1",
         "phenolyzerRank": 157
       },
       {
-        "name": "PSMC5",
+        "name": "PSMC6",
         "phenolyzerRank": 158
       },
       {
-        "name": "SHFM1",
+        "name": "PSMD4",
         "phenolyzerRank": 159
       },
       {
-        "name": "PSMD4",
+        "name": "PSMC5",
         "phenolyzerRank": 160
       },
       {
@@ -8736,71 +8755,71 @@
         "phenolyzerRank": 169
       },
       {
-        "name": "PSMB11",
+        "name": "PSME3",
         "phenolyzerRank": 170
       },
       {
-        "name": "PSMB10",
+        "name": "PSMB6",
         "phenolyzerRank": 171
       },
       {
-        "name": "PSMB9",
+        "name": "PSMB4",
         "phenolyzerRank": 172
       },
       {
-        "name": "PSMB4",
+        "name": "PSMD5",
         "phenolyzerRank": 173
       },
       {
-        "name": "PSMA4",
+        "name": "PSMB10",
         "phenolyzerRank": 174
       },
       {
-        "name": "LOC100506136",
+        "name": "PSMD9",
         "phenolyzerRank": 175
       },
       {
-        "name": "PSME3",
+        "name": "PSMB11",
         "phenolyzerRank": 176
       },
       {
-        "name": "PSMB2",
+        "name": "PSMB5",
         "phenolyzerRank": 177
       },
       {
-        "name": "PSME1",
+        "name": "PSMB2",
         "phenolyzerRank": 178
       },
       {
-        "name": "PSMD5",
+        "name": "PSMB9",
         "phenolyzerRank": 179
       },
       {
-        "name": "PSMB8",
+        "name": "PSMA1",
         "phenolyzerRank": 180
       },
       {
-        "name": "PSMA1",
+        "name": "PSMB8",
         "phenolyzerRank": 181
       },
       {
-        "name": "PSMB6",
+        "name": "PSME1",
         "phenolyzerRank": 182
       },
       {
-        "name": "PSMB5",
+        "name": "PSMF1",
         "phenolyzerRank": 183
       },
       {
-        "name": "PSMD9",
+        "name": "LOC100506136",
         "phenolyzerRank": 184
       },
       {
-        "name": "PSMF1",
+        "name": "PSMA8",
         "phenolyzerRank": 185
       },
       {
-        "name": "PSMA8",
+        "name": "PSMA4",
         "phenolyzerRank": 186
       },
       {
@@ -9016,11 +9035,11 @@
         "phenolyzerRank": 239
       },
       {
-        "name": "NUP107",
+        "name": "NUP160",
         "phenolyzerRank": 240
       },
       {
-        "name": "NUP160",
+        "name": "NUP107",
         "phenolyzerRank": 241
       },
       {
@@ -9128,7 +9147,7 @@
         "phenolyzerRank": 267
       },
       {
-        "name": "HIST1H3H",
+        "name": "HIST1H3E",
         "phenolyzerRank": 268
       },
       {
@@ -9136,43 +9155,43 @@
         "phenolyzerRank": 269
       },
       {
-        "name": "HIST2H3C",
+        "name": "HIST1H3I",
         "phenolyzerRank": 270
       },
       {
-        "name": "HIST1H3A",
+        "name": "HIST1H3H",
         "phenolyzerRank": 271
       },
       {
-        "name": "HIST1H3F",
+        "name": "HIST1H3A",
         "phenolyzerRank": 272
       },
       {
-        "name": "HIST1H3D",
+        "name": "HIST2H3C",
         "phenolyzerRank": 273
       },
       {
-        "name": "HIST1H3I",
+        "name": "HIST1H3G",
         "phenolyzerRank": 274
       },
       {
-        "name": "HIST1H3G",
+        "name": "HIST1H3C",
         "phenolyzerRank": 275
       },
       {
-        "name": "HIST1H3E",
+        "name": "HIST1H3F",
         "phenolyzerRank": 276
       },
       {
-        "name": "HIST1H3J",
+        "name": "HIST1H3D",
         "phenolyzerRank": 277
       },
       {
-        "name": "HIST2H3A",
+        "name": "HIST1H3J",
         "phenolyzerRank": 278
       },
       {
-        "name": "HIST1H3C",
+        "name": "HIST2H3A",
         "phenolyzerRank": 279
       },
       {
@@ -9196,7 +9215,7 @@
         "phenolyzerRank": 284
       },
       {
-        "name": "POM121",
+        "name": "NUP50",
         "phenolyzerRank": 285
       },
       {
@@ -9204,7 +9223,7 @@
         "phenolyzerRank": 286
       },
       {
-        "name": "NUP50",
+        "name": "POM121",
         "phenolyzerRank": 287
       },
       {
@@ -9224,7 +9243,7 @@
         "phenolyzerRank": 291
       },
       {
-        "name": "NUP62",
+        "name": "NUP35",
         "phenolyzerRank": 292
       },
       {
@@ -9236,11 +9255,11 @@
         "phenolyzerRank": 294
       },
       {
-        "name": "NUP188",
+        "name": "NUPL2",
         "phenolyzerRank": 295
       },
       {
-        "name": "NUP205",
+        "name": "NUPL1",
         "phenolyzerRank": 296
       },
       {
@@ -9248,7 +9267,7 @@
         "phenolyzerRank": 297
       },
       {
-        "name": "NUP88",
+        "name": "NUP188",
         "phenolyzerRank": 298
       },
       {
@@ -9256,11 +9275,11 @@
         "phenolyzerRank": 299
       },
       {
-        "name": "NUP35",
+        "name": "NUP205",
         "phenolyzerRank": 300
       }
     ],
-    "datetime_last_modified": 1573058506179
+    "datetime_last_modified": 1573062574944
   },
   "updated_at": "2019-11-06T15:08:54.647Z",
   "id": 74,
