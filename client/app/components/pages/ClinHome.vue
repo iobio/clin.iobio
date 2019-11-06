@@ -89,16 +89,6 @@ $horizontal-dashboard-height: 140px
     </div>
 
 
-    <login-mosaic
-      v-if="!showSplash && mosaicSession && !isAuthenticated"
-      :awsSession="awsSession"
-      @authenticated-mosaic="onAuthenticatedMosaic">
-    </login-mosaic>
-
-
-
-
-
 
     <div style="width:100%;height:100%;padding: 0px"
     :class="{'app-content': true}"
@@ -199,6 +189,7 @@ import SaveAnalysisPopup  from '../partials/SaveAnalysisPopup.vue'
 
 import workflowData  from '../../../data/workflows.json'
 import variantData   from '../../../data/variants_mosaic_platinum.json'
+import analysisData  from '../../../data/analysis.json'
 
 export default {
   name: 'home',
@@ -234,7 +225,6 @@ export default {
       iframesMounted: false,
 
       isAuthenticated: false,
-      awsSession:  null,
       mosaicSession: null,
       modelInfos: null,
       launchedFromMosaic: false,
@@ -263,7 +253,7 @@ export default {
 
       appUrls: {
         'localhost': {
-            'gene':      'http://localhost:4026/?launchedFromClin=true&frame_source=' + window.document.URL,
+            'gene':      'https://localhost:4026/?launchedFromClin=true&frame_source=' + window.document.URL,
             'genefull':  'http://localhost:4026/?launchedFromClin=true&frame_source=' + window.document.URL,
             'genepanel': 'http://localhost:4024/?launchedFromClin=true&frame_source=' + window.document.URL,
             //'bam':       'http://localhost:4027'
@@ -294,7 +284,27 @@ export default {
       idWorkflow: "workflow.clin.1.0",
       workflow: null,
       analysis: null,
-      caseSummary: null
+      caseSummary: null,
+
+
+      demoModelInfos:  [
+        {relationship: 'proband', affectedStatus: 'affected',   name: 'NA12878', 'sample': 'NA12878', sex: 'female',  'vcf': self.getDemoVcf().exome, 'tbi': null, 'bam': self.getDemoBams().exome['proband'], 'bai': null },
+        {relationship: 'mother',  affectedStatus: 'unaffected', name: 'NA12892', 'sample': 'NA12892', sex: 'female',  'vcf': self.getDemoVcf().exome, 'tbi': null, 'bam': self.getDemoBams().exome['mother'], 'bai': null  },
+        {relationship: 'father',  affectedStatus: 'unaffected', name: 'NA12891', 'sample': 'NA12891', sex: 'male',    'vcf': self.getDemoVcf().exome, 'tbi': null, 'bam': self.getDemoBams().exome['father'], 'bai': null  },
+        {relationship: 'sibling', affectedStatus: 'unaffected', name: 'NA12877', 'sample': 'NA12877', sex: 'male',    'vcf': self.getDemoVcf().exome, 'tbi': null, 'bam': self.getDemoBams().exome['sibling'], 'bai': null  },
+      ],
+
+      demoUser: {
+        "id": 13,
+        "email": "iobioproject@gmail.com",
+        "first_name": "Demo",
+        "last_name": "User",
+        "created_at": "2018-12-14T08:15:12.805Z",
+        "updated_at": "2019-04-09T22:09:54.306Z",
+        "username": "tonya_lee.disera_6b762afd",
+        "confirmation_status": "CONFIRMED"
+      }
+
 
     }
 
@@ -428,12 +438,13 @@ export default {
 
             self.mosaicSession.promiseGetProject(self.paramProjectId)
             .then(function(project) {
+              self.onAuthenticated()
+
               self.caseSummary = {};
               self.caseSummary.name = project.name;
               self.caseSummary.description = project.description && project.description.length > 0 ? project.description : "A summary of the trio goes here....";
 
 
-              self.promiseInitAWSSession();
 
             })
           })
@@ -442,10 +453,93 @@ export default {
             self.splashMessage = error;
           })
         } else {
-          self.promiseInitAWSSession();
+          self.modelInfos = self.demoModelInfos;
+          self.user       = self.demoUser;
+
+          self.onAuthenticated()
+
+          self.caseSummary = {}
+          self.caseSummary.name = "Demo Platinum"
+          self.caseSummary.description = "Case summary..."
+
+
+
         }
       })
     },
+
+    getDemoVcf: function() {
+
+      return  {
+        'exome': "https://s3.amazonaws.com/iobio/samples/vcf/platinum-exome.vcf.gz",
+        'genome': "https://s3.amazonaws.com/iobio/gene/wgs_platinum/platinum-trio.vcf.gz"
+      }
+    },
+
+    getDemoBams: function() {
+
+      return {
+        'exome': {
+          'proband': 'https://s3.amazonaws.com/iobio/samples/bam/NA12878.exome.bam',
+          'mother':  'https://s3.amazonaws.com/iobio/samples/bam/NA12892.exome.bam',
+          'father':  'https://s3.amazonaws.com/iobio/samples/bam/NA12891.exome.bam',
+          'sibling': 'https://s3.amazonaws.com/iobio/samples/bam/NA12877.exome.bam'
+        },
+        'genome': {
+          'proband': 'https://s3.amazonaws.com/iobio/gene/wgs_platinum/NA12878.bam',
+          'mother':  'https://s3.amazonaws.com/iobio/gene/wgs_platinum/NA12892.bam',
+          'father':  'https://s3.amazonaws.com/iobio/gene/wgs_platinum/NA12891.bam'
+        }
+      }
+
+    },
+
+    onAuthenticated: function(callback) {
+      let self = this;
+      self.isAuthenticated = true;
+
+      self.workflow = self.workflows[self.idWorkflow];
+
+      if (self.workflow == null) {
+        alert("Unable to find workflow " + self.idWorkflow);
+        return;
+      }
+
+      self.showSplash = false;
+
+      self.promiseGetAnalysis(
+        self.paramProjectId,
+        self.paramAnalysisId,
+        self.workflow)
+      .then(function() {
+
+        console.log("ClinHome.onAuthenticated  analysis:", self.analysis)
+
+        // Send message to set the data in the iobio apps
+        for (var appName in self.apps) {
+          let app = self.apps[appName];
+          if (!app.isLoaded) {
+            self.setData(appName, 500);
+          } else {
+
+          }
+        }
+
+        if (callback) {
+          callback();
+        }
+
+
+
+      })
+      .catch(function(error) {
+        console.log("Error occurred in onAuthenticated " + error);
+        if (callback) {
+          callback();
+        }
+      })
+    },
+
 
     promiseIFramesMounted: function() {
       let self = this;
@@ -495,35 +589,6 @@ export default {
     },
 
 
-    promiseInitAWSSession: function() {
-      let self = this;
-
-      return new Promise(function(resolve, reject) {
-        self.awsSession = new AWSSession();
-
-        if (self.awsSession.canAuthenticatePrevSession() && localStorage.getItem('hub-iobio-tkn') && localStorage.getItem('hub-iobio-tkn').length > 0 && self.paramSampleId && self.paramSource) {
-          self.awsSession.authenticatePrevSession(function(success, userName) {
-            if (success) {
-              self.onAuthenticatedMosaic(userName, function() {
-                resolve();
-              });
-            } else {
-              self.showSplash = false;
-              self.awsSession.clearPrevSession();
-              alert("Unable to authenticate user from previous session.")
-              reject();
-            }
-
-          })
-        } else {
-          self.showSplash = false;
-          resolve();
-        }
-
-      })
-
-    },
-
     onStepChanged: function(stepNumber) {
       this.currentStep = stepNumber
     },
@@ -558,58 +623,6 @@ export default {
       this.showFindings = true;
     },
 
-
-
-    onAuthenticatedMosaic: function(researcher, callback) {
-      let self = this;
-      self.isAuthenticated = true;
-
-      self.workflow = self.workflows[self.idWorkflow];
-
-      if (self.workflow == null) {
-        alert("Unable to find workflow " + self.idWorkflow);
-        return;
-      }
-
-      self.showSplash = false;
-
-      //self.mosaicSession.getApplications();
-
-      self.promiseGetAnalysis(
-        self.paramProjectId,
-        self.paramAnalysisId,
-        self.workflow)
-      .then(function() {
-
-        console.log("ClinHome.onAuthenticatedMosaic  analysis:", self.analysis)
-
-        // Send message to set the data in the iobio apps
-        for (var appName in self.apps) {
-          let app = self.apps[appName];
-          if (!app.isLoaded) {
-            self.setData(appName, 500);
-          } else {
-
-          }
-        }
-
-        if (callback) {
-          callback();
-        }
-
-
-
-      })
-      .catch(function(error) {
-        console.log("Error occurred in onAuthenticatedMosaic: " + error);
-        if (callback) {
-          callback();
-        }
-      })
-
-
-
-    },
 
     getWorkflowStep: function(stepKey) {
       let self = this;
@@ -956,7 +969,7 @@ export default {
 
     promiseAutosaveAnalysis() {
       let self = this;
-      if (self.analysis.id ) {
+      if (self.analysis.id && self.launcedFromMosaic) {
         return self.promiseSaveAnalysis({notify: false});
       } else {
 
@@ -969,64 +982,72 @@ export default {
       let self = this;
       return new Promise(function(resolve, reject) {
 
-        if (idAnalysis && idAnalysis.length > 0) {
+        if (self.launchedFromMosaic) {
+          if (idAnalysis && idAnalysis.length > 0) {
 
-          self.mosaicSession.promiseGetAnalysis(idProject, idAnalysis)
-          .then(function(analysis) {
-            if (analysis) {
+            self.mosaicSession.promiseGetAnalysis(idProject, idAnalysis)
+            .then(function(analysis) {
+              if (analysis) {
 
-              self.analysis = analysis;
-              self.idAnalysis = self.analysis.id;
+                self.analysis = analysis;
+                self.idAnalysis = self.analysis.id;
 
-              self.setGeneTaskBadges();
-              resolve();
+                self.setGeneTaskBadges();
+                resolve();
 
-            } else {
-              reject("Unable to find/create an analysis " + idAnalysis);
-            }
-          })
-          .catch(function(err) {
-            reject(err);
-          })
+              } else {
+                reject("Unable to find/create an analysis " + idAnalysis);
+              }
+            })
+            .catch(function(err) {
+              reject(err);
+            })
 
+          } else {
+            var newAnalysis = {};
+            newAnalysis.title = "clin.iobio analysis";
+            newAnalysis.description = "a description goes here";
+            newAnalysis.project_id = idProject;
+            newAnalysis.sample_id = self.paramSampleId;
+            newAnalysis.payload = {};
+            newAnalysis.payload.project_id = idProject;
+            newAnalysis.payload.sample_id = self.paramSampleId;
+            newAnalysis.payload.datetime_created = self.getCurrentDateTime();
+            newAnalysis.payload.workflow_id = workflow.id;
+            newAnalysis.payload.genes = [];
+            newAnalysis.payload.phenotypes = [];
+            newAnalysis.payload.gtrFullList = [];
+            newAnalysis.payload.phenolyzerFullList = [];
+            newAnalysis.payload.variants = self.importedVariants.variants;
+            newAnalysis.payload.steps = workflow.steps.map(function(step) {
+              let stepObject = {
+                key: step.key,
+                number: step.number,
+                complete: false
+              };
+              if (step.tasks) {
+                stepObject.tasks = step.tasks.map(function(task) {
+                  return {
+                    key: task.key,
+                    complete: false,
+                    passed: false,
+                  }
+                })
+              }
+              return stepObject;
+            })
+            self.analysis = newAnalysis;
+            resolve();
+
+          }
         } else {
-          var newAnalysis = {};
-          newAnalysis.title = "clin.iobio analysis";
-          newAnalysis.description = "a description goes here";
-          newAnalysis.project_id = idProject;
-          newAnalysis.sample_id = self.paramSampleId;
-          newAnalysis.payload = {};
-          newAnalysis.payload.project_id = idProject;
-          newAnalysis.payload.sample_id = self.paramSampleId;
-          newAnalysis.payload.datetime_created = self.getCurrentDateTime();
-          newAnalysis.payload.workflow_id = workflow.id;
-          newAnalysis.payload.genes = [];
-          newAnalysis.payload.phenotypes = [];
-          newAnalysis.payload.gtrFullList = [];
-          newAnalysis.payload.phenolyzerFullList = [];
-          newAnalysis.payload.variants = self.importedVariants.variants;
-          newAnalysis.payload.steps = workflow.steps.map(function(step) {
-            let stepObject = {
-              key: step.key,
-              number: step.number,
-              complete: false
-            };
-            if (step.tasks) {
-              stepObject.tasks = step.tasks.map(function(task) {
-                return {
-                  key: task.key,
-                  complete: false,
-                  passed: false,
-                }
-              })
-            }
-            return stepObject;
-          })
-          self.analysis = newAnalysis;
+          self.analysis = analysisData;
+          self.idAnalysis = self.analysis.id;
+
+          self.setGeneTaskBadges();
           resolve();
 
         }
-
       });
     },
 
