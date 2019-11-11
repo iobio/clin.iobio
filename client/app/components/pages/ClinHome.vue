@@ -257,20 +257,20 @@ export default {
 
       appUrls: {
         'localhost': {
-            'gene':      'http://localhost:4026/?launchedFromClin=true&frame_source=' + window.document.URL,
-            'genefull':  'http://localhost:4026/?launchedFromClin=true&frame_source=' + window.document.URL,
-            'genepanel': 'https://dev.panel.iobio.io/?launchedFromClin=true&frame_source=' + window.document.URL,
-            //'bam':       'http://localhost:4027' https://dev.gene.iobio.io/
+          'gene':      'https://localhost:4026/?launchedFromClin=true&frame_source=' + window.document.URL,
+          'genefull':  'http://localhost:4026/?launchedFromClin=true&frame_source=' + window.document.URL,
+          'genepanel': 'http://localhost:4024/?launchedFromClin=true&frame_source=' + window.document.URL,
+          //'bam':       'http://localhost:4027'
         },
         'tony.iobio.io': {
-            'gene':      'https://localhost:4026/?launchedFromClin=true&frame_source=' + window.document.URL,
-            'genefull':  'https://localhost:4026/?launchedFromClin=true&frame_source=' + window.document.URL,
-            'genepanel': 'http://localhost:8080/?launchedFromClin=true&frame_source=' + window.document.URL,
-            //'bam':       'http://tony.iobio.io:4027'
+          'gene':      'http://tony.iobio.io:4026/?launchedFromClin=true&frame_source=' + window.document.URL,
+          'genefull':  'http://tony.iobio.io:4026/?launchedFromClin=true&frame_source=' + window.document.URL,
+          'genepanel': 'http://tony.iobio.io:4024/?launchedFromClin=true&frame_source=' + window.document.URL,
+          //'bam':       'http://tony.iobio.io:4027'
         },
         'dev': {
-            'gene':      'http://localhost:4026/?launchedFromClin=true&frame_source=' + window.document.URL,
-            'genefull':  'http://localhost:4026/?launchedFromClin=true&frame_source=' + window.document.URL,
+            'gene':      'https://dev.gene.iobio.io/?launchedFromClin=true&frame_source=' + window.document.URL,
+            'genefull':  'https://dev.gene.iobio.io/?launchedFromClin=true&frame_source=' + window.document.URL,
             'genepanel': 'https://dev.panel.iobio.io/?launchedFromClin=true&frame_source=' + window.document.URL,
             //'bam':       'https://newbam.iobio.io'
         },
@@ -409,7 +409,6 @@ export default {
 
     init: function() {
       let self = this;
-      console.log("inside init")
       var appTarget = null;
       if (window.document.URL.indexOf("localhost") > 0) {
         appTarget = "localhost";
@@ -421,8 +420,6 @@ export default {
       //self.apps.bam.url       = self.appUrls[appTarget].bam;
       self.apps.genepanel.url     = self.appUrls[appTarget].genepanel;
       self.apps.genefull.url      = self.appUrls[appTarget].genefull;
-      console.log("self.apps.genepanel.url", self.apps.genepanel.url)
-      console.log("self.apps.genefull.url", self.apps.genefull.url)
       window.addEventListener("message", self.receiveAppMessage, false);
 
       self.promiseIFramesMounted()
