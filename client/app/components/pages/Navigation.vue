@@ -191,7 +191,7 @@ nav.toolbar
         </v-card>
       </v-menu>
 
-      <v-btn id="report-button">
+      <v-btn id="report-button" @click="createAnalysisPDF">
         <v-icon>assignment</v-icon>
         Report
       </v-btn>
@@ -205,6 +205,7 @@ nav.toolbar
 
 <script>
 
+import { bus } from '../../routes';
 
 export default {
   name: 'navigation',
@@ -233,6 +234,9 @@ export default {
   methods: {
     round(value, places) {
       return +(Math.round(value + "e+" + places)  + "e-" + places);
+    },
+    createAnalysisPDF(){
+      bus.$emit("getAnalysisObject");
     }
   },
   created: function() {

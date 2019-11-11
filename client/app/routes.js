@@ -96,6 +96,7 @@ Vue.mixin({
   }
 })
 
+export const bus = new Vue();
 
 window.vm = new Vue({
   el: '#app',
