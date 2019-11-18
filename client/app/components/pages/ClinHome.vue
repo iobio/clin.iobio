@@ -265,8 +265,8 @@ export default {
             //'bam':       'http://tony.iobio.io:4027'
         },
         'dev': {
-            'gene':      'https://stage.genepanel.iobio.io/?launchedFromClin=true&frame_source=' + window.document.URL,
-            'genefull':  'https://stage.genepanel.iobio.io/?launchedFromClin=true&frame_source=' + window.document.URL,
+            'gene':      'https://stage.gene.iobio.io/?launchedFromClin=true&frame_source=' + window.document.URL,
+            'genefull':  'https://stage.gene.iobio.io/?launchedFromClin=true&frame_source=' + window.document.URL,
             'genepanel': 'https://stage.genepanel.iobio.io/?launchedFromClin=true&frame_source=' + window.document.URL,
             //'bam':       'https://newbam.iobio.io'
         },
