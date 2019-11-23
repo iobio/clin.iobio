@@ -1,0 +1,206 @@
+html {
+  -webkit-font-smoothing: auto;
+}
+
+.hide {
+  display: none !important;
+}
+
+.card {
+  border: none !important;
+}
+
+.full-width {
+  max-width: -moz-available !important;
+  max-width: -webkit-fill-available !important;
+}
+
+.container.fluid {
+  max-width: calc(100% - 10px);
+}
+
+
+.btn {
+  text-transform: none;
+}
+
+
+.application.theme--light {
+  background: #fafafa;
+  color:  rgb(113,113,113);
+  fill:  rgb(113,113,113);
+}
+
+
+.application.theme--light a {
+  cursor: pointer;
+  text-decoration: none !important;
+}
+
+.theme--light .card,
+.application .theme--light.card {
+  color:  rgb(113,113,113);
+  fill:  rgb(113,113,113);
+}
+
+.theme--light .input-group.input-group--dirty .input-group__selections__comma:not(.input-group__selections__comma--active), .application .theme--light.input-group.input-group--dirty .input-group__selections__comma:not(.input-group__selections__comma--active) {
+  color:  rgb(113,113,113);
+  fill:  rgb(113,113,113);
+}
+
+.input-group--text-field.input-group--prepend-icon .input-group__prepend-icon {
+  padding-right: 3px;
+  justify-content: flex-end;
+}
+
+.theme--light .list, .application .theme--light.list {
+  color: rgb(113, 113, 113)
+}
+.menu__content .list__tile__title a {
+  color: rgb(113, 113, 113)
+}
+
+.theme--light .btn:not(.btn--icon):not(.btn--flat),
+.application .theme--light.btn:not(.btn--icon):not(.btn--flat) {
+  background-color: white;
+}
+
+.card {
+  width: 100%;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.card__title--primary {
+    padding-top: 4px;
+}
+.card__title {
+    padding-top: 0px;
+    padding-right: 0px;
+    padding-bottom: 0px;
+    padding-left: 0px;
+}
+
+.list__tile {
+    font-size: 14px;
+ }
+.input-group label {
+  font-size: 14px;
+}
+.radio + .radio, .checkbox + .checkbox {
+  margin-top: 10px;
+}
+.radio label, .checkbox label {
+  padding-left: 0px;
+  line-height: 20px;
+}
+
+.input-group.input-group--slider label {
+  font-size: 14px;
+  font-weight: normal;
+  color: rgb(113,113,113);
+}
+
+.tooltip {
+  position: absolute;
+  z-index: initial;
+  display: initial;
+  font-family: initial;
+  font-size: initial;
+  font-style: initial;
+  font-weight: initial;
+  line-height: initial;
+  text-align: initial;
+  text-align: initial;
+  text-decoration: initial;
+  text-shadow: initial;
+  text-transform: initial;
+  letter-spacing: initial;
+  word-break: initial;
+  word-spacing: initial;
+  word-wrap: initial;
+  white-space: initial;
+  filter: initial;
+  opacity: initial;
+
+  line-break: auto;
+}
+
+.btn {
+  line-height: 1;
+}
+
+.btn__content {
+  height: initial;
+}
+
+.menuable__content__active {
+  background-color: white;
+  z-index: 100 !important;
+}
+
+.menu__content--select.menuable__content__active {
+  z-index: 204 !important;
+}
+
+.dropdown.open .dropdown-menu {
+  max-height: 400px !important;
+  overflow-y: scroll !important
+}
+
+
+.overlay--active {
+  pointer-events: auto;
+  -ms-touch-action: none;
+  touch-action: none;
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: initial;
+  -webkit-transition: none;
+  transition: none;
+  z-index: none;
+}
+
+
+.menu__content ul hr {
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
+
+.alertify .ajs-footer .ajs-buttons.ajs-auxiliary .ajs-button,
+.alertify .ajs-footer .ajs-buttons.ajs-primary .ajs-button {
+  margin: 8px;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.alertify .ajs-footer {
+  border-top: none;
+}
+
+.alertify .ajs-header {
+  border-bottom: none;
+  color: #7f7f7f;
+}
+.alertify .ajs-body {
+  color: #7f7f7f;
+}
+.alertify .ajs-footer .ajs-buttons .ajs-button {
+  text-transform: none;
+  color: #7f7f7f;
+}
+.dialog__content.dialog__content__active {
+  height: initial !important;
+}
+
+
+

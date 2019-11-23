@@ -4,8 +4,7 @@
  */
 <style lang="sass"  >
 
-// @import ../../../assets/sass/variables
-@import ../assets/sass/_variables.sass
+@import ../../../assets/sass/variables
 
 $light-grey-background: #eaeaea
 $horizontal-dashboard-height: 140px
@@ -173,27 +172,28 @@ $horizontal-dashboard-height: 140px
 
 
 <script>
-import Navigation    from  '../components/pages/Navigation.vue'
-import Workflow      from  '../components/pages/Workflow.vue'
-import ReviewCase    from  '../components/viz/ReviewCase.vue'
-import Findings      from  '../components/viz/Findings.vue'
-import LoginMosaic   from  '../components/partials/LoginMosaic.vue'
-import AppIcon       from  '../components/partials/AppIcon.vue'
 
-import AWSSession    from  '../models/AWSSession'
-import MosaicSession from  '../models/MosaicSession.js'
+import Navigation    from  '../pages/Navigation.vue'
+import Workflow      from  '../pages/Workflow.vue'
+import ReviewCase    from  '../viz/ReviewCase.vue'
+import Findings      from  '../viz/Findings.vue'
+import LoginMosaic   from  '../partials/LoginMosaic.vue'
+import AppIcon       from  '../partials/AppIcon.vue'
+
+import AWSSession    from  '../../models/AWSSession.js'
+import MosaicSession from  '../../models/MosaicSession.js'
 
 
-import SaveButton  from '../components/partials/SaveButton.vue'
-import SaveAnalysisPopup  from '../components/partials/SaveAnalysisPopup.vue'
+import SaveButton  from '../partials/SaveButton.vue'
+import SaveAnalysisPopup  from '../partials/SaveAnalysisPopup.vue'
 
-import workflowData  from '../data/workflows.json'
-import variantData   from '../data/variants_mosaic_platinum.json'
-import analysisData  from '../data/analysis.json'
+import workflowData  from '../../../data/workflows.json'
+import variantData   from '../../../data/variants_mosaic_platinum.json'
+import analysisData  from '../../../data/analysis.json'
 
 import axios from 'axios'
 import { saveAs } from 'file-saver'
-import { bus } from '../main'
+import { bus } from '../../routes'
 
 export default {
   name: 'home',
