@@ -135,7 +135,7 @@ $horizontal-dashboard-height: 140px
       </v-card>
 
 
-      <div id="gene-panel-iframe"
+      <div id="gene-panel-iframe" style="width:100%;height:100%"
         v-show="!isAuthenticated || (currentStep == 2  && !showFindings)">
         <iframe
         :src="apps.genepanel.url + '&iobio_source=' + iobioSource"

@@ -369,7 +369,7 @@ $badge-inactive-color:  #d8d3d3
         <div class="step-buttons">
           <div class="step">
             <v-divider v-if="stepIndex != 0" :class="{'long': true}"></v-divider>
-            <v-btn class="avatar-button" flat  @click="onStepClick(step)">
+            <v-btn class="avatar-button" text  @click="onStepClick(step)">
               <v-avatar >
                 <span class="headline">{{ getStepNumber(step.key) }} </span>
               </v-avatar>
@@ -388,7 +388,7 @@ $badge-inactive-color:  #d8d3d3
                 </div>
               </div>
               <v-divider :class="{'short': true}"></v-divider>
-              <v-btn class="avatar-button"  flat  @click="onTaskClick(step, task)">
+              <v-btn class="avatar-button"  text  @click="onTaskClick(step, task)">
                   <v-avatar >
                     <v-icon v-if="false && task.complete">check</v-icon>
                   </v-avatar>

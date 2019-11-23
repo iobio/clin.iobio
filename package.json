@@ -19,6 +19,7 @@
     "debug": "^2.6.8",
     "express": "^4.15.3",
     "file-saver": "^2.0.2",
+    "iobio-phenotype-extractor-vue": "^0.1.10",
     "jquery": "^3.4.1",
     "material-design-icons-iconfont": "^5.0.1",
     "serve-favicon": "^2.4.3",

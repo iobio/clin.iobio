@@ -102,7 +102,7 @@ nav.toolbar
       :nudge-width="350"
       v-model="showCaseMenu"
       >
-        <v-btn v-if="caseSummary && caseSummary.name"  flat slot="activator">
+        <v-btn v-if="caseSummary && caseSummary.name"  text slot="activator">
           {{ caseSummary.name }}
         </v-btn>
 
@@ -127,7 +127,7 @@ nav.toolbar
       :nudge-width="350"
       v-model="showPhenotypesMenu"
       >
-        <v-btn  flat slot="activator">
+        <v-btn  text slot="activator">
           Phenotypes
         </v-btn>
 
@@ -141,7 +141,7 @@ nav.toolbar
       :nudge-width="350"
       v-model="showGenesMenu"
       >
-        <v-btn  flat slot="activator">
+        <v-btn  text slot="activator">
           Genes
         </v-btn>
 
@@ -155,7 +155,7 @@ nav.toolbar
       :nudge-width="350"
       v-model="showVariantsMenu"
       >
-        <v-btn  flat slot="activator">
+        <v-btn  text slot="activator">
           Variants
         </v-btn>
 
@@ -169,7 +169,7 @@ nav.toolbar
       :nudge-width="350"
       v-model="showNotesMenu"
       >
-        <v-btn  flat slot="activator">
+        <v-btn  text slot="activator">
           Notes
         </v-btn>
 
@@ -183,7 +183,7 @@ nav.toolbar
       :nudge-width="350"
       v-model="showInstructionsMenu"
       >
-        <v-btn  flat slot="activator">
+        <v-btn  text slot="activator">
           Instructions
         </v-btn>
 
