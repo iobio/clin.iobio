@@ -2,7 +2,7 @@
   <v-app>
     <v-content>
       <HelloWorld/>
-      <Main/>
+      <!-- <Main/> -->
     </v-content>
   </v-app>
 </template>

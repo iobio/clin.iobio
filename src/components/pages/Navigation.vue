@@ -9,8 +9,83 @@
     height: 30px !important
 
 
+//new
+header.theme--dark.v-sheet
+  padding-top: 5px
+  background-color: $nav-color !important
+  font-weight: 300 !important
+
+  .v-toolbar__content
+    margin-top: 1px
+    align-items: flex-end
+    padding-right: 15px
+    padding-bottom: 5px
+
+    .percent-label
+      font-size: 12px
+
+    #workflow-progress
+      display: inline-block
+      text-align: center
+
+      .v-progress-linear__background.primary
+        background-color: $workflow-active-color !important
+        border-color: $workflow-active-color !important
+      .v-progress-linear__bar__determinate.primary
+        background-color: $workflow-active-color !important
+        border-color: $workflow-active-color !important
+
+    .v-toolbar__title
+      color: $nav-title-color
+      font-family: $iobio-font
+
+    .v-btn
+      color: $nav-text-color
+      text-transform: none
+      font-size: 13px !important
 
 
+    .v-toolbar__items
+      width: 60%
+
+    .v-btn
+      margin: 0px
+      min-width: 78px
+      margin-left: 10px
+
+      .v-btn__content
+        padding: 0 0px
+        font-family: $iobio-font
+
+
+    #report-button
+      height: 30px
+      margin-left: 20px
+      margin-bottom: 4px
+
+      .v-btn__content
+        color: $workflow-active-color
+
+        i.material-icons
+          color: $workflow-active-color !important
+          font-size: 17px !important
+          padding-right: 2px
+
+
+    i.material-icons
+      margin-right: 2px
+      color:  $nav-text-color !important
+
+    .v-toolbar__title
+      font-size: 18px
+      margin-right: 5px
+      margin-left: 5px
+      padding-bottom: 6px
+      min-width: 130px
+
+
+
+//old
 nav.toolbar
   padding-top: 5px
   background-color: $nav-color !important
@@ -102,9 +177,14 @@ nav.toolbar
       :nudge-width="350"
       v-model="showCaseMenu"
       >
-        <v-btn v-if="caseSummary && caseSummary.name"  text slot="activator">
+      <template v-slot:activator="{ on }">
+        <v-btn text v-on="on" v-if="caseSummary && caseSummary.name">
           {{ caseSummary.name }}
         </v-btn>
+      </template>
+        <!-- <v-btn v-if="caseSummary && caseSummary.name"  text slot="activator">
+          {{ caseSummary.name }}
+        </v-btn> -->
 
         <v-card>
         </v-card>
@@ -127,9 +207,14 @@ nav.toolbar
       :nudge-width="350"
       v-model="showPhenotypesMenu"
       >
-        <v-btn  text slot="activator">
+      <template v-slot:activator="{ on }">
+        <v-btn text v-on="on">
           Phenotypes
         </v-btn>
+      </template>
+        <!-- <v-btn  text slot="activator">
+          Phenotypes
+        </v-btn> -->
 
         <v-card>
         </v-card>
@@ -141,9 +226,14 @@ nav.toolbar
       :nudge-width="350"
       v-model="showGenesMenu"
       >
-        <v-btn  text slot="activator">
+      <template v-slot:activator="{ on }">
+        <v-btn text v-on="on">
           Genes
         </v-btn>
+      </template>
+        <!-- <v-btn  text slot="activator">
+          Genes
+        </v-btn> -->
 
         <v-card>
         </v-card>
@@ -191,7 +281,7 @@ nav.toolbar
         </v-card>
       </v-menu>
 
-      <v-btn id="report-button" @click="createAnalysisPDF">
+      <v-btn light tile id="report-button" @click="createAnalysisPDF">
         <v-icon>assignment</v-icon>
         Report
       </v-btn>
