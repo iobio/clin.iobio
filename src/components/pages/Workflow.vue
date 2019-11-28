@@ -8,7 +8,7 @@ $badge-inactive-color:  #d8d3d3
 #workflow-card
   color: $workflow-inactive-color
   height: 140px
-  margin-top: 50px
+  // margin-top: 50px
   margin-bottom: 10px
   padding-top: 10px
   padding-bottom: 0px
@@ -133,10 +133,10 @@ $badge-inactive-color:  #d8d3d3
     padding: 0px
     margin: 0px
 
-    .btn__content
+    .v-btn__content
       padding: 0px
 
-      .avatar
+      .v-avatar
         border: solid 2px $workflow-inactive-color
 
         .headline
@@ -157,9 +157,10 @@ $badge-inactive-color:  #d8d3d3
           height:      40px
           min-width:   40px
 
-          .avatar
+          .v-avatar
             width:     40px !important
             height:    40px !important
+            min-width:   0px !important
             border: solid 2px $workflow-active-color
 
             .headline
@@ -169,7 +170,7 @@ $badge-inactive-color:  #d8d3d3
 
       &.active.complete
         .step
-          .avatar
+          .v-avatar
             background-color: $workflow-active-color
             .headline
               color: white !important
@@ -177,13 +178,13 @@ $badge-inactive-color:  #d8d3d3
 
       .task
         &.complete
-          .avatar
+          .v-avatar
             border-color:  $text-color !important
             background-color: $text-color !important
             .material-icons
               color: $text-color !important
         &.active
-          .avatar
+          .v-avatar
             background-color:  white !important
             border-color: $workflow-active-color  !important
             .material-icons
@@ -192,7 +193,7 @@ $badge-inactive-color:  #d8d3d3
             color: $workflow-active-color
             font-weight: bold
           &.complete
-            .avatar
+            .v-avatar
               background-color:  $workflow-active-color !important
               .material-icons
                 color: white !important
@@ -204,9 +205,10 @@ $badge-inactive-color:  #d8d3d3
         .avatar-button
           height:    20px !important
           min-width: 20px !important
-          .avatar
+          .v-avatar
             width: 20px !important
             height: 20px !important
+            min-width:   0px !important
             border: solid 2px $text-color
             background-color:  white
             margin-top: 0px
@@ -262,14 +264,15 @@ $badge-inactive-color:  #d8d3d3
         min-width: 32px
         margin-left: 3px
 
-        .avatar
+        .v-avatar
           width:   32px !important
           height:  32px !important
+          min-width:   0px !important
 
           .headline
             font-size: 14px !important
     &.complete
-      .avatar
+      .v-avatar
         background-color: $workflow-inactive-color
         .headline
           color: white !important
@@ -277,7 +280,7 @@ $badge-inactive-color:  #d8d3d3
     .task
 
       &.complete
-        .avatar
+        .v-avatar
           background-color: $workflow-inactive-color !important
           .material-icons
             color: white !important
@@ -292,9 +295,10 @@ $badge-inactive-color:  #d8d3d3
       .avatar-button
         height:      24px !important
         min-width:   15px !important
-        .avatar
+        .v-avatar
           width:             14px !important
           height:            14px !important
+          min-width:           0px !important
           display:           inline-block
           margin-top:        3px
           border: solid 2px  $workflow-inactive-color
