@@ -112,10 +112,28 @@ $horizontal-dashboard-height: 140px
         </review-case>
       </v-card>
 
+      <v-card  class="clin-card"
+        v-if="analysis && workflow"
+        v-show="analysis && workflow && currentStep == 2 && !showFindings"
+      >
+        <PhenotypeExtractor
+          @GtrGeneList="GtrGeneList($event)">
+        </PhenotypeExtractor>
+      </v-card>
 
       <v-card  class="clin-card"
         v-if="analysis && workflow"
-        v-show="analysis && workflow && currentStep == 5 && !showFindings "
+        v-show="analysis && workflow && currentStep == 3 && !showFindings"
+      >
+      <GeneList
+        :gtrGenes="gtrGenes">
+      </GeneList>
+      </v-card>
+
+
+      <v-card  class="clin-card"
+        v-if="analysis && workflow"
+        v-show="analysis && workflow && currentStep == 6 && !showFindings "
       >
         <findings
         ref="findingsRef"
@@ -136,7 +154,16 @@ $horizontal-dashboard-height: 140px
       </v-card>
 
 
-      <div id="gene-panel-iframe" style="width:100%;height:1024px"
+
+      <!-- <br>
+      Gene list
+      <GeneList
+        :gtrGenes="gtrGenes">
+      </GeneList> -->
+
+
+
+      <div id="gene-panel-iframe" style="width:100%;height:1px"
         v-show="!isAuthenticated || (currentStep == 2  && !showFindings)">
         <iframe
         :src="apps.genepanel.url + '&iobio_source=' + iobioSource"
@@ -144,7 +171,7 @@ $horizontal-dashboard-height: 140px
         </iframe>
       </div>
 
-      <div id="gene-iframe" style="width:100%;height:1024px" v-show="!isAuthenticated || ((currentStep == 3) && !showFindings)">
+      <div id="gene-iframe" style="width:100%;height:1024px" v-show="!isAuthenticated || ((currentStep == 4) && !showFindings)">
         <iframe
         :src="apps.genefull.url"
         style="width:100%;height:100%" frameBorder="0">
@@ -196,6 +223,9 @@ import axios from 'axios'
 import { saveAs } from 'file-saver'
 import { bus } from '../main'
 
+import NewComponents from 'iobio-phenotype-extractor-vue';
+
+
 export default {
   name: 'home',
   components: {
@@ -206,7 +236,8 @@ export default {
     Findings,
     AppIcon,
     SaveButton,
-    SaveAnalysisPopup
+    SaveAnalysisPopup,
+    ...NewComponents
   },
   props: {
     paramDebug:          null,
@@ -308,9 +339,9 @@ export default {
         "updated_at": "2019-04-09T22:09:54.306Z",
         "username": "tonya_lee.disera_6b762afd",
         "confirmation_status": "CONFIRMED"
-      }
+      },
 
-
+      gtrGenes: [],
     }
 
   },
@@ -361,6 +392,9 @@ export default {
   },
 
   watch: {
+    workflow(){
+      console.log("workflow data in clinhome", this.workflow)
+    },
     currentStep: function() {
       let self = this;
       if (self.isAuthenticated && self.workflow && self.analysis && self.currentStep) {
@@ -1300,6 +1334,11 @@ export default {
           const pdfBlob = new Blob([res.data], { type: 'application/pdf' })
           saveAs(pdfBlob, "analysis.pdf")
         })
+    },
+
+    GtrGeneList(genes){
+      console.log("genes returned", genes)
+      this.gtrGenes = genes;
     }
 
   }

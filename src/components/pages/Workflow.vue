@@ -325,10 +325,11 @@ $badge-inactive-color:  #d8d3d3
 
 
   .button-panel
-    margin-top: -25px
+    // margin-top: -25px
+    margin-top: -15px
 
   #current-checkbox-container
-    margin-top: -48px
+    margin-top: -52px
     max-width: 30px
 
     label
@@ -457,6 +458,9 @@ export default {
     }
   },
   watch: {
+    analysisSteps(){
+      console.log("analysisSteps", this.analysisSteps)
+    },
     currentTask: function() {
       let self = this;
       self.$emit("on-task-changed")
@@ -622,6 +626,8 @@ export default {
     self.currentTaskComplete = self.currentTask.complete;
 
     self.shiftButtons();
+
+    console.log("analysisSteps mounted", this.analysisSteps)
 
   }
 }

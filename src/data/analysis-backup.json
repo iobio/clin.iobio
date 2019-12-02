@@ -34,18 +34,6 @@
         "complete": false
       },
       {
-        "key": "phenotypes",
-        "tasks": [
-          {
-            "key": "review-phenotypes",
-            "passed": false,
-            "complete": true
-          }
-        ],
-        "number": 2,
-        "complete": false
-      },
-      {
         "key": "genes",
         "tasks": [
           {
@@ -53,9 +41,20 @@
             "badge": 15,
             "passed": false,
             "complete": true
+          },
+          {
+            "key": "phenotype-genes",
+            "badge": 10,
+            "passed": false,
+            "complete": true
+          },
+          {
+            "key": "summary-genes",
+            "passed": false,
+            "complete": false
           }
         ],
-        "number": 3,
+        "number": 2,
         "complete": false
       },
       {
@@ -68,7 +67,7 @@
             "complete": false
           }
         ],
-        "number": 4,
+        "number": 3,
         "complete": false
       },
       {
@@ -80,7 +79,7 @@
             "complete": false
           }
         ],
-        "number": 5,
+        "number": 4,
         "complete": false
       }
     ],
