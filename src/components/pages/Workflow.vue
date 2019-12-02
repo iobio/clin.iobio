@@ -7,8 +7,9 @@ $badge-inactive-color:  #d8d3d3
 
 #workflow-card
   color: $workflow-inactive-color
-  height: 140px
+  // height: 140px
   // margin-top: 50px
+  height: auto
   margin-bottom: 10px
   padding-top: 10px
   padding-bottom: 0px
@@ -225,7 +226,7 @@ $badge-inactive-color:  #d8d3d3
     .step-buttons
       display: inline-block
 
-    .divider
+    .v-divider
       width: 34px
       margin: 0px
       display: inline-block
@@ -327,7 +328,7 @@ $badge-inactive-color:  #d8d3d3
     margin-top: -25px
 
   #current-checkbox-container
-    margin-top: -38px
+    margin-top: -48px
     max-width: 30px
 
     label

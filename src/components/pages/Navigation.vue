@@ -245,9 +245,14 @@ nav.toolbar
       :nudge-width="350"
       v-model="showVariantsMenu"
       >
-        <v-btn  text slot="activator">
+      <template v-slot:activator="{ on }">
+        <v-btn text v-on="on">
           Variants
         </v-btn>
+      </template>
+        <!-- <v-btn  text slot="activator">
+          Variants
+        </v-btn> -->
 
         <v-card>
         </v-card>
@@ -259,9 +264,14 @@ nav.toolbar
       :nudge-width="350"
       v-model="showNotesMenu"
       >
-        <v-btn  text slot="activator">
+        <!-- <v-btn  text slot="activator">
           Notes
-        </v-btn>
+        </v-btn> -->
+        <template v-slot:activator="{ on }">
+          <v-btn text v-on="on">
+            Notes
+          </v-btn>
+        </template>
 
         <v-card>
         </v-card>
@@ -273,9 +283,14 @@ nav.toolbar
       :nudge-width="350"
       v-model="showInstructionsMenu"
       >
-        <v-btn  text slot="activator">
+        <!-- <v-btn  text slot="activator">
           Instructions
-        </v-btn>
+        </v-btn> -->
+        <template v-slot:activator="{ on }">
+          <v-btn text v-on="on">
+            Instructions
+          </v-btn>
+        </template>
 
         <v-card>
         </v-card>

@@ -27,8 +27,9 @@ $horizontal-dashboard-height: 140px
     width: 100%
     display: flex
     justify-content: center
+    height: 1024px
 
-    .progress-circular
+    .v-progress-circular
       color: $navy-blue !important
 
 .clin-card
@@ -135,7 +136,7 @@ $horizontal-dashboard-height: 140px
       </v-card>
 
 
-      <div id="gene-panel-iframe" style="width:100%;height:100%"
+      <div id="gene-panel-iframe" style="width:100%;height:1024px"
         v-show="!isAuthenticated || (currentStep == 2  && !showFindings)">
         <iframe
         :src="apps.genepanel.url + '&iobio_source=' + iobioSource"
@@ -143,7 +144,7 @@ $horizontal-dashboard-height: 140px
         </iframe>
       </div>
 
-      <div id="gene-iframe" v-show="!isAuthenticated || ((currentStep == 3) && !showFindings)">
+      <div id="gene-iframe" style="width:100%;height:1024px" v-show="!isAuthenticated || ((currentStep == 3) && !showFindings)">
         <iframe
         :src="apps.genefull.url"
         style="width:100%;height:100%" frameBorder="0">
