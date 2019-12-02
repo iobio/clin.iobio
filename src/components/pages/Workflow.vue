@@ -352,6 +352,8 @@ $badge-inactive-color:  #d8d3d3
   #ab-switch
     top: 125px
 
+  .v-application, .accent--text
+    color: $workflow-active-color !important
 
 </style>
 
