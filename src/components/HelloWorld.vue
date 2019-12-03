@@ -117,8 +117,9 @@ $horizontal-dashboard-height: 140px
         v-show="analysis && workflow && currentStep == 2 && !showFindings"
       >
         <PhenotypeExtractor
-          @GtrGeneList="GtrGeneList($event)">
+          @summaryGenes="summaryGenes($event)">
         </PhenotypeExtractor>
+
       </v-card>
 
       <v-card  class="clin-card"
@@ -126,7 +127,7 @@ $horizontal-dashboard-height: 140px
         v-show="analysis && workflow && currentStep == 3 && !showFindings"
       >
       <GeneList
-        :gtrGenes="gtrGenes">
+        :summaryGeneList="summaryGeneList">
       </GeneList>
       </v-card>
 
@@ -342,6 +343,7 @@ export default {
       },
 
       gtrGenes: [],
+      summaryGeneList: []
     }
 
   },
@@ -1339,7 +1341,14 @@ export default {
     GtrGeneList(genes){
       console.log("genes returned", genes)
       this.gtrGenes = genes;
+    },
+
+    summaryGenes(genes){
+      console.log("genes returned", genes)
+      // this.gtrGenes = genes;
+      this.summaryGeneList = genes;
     }
+
 
   }
 }

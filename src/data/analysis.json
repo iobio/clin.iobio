@@ -39,7 +39,7 @@
           {
             "key": "review-phenotypes",
             "passed": false,
-            "complete": true
+            "complete": false
           }
         ],
         "number": 2,
@@ -50,9 +50,9 @@
         "tasks": [
           {
             "key": "gtr-genes",
-            "badge": 15,
+            "badge": 0,
             "passed": false,
-            "complete": true
+            "complete": false
           }
         ],
         "number": 3,
