@@ -281,20 +281,20 @@ export default {
 
       appUrls: {
         'localhost': {
-            'gene':      'https://localhost:4026/?launchedFromClin=true&frame_source=' + window.document.URL,
-            'genefull':  'http://localhost:4026/?launchedFromClin=true&frame_source=' + window.document.URL,
-            'genepanel': 'http://localhost:8080/?launchedFromClin=true&frame_source=' + window.document.URL,
-            //'bam':       'http://localhost:4027' https://dev.gene.iobio.io/
+          'gene':      'https://localhost:4026/?launchedFromClin=true&frame_source=' + window.document.URL,
+          'genefull':  'http://localhost:4026/?launchedFromClin=true&frame_source=' + window.document.URL,
+          'genepanel': 'http://localhost:4024/?launchedFromClin=true&frame_source=' + window.document.URL,
+          //'bam':       'http://localhost:4027'
         },
         'tony.iobio.io': {
-            'gene':      'https://localhost:4026/?launchedFromClin=true&frame_source=' + window.document.URL,
-            'genefull':  'https://localhost:4026/?launchedFromClin=true&frame_source=' + window.document.URL,
-            'genepanel': 'http://localhost:8080/?launchedFromClin=true&frame_source=' + window.document.URL,
-            //'bam':       'http://tony.iobio.io:4027'
+          'gene':      'http://tony.iobio.io:4026/?launchedFromClin=true&frame_source=' + window.document.URL,
+          'genefull':  'http://tony.iobio.io:4026/?launchedFromClin=true&frame_source=' + window.document.URL,
+          'genepanel': 'http://tony.iobio.io:4024/?launchedFromClin=true&frame_source=' + window.document.URL,
+          //'bam':       'http://tony.iobio.io:4027'
         },
         'dev': {
-            'gene':      'http://localhost:4026/?launchedFromClin=true&frame_source=' + window.document.URL,
-            'genefull':  'http://localhost:4026/?launchedFromClin=true&frame_source=' + window.document.URL,
+            'gene':      'https://stage.gene.iobio.io/?launchedFromClin=true&frame_source=' + window.document.URL,
+            'genefull':  'https://stage.gene.iobio.io/?launchedFromClin=true&frame_source=' + window.document.URL,
             'genepanel': 'https://dev.panel.iobio.io/?launchedFromClin=true&frame_source=' + window.document.URL,
             //'bam':       'https://newbam.iobio.io'
         },
