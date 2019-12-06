@@ -1,7 +1,7 @@
 <template>
   <v-app>
     <v-content>
-      <HelloWorld/>
+      <ClinHome/>
       <!-- <Main/> -->
       <!-- <PhenotypeExtractor/>
       <GeneList/> -->
@@ -10,13 +10,13 @@
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld';
+import ClinHome from './components/pages/ClinHome.vue';
 
 export default {
   name: 'App',
 
   components: {
-    HelloWorld,
+    ClinHome,
   },
 
   data: () => ({

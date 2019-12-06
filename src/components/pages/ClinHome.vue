@@ -4,7 +4,10 @@
  */
 <style lang="sass"  >
 
-@import ../../../assets/sass/variables
+// @import ../../../assets/sass/variables
+// @import ../assets/sass/_variables.sass
+@import ../../assets/sass/_variables.sass
+
 
 $light-grey-background: #eaeaea
 $horizontal-dashboard-height: 140px
@@ -26,8 +29,9 @@ $horizontal-dashboard-height: 140px
     width: 100%
     display: flex
     justify-content: center
+    height: 1024px
 
-    .progress-circular
+    .v-progress-circular
       color: $navy-blue !important
 
 .clin-card
@@ -110,10 +114,30 @@ $horizontal-dashboard-height: 140px
         </review-case>
       </v-card>
 
+      <v-card  class="clin-card"
+        v-if="analysis && workflow"
+        v-show="analysis && workflow && currentStep == 2 && !showFindings"
+      >
+        <PhenotypeExtractor
+          :phenotypes="analysis.payload.phenotypes"
+          @summaryGenes="summaryGenes($event)">
+        </PhenotypeExtractor>
+
+      </v-card>
 
       <v-card  class="clin-card"
         v-if="analysis && workflow"
-        v-show="analysis && workflow && currentStep == 5 && !showFindings "
+        v-show="analysis && workflow && currentStep == 3 && !showFindings"
+      >
+      <GeneList
+        :summaryGeneList="summaryGeneList">
+      </GeneList>
+      </v-card>
+
+
+      <v-card  class="clin-card"
+        v-if="analysis && workflow"
+        v-show="analysis && workflow && currentStep == 6 && !showFindings "
       >
         <findings
         ref="findingsRef"
@@ -134,7 +158,16 @@ $horizontal-dashboard-height: 140px
       </v-card>
 
 
-      <div id="gene-panel-iframe"
+
+      <!-- <br>
+      Gene list
+      <GeneList
+        :gtrGenes="gtrGenes">
+      </GeneList> -->
+
+
+
+      <div id="gene-panel-iframe" style="width:100%;height:1px"
         v-show="!isAuthenticated || (currentStep == 2  && !showFindings)">
         <iframe
         :src="apps.genepanel.url + '&iobio_source=' + iobioSource"
@@ -142,7 +175,7 @@ $horizontal-dashboard-height: 140px
         </iframe>
       </div>
 
-      <div id="gene-iframe" v-show="!isAuthenticated || ((currentStep == 3) && !showFindings)">
+      <div id="gene-iframe" style="width:100%;height:1024px" v-show="!isAuthenticated || ((currentStep == 4) && !showFindings)">
         <iframe
         :src="apps.genefull.url"
         style="width:100%;height:100%" frameBorder="0">
@@ -172,7 +205,6 @@ $horizontal-dashboard-height: 140px
 
 
 <script>
-
 import Navigation    from  '../pages/Navigation.vue'
 import Workflow      from  '../pages/Workflow.vue'
 import ReviewCase    from  '../viz/ReviewCase.vue'
@@ -187,13 +219,16 @@ import MosaicSession from  '../../models/MosaicSession.js'
 import SaveButton  from '../partials/SaveButton.vue'
 import SaveAnalysisPopup  from '../partials/SaveAnalysisPopup.vue'
 
-import workflowData  from '../../../data/workflows.json'
-import variantData   from '../../../data/variants_mosaic_platinum.json'
-import analysisData  from '../../../data/analysis.json'
+import workflowData  from '../../data/workflows.json'
+import variantData   from '../../data/variants_mosaic_platinum.json'
+import analysisData  from '../../data/analysis.json'
 
 import axios from 'axios'
 import { saveAs } from 'file-saver'
-import { bus } from '../../routes'
+import { bus } from '../../main'
+
+import NewComponents from 'iobio-phenotype-extractor-vue';
+
 
 export default {
   name: 'home',
@@ -205,7 +240,8 @@ export default {
     Findings,
     AppIcon,
     SaveButton,
-    SaveAnalysisPopup
+    SaveAnalysisPopup,
+    ...NewComponents
   },
   props: {
     paramDebug:          null,
@@ -307,9 +343,10 @@ export default {
         "updated_at": "2019-04-09T22:09:54.306Z",
         "username": "tonya_lee.disera_6b762afd",
         "confirmation_status": "CONFIRMED"
-      }
+      },
 
-
+      gtrGenes: [],
+      summaryGeneList: []
     }
 
   },
@@ -360,6 +397,9 @@ export default {
   },
 
   watch: {
+    workflow(){
+      console.log("workflow data in clinhome", this.workflow)
+    },
     currentStep: function() {
       let self = this;
       if (self.isAuthenticated && self.workflow && self.analysis && self.currentStep) {
@@ -409,7 +449,6 @@ export default {
 
     init: function() {
       let self = this;
-      console.log("inside init")
       var appTarget = null;
       if (window.document.URL.indexOf("localhost") > 0) {
         appTarget = "localhost";
@@ -738,6 +777,8 @@ export default {
     },
 
     sendAppMessage: function(appName, obj) {
+      console.log("message sent to: ", appName)
+      console.log("message obj: ", obj)
       let self = this;
       var theObject = obj ? obj : {type: 'start-analysis', sender: 'clin.iobio'};
       if (!theObject.hasOwnProperty("isFrameVisible")) {
@@ -1299,7 +1340,19 @@ export default {
           const pdfBlob = new Blob([res.data], { type: 'application/pdf' })
           saveAs(pdfBlob, "analysis.pdf")
         })
+    },
+
+    GtrGeneList(genes){
+      console.log("genes returned", genes)
+      this.gtrGenes = genes;
+    },
+
+    summaryGenes(genes){
+      console.log("genes returned", genes)
+      // this.gtrGenes = genes;
+      this.summaryGeneList = genes;
     }
+
 
   }
 }
