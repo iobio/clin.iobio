@@ -117,6 +117,7 @@ $horizontal-dashboard-height: 140px
         v-show="analysis && workflow && currentStep == 2 && !showFindings"
       >
         <PhenotypeExtractor
+          :phenotypes="analysis.payload.phenotypes"
           @summaryGenes="summaryGenes($event)">
         </PhenotypeExtractor>
 
@@ -446,7 +447,6 @@ export default {
 
     init: function() {
       let self = this;
-      console.log("inside init")
       var appTarget = null;
       if (window.document.URL.indexOf("localhost") > 0) {
         appTarget = "localhost";
@@ -775,6 +775,8 @@ export default {
     },
 
     sendAppMessage: function(appName, obj) {
+      console.log("message sent to: ", appName)
+      console.log("message obj: ", obj)
       let self = this;
       var theObject = obj ? obj : {type: 'start-analysis', sender: 'clin.iobio'};
       if (!theObject.hasOwnProperty("isFrameVisible")) {

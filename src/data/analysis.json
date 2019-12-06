@@ -50,7 +50,6 @@
         "tasks": [
           {
             "key": "gtr-genes",
-            "badge": 0,
             "passed": false,
             "complete": false
           }
@@ -1068,10 +1067,24 @@
     "sample_id": "108",
     "phenotypes": [
       [
-        "Dejerine-Sottas disease"
+        {
+          "DiseaseName": "Dejerine-Sottas disease",
+          "ConceptID": "C0011195",
+          "general": true,
+          "gtrSearchStatus": "Completed"
+        }
       ],
       [
-        "dejerine sottas"
+        {
+          "id": "dejerine sottas disease",
+          "label": "dejerine sottas disease",
+          "value": "dejerine sottas disease",
+          "general": true,
+          "phenolyzerSearchStatus": "Completed"
+        }
+      ],
+      [
+        
       ]
     ],
     "project_id": "32",
