@@ -4,8 +4,6 @@
  */
 <style lang="sass"  >
 
-// @import ../../../assets/sass/variables
-// @import ../assets/sass/_variables.sass
 @import ../../assets/sass/_variables.sass
 
 
@@ -157,16 +155,6 @@ $horizontal-dashboard-height: 140px
         </findings>
       </v-card>
 
-
-
-      <!-- <br>
-      Gene list
-      <GeneList
-        :gtrGenes="gtrGenes">
-      </GeneList> -->
-
-
-
       <div id="gene-panel-iframe" style="width:100%;height:1px"
         v-show="!isAuthenticated || (currentStep == 2  && !showFindings)">
         <iframe
@@ -293,9 +281,9 @@ export default {
 
       appUrls: {
         'localhost': {
-            'gene':      'https://dev.gene.iobio.io/?launchedFromClin=true&frame_source=' + window.document.URL,
-            'genefull':  'https://dev.gene.iobio.io/?launchedFromClin=true&frame_source=' + window.document.URL,
-            'genepanel': 'https://dev.panel.iobio.io/?launchedFromClin=true&frame_source=' + window.document.URL,
+            'gene':      'https://localhost:4026/?launchedFromClin=true&frame_source=' + window.document.URL,
+            'genefull':  'http://localhost:4026/?launchedFromClin=true&frame_source=' + window.document.URL,
+            'genepanel': 'http://localhost:8080/?launchedFromClin=true&frame_source=' + window.document.URL,
             //'bam':       'http://localhost:4027' https://dev.gene.iobio.io/
         },
         'tony.iobio.io': {
@@ -398,7 +386,7 @@ export default {
 
   watch: {
     workflow(){
-      console.log("workflow data in clinhome", this.workflow)
+      // console.log("workflow data in clinhome", this.workflow)
     },
     currentStep: function() {
       let self = this;
@@ -460,8 +448,8 @@ export default {
       //self.apps.bam.url       = self.appUrls[appTarget].bam;
       self.apps.genepanel.url     = self.appUrls[appTarget].genepanel;
       self.apps.genefull.url      = self.appUrls[appTarget].genefull;
-      console.log("self.apps.genepanel.url", self.apps.genepanel.url)
-      console.log("self.apps.genefull.url", self.apps.genefull.url)
+      // console.log("self.apps.genepanel.url", self.apps.genepanel.url)
+      // console.log("self.apps.genefull.url", self.apps.genefull.url)
       window.addEventListener("message", self.receiveAppMessage, false);
 
       self.promiseIFramesMounted()
@@ -777,8 +765,6 @@ export default {
     },
 
     sendAppMessage: function(appName, obj) {
-      console.log("message sent to: ", appName)
-      console.log("message obj: ", obj)
       let self = this;
       var theObject = obj ? obj : {type: 'start-analysis', sender: 'clin.iobio'};
       if (!theObject.hasOwnProperty("isFrameVisible")) {
