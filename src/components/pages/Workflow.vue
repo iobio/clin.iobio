@@ -1,6 +1,6 @@
 <style lang="sass">
 
-@import ../../assets/sass/_variables.sass
+@import ../../assets/sass/variables
 
 $badge-inactive-color:  #d8d3d3
 

@@ -2,7 +2,7 @@ import Vue                  from 'vue'
 import App                  from './App.vue'
 import router               from './router'
 import store                from './store'
-import bootstrap            from 'bootstrap/dist/css/bootstrap.css'
+// import bootstrap            from 'bootstrap/dist/css/bootstrap.css'
 
 import vuetify              from './plugins/vuetify';
 

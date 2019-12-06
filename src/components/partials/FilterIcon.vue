@@ -1,6 +1,6 @@
 <style lang="sass" scoped>
 
-@import ../../assets/sass/_variables.sass
+@import ../../assets/sass/variables
 
 
 

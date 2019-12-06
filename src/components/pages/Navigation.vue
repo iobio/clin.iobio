@@ -1,6 +1,6 @@
 <style lang="sass">
 
-@import ../../assets/sass/_variables.sass
+@import ../../assets/sass/variables
 
 
 .dialog.dialog--active

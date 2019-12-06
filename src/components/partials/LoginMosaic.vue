@@ -4,7 +4,7 @@
  */
 <style lang="sass"  >
 
-@import ../../assets/sass/_variables.sass
+@import ../../assets/sass/variables
 
 .login-dialog
   .row

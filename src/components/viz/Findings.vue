@@ -1,6 +1,6 @@
 <style lang="sass"  >
 
-@import ../../assets/sass/_variables.sass
+@import ../../assets/sass/variables
 
 #findings-panel
   padding: 5px 20px 5px 20px

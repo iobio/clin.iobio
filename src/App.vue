@@ -2,9 +2,6 @@
   <v-app>
     <v-content>
       <ClinHome/>
-      <!-- <Main/> -->
-      <!-- <PhenotypeExtractor/>
-      <GeneList/> -->
     </v-content>
   </v-app>
 </template>
