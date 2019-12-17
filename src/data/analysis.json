@@ -20,6 +20,53 @@
       "MED25",
       "PHYH"
     ],
+    "VennDiagramData": {
+      "gtr": {
+        "count": 69
+      },
+      "phenolyzer": {
+        "count": 300
+      },
+      "ImportedGenes": {
+        "count": 0
+      },
+      "ClinPhen": {
+        "count": 0
+      },
+      "gtr_phenolyzer": {
+        "count": 31
+      },
+      "gtr_ImportedGenes": {
+        "count": 0
+      },
+      "gtr_ClinPhen": {
+        "count": 0
+      },
+      "phenolyzer_ImportedGenes": {
+        "count": 0
+      },
+      "phenolyzer_ClinPhen": {
+        "count": 0
+      },
+      "ImportedGenes_ClinPhen": {
+        "count": 0
+      },
+      "gtr_phenolyzer_ImportedGenes": {
+        "count": 0
+      },
+      "gtr_phenolyzer_ClinPhen": {
+        "count": 0
+      },
+      "gtr_ImportedGenes_ClinPhen": {
+        "count": 0
+      },
+      "phenolyzer_ImportedGenes_ClinPhen": {
+        "count": 0
+      },
+      "gtr_phenolyzer_ImportedGenes_ClinPhen": {
+        "count": 0
+      }
+    },
     "steps": [
       {
         "key": "review-case",
@@ -1084,7 +1131,7 @@
         }
       ],
       [
-        
+
       ]
     ],
     "project_id": "32",

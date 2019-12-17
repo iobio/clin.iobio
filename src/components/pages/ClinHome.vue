@@ -116,9 +116,16 @@ $horizontal-dashboard-height: 140px
         v-if="analysis && workflow"
         v-show="analysis && workflow && currentStep == 2 && !showFindings"
       >
-        <PhenotypeExtractor
+        <!-- <PhenotypeExtractor
           :phenotypes="analysis.payload.phenotypes"
           @summaryGenes="summaryGenes($event)">
+        </PhenotypeExtractor> -->
+
+        <PhenotypeExtractor
+          :phenotypes="analysis.payload.phenotypes"
+          @summaryGenes="summaryGenes($event)"
+          @saveSearchedPhenotypes="saveSearchedPhenotypes($event)"
+          :VennDiagramData="analysis.payload.VennDiagramData">
         </PhenotypeExtractor>
 
       </v-card>
@@ -127,8 +134,11 @@ $horizontal-dashboard-height: 140px
         v-if="analysis && workflow"
         v-show="analysis && workflow && currentStep == 3 && !showFindings"
       >
-      <GeneList
+      <!-- <GeneList
         :summaryGeneList="summaryGeneList">
+      </GeneList> -->
+      <GeneList
+        :summaryGeneList="analysis.payload.genesReport">
       </GeneList>
       </v-card>
 
@@ -1334,9 +1344,12 @@ export default {
     },
 
     summaryGenes(genes){
-      console.log("genes returned", genes)
-      // this.gtrGenes = genes;
       this.summaryGeneList = genes;
+      this.analysis.payload.genesReport = this.summaryGeneList;
+    },
+
+    saveSearchedPhenotypes(phenotypes){
+      this.analysis.payload.phenotypes = phenotypes;
     }
 
 
