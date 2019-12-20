@@ -122,6 +122,7 @@ $horizontal-dashboard-height: 140px
         </PhenotypeExtractor> -->
 
         <PhenotypeExtractor
+          v-if="analysis && workflow && currentStep == 2 && !showFindings"
           :phenotypes="analysis.payload.phenotypes"
           @summaryGenes="summaryGenes($event)"
           @saveSearchedPhenotypes="saveSearchedPhenotypes($event)"
@@ -130,6 +131,7 @@ $horizontal-dashboard-height: 140px
 
         <br>
         <GeneList
+          v-if="analysis && workflow && currentStep == 2 && !showFindings"
           :summaryGeneList="analysis.payload.genesReport">
         </GeneList>
 
