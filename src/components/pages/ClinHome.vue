@@ -128,18 +128,11 @@ $horizontal-dashboard-height: 140px
           :VennDiagramData="analysis.payload.VennDiagramData">
         </PhenotypeExtractor>
 
-      </v-card>
+        <br>
+        <GeneList
+          :summaryGeneList="analysis.payload.genesReport">
+        </GeneList>
 
-      <v-card  class="clin-card"
-        v-if="analysis && workflow"
-        v-show="analysis && workflow && currentStep == 3 && !showFindings"
-      >
-      <!-- <GeneList
-        :summaryGeneList="summaryGeneList">
-      </GeneList> -->
-      <GeneList
-        :summaryGeneList="analysis.payload.genesReport">
-      </GeneList>
       </v-card>
 
 
@@ -173,7 +166,7 @@ $horizontal-dashboard-height: 140px
         </iframe>
       </div>
 
-      <div id="gene-iframe" style="width:100%;height:1024px" v-show="!isAuthenticated || ((currentStep == 4) && !showFindings)">
+      <div id="gene-iframe" style="width:100%;height:1024px" v-show="!isAuthenticated || ((currentStep == 3) && !showFindings)">
         <iframe
         :src="apps.genefull.url"
         style="width:100%;height:100%" frameBorder="0">
@@ -458,8 +451,6 @@ export default {
       //self.apps.bam.url       = self.appUrls[appTarget].bam;
       self.apps.genepanel.url     = self.appUrls[appTarget].genepanel;
       self.apps.genefull.url      = self.appUrls[appTarget].genefull;
-      // console.log("self.apps.genepanel.url", self.apps.genepanel.url)
-      // console.log("self.apps.genefull.url", self.apps.genefull.url)
       window.addEventListener("message", self.receiveAppMessage, false);
 
       self.promiseIFramesMounted()
@@ -1339,7 +1330,6 @@ export default {
     },
 
     GtrGeneList(genes){
-      console.log("genes returned", genes)
       this.gtrGenes = genes;
     },
 

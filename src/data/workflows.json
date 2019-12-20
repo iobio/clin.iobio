@@ -26,31 +26,17 @@
           "summary": "Generate candidate gene list based on patient's phenotype using commercially available tests and gene-to-phenotype associations.",
           "tasks": [
             {
-              "key": "review-phenotypes",
-              "name": "Review Phenotypes"
+              "key": "review-phenotypes-genes",
+              "name": "Review Phenotypes & Genes"
             }
           ],
           "title": "Phenotypist"
         },
         {
-          "app": "genepanel",
-          "description": "Generate candidate gene list based on patient's phenotype using commercially available tests and gene-to-phenotype associations.",
-          "key": "genes",
-          "number": 3,
-          "summary": "Generate candidate gene list based on patient's phenotype using commercially available tests and gene-to-phenotype associations.",
-          "tasks": [
-            {
-              "key": "gtr-genes",
-              "name": "Review Genes"
-            }
-          ],
-          "title": "Gene List"
-        },
-        {
           "app": "genefull",
           "description": "The GENE.IOBIO app is used to review variants from whole exome/genome variant analysis",
           "key": "variants-full",
-          "number": 4,
+          "number": 3,
           "summary": "Review possible causative variants found in whole exome/genome of proband.",
           "tasks": [
             {
@@ -65,7 +51,7 @@
           "app": "review-findings",
           "description": "Review findings",
           "key": "review-findings",
-          "number": 5,
+          "number": 4,
           "summary": "Show Findings",
           "tasks": [
             {

@@ -84,24 +84,12 @@
         "key": "phenotypes",
         "tasks": [
           {
-            "key": "review-phenotypes",
+            "key": "review-phenotypes-genes",
             "passed": false,
             "complete": false
           }
         ],
         "number": 2,
-        "complete": false
-      },
-      {
-        "key": "genes",
-        "tasks": [
-          {
-            "key": "gtr-genes",
-            "passed": false,
-            "complete": false
-          }
-        ],
-        "number": 3,
         "complete": false
       },
       {
@@ -114,7 +102,7 @@
             "complete": false
           }
         ],
-        "number": 4,
+        "number": 3,
         "complete": false
       },
       {
@@ -126,7 +114,7 @@
             "complete": false
           }
         ],
-        "number": 5,
+        "number": 4,
         "complete": false
       }
     ],
