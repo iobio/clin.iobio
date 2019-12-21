@@ -160,13 +160,13 @@ $horizontal-dashboard-height: 140px
         </findings>
       </v-card>
 
-      <div id="gene-panel-iframe" style="width:100%;height:1px"
+      <!-- <div id="gene-panel-iframe" style="width:100%;height:1px"
         v-show="!isAuthenticated || (currentStep == 2  && !showFindings)">
         <iframe
         :src="apps.genepanel.url + '&iobio_source=' + iobioSource"
         style="width:100%;height:100%" frameBorder="0">
         </iframe>
-      </div>
+      </div> -->
 
       <div id="gene-iframe" style="width:100%;height:1024px" v-show="!isAuthenticated || ((currentStep == 3) && !showFindings)">
         <iframe
@@ -286,28 +286,28 @@ export default {
 
       appUrls: {
         'localhost': {
-          'gene':      'https://localhost:4026/?launchedFromClin=true&frame_source=' + window.document.URL,
+          'gene':      'http://localhost:4026/?launchedFromClin=true&frame_source=' + window.document.URL,
           'genefull':  'http://localhost:4026/?launchedFromClin=true&frame_source=' + window.document.URL,
-          'genepanel': 'http://localhost:4024/?launchedFromClin=true&frame_source=' + window.document.URL,
+          // 'genepanel': 'https://dev.panel.iobio.io/?launchedFromClin=true&frame_source=' + window.document.URL,
           //'bam':       'http://localhost:4027'
         },
         'tony.iobio.io': {
           'gene':      'http://tony.iobio.io:4026/?launchedFromClin=true&frame_source=' + window.document.URL,
           'genefull':  'http://tony.iobio.io:4026/?launchedFromClin=true&frame_source=' + window.document.URL,
-          'genepanel': 'http://tony.iobio.io:4024/?launchedFromClin=true&frame_source=' + window.document.URL,
+          // 'genepanel': 'http://tony.iobio.io:4024/?launchedFromClin=true&frame_source=' + window.document.URL,
           //'bam':       'http://tony.iobio.io:4027'
         },
         'dev': {
             'gene':      'https://stage.gene.iobio.io/?launchedFromClin=true&frame_source=' + window.document.URL,
             'genefull':  'https://stage.gene.iobio.io/?launchedFromClin=true&frame_source=' + window.document.URL,
-            'genepanel': 'https://dev.panel.iobio.io/?launchedFromClin=true&frame_source=' + window.document.URL,
+            // 'genepanel': 'https://dev.panel.iobio.io/?launchedFromClin=true&frame_source=' + window.document.URL,
             //'bam':       'https://newbam.iobio.io'
         },
       },
 
       apps: {
         //'bam':       {url: null, isLoaded: false, step: 0, iframeSelector: '#bam-iframe iframe'},
-        'genepanel': {url: null, isLoaded: false, isMounted: true,  step: 2,  iframeSelector: '#gene-panel-iframe iframe'},
+        // 'genepanel': {url: null, isLoaded: false, isMounted: true,  step: 2,  iframeSelector: '#gene-panel-iframe iframe'},
         'gene':      {url: null, isLoaded: false, isMounted: true,  step: -1, iframeSelector: '#gene-iframe iframe'},
         'genefull':  {url: null, isLoaded: false, isMounted: false, step: 3,  iframeSelector: '#gene-iframe iframe'}
       },
@@ -404,14 +404,14 @@ export default {
 
         // If we are going to gene.iobio (candidate genes), request
         // the genes from gene panel
-        let appGene = self.apps.genefull;
-        if (appGene.step == self.currentStep && appGene.isMounted) {
-          var msgObject = {
-            type:                  'request-genes',
-            sender:                'clin.iobio',
-            receiver:              'genepanel' };
-          self.sendAppMessage('genepanel', msgObject);
-        }
+        // let appGene = self.apps.genefull;
+        // if (appGene.step == self.currentStep && appGene.isMounted) {
+        //   var msgObject = {
+        //     type:                  'request-genes',
+        //     sender:                'clin.iobio',
+        //     receiver:              'genepanel' };
+        //   self.sendAppMessage('genepanel', msgObject);
+        // }
 
         // Indicate to app that it is now visible
         for (var appName in self.apps) {
@@ -451,7 +451,7 @@ export default {
         appTarget = "dev";
       }
       //self.apps.bam.url       = self.appUrls[appTarget].bam;
-      self.apps.genepanel.url     = self.appUrls[appTarget].genepanel;
+      // self.apps.genepanel.url     = self.appUrls[appTarget].genepanel;
       self.apps.genefull.url      = self.appUrls[appTarget].genefull;
       window.addEventListener("message", self.receiveAppMessage, false);
 
