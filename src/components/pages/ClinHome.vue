@@ -68,6 +68,7 @@ $horizontal-dashboard-height: 140px
    :caseSummary="caseSummary"
    :analysis="analysis">
   </navigation>
+  <v-btn @click="sendIframeMsg" color="primary">send iframe message</v-btn>
 
   <workflow v-if="iframesMounted && !showSplash && isAuthenticated && workflow && analysis"
    ref="workflowRef"
@@ -111,6 +112,7 @@ $horizontal-dashboard-height: 140px
         :sampleId="paramSampleId">
         </review-case>
       </v-card>
+
 
       <v-card  class="clin-card"
         v-if="analysis && workflow"
@@ -768,14 +770,19 @@ export default {
     },
 
     sendAppMessage: function(appName, obj) {
+      console.log("obj", obj, " appName : ", appName)
       let self = this;
       var theObject = obj ? obj : {type: 'start-analysis', sender: 'clin.iobio'};
+      console.log("theObject", theObject)
       if (!theObject.hasOwnProperty("isFrameVisible")) {
         let app = self.apps[appName];
         theObject.isFrameVisible = app.step == self.currentStep;
       }
 
       var iframeSelector = self.apps[appName].iframeSelector;
+      console.log("self.apps[appName]", self.apps[appName])
+      console.log("iframeSelector", iframeSelector)
+      console.log("$(iframeSelector)[0]", $(iframeSelector)[0])
       if (iframeSelector && iframeSelector.length > 0 && $(iframeSelector).length > 0) {
         $(iframeSelector)[0].contentWindow.postMessage(JSON.stringify(theObject), '*');
       } else {
@@ -1342,6 +1349,33 @@ export default {
 
     saveSearchedPhenotypes(phenotypes){
       this.analysis.payload.phenotypes = phenotypes;
+    },
+
+
+    sendIframeMsg(){
+      let self = this;
+      var appName = "genefull";
+      var iframeSelector = self.apps[appName].iframeSelector;
+      console.log("self.apps[appName]", self.apps[appName])
+      // console.log("iframeSelector", iframeSelector)
+      // console.log("$(iframeSelector)[0]", $(iframeSelector)[0])
+      console.log("Sending message!!!!")
+      var theObject = {
+        "msg" : "sending message to clin"
+      }
+
+      var msgObj = {
+            type: 'apply-genes',
+            source: 'all',
+            // genes: filteredKnownGenes,
+            genesReport: self.analysis.payload.genesReport,
+            // searchTerms:  [this.searchTermGTR, this.searchTermPhenotype]
+            searchTerms:  self.analysis.payload.phenotypes
+          }
+      console.log("genes report", self.analysis.payload.genesReport)
+      $(iframeSelector)[0].contentWindow.postMessage(JSON.stringify(msgObj), '*');
+
+
     }
 
 
