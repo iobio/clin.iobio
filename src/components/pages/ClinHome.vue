@@ -68,7 +68,6 @@ $horizontal-dashboard-height: 140px
    :caseSummary="caseSummary"
    :analysis="analysis">
   </navigation>
-  <v-btn @click="sendIframeMsg" color="primary">send iframe message</v-btn>
 
   <workflow v-if="iframesMounted && !showSplash && isAuthenticated && workflow && analysis"
    ref="workflowRef"
@@ -406,14 +405,28 @@ export default {
 
         // If we are going to gene.iobio (candidate genes), request
         // the genes from gene panel
-        // let appGene = self.apps.genefull;
-        // if (appGene.step == self.currentStep && appGene.isMounted) {
-        //   var msgObject = {
-        //     type:                  'request-genes',
-        //     sender:                'clin.iobio',
-        //     receiver:              'genepanel' };
-        //   self.sendAppMessage('genepanel', msgObject);
-        // }
+        let appGene = self.apps.genefull;
+        if (appGene.step == self.currentStep && appGene.isMounted) {
+          var appName = "genefull";
+          var iframeSelector = self.apps[appName].iframeSelector;
+
+          console.log("Sending genesReport to gene.iobio")
+
+          var theObject = {
+                type: 'apply-genes',
+                source: 'all',
+                genesReport: self.analysis.payload.genesReport,
+                searchTerms:  self.analysis.payload.phenotypes
+              }
+          $(iframeSelector)[0].contentWindow.postMessage(JSON.stringify(theObject), '*');
+
+          // var msgObject = {
+          //   type:                  'request-genes',
+          //   sender:                'clin.iobio',
+          //   receiver:              'genepanel' };
+          // self.sendAppMessage('genepanel', msgObject);
+        }
+
 
         // Indicate to app that it is now visible
         for (var appName in self.apps) {
@@ -770,19 +783,14 @@ export default {
     },
 
     sendAppMessage: function(appName, obj) {
-      console.log("obj", obj, " appName : ", appName)
       let self = this;
       var theObject = obj ? obj : {type: 'start-analysis', sender: 'clin.iobio'};
-      console.log("theObject", theObject)
       if (!theObject.hasOwnProperty("isFrameVisible")) {
         let app = self.apps[appName];
         theObject.isFrameVisible = app.step == self.currentStep;
       }
 
       var iframeSelector = self.apps[appName].iframeSelector;
-      console.log("self.apps[appName]", self.apps[appName])
-      console.log("iframeSelector", iframeSelector)
-      console.log("$(iframeSelector)[0]", $(iframeSelector)[0])
       if (iframeSelector && iframeSelector.length > 0 && $(iframeSelector).length > 0) {
         $(iframeSelector)[0].contentWindow.postMessage(JSON.stringify(theObject), '*');
       } else {
@@ -1350,34 +1358,6 @@ export default {
     saveSearchedPhenotypes(phenotypes){
       this.analysis.payload.phenotypes = phenotypes;
     },
-
-
-    sendIframeMsg(){
-      let self = this;
-      var appName = "genefull";
-      var iframeSelector = self.apps[appName].iframeSelector;
-      console.log("self.apps[appName]", self.apps[appName])
-      // console.log("iframeSelector", iframeSelector)
-      // console.log("$(iframeSelector)[0]", $(iframeSelector)[0])
-      console.log("Sending message!!!!")
-      var theObject = {
-        "msg" : "sending message to clin"
-      }
-
-      var msgObj = {
-            type: 'apply-genes',
-            source: 'all',
-            // genes: filteredKnownGenes,
-            genesReport: self.analysis.payload.genesReport,
-            // searchTerms:  [this.searchTermGTR, this.searchTermPhenotype]
-            searchTerms:  self.analysis.payload.phenotypes
-          }
-      console.log("genes report", self.analysis.payload.genesReport)
-      $(iframeSelector)[0].contentWindow.postMessage(JSON.stringify(msgObj), '*');
-
-
-    }
-
 
   }
 }
