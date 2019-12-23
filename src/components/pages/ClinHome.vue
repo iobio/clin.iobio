@@ -127,7 +127,10 @@ $horizontal-dashboard-height: 140px
           :phenotypes="analysis.payload.phenotypes"
           @summaryGenes="summaryGenes($event)"
           @saveSearchedPhenotypes="saveSearchedPhenotypes($event)"
-          :VennDiagramData="analysis.payload.VennDiagramData">
+          :VennDiagramData="analysis.payload.VennDiagramData"
+          @GtrGeneList="GtrGeneList($event)"
+          @PhenolyzerGeneList="PhenolyzerGeneList($event)"
+          @HpoGeneList="HpoGeneList($event)">
         </PhenotypeExtractor>
 
         <br>
@@ -416,7 +419,10 @@ export default {
                 type: 'apply-genes',
                 source: 'all',
                 genesReport: self.analysis.payload.genesReport,
-                searchTerms:  self.analysis.payload.phenotypes
+                searchTerms:  self.analysis.payload.phenotypes,
+                gtrFullList: self.analysis.payload.gtrFullList,
+                phenolyzerFullList: self.analysis.payload.phenolyzerFullList,
+                hpoFullList: self.analysis.payload.hpoFullList
               }
           $(iframeSelector)[0].contentWindow.postMessage(JSON.stringify(theObject), '*');
 
@@ -1346,10 +1352,6 @@ export default {
         })
     },
 
-    GtrGeneList(genes){
-      this.gtrGenes = genes;
-    },
-
     summaryGenes(genes){
       this.summaryGeneList = genes;
       this.analysis.payload.genesReport = this.summaryGeneList;
@@ -1357,6 +1359,40 @@ export default {
 
     saveSearchedPhenotypes(phenotypes){
       this.analysis.payload.phenotypes = phenotypes;
+    },
+
+    GtrGeneList(genes){
+      var gtrCompleteLsit = [];
+      genes.map(gene=>{
+        gtrCompleteLsit.push({
+          name: gene.name,
+          gtrRank: gene.indexVal,
+          gtrAssociated: gene.isAssociatedGene
+        })
+      })
+      this.analysis.payload.gtrFullList = gtrCompleteLsit;
+    },
+
+    PhenolyzerGeneList(genes){
+      var phenolyzerCompleteList = [];
+      genes.map(gene=>{
+        phenolyzerCompleteList.push({
+          name: gene.geneName,
+          phenolyzerRank: gene.indexVal
+        })
+      })
+      this.analysis.payload.phenolyzerFullList = phenolyzerCompleteList;
+    },
+
+    HpoGeneList(genes){
+      var hpoCompleteList = [];
+      genes.map(gene=>{
+        hpoCompleteList.push({
+          name: gene.gene,
+          hpoRank: gene.index
+        })
+      })
+      this.analysis.payload.hpoFullList = hpoCompleteList;
     },
 
   }
