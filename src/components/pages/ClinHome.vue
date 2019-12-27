@@ -130,13 +130,16 @@ $horizontal-dashboard-height: 140px
           :VennDiagramData="analysis.payload.VennDiagramData"
           @GtrGeneList="GtrGeneList($event)"
           @PhenolyzerGeneList="PhenolyzerGeneList($event)"
-          @HpoGeneList="HpoGeneList($event)">
+          @HpoGeneList="HpoGeneList($event)"
+          :AddedGenes="AddedGenes">
         </PhenotypeExtractor>
 
         <br>
         <GeneList
           v-if="analysis && workflow && currentStep == 2 && !showFindings"
-          :summaryGeneList="analysis.payload.genesReport">
+          :summaryGeneList="analysis.payload.genesReport"
+          @importedGenes="importedGenes($event)"
+          @UpdateListOnDelete="UpdateListOnDelete($event)">
         </GeneList>
 
       </v-card>
@@ -343,7 +346,8 @@ export default {
       },
 
       gtrGenes: [],
-      summaryGeneList: []
+      summaryGeneList: [],
+      AddedGenes:[],
     }
 
   },
@@ -1393,6 +1397,15 @@ export default {
         })
       })
       this.analysis.payload.hpoFullList = hpoCompleteList;
+    },
+
+    importedGenes(genes){
+      this.AddedGenes = genes;
+    },
+
+    UpdateListOnDelete(genes){
+      this.summaryGeneList = genes;
+      this.analysis.payload.genesReport = genes;
     },
 
   }
