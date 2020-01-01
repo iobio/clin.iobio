@@ -1149,7 +1149,8 @@
           }
         ],
         "geneRankGtr": 1,
-        "geneRankPhenolyzer": 3
+        "geneRankPhenolyzer": 3,
+        "isAssociatedGene": true
       },
       {
         "name": "EGR2",
@@ -1175,7 +1176,8 @@
           }
         ],
         "geneRankGtr": 2,
-        "geneRankPhenolyzer": 1
+        "geneRankPhenolyzer": 1,
+        "isAssociatedGene": true
       },
       {
         "name": "PMP22",
@@ -1201,7 +1203,8 @@
           }
         ],
         "geneRankGtr": 3,
-        "geneRankPhenolyzer": 2
+        "geneRankPhenolyzer": 2,
+        "isAssociatedGene": true
       },
       {
         "name": "PRX",
@@ -1227,7 +1230,8 @@
           }
         ],
         "geneRankGtr": 4,
-        "geneRankPhenolyzer": 20
+        "geneRankPhenolyzer": 20,
+        "isAssociatedGene": true
       },
       {
         "name": "GDAP1",
