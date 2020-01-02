@@ -10,8 +10,9 @@
 $light-grey-background: #eaeaea
 $horizontal-dashboard-height: 140px
 
-.application--wrap
+.application--wrap, #application-content
   background-color: $light-grey-background
+
 
 
 #clin-container
@@ -30,6 +31,8 @@ $horizontal-dashboard-height: 140px
     height: 1024px
 
     .v-progress-circular
+      color: $navy-blue !important
+    h3
       color: $navy-blue !important
 
 .clin-card
@@ -63,7 +66,7 @@ $horizontal-dashboard-height: 140px
 
 
 <template>
-<div>
+<div id="application-content">
   <navigation v-if="!showSplash && isAuthenticated  && workflow && analysis"
    :caseSummary="caseSummary"
    :analysis="analysis">
@@ -81,12 +84,12 @@ $horizontal-dashboard-height: 140px
 
   <div id="clin-container" style="display:flex" :class="{authenticated: isAuthenticated}">
 
-    <div id="splash-screen" v-if="showSplash">
-      <v-card :style="showSplashProgress ? 'text-align:center;margin-top:100px;width:400px;padding-top:20px;height:75px' : 'text-align:left;margin-top:100px;width:400px;height:125px'">
-        <v-progress-circular id="overall-progress"  v-if="showSplashProgress" :size="22"  :width="4" color="teal accent-4"
+    <div id="splash-screen" v-if="showSplash" >
+      <v-card style="display:flex;justify-content:center;align-items:center;margin-top:100px;width:320px;max-height:100px">
+        <v-progress-circular id="overall-progress" :size="22"  :width="2" color="accent-4" 
           :indeterminate="true">
         </v-progress-circular>
-        <h3  style="display:inline-block;margin-left: 10px" > {{ splashMessage }} </h3>
+        <h3  style="font-weight: 400;display: inline-block;padding-left: 6px;margin: 0px;" > {{ splashMessage }} </h3>
       </v-card>
     </div>
 
