@@ -86,7 +86,7 @@ $horizontal-dashboard-height: 140px
 
     <div id="splash-screen" v-if="showSplash" >
       <v-card style="display:flex;justify-content:center;align-items:center;margin-top:100px;width:320px;max-height:100px">
-        <v-progress-circular id="overall-progress" :size="22"  :width="2" color="accent-4" 
+        <v-progress-circular id="overall-progress" :size="22"  :width="2" color="accent-4"
           :indeterminate="true">
         </v-progress-circular>
         <h3  style="font-weight: 400;display: inline-block;padding-left: 6px;margin: 0px;" > {{ splashMessage }} </h3>
@@ -124,26 +124,29 @@ $horizontal-dashboard-height: 140px
           :phenotypes="analysis.payload.phenotypes"
           @summaryGenes="summaryGenes($event)">
         </PhenotypeExtractor> -->
-
-        <PhenotypeExtractor
-          v-if="analysis && workflow && currentStep == 2 && !showFindings"
-          :phenotypes="analysis.payload.phenotypes"
-          @summaryGenes="summaryGenes($event)"
-          @saveSearchedPhenotypes="saveSearchedPhenotypes($event)"
-          :VennDiagramData="analysis.payload.VennDiagramData"
-          @GtrGeneList="GtrGeneList($event)"
-          @PhenolyzerGeneList="PhenolyzerGeneList($event)"
-          @HpoGeneList="HpoGeneList($event)"
-          :AddedGenes="AddedGenes">
-        </PhenotypeExtractor>
+        <keep-alive>
+          <PhenotypeExtractor
+            v-if="analysis && workflow && currentStep == 2 && !showFindings"
+            :phenotypes="analysis.payload.phenotypes"
+            @summaryGenes="summaryGenes($event)"
+            @saveSearchedPhenotypes="saveSearchedPhenotypes($event)"
+            :VennDiagramData="analysis.payload.VennDiagramData"
+            @GtrGeneList="GtrGeneList($event)"
+            @PhenolyzerGeneList="PhenolyzerGeneList($event)"
+            @HpoGeneList="HpoGeneList($event)"
+            :AddedGenes="AddedGenes">
+          </PhenotypeExtractor>
+        </keep-alive>
 
         <br>
-        <GeneList
-          v-if="analysis && workflow && currentStep == 2 && !showFindings"
-          :summaryGeneList="analysis.payload.genesReport"
-          @importedGenes="importedGenes($event)"
-          @UpdateListOnDelete="UpdateListOnDelete($event)">
-        </GeneList>
+        <keep-alive>
+          <GeneList
+            v-if="analysis && workflow && currentStep == 2 && !showFindings"
+            :summaryGeneList="analysis.payload.genesReport"
+            @importedGenes="importedGenes($event)"
+            @UpdateListOnDelete="UpdateListOnDelete($event)">
+          </GeneList>
+        </keep-alive>
 
       </v-card>
 
