@@ -366,7 +366,6 @@ export default {
 
   mounted: function() {
     this.init();
-
     bus.$on("getAnalysisObject", ()=>{
       this.generatePDF()
     })

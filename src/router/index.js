@@ -23,8 +23,7 @@ const routes = [
     },
     props: (route) => ({
         //paramIdProject:        route.query.idProject,
-
-        paramDebug:            route.query.debug,
+        paramDebug:                 route.query.debug,
 
         paramAnalysisId:            route.query.analysis_id,
         paramProjectId:             route.query.project_id,

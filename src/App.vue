@@ -1,7 +1,8 @@
 <template>
   <v-app>
     <v-content>
-      <ClinHome/>
+      <!-- <ClinHome/> -->
+      <router-view></router-view>
     </v-content>
   </v-app>
 </template>
