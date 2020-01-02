@@ -11,6 +11,7 @@
 <script>
 import dTree from '../../js/thirdparty/dtree'
 import { makeMultiDTreeData } from '../../js/thirdparty/pedigreePreprocess';
+
 export default {
   name: 'PedigreeGraph',
   props: {
