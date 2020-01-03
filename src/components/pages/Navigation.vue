@@ -9,24 +9,23 @@
     height: 30px !important
 
 
-//new
 header.theme--dark.v-sheet
   padding-top: 5px
   background-color: $nav-color !important
   font-weight: 300 !important
 
   .v-toolbar__content
-    margin-top: 1px
+    margin-top: 2px
     align-items: flex-end
     padding-right: 15px
-    padding-bottom: 5px
+    padding-bottom: 10px
 
     .percent-label
       font-size: 12px
 
     #workflow-progress
-      display: inline-block
-      text-align: center
+      display: flex
+      padding-bottom: 10px
 
       .v-progress-linear__background.primary
         background-color: $workflow-active-color !important
@@ -34,6 +33,9 @@ header.theme--dark.v-sheet
       .v-progress-linear__bar__determinate.primary
         background-color: $workflow-active-color !important
         border-color: $workflow-active-color !important
+
+      span
+        margin-left: 8px
 
     .v-toolbar__title
       color: $nav-title-color
@@ -62,12 +64,13 @@ header.theme--dark.v-sheet
       height: 30px
       margin-left: 20px
       margin-bottom: 4px
+      background-color: $workflow-active-color
 
       .v-btn__content
-        color: $workflow-active-color
+        color: white
 
         i.material-icons
-          color: $workflow-active-color !important
+          color: white !important
           font-size: 17px !important
           padding-right: 2px
 
@@ -85,77 +88,6 @@ header.theme--dark.v-sheet
 
 
 
-//old
-nav.toolbar
-  padding-top: 5px
-  background-color: $nav-color !important
-  font-weight: 300 !important
-
-
-  .toolbar__content
-    margin-top: 2px
-    align-items: flex-end
-    padding-right: 15px
-    padding-bottom: 5px
-
-    .percent-label
-      font-size: 12px
-
-
-    #workflow-progress
-      display: inline-block
-      text-align: center
-
-      .progress-linear__background.primary
-        background-color: $workflow-active-color !important
-        border-color: $workflow-active-color !important
-      .progress-linear__bar__determinate.primary
-        background-color: $workflow-active-color !important
-        border-color: $workflow-active-color !important
-
-
-    .toolbar__title
-      color: $nav-title-color
-      font-family: $iobio-font
-    .btn
-      color: $nav-text-color
-
-
-    .toolbar__items
-      width: 60%
-
-    .btn
-      margin: 0px
-      min-width: 78px
-      margin-left: 10px
-
-      .btn__content
-        padding: 0 0px
-
-    #report-button
-      height: 30px
-      margin-left: 20px
-      margin-bottom: 4px
-
-      .btn__content
-        color: $workflow-active-color
-
-        i.material-icons
-          color: $workflow-active-color !important
-          font-size: 17px !important
-          padding-right: 2px
-
-
-    i.material-icons
-      margin-right: 2px
-      color:  $nav-text-color !important
-
-    .toolbar__title
-      font-size: 18px
-      margin-right: 5px
-      margin-left: 5px
-      padding-bottom: 6px
-      min-width: 130px
 
 
 </style>
@@ -202,63 +134,7 @@ nav.toolbar
       <v-spacer></v-spacer>
 
       <v-menu
-      offset-y v-if="false"
-      :close-on-content-click="false"
-      :nudge-width="350"
-      v-model="showPhenotypesMenu"
-      >
-      <template v-slot:activator="{ on }">
-        <v-btn text v-on="on">
-          Phenotypes
-        </v-btn>
-      </template>
-        <!-- <v-btn  text slot="activator">
-          Phenotypes
-        </v-btn> -->
-
-        <v-card>
-        </v-card>
-      </v-menu>
-
-      <v-menu
-      offset-y
-      :close-on-content-click="false"
-      :nudge-width="350"
-      v-model="showGenesMenu"
-      >
-      <template v-slot:activator="{ on }">
-        <v-btn text v-on="on">
-          Genes
-        </v-btn>
-      </template>
-        <!-- <v-btn  text slot="activator">
-          Genes
-        </v-btn> -->
-
-        <v-card>
-        </v-card>
-      </v-menu>
-
-      <v-menu v-if="false"
-      offset-y
-      :close-on-content-click="false"
-      :nudge-width="350"
-      v-model="showVariantsMenu"
-      >
-      <template v-slot:activator="{ on }">
-        <v-btn text v-on="on">
-          Variants
-        </v-btn>
-      </template>
-        <!-- <v-btn  text slot="activator">
-          Variants
-        </v-btn> -->
-
-        <v-card>
-        </v-card>
-      </v-menu>
-
-      <v-menu
+      v-if="false"
       offset-y
       :close-on-content-click="false"
       :nudge-width="350"
