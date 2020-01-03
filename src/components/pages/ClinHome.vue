@@ -804,49 +804,38 @@ export default {
         }
 
 
-        let promise = null;
-        if (self.persistCache && (appName == 'gene' || appName == 'genefull')) {
-          promise = self.promiseGetCache()
-        } else {
-          promise = Promise.resolve();
+        let app = self.apps[appName];
+
+        console.log("ClinHome.setData  sending data to " + appName)
+
+        var msgObject = {
+            type:                  'set-data',
+            sender:                'clin.iobio',
+            receiver:               appName,
+            'user':                 self.user,
+            'iobioSource':          self.iobioSource,
+            'isFrameVisible':       app.step == self.currentStep,
+            'modelInfo':            probandModelInfo[0],
+            'modelInfos':           self.modelInfos,
+            'analysis':             self.analysis,
+            'phenotypes':           self.analysis.payload.phenotypes,
+            'genes':                self.analysis.payload.genes,
+            'genesReport':          self.analysis.payload.genesReport,
+            'genesGtr':             self.analysis.payload.genesGtr,
+            'genesPhenolyzer':      self.analysis.payload.genesPhenolyzer,
+            'genesManual':          self.analysis.payload.genesManual,
+            'gtrFullList':          self.analysis.payload.gtrFullList,
+            'phenolyzerFullList':   self.analysis.payload.phenolyzerFullList,
+            'variants':             self.analysis.payload.variants
+        };
+        if (self.paramGeneBatchSize && (appName == 'gene' || appName == 'genefull')) {
+          msgObject.batchSize = +self.paramGeneBatchSize;
         }
 
-        promise
-        .then(function() {
-          let app = self.apps[appName];
-
-          console.log("ClinHome.setData  sending data to " + appName)
-
-          var msgObject = {
-              type:                  'set-data',
-              sender:                'clin.iobio',
-              receiver:               appName,
-              'user':                 self.user,
-              'iobioSource':          self.iobioSource,
-              'isFrameVisible':       app.step == self.currentStep,
-              'modelInfo':            probandModelInfo[0],
-              'modelInfos':           self.modelInfos,
-              'analysis':             self.analysis,
-              'phenotypes':           self.analysis.payload.phenotypes,
-              'genes':                self.analysis.payload.genes,
-              'genesReport':          self.analysis.payload.genesReport,
-              'genesGtr':             self.analysis.payload.genesGtr,
-              'genesPhenolyzer':      self.analysis.payload.genesPhenolyzer,
-              'genesManual':          self.analysis.payload.genesManual,
-              'gtrFullList':          self.analysis.payload.gtrFullList,
-              'phenolyzerFullList':   self.analysis.payload.phenolyzerFullList,
-              'persistCache':         self.persistCache,
-              'variants':             self.analysis.payload.variants
-          };
-          if (self.paramGeneBatchSize && (appName == 'gene' || appName == 'genefull')) {
-            msgObject.batchSize = +self.paramGeneBatchSize;
-          }
 
 
+        self.sendAppMessage(appName, msgObject);
 
-          self.sendAppMessage(appName, msgObject);
-
-        })
 
 
        }, pauseMillisec);
@@ -919,39 +908,14 @@ export default {
         }
         this.promiseCompleteStepTask('genes', taskMap[messageObject.source]);
         this.sendAppMessage('genefull', messageObject);
-      } else if (messageObject.type == "save-variants") {
-        if (messageObject.action == "replace" || messageObject.action == "update") {
-          this.promiseUpdateVariants(messageObject.variants)
-        } else if (messageObject.action == "delete") {
-          this.promiseDeleteVariants(messageObject.variants)
-        }
-      } else if (messageObject.type == "save-filters") {
-        this.promiseUpdateFilters(messageObject.filters);
-      } else if (messageObject.type == "insufficient-coverage") {
-        this.setCoverageTaskBadge(messageObject.geneCount);
-      }
+      } else if (messageObject.type == "save-analysis") {
+          this.analysis = messageObject.analysis;
+          this.promiseAutosaveAnalysis()
+      } 
 
 
     },
 
-    findMatchingVariantIndex(variant) {
-      let matchingIdx = -1;
-      let idx = 0;
-      let self = this;
-      if (self.analysis && self.analysis.payload.variants) {
-        self.analysis.payload.variants.forEach(function(v) {
-          if (matchingIdx == -1
-              && v.gene == variant.gene
-              && v.start == variant.start
-              && v.ref == variant.ref
-              && v.alt == variant.alt ) {
-            matchingIdx = idx;
-          }
-          idx++;
-        })
-      }
-      return matchingIdx;
-    },
 
     isValidAppOrigin: function(event) {
       return (this.apps.genefull.url.indexOf(event.origin) >= 0 || this.apps.genepanel.url.indexOf(event.origin) >= 0);
@@ -1093,7 +1057,7 @@ export default {
 
     promiseAutosaveAnalysis() {
       let self = this;
-      if (self.analysis.id && self.launcedFromMosaic) {
+      if (self.analysis.id && self.launchedFromMosaic) {
         return self.promiseSaveAnalysis({notify: false});
       } else {
 
@@ -1272,52 +1236,17 @@ export default {
     },
 
 
-    promiseUpdateVariants: function(variantsToReplace) {
+    promiseUpdateAnalysis: function(analysis) {
       let self = this;
-      variantsToReplace.forEach(function(variant) {
-        let matchingIdx = self.findMatchingVariantIndex(variant);
-        if (matchingIdx != -1) {
-          self.analysis.payload.variants[matchingIdx] = variant;
-        } else {
-          self.analysis.payload.variants.push(variant);
-        }
-      })
       self.analysis.payload.datetime_last_modified = self.getCurrentDateTime();
       self.organizeVariantsByInterpretation();
       self.setVariantTaskBadges();
       return self.promiseAutosaveAnalysis();
     },
 
-    promiseDeleteVariants(variantsToRemove) {
-      let self = this;
-      let toRemove = [];
-      if (variantsToRemove && self.analysis.payload.variants) {
-        variantsToRemove.forEach(function(variantToRemove) {
-          let matchingIdx = self.findMatchingVariantIndex(variantToRemove);
-          if (matchingIdx != -1) {
-            toRemove.push($.extend({}, variantToRemove));
-          }
-        })
-      }
-      toRemove.forEach(function(v) {
-        let idx = self.findMatchingVariantIndex(v, self.analysis.payload.variants);
-        self.analysis.payload.variants.remove(idx);
-      })
-      self.analysis.payload.datetime_last_modified = self.getCurrentDateTime();
-      self.organizeVariantsByInterpretation();
-      self.setVariantTaskBadges();
-      return self.promiseAutosaveAnalysis();
-    },
 
     promiseUpdateWorkflow: function() {
       let self = this;
-      self.analysis.payload.datetime_last_modified = self.getCurrentDateTime();
-      return self.promiseAutosaveAnalysis();
-    },
-
-    promiseUpdateFilters: function(filters) {
-      let self = this;
-      self.analysis.payload.filters = filters;
       self.analysis.payload.datetime_last_modified = self.getCurrentDateTime();
       return self.promiseAutosaveAnalysis();
     },
