@@ -7,6 +7,9 @@
 @import ../../assets/sass/variables
 
 
+.v-btn 
+  letter-spacing: initial !important
+
 $light-grey-background: #eaeaea
 $horizontal-dashboard-height: 140px
 
