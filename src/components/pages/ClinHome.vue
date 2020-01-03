@@ -111,7 +111,7 @@ $horizontal-dashboard-height: 140px
         :caseSummary="caseSummary"
         :modelInfos="modelInfos"
         :pedigree="mosaicSession ? mosaicSession.pedigreeSamples : null"
-        :sampleId="paramSampleId">
+        :sampleId="params.sample_id">
         </review-case>
       </v-card>
 
@@ -157,14 +157,14 @@ $horizontal-dashboard-height: 140px
       >
         <findings
         ref="findingsRef"
-        v-if="analysis && workflow"
+        v-if="analysis && workflow && params.sample_id"
         v-show="analysis && workflow"
         :workflow="workflow"
         :analysis="analysis.payload"
         :caseSummary="caseSummary"
         :modelInfos="modelInfos"
         :pedigree="mosaicSession ? mosaicSession.pedigreeSamples : null"
-        :sampleId="paramSampleId"
+        :sampleId="params.sample_id"
         :phenotypes="analysis.payload.phenotypes"
         :genes="analysis.payload.genes"
         :variants="analysis.payload.variants"
@@ -280,6 +280,8 @@ export default {
       workflows:        workflowData,
       importedVariants: variantData,
 
+      variantSetCounts: {},
+
 
       variantsByInterpretation: [
        { key: 'sig',         display: 'Significant Variants',  abbrev: 'Significant', organizedVariants: []},
@@ -354,6 +356,10 @@ export default {
       gtrGenes: [],
       summaryGeneList: [],
       AddedGenes:[],
+
+
+      // temp workaround until Adit fixes router.js
+      params: {}
     }
 
   },
@@ -488,23 +494,41 @@ export default {
       self.promiseIFramesMounted()
       .then(function() {
 
-        if (localStorage.getItem('hub-iobio-tkn') && localStorage.getItem('hub-iobio-tkn').length > 0
-            && self.paramSampleId && self.paramSource) {
+        if (localStorage.getItem('hub-iobio-tkn') && localStorage.getItem('hub-iobio-tkn').length > 0) {
+           //(localStorage.getItem('hub-iobio-tkn') && localStorage.getItem('hub-iobio-tkn').length > 0 
+          // && self.paramSampleId && self.paramSource) {
 
-          if (self.iobioSourceMap[self.paramSource]) {
-            self.iobioSource = self.iobioSourceMap[self.paramSource];
+          // Temporary workaround until router is fixed to pass paramSampleId, paramSource, etc
+          self.params.sample_id             = localStorage.getItem('param_sample_id')
+          self.params.analysis_id           = localStorage.getItem('param_analysis_id')
+          self.params.project_id            = localStorage.getItem('param_project_id')
+          self.params.source                = localStorage.getItem('param_source')
+          self.params.iobio_source          = localStorage.getItem('param_iobio')
+          self.params.client_application_id = localStorage.getItem('param_client_application_id')
+          if (self.params.analysis_id == 'undefined') {
+            self.params.analysis_id = null;
+          }
+          if (self.params.iobio_source == 'undefined') {
+            self.params.iobio_source = null;
+          }
+
+
+
+          if (self.iobioSourceMap[self.params.source]) {
+            self.iobioSource = self.iobioSourceMap[self.params.source];
           }
 
           self.launchedFromMosaic = true;
           self.mosaicSession = new MosaicSession();
           // For now, just hardcode is_pedgree = true
-          self.mosaicSession.promiseInit(self.paramSampleId, self.paramSource, true, self.paramProjectId)
+          self.mosaicSession.promiseInit(self.params.sample_id, self.params.source, 
+            true, self.params.project_id, self.params.client_application_id)
           .then(data => {
             self.modelInfos = data.modelInfos;
             self.user       = data.user;
 
 
-            self.mosaicSession.promiseGetProject(self.paramProjectId)
+            self.mosaicSession.promiseGetProject(self.params.project_id)
             .then(function(project) {
               self.onAuthenticated()
 
@@ -576,9 +600,41 @@ export default {
       self.showSplash = false;
 
       self.promiseGetAnalysis(
-        self.paramProjectId,
-        self.paramAnalysisId,
+        self.params.project_id,
+        self.params.analysis_id,
         self.workflow)
+      .then(function() {
+          if ((self.analysis.payload.variants == null || self.analysis.payload.variants.length == 0) && self.mosaicSession.hasVariantSets(self.modelInfos)) {
+            return self.mosaicSession.promiseParseVariantSets(self.modelInfos)
+          } else {
+            return Promise.resolve({});
+          }
+      })
+      .then(function(variantSets) {
+        if (variantSets && Object.keys(variantSets).length > 0) {
+          self.variantSetCounts = { total: 0 }
+          for (var key in variantSets) {
+            self.variantSetCounts[key]   = variantSets[key] ? variantSets[key].length : 0;
+            self.variantSetCounts.total += variantSets[key] ? variantSets[key].length : 0;
+            variantSets[key].forEach(function(importedVariant) {
+              let theFilterName = null;
+              if (self.mosaicSession.variantSetToFilterName[key]) {
+                theFilterName = self.mosaicSession.variantSetToFilterName[key];
+              } else {
+                theFilterName = key;
+              }
+              importedVariant.variantSet = theFilterName;
+              self.analysis.payload.variants.push(importedVariant);
+              if (self.analysis.payload.genes.indexOf(importedVariant.gene) < 0) {
+                self.analysis.payload.genes.push(importedVariant.gene);
+              }
+            })
+          }
+          return Promise.resolve();
+        } else {
+          return Promise.resolve();
+        }
+      })
       .then(function() {
 
         console.log("ClinHome.onAuthenticated  analysis:", self.analysis)
@@ -1076,17 +1132,26 @@ export default {
             newAnalysis.title = "clin.iobio analysis";
             newAnalysis.description = "a description goes here";
             newAnalysis.project_id = idProject;
-            newAnalysis.sample_id = self.paramSampleId;
+            newAnalysis.sample_id = self.params.sample_id;
             newAnalysis.payload = {};
             newAnalysis.payload.project_id = idProject;
-            newAnalysis.payload.sample_id = self.paramSampleId;
+            newAnalysis.payload.sample_id = self.params.sample_id;
             newAnalysis.payload.datetime_created = self.getCurrentDateTime();
             newAnalysis.payload.workflow_id = workflow.id;
             newAnalysis.payload.genes = [];
             newAnalysis.payload.phenotypes = [];
             newAnalysis.payload.gtrFullList = [];
             newAnalysis.payload.phenolyzerFullList = [];
-            newAnalysis.payload.variants = self.importedVariants.variants;
+
+            // HACK WORKAROUND!!
+            // Workaround until Adit can handle null VennDiagram in his component
+            //
+            self.initForPhenotypist(newAnalysis);
+
+
+            newAnalysis.payload.variants = [];
+
+
             newAnalysis.payload.steps = workflow.steps.map(function(step) {
               let stepObject = {
                 key: step.key,
@@ -1111,12 +1176,72 @@ export default {
         } else {
           self.analysis = analysisData;
           self.idAnalysis = self.analysis.id;
+          self.analysis.payload.variants = self.importedVariants.variants;
 
           self.setGeneTaskBadges();
           resolve();
 
         }
       });
+    },
+
+
+    initForPhenotypist(analysis) {
+      analysis.payload.VennDiagramData = {
+                  "gtr": {
+                    "count": 0
+                  },
+                  "phenolyzer": {
+                    "count": 0
+                  },
+                  "ImportedGenes": {
+                    "count": 0
+                  },
+                  "ClinPhen": {
+                    "count": 0
+                  },
+                  "gtr_phenolyzer": {
+                    "count": 0
+                  },
+                  "gtr_ImportedGenes": {
+                    "count": 0
+                  },
+                  "gtr_ClinPhen": {
+                    "count": 0
+                  },
+                  "phenolyzer_ImportedGenes": {
+                    "count": 0
+                  },
+                  "phenolyzer_ClinPhen": {
+                    "count": 0
+                  },
+                  "ImportedGenes_ClinPhen": {
+                    "count": 0
+                  },
+                  "gtr_phenolyzer_ImportedGenes": {
+                    "count": 0
+                  },
+                  "gtr_phenolyzer_ClinPhen": {
+                    "count": 0
+                  },
+                  "gtr_ImportedGenes_ClinPhen": {
+                    "count": 0
+                  },
+                  "phenolyzer_ImportedGenes_ClinPhen": {
+                    "count": 0
+                  },
+                  "gtr_phenolyzer_ImportedGenes_ClinPhen": {
+                    "count": 0
+                  }
+                };
+      analysis.payload.genesGtr = [];
+      analysis.payload.phenotypes = [[],[], []];
+      analysis.payload.genesManual = [];
+      analysis.payload.genesReport = [];
+      analysis.payload.gtrFullList = [];
+      analysis.payloadgenesPhenolyzer = [];
+      analysis.payload.hpoFullList = [];
+      analysis.payload.phenolyzerFullList = [];
     },
 
 
