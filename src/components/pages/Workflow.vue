@@ -416,7 +416,7 @@ $badge-inactive-color:  #d8d3d3
           light></v-checkbox>
       </div>
 
-      <div class="button-panel"  style="text-align:center" >
+      <div class="button-panel" v-show="false" style="text-align:center" >
         <v-btn :class="{'nav-btn': true, 'disabled': disablePrev}"  small  @click="onPrevTask"><v-icon>arrow_back</v-icon></v-btn>
         <v-btn :class="{'nav-btn': true, 'disabled': disableNext}"  small  @click="onNextTask"><v-icon>arrow_forward</v-icon></v-btn>
       </div>
