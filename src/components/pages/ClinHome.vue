@@ -1239,7 +1239,7 @@ export default {
       analysis.payload.genesManual = [];
       analysis.payload.genesReport = [];
       analysis.payload.gtrFullList = [];
-      analysis.payloadgenesPhenolyzer = [];
+      analysis.payload.genesPhenolyzer = [];
       analysis.payload.hpoFullList = [];
       analysis.payload.phenolyzerFullList = [];
     },
