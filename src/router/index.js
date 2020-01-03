@@ -25,7 +25,7 @@ const routes = [
         localStorage.setItem('param_analysis_id',           queryParams.analysis_id)
         localStorage.setItem('param_source',                queryParams.source)
         localStorage.setItem('param_iobio_source',          queryParams.iobio_source)
-        localStorage.setItem('client_application_id',       queryParams.client_application_id)
+        localStorage.setItem('param_client_application_id', queryParams.client_application_id)
 
 
       } else {
