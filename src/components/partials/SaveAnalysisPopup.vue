@@ -54,7 +54,7 @@
       <v-card v-if="analysis" class="save-analysis-content full-width">
         <v-card-title style="justify-content:space-between">
           <span class="info-title"> {{ analysis.id ? 'Name and description of this analysis' : 'Add this analysis to Mosaic' }}</span>
-          <v-btn  @click="onClose" flat class="close-button">
+          <v-btn  @click="onClose" text class="close-button">
             <v-icon>close</v-icon>
           </v-btn>
         </v-card-title>
