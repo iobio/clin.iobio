@@ -7,6 +7,22 @@
 @import ../../assets/sass/variables
 
 
+.v-snack--right
+  margin-right: 120px !important
+
+.v-snack
+  top: 0px !important
+  
+  .v-snack__wrapper
+    min-width: 200px !important
+    background-color: transparent !important
+
+    .v-snack__content
+      min-height: 35px !important
+      padding-top: 10px !important
+      padding-bottom: 2px !important
+      font-size: 12px !important
+
 .v-btn 
   letter-spacing: initial !important
 
@@ -191,6 +207,23 @@ $horizontal-dashboard-height: 140px
         </iframe>
       </div>
 
+      <v-snackbar
+        :timeout="snackbar.timeout"
+        :top="snackbar.top"
+        :bottom="snackbar.bottom"
+        :center="snackbar.center"
+        :left="snackbar.left"
+        :right="snackbar.right"
+        v-model="showSnackbar"
+       >
+        <span v-html="snackbar.message"></span>
+        <v-btn
+          v-if="snackbar.close" flat color="white"
+          @click.native="showSnackbar = false">
+          <v-icon>close</v-icon>
+        </v-btn>
+
+      </v-snackbar>
 
 
 
@@ -206,7 +239,7 @@ $horizontal-dashboard-height: 140px
   <save-analysis-popup
     :showIt="showSaveModal"
     :analysis="analysis"
-    @on-save-analysis="promiseSaveAnalysis"
+    @on-save-analysis="promiseSaveAnalysis({notify:true})"
     @on-cancel-analysis="onCancelAnalysis">
   </save-analysis-popup>
 </div>
@@ -360,6 +393,8 @@ export default {
       summaryGeneList: [],
       AddedGenes:[],
 
+      showSnackbar: false,
+      snackbar: {message: '', timeout: 0, left: false, right: false, center: true, top: true, bottom: false},
 
       // temp workaround until Adit fixes router.js
       params: {}
@@ -913,7 +948,13 @@ export default {
         this.sendAppMessage('genefull', messageObject);
       } else if (messageObject.type == "save-analysis") {
           this.analysis = messageObject.analysis;
-          this.promiseAutosaveAnalysis()
+          this.promiseAutosaveAnalysis({notify: true})
+          .then(function() {
+
+          })
+          .catch(function(error) {
+
+          })
       } 
 
 
@@ -1018,18 +1059,30 @@ export default {
       return new Promise(function(resolve, reject) {
         if (self.analysis.id ) {
 
-          self.mosaicSession.promiseUpdateAnalysisTitle(self.analysis)
+          let promiseSave = null;
+          if (options && !options.autoupdate) {
+            promiseSave = self.mosaicSession.promiseUpdateAnalysisTitle(self.analysis)
+          } else {
+            promiseSave = self.mosaicSession.promiseUpdateAnalysis(self.analysis)
+          }
+
+          if (options && options.notify) {
+              self.onShowSnackbar( {message: 'saving analysis...', 
+                timeout: 3000, top: true, right: true });            
+          }
+
+          promiseSave
           .then(function(analysis) {
-            self.showSaveModal = false;
-            return self.mosaicSession.promiseUpdateAnalysis(self.analysis)
-          })
-          .then(function(analysis) {
-            //self.onShowSnackbar( {message: 'Analysis  \'' + self.analysis.title + '\'  saved.', timeout: 3000});
+            if (options && options.notify) {
+              self.onShowSnackbar( {message: 'Analysis  \'' + self.analysis.title + '\'  saved.', timeout: 3000, top: true, right: true });            
+            }
             self.analysis = analysis;
             resolve();
           })
           .catch(function(error) {
-            //self.onShowSnackbar( {message: 'Unable to update analysis.', timeout: 6000});
+            alertify.error("Unable to save analysis")
+            console.log("Error occurred when saving analysis. ", error)
+            self.onShowSnackbar( {message: 'Unable to update analysis.', timeout: 6000});
             reject(error);
           })
 
@@ -1038,12 +1091,14 @@ export default {
           self.mosaicSession.promiseAddAnalysis(self.analysis.project_id, self.analysis)
           .then(function(analysis) {
             console.log("**********  adding mosaic analysis " + self.analysis.id + " " + " **************")
-            //self.onShowSnackbar( {message: 'New analysis  \'' + self.analysis.title + '\'  saved.', timeout: 3000});
+            if (options && options.notify) {
+              self.onShowSnackbar( {message: 'New analysis  \'' + self.analysis.title + '\'  saved.', timeout: 3000, top: true, center: true});
+            }
             self.analysis = analysis;
             resolve();
           })
           .catch(function(error) {
-            //self.onShowSnackbar( {message: 'Unable to add analysis.', timeout: 6000});
+            self.onShowSnackbar( {message: 'Unable to add analysis.', timeout: 6000});
             reject(error);
           })
         }
@@ -1058,10 +1113,12 @@ export default {
       self.showSaveModal = false
     },
 
-    promiseAutosaveAnalysis() {
+    promiseAutosaveAnalysis(options) {
       let self = this;
       if (self.analysis.id && self.launchedFromMosaic) {
-        return self.promiseSaveAnalysis({notify: false});
+        let theOptions = options ? options : {};
+        theOptions.autoupdate = true;
+        return self.promiseSaveAnalysis(theOptions);
       } else {
 
       }
@@ -1468,6 +1525,34 @@ export default {
     UpdateListOnDelete(genes){
       this.summaryGeneList = genes;
       this.analysis.payload.genesReport = genes;
+    },
+
+    onShowSnackbar: function(snackbar) {
+      if (snackbar && snackbar.message) {
+        this.showSnackbar = true;
+
+        snackbar.left     = snackbar.left ? snackbar.left : false;
+        snackbar.right    = snackbar.right ? snackbar.right : false;
+        snackbar.center   = snackbar.center ? snackbar.center : false;
+        snackbar.top      = snackbar.top ? snackbar.top : false;
+        snackbar.bottom   = snackbar.bottom ? snackbar.bottom : false;
+
+        if (!snackbar.left && !snackbar.right && !snackbar.center) {
+          snackbar.center = true;
+        }
+        if (!snackbar.top && !snackbar.bottom) {
+          snackbar.top = true;
+        }
+
+        this.snackbar = snackbar;
+
+        if (this.snackbar.timeout == null) {
+          this.snackbar.timeout = 6000;
+        }
+      }
+    },
+    onHideSnackbar: function() {
+      this.showSnackbar = false;
     },
 
   }
