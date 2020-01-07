@@ -12,7 +12,7 @@
 
 .v-snack
   top: 0px !important
-  
+
   .v-snack__wrapper
     min-width: 200px !important
     background-color: transparent !important
@@ -23,7 +23,7 @@
       padding-bottom: 2px !important
       font-size: 12px !important
 
-.v-btn 
+.v-btn
   letter-spacing: initial !important
 
 $light-grey-background: #eaeaea
@@ -139,10 +139,6 @@ $horizontal-dashboard-height: 140px
         v-if="analysis && workflow"
         v-show="analysis && workflow && currentStep == 2 && !showFindings"
       >
-        <!-- <PhenotypeExtractor
-          :phenotypes="analysis.payload.phenotypes"
-          @summaryGenes="summaryGenes($event)">
-        </PhenotypeExtractor> -->
         <keep-alive>
           <PhenotypeExtractor
             v-if="analysis && workflow && currentStep == 2 && !showFindings"
@@ -191,14 +187,6 @@ $horizontal-dashboard-height: 140px
         :filters="analysis.payload.filters">
         </findings>
       </v-card>
-
-      <!-- <div id="gene-panel-iframe" style="width:100%;height:1px"
-        v-show="!isAuthenticated || (currentStep == 2  && !showFindings)">
-        <iframe
-        :src="apps.genepanel.url + '&iobio_source=' + iobioSource"
-        style="width:100%;height:100%" frameBorder="0">
-        </iframe>
-      </div> -->
 
       <div id="gene-iframe" style="width:100%;height:1024px" v-show="!isAuthenticated || ((currentStep == 3) && !showFindings)">
         <iframe
@@ -339,19 +327,16 @@ export default {
         'localhost': {
           'gene':      'http://localhost:4026/?launchedFromClin=true&frame_source=' + window.document.URL,
           'genefull':  'http://localhost:4026/?launchedFromClin=true&frame_source=' + window.document.URL,
-          // 'genepanel': 'https://dev.panel.iobio.io/?launchedFromClin=true&frame_source=' + window.document.URL,
           //'bam':       'http://localhost:4027'
         },
         'tony.iobio.io': {
           'gene':      'http://tony.iobio.io:4026/?launchedFromClin=true&frame_source=' + window.document.URL,
           'genefull':  'http://tony.iobio.io:4026/?launchedFromClin=true&frame_source=' + window.document.URL,
-          // 'genepanel': 'http://tony.iobio.io:4024/?launchedFromClin=true&frame_source=' + window.document.URL,
           //'bam':       'http://tony.iobio.io:4027'
         },
         'dev': {
             'gene':      'https://stage.gene.iobio.io/?launchedFromClin=true&frame_source=' + window.document.URL,
             'genefull':  'https://stage.gene.iobio.io/?launchedFromClin=true&frame_source=' + window.document.URL,
-            // 'genepanel': 'https://dev.panel.iobio.io/?launchedFromClin=true&frame_source=' + window.document.URL,
             //'bam':       'https://newbam.iobio.io'
         },
       },
@@ -479,11 +464,6 @@ export default {
               }
           $(iframeSelector)[0].contentWindow.postMessage(JSON.stringify(theObject), '*');
 
-          // var msgObject = {
-          //   type:                  'request-genes',
-          //   sender:                'clin.iobio',
-          //   receiver:              'genepanel' };
-          // self.sendAppMessage('genepanel', msgObject);
         }
 
 
@@ -533,7 +513,7 @@ export default {
       .then(function() {
 
         if (localStorage.getItem('hub-iobio-tkn') && localStorage.getItem('hub-iobio-tkn').length > 0) {
-           //(localStorage.getItem('hub-iobio-tkn') && localStorage.getItem('hub-iobio-tkn').length > 0 
+           //(localStorage.getItem('hub-iobio-tkn') && localStorage.getItem('hub-iobio-tkn').length > 0
           // && self.paramSampleId && self.paramSource) {
 
           // Temporary workaround until router is fixed to pass paramSampleId, paramSource, etc
@@ -559,7 +539,7 @@ export default {
           self.launchedFromMosaic = true;
           self.mosaicSession = new MosaicSession();
           // For now, just hardcode is_pedgree = true
-          self.mosaicSession.promiseInit(self.params.sample_id, self.params.source, 
+          self.mosaicSession.promiseInit(self.params.sample_id, self.params.source,
             true, self.params.project_id, self.params.client_application_id)
           .then(data => {
             self.modelInfos = data.modelInfos;
@@ -955,7 +935,7 @@ export default {
           .catch(function(error) {
 
           })
-      } 
+      }
 
 
     },
@@ -1067,14 +1047,14 @@ export default {
           }
 
           if (options && options.notify) {
-              self.onShowSnackbar( {message: 'saving analysis...', 
-                timeout: 3000, top: true, right: true });            
+              self.onShowSnackbar( {message: 'saving analysis...',
+                timeout: 3000, top: true, right: true });
           }
 
           promiseSave
           .then(function(analysis) {
             if (options && options.notify) {
-              self.onShowSnackbar( {message: 'Analysis  \'' + self.analysis.title + '\'  saved.', timeout: 3000, top: true, right: true });            
+              self.onShowSnackbar( {message: 'Analysis  \'' + self.analysis.title + '\'  saved.', timeout: 3000, top: true, right: true });
             }
             self.analysis = analysis;
             resolve();
