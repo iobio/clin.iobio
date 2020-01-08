@@ -509,20 +509,22 @@ export default {
       self.apps.genefull.url      = self.appUrls[appTarget].genefull;
       window.addEventListener("message", self.receiveAppMessage, false);
 
+
+
       self.promiseIFramesMounted()
       .then(function() {
 
-        if (localStorage.getItem('hub-iobio-tkn') && localStorage.getItem('hub-iobio-tkn').length > 0) {
-           //(localStorage.getItem('hub-iobio-tkn') && localStorage.getItem('hub-iobio-tkn').length > 0
-          // && self.paramSampleId && self.paramSource) {
+        if (localStorage.getItem('hub-iobio-tkn') && localStorage.getItem('hub-iobio-tkn').length > 0 
+           && self.paramSampleId && self.paramSource) {
 
           // Temporary workaround until router is fixed to pass paramSampleId, paramSource, etc
-          self.params.sample_id             = localStorage.getItem('param_sample_id')
-          self.params.analysis_id           = localStorage.getItem('param_analysis_id')
-          self.params.project_id            = localStorage.getItem('param_project_id')
-          self.params.source                = localStorage.getItem('param_source')
-          self.params.iobio_source          = localStorage.getItem('param_iobio')
-          self.params.client_application_id = localStorage.getItem('param_client_application_id')
+          self.params.sample_id             = self.paramSampleId
+          self.params.analysis_id           = self.paramAnalysisId
+          self.params.project_id            = self.paramProjectId
+          self.params.source                = self.paramSource
+          self.params.iobio_source          = self.paramIobioSource
+          self.params.client_application_id = self.paramClientApplicationId
+
           if (self.params.analysis_id == 'undefined') {
             self.params.analysis_id = null;
           }
@@ -914,18 +916,7 @@ export default {
           self.apps[messageObject.app].isLoaded = true;
         }
       } else if (messageObject.type == "apply-genes" && messageObject.sender == 'genepanel.iobio.io') {
-        var taskMap = {
-          'gtr':              'gtr-genes',
-          'phenotype-driven': 'phenotype-genes',
-          'all':              'export-genes'
-        }
-        this.promiseUpdateGenesData(messageObject);
-        this.setGeneTaskBadges();
-        if (this.analysis.payload.genes.length == 0) {
-          this.clearVariantTaskBadges();
-        }
         this.promiseCompleteStepTask('genes', taskMap[messageObject.source]);
-        this.sendAppMessage('genefull', messageObject);
       } else if (messageObject.type == "save-analysis") {
           this.analysis = messageObject.analysis;
           this.promiseAutosaveAnalysis({notify: true})
@@ -1100,7 +1091,7 @@ export default {
         theOptions.autoupdate = true;
         return self.promiseSaveAnalysis(theOptions);
       } else {
-
+        return Promise.resolve();
       }
 
     },
