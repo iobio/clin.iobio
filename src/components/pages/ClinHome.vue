@@ -283,7 +283,8 @@ export default {
     paramToken:          null,
     paramSource:         null,
     paramIobioSource:    null,
-    paramGeneBatchSize:  null
+    paramGeneBatchSize:  null,
+    paramClientApplicationId: null
   },
   data() {
     let self = this;
