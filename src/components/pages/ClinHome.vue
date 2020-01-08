@@ -1063,7 +1063,7 @@ export default {
           .then(function(analysis) {
             console.log("**********  adding mosaic analysis " + self.analysis.id + " " + " **************")
             if (options && options.notify) {
-              self.onShowSnackbar( {message: 'New analysis  \'' + self.analysis.title + '\'  saved.', timeout: 3000, top: true, center: true});
+              self.onShowSnackbar( {message: 'Analysis  \'' + self.analysis.title + '\'  saved.', timeout: 3000, top: true, right: true});
             }
             self.analysis = analysis;
             resolve();
@@ -1124,8 +1124,8 @@ export default {
 
           } else {
             var newAnalysis = {};
-            newAnalysis.title = "clin.iobio analysis";
-            newAnalysis.description = "a description goes here";
+            newAnalysis.title = "";
+            newAnalysis.description = "";
             newAnalysis.project_id = idProject;
             newAnalysis.sample_id = self.params.sample_id;
             newAnalysis.payload = {};
@@ -1171,6 +1171,10 @@ export default {
         } else {
           self.analysis = analysisData;
           self.idAnalysis = self.analysis.id;
+
+          // These are the platinum variants that we are just grabbing
+          // from a json file to mimic what variant sets from genome-wide
+          // filters would look like
           self.analysis.payload.variants = self.importedVariants.variants;
 
           self.setGeneTaskBadges();
