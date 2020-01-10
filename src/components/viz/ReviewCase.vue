@@ -113,7 +113,7 @@
       <div style="display: inline-flex">
       {{sampleIds[i]}}
         <PedigreeGraph :data="allPedigreeDataArrays[i]" :id="sampleIds[i]" :width="200" :height="150" :pedigree="pedigree"></PedigreeGraph>
-        <VariantType :data="allVarCounts[i].counts" :width="200" :height="150"></VariantType>
+        <QualitativeBarChart :data="allVarCounts[i].counts" :width="200" :height="150"></QualitativeBarChart>
         <BarChart :data="coverageDataArray[i]" :width="200" :height="150"></BarChart>
       </div>
    </div>
@@ -121,16 +121,16 @@
 </template>
 
 <script>
-import PedigreeGraph from '../viz/PedigreeGraph.vue';
+import PedigreeGraph from './PedigreeGraph.vue';
 import AppIcon       from '../partials/AppIcon.vue';
-import VariantType from '../viz/VariantType.vue'
-import BarChart from '../viz/BarChart.vue'
+import QualitativeBarChart from './QualitativeBarChart.vue'
+import BarChart from './BarChart.vue'
 
 export default {
   name: 'review-case',
   components: {
+    QualitativeBarChart,
     BarChart,
-    VariantType,
     PedigreeGraph,
     AppIcon
   },

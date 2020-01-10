@@ -326,24 +326,6 @@ export default class MosaicSession {
     })
   }
 
-  promiseGetMetricsForSample(project_id, sample_id) {
-    let self = this;
-
-    return new Promise(function(resolve, reject) {
-      // Get pedigree for sample
-      self.getMetricsForSample(project_id, sample_id)
-          .done(metrics => {
-            if (metrics) {
-              resolve(metrics);
-            } else {
-              reject("Error getting metrics");
-            }
-          })
-          .fail(error => {
-            reject("Error getting metricse for sample " + sample_id + ": " + error);
-          })
-    })
-  }
 
   parsePedigree(raw_pedigree, sample_id) {
 
@@ -425,18 +407,6 @@ export default class MosaicSession {
       }
     });
   }
-
-  getMetricsForSample(project_id, sample_id){
-    return $.ajax({
-      url: self.api + '/projects/' + project_id +  '/samples/' + sample_id + '/pedigree',
-      type: 'GET',
-      contentType: 'application/json',
-      headers: {
-        'Authorization': localStorage.getItem('hub-iobio-tkn')
-      }
-    });
-  }
-
 
   getSample(project_id, sample_id) {
     let self = this;

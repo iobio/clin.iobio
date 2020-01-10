@@ -35,7 +35,7 @@
 
 <script>
     import * as d3 from 'd3';
-    import { formatNumber } from './util/formatNumber';
+    import { formatNumber } from '../../utils/formatNumber.js';
     export default {
         name: 'BarChart',
         props: {

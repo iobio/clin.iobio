@@ -10,8 +10,8 @@
 </template>
 
 <script>
-import dTree from './util/dtree.js';
-import { makeMultiDTreeData } from './util/pedigreePreprocess.js';
+import dTree from '../../utils/dtree.js';
+import { makeMultiDTreeData } from '../../utils/pedigreePreprocess.js';
 const { pedigree: pedigreeColors } = {affected: "blue", selected: "grey"};
 export default {
   name: 'PedigreeGraph',

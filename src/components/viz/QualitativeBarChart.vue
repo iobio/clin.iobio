@@ -31,7 +31,7 @@
     const xColumn = 'type';
     const yColumn = 'count';
     export default {
-        name: 'variantType',
+        name: 'QualitativeBarChart',
         props: {
             data: {
                 type: Object,
