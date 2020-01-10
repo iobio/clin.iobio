@@ -12,7 +12,7 @@
 
 .v-snack
   top: 0px !important
-  
+
   .v-snack__wrapper
     min-width: 200px !important
     background-color: transparent !important
@@ -23,7 +23,7 @@
       padding-bottom: 2px !important
       font-size: 12px !important
 
-.v-btn 
+.v-btn
   letter-spacing: initial !important
 
 $light-grey-background: #eaeaea
@@ -129,8 +129,10 @@ $horizontal-dashboard-height: 140px
         :analysis="analysis.payload"
         :caseSummary="caseSummary"
         :modelInfos="modelInfos"
-        :pedigree="mosaicSession ? mosaicSession.pedigreeSamples : null"
-        :sampleId="params.sample_id">
+        :pedigree="rawPedigree"
+        :sampleId="params.sample_id"
+        :allVarCounts="allVarCounts"
+        :coverageHistos="coverageHistos">
         </review-case>
       </v-card>
 
@@ -397,7 +399,10 @@ export default {
       snackbar: {message: '', timeout: 0, left: false, right: false, center: true, top: true, bottom: false},
 
       // temp workaround until Adit fixes router.js
-      params: {}
+      params: {},
+      rawPedigree: null,
+      allVarCounts: null,
+      coverageHistos: null,
     }
 
   },
@@ -533,7 +538,7 @@ export default {
       .then(function() {
 
         if (localStorage.getItem('hub-iobio-tkn') && localStorage.getItem('hub-iobio-tkn').length > 0) {
-           //(localStorage.getItem('hub-iobio-tkn') && localStorage.getItem('hub-iobio-tkn').length > 0 
+           //(localStorage.getItem('hub-iobio-tkn') && localStorage.getItem('hub-iobio-tkn').length > 0
           // && self.paramSampleId && self.paramSource) {
 
           // Temporary workaround until router is fixed to pass paramSampleId, paramSource, etc
@@ -559,12 +564,16 @@ export default {
           self.launchedFromMosaic = true;
           self.mosaicSession = new MosaicSession();
           // For now, just hardcode is_pedgree = true
-          self.mosaicSession.promiseInit(self.params.sample_id, self.params.source, 
+          self.mosaicSession.promiseInit(self.params.sample_id, self.params.source,
             true, self.params.project_id, self.params.client_application_id)
           .then(data => {
             self.modelInfos = data.modelInfos;
             self.user       = data.user;
 
+            self.coverageHistos = data.coverageHistos;
+            self.rawPedigree = data.rawPedigree;
+            console.log("coverageHistos in clin home", self.coverageHistos);
+            self.allVarCounts = data.allVarCounts;
 
             self.mosaicSession.promiseGetProject(self.params.project_id)
             .then(function(project) {
@@ -955,7 +964,7 @@ export default {
           .catch(function(error) {
 
           })
-      } 
+      }
 
 
     },
@@ -1067,14 +1076,14 @@ export default {
           }
 
           if (options && options.notify) {
-              self.onShowSnackbar( {message: 'saving analysis...', 
-                timeout: 3000, top: true, right: true });            
+              self.onShowSnackbar( {message: 'saving analysis...',
+                timeout: 3000, top: true, right: true });
           }
 
           promiseSave
           .then(function(analysis) {
             if (options && options.notify) {
-              self.onShowSnackbar( {message: 'Analysis  \'' + self.analysis.title + '\'  saved.', timeout: 3000, top: true, right: true });            
+              self.onShowSnackbar( {message: 'Analysis  \'' + self.analysis.title + '\'  saved.', timeout: 3000, top: true, right: true });
             }
             self.analysis = analysis;
             resolve();
