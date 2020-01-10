@@ -129,8 +129,10 @@ $horizontal-dashboard-height: 140px
         :analysis="analysis.payload"
         :caseSummary="caseSummary"
         :modelInfos="modelInfos"
-        :pedigree="mosaicSession ? mosaicSession.pedigreeSamples : null"
-        :sampleId="params.sample_id">
+        :pedigree="rawPedigree"
+        :sampleId="params.sample_id"
+        :allVarCounts="allVarCounts"
+        :coverageHistos="coverageHistos">
         </review-case>
       </v-card>
 
@@ -383,7 +385,10 @@ export default {
       snackbar: {message: '', timeout: 0, left: false, right: false, center: true, top: true, bottom: false},
 
       // temp workaround until Adit fixes router.js
-      params: {}
+      params: {},
+      rawPedigree: null,
+      allVarCounts: null,
+      coverageHistos: null,
     }
 
   },
@@ -515,7 +520,8 @@ export default {
       self.promiseIFramesMounted()
       .then(function() {
 
-        if (localStorage.getItem('hub-iobio-tkn') && localStorage.getItem('hub-iobio-tkn').length > 0 
+
+        if (localStorage.getItem('hub-iobio-tkn') && localStorage.getItem('hub-iobio-tkn').length > 0
            && self.paramSampleId && self.paramSource) {
 
           // Temporary workaround until router is fixed to pass paramSampleId, paramSource, etc
@@ -548,6 +554,10 @@ export default {
             self.modelInfos = data.modelInfos;
             self.user       = data.user;
 
+            self.coverageHistos = data.coverageHistos;
+            self.rawPedigree = data.rawPedigree;
+            console.log("coverageHistos in clin home", self.coverageHistos);
+            self.allVarCounts = data.allVarCounts;
 
             self.mosaicSession.promiseGetProject(self.params.project_id)
             .then(function(project) {

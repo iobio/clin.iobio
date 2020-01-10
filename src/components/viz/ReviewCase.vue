@@ -71,14 +71,11 @@
 
   <div id="review-case-panel" >
 
-
-
       <span class="card-title">
         Review patient
       </span>
 
       <div style="display:flex;flex-flow:row">
-
 
         <div class="review-section">
 
@@ -86,13 +83,6 @@
             <div  class="subsection"  >
               <span class="card-subheading">{{ caseSummary.name }} </span>
               <div style="display:flex">
-                <pedigree-graph
-                  v-if="pedigree"
-                  :height="60"
-                  :data="pedigree"
-                  :uuid="sampleId"
-                  :width="80"
-                />
                 <div style="margin-left:15px">
                   <div  class="sample" v-for="modelInfo in modelInfos" :key="modelInfo.sample">
                     <span class="rel">{{ modelInfo.relationship }}</span>
@@ -101,7 +91,6 @@
                 </div>
               </div>
             </div>
-
 
             <div class="subsection">
               <div v-if="false" class="card-subheading">Description</div>
@@ -115,30 +104,33 @@
               <div v-for="(phenotype, index) in phenotypeList" class="phenotype-search-term">
                 {{phenotype}}
               </div>
-
             </div>
-
-
           </div>
-
         </div>
-
-
       </div>
 
-
-
-
+    <div v-for="(d, i) in allVarCounts" >
+      <div style="display: inline-flex">
+      {{sampleIds[i]}}
+        <PedigreeGraph :data="allPedigreeDataArrays[i]" :id="sampleIds[i]" :width="200" :height="150" :pedigree="pedigree"></PedigreeGraph>
+        <QualitativeBarChart :data="allVarCounts[i].counts" :width="200" :height="150"></QualitativeBarChart>
+        <BarChart :data="coverageDataArray[i]" :width="200" :height="150"></BarChart>
+      </div>
+   </div>
   </div>
 </template>
 
 <script>
-import PedigreeGraph from '../viz/PedigreeGraph.vue';
+import PedigreeGraph from './PedigreeGraph.vue';
 import AppIcon       from '../partials/AppIcon.vue';
+import QualitativeBarChart from './QualitativeBarChart.vue'
+import BarChart from './BarChart.vue'
 
 export default {
   name: 'review-case',
   components: {
+    QualitativeBarChart,
+    BarChart,
     PedigreeGraph,
     AppIcon
   },
@@ -149,25 +141,86 @@ export default {
     modelInfos:  null,
     pedigree:    null,
     sampleId:    null,
+    allVarCounts: null,
+    coverageHistos: null
   },
   data() {
     return {
-
+      uuid: 10,
+      sampleIds: null,
+      pedigreeDataArray: null,
+      allPedigreeDataArrays: null,
+      coverageDataArray: null,
     }
 
   },
+
+  mounted: function(){
+    this.formatPedigreeData();
+    this.formatCoverageData();
+    this.assignProbandToEachSample();
+  },
+
   methods: {
-
-
-    refreshReport: function() {
-
+    formatPedDict(d){
+      this.sampleIds.push(d.pedigree.sample_id);
+      let pedDict ={
+        id: d.id,
+        pedigree: {
+          affection_status: 1,
+          maternal_id: d.maternal_id,
+          paternal_id: d.paternal_id,
+          sample_id: d.sample_id,
+          sex: d.sex
+        }
+      };
+      return pedDict;
     },
 
+    formatCoverageArray(d){
+      let coverageArr = [];
+      for(let k in d){
+        const coords = [k, d[k]];
+        coverageArr.push(coords);
+      }
+      return coverageArr;
+    },
+
+    formatPedigreeData(){
+      this.pedigreeDataArray = [];
+      this.sampleIds = [];
+      for(const k in this.pedigree){
+        const pedDict = this.formatPedDict(this.pedigree[k]);
+        this.pedigreeDataArray.push(pedDict);
+      }
+    },
+
+    formatCoverageData(){
+      let self = this;
+      self.coverageDataArray = [];
+      this.coverageHistos.forEach(function(d){
+        const coverageArr = self.formatCoverageArray(d.coverage);
+        self.coverageDataArray.push(coverageArr);
+      });
+    },
+
+    assignProbandToEachSample(){
+      this.allPedigreeDataArrays = [];
+      for(let i = 0; i < 4; i++){
+        this.allPedigreeDataArrays.push(this.pedigreeDataArray);
+      }
+    }
   },
   computed: {
 
   },
   watch: {
+    coverageHistos: function(){
+    },
+    allVarCounts: function(){
+    },
+    pedigree: function(){
+    }
   },
 }
 </script>

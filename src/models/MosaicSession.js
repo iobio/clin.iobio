@@ -31,6 +31,8 @@ export default class MosaicSession {
 
     return new Promise((resolve, reject) => {
       let modelInfos = [];
+      let coverageHistos = [];
+      let allVarCounts = [];
 
       self.promiseGetCurrentUser()
       .then(function(data) {
@@ -42,7 +44,6 @@ export default class MosaicSession {
       })
 
       self.promiseGetSampleInfo(projectId, sampleId, isPedigree).then(data => {
-
 
         let promises = [];
 
@@ -68,8 +69,9 @@ export default class MosaicSession {
                 let p =  self.promiseGetFileMapForSample(projectId, s, rel).then(data => {
                   let theSample = data.sample;
                   theSample.files = data.fileMap;
-                  console.log(theSample)
 
+                  let coverageHisto =  {id: sampleId, coverage: theSample.distributions.coverage_hist_no_outliers};
+                  let varCounts = {id: sampleId, counts : { SNP: theSample.metrics.var_snp_count, indel : theSample.metrics.var_indel_count, other: theSample.metrics.var_other_count}}
 
 
                   // gene.iobio only supports siblings in same multi-sample vcf as proband.
@@ -110,6 +112,8 @@ export default class MosaicSession {
                     }
 
                     modelInfos.push(modelInfo);
+                    coverageHistos.push(coverageHisto);
+                    allVarCounts.push(varCounts);
                   }
 
                 })
@@ -133,7 +137,7 @@ export default class MosaicSession {
               alertify.alert("Error", buf)
             }
 
-            resolve({'modelInfos': modelInfos, 'rawPedigree': rawPedigree});
+            resolve({'modelInfos': modelInfos, 'rawPedigree': rawPedigree, 'coverageHistos': coverageHistos, 'allVarCounts': allVarCounts});
           })
           .catch(error => {
             reject(error);
@@ -214,7 +218,7 @@ export default class MosaicSession {
               if (fields.length == self.variantSetTxtCols.length) {
                 if (variant.sampleId  &&  modelInfo.sample && variant.sampleId != modelInfo.sample) {
                   keep = false;
-                } 
+                }
               }
               if (keep) {
                 if (variant.gene == "" || variant.gene == null || variant.gene.trim().length == 0) {
@@ -229,14 +233,14 @@ export default class MosaicSession {
                     variant.inheritance = variant.slivarFilter;
                     variant.filtersPassed = variant.inheritance;
                   }
-                  
+
                   let matched = variants.filter(function(v) {
                     return v.variant_id == variant.variant_id;
                   })
                   if (matched.length == 0) {
-                    variants.push(variant)                                              
+                    variants.push(variant)
                   }
-                }                
+                }
               } else {
                 console.log("bypassing variant rec for sample " + variant.sampleId)
               }
@@ -322,6 +326,7 @@ export default class MosaicSession {
     })
   }
 
+
   parsePedigree(raw_pedigree, sample_id) {
 
     let self = this;
@@ -403,7 +408,6 @@ export default class MosaicSession {
     });
   }
 
-
   getSample(project_id, sample_id) {
     let self = this;
     return $.ajax({
@@ -426,7 +430,7 @@ export default class MosaicSession {
       self.promiseGetFilesForSample(project_id, currentSample.id)
       .then(files => {
         files.filter(file => {
-          return file.type 
+          return file.type
         })
         .forEach(file => {
 
@@ -658,7 +662,7 @@ export default class MosaicSession {
 
   updateAnalysis(projectId, analysisId, newAnalysisData) {
     let self = this;
-    
+
     return $.ajax({
       url: self.api + '/projects/' + projectId + '/analyses/' + analysisId
             + '?client_application_id=' + this.client_application_id,
@@ -680,7 +684,7 @@ export default class MosaicSession {
         })
         .fail(error => {
           reject("Error getting currentUser :" + error);
-        })      
+        })
     })
   }
 
@@ -710,7 +714,7 @@ export default class MosaicSession {
           cache.push(value);
       }
       return value;
-    });    
+    });
     cache = [];
     return analysisString;
   }
