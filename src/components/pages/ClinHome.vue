@@ -141,10 +141,6 @@ $horizontal-dashboard-height: 140px
         v-if="analysis && workflow"
         v-show="analysis && workflow && currentStep == 2 && !showFindings"
       >
-        <!-- <PhenotypeExtractor
-          :phenotypes="analysis.payload.phenotypes"
-          @summaryGenes="summaryGenes($event)">
-        </PhenotypeExtractor> -->
         <keep-alive>
           <PhenotypeExtractor
             v-if="analysis && workflow && currentStep == 2 && !showFindings"
@@ -193,14 +189,6 @@ $horizontal-dashboard-height: 140px
         :filters="analysis.payload.filters">
         </findings>
       </v-card>
-
-      <!-- <div id="gene-panel-iframe" style="width:100%;height:1px"
-        v-show="!isAuthenticated || (currentStep == 2  && !showFindings)">
-        <iframe
-        :src="apps.genepanel.url + '&iobio_source=' + iobioSource"
-        style="width:100%;height:100%" frameBorder="0">
-        </iframe>
-      </div> -->
 
       <div id="gene-iframe" style="width:100%;height:1024px" v-show="!isAuthenticated || ((currentStep == 3) && !showFindings)">
         <iframe
@@ -297,7 +285,8 @@ export default {
     paramToken:          null,
     paramSource:         null,
     paramIobioSource:    null,
-    paramGeneBatchSize:  null
+    paramGeneBatchSize:  null,
+    paramClientApplicationId: null
   },
   data() {
     let self = this;
@@ -341,19 +330,16 @@ export default {
         'localhost': {
           'gene':      'http://localhost:4026/?launchedFromClin=true&frame_source=' + window.document.URL,
           'genefull':  'http://localhost:4026/?launchedFromClin=true&frame_source=' + window.document.URL,
-          // 'genepanel': 'https://dev.panel.iobio.io/?launchedFromClin=true&frame_source=' + window.document.URL,
           //'bam':       'http://localhost:4027'
         },
         'tony.iobio.io': {
           'gene':      'http://tony.iobio.io:4026/?launchedFromClin=true&frame_source=' + window.document.URL,
           'genefull':  'http://tony.iobio.io:4026/?launchedFromClin=true&frame_source=' + window.document.URL,
-          // 'genepanel': 'http://tony.iobio.io:4024/?launchedFromClin=true&frame_source=' + window.document.URL,
           //'bam':       'http://tony.iobio.io:4027'
         },
         'dev': {
             'gene':      'https://stage.gene.iobio.io/?launchedFromClin=true&frame_source=' + window.document.URL,
             'genefull':  'https://stage.gene.iobio.io/?launchedFromClin=true&frame_source=' + window.document.URL,
-            // 'genepanel': 'https://dev.panel.iobio.io/?launchedFromClin=true&frame_source=' + window.document.URL,
             //'bam':       'https://newbam.iobio.io'
         },
       },
@@ -484,11 +470,6 @@ export default {
               }
           $(iframeSelector)[0].contentWindow.postMessage(JSON.stringify(theObject), '*');
 
-          // var msgObject = {
-          //   type:                  'request-genes',
-          //   sender:                'clin.iobio',
-          //   receiver:              'genepanel' };
-          // self.sendAppMessage('genepanel', msgObject);
         }
 
 
@@ -534,20 +515,23 @@ export default {
       self.apps.genefull.url      = self.appUrls[appTarget].genefull;
       window.addEventListener("message", self.receiveAppMessage, false);
 
+
+
       self.promiseIFramesMounted()
       .then(function() {
 
-        if (localStorage.getItem('hub-iobio-tkn') && localStorage.getItem('hub-iobio-tkn').length > 0) {
-           //(localStorage.getItem('hub-iobio-tkn') && localStorage.getItem('hub-iobio-tkn').length > 0
-          // && self.paramSampleId && self.paramSource) {
+
+        if (localStorage.getItem('hub-iobio-tkn') && localStorage.getItem('hub-iobio-tkn').length > 0
+           && self.paramSampleId && self.paramSource) {
 
           // Temporary workaround until router is fixed to pass paramSampleId, paramSource, etc
-          self.params.sample_id             = localStorage.getItem('param_sample_id')
-          self.params.analysis_id           = localStorage.getItem('param_analysis_id')
-          self.params.project_id            = localStorage.getItem('param_project_id')
-          self.params.source                = localStorage.getItem('param_source')
-          self.params.iobio_source          = localStorage.getItem('param_iobio')
-          self.params.client_application_id = localStorage.getItem('param_client_application_id')
+          self.params.sample_id             = self.paramSampleId
+          self.params.analysis_id           = self.paramAnalysisId
+          self.params.project_id            = self.paramProjectId
+          self.params.source                = self.paramSource
+          self.params.iobio_source          = self.paramIobioSource
+          self.params.client_application_id = self.paramClientApplicationId
+
           if (self.params.analysis_id == 'undefined') {
             self.params.analysis_id = null;
           }
@@ -873,7 +857,6 @@ export default {
             'genesManual':          self.analysis.payload.genesManual,
             'gtrFullList':          self.analysis.payload.gtrFullList,
             'phenolyzerFullList':   self.analysis.payload.phenolyzerFullList,
-            'variants':             self.analysis.payload.variants
         };
         if (self.paramGeneBatchSize && (appName == 'gene' || appName == 'genefull')) {
           msgObject.batchSize = +self.paramGeneBatchSize;
@@ -943,18 +926,7 @@ export default {
           self.apps[messageObject.app].isLoaded = true;
         }
       } else if (messageObject.type == "apply-genes" && messageObject.sender == 'genepanel.iobio.io') {
-        var taskMap = {
-          'gtr':              'gtr-genes',
-          'phenotype-driven': 'phenotype-genes',
-          'all':              'export-genes'
-        }
-        this.promiseUpdateGenesData(messageObject);
-        this.setGeneTaskBadges();
-        if (this.analysis.payload.genes.length == 0) {
-          this.clearVariantTaskBadges();
-        }
         this.promiseCompleteStepTask('genes', taskMap[messageObject.source]);
-        this.sendAppMessage('genefull', messageObject);
       } else if (messageObject.type == "save-analysis") {
           this.analysis = messageObject.analysis;
           this.promiseAutosaveAnalysis({notify: true})
@@ -1101,7 +1073,7 @@ export default {
           .then(function(analysis) {
             console.log("**********  adding mosaic analysis " + self.analysis.id + " " + " **************")
             if (options && options.notify) {
-              self.onShowSnackbar( {message: 'New analysis  \'' + self.analysis.title + '\'  saved.', timeout: 3000, top: true, center: true});
+              self.onShowSnackbar( {message: 'Analysis  \'' + self.analysis.title + '\'  saved.', timeout: 3000, top: true, right: true});
             }
             self.analysis = analysis;
             resolve();
@@ -1129,7 +1101,7 @@ export default {
         theOptions.autoupdate = true;
         return self.promiseSaveAnalysis(theOptions);
       } else {
-
+        return Promise.resolve();
       }
 
     },
@@ -1162,8 +1134,8 @@ export default {
 
           } else {
             var newAnalysis = {};
-            newAnalysis.title = "clin.iobio analysis";
-            newAnalysis.description = "a description goes here";
+            newAnalysis.title = "";
+            newAnalysis.description = "";
             newAnalysis.project_id = idProject;
             newAnalysis.sample_id = self.params.sample_id;
             newAnalysis.payload = {};
@@ -1209,6 +1181,10 @@ export default {
         } else {
           self.analysis = analysisData;
           self.idAnalysis = self.analysis.id;
+
+          // These are the platinum variants that we are just grabbing
+          // from a json file to mimic what variant sets from genome-wide
+          // filters would look like
           self.analysis.payload.variants = self.importedVariants.variants;
 
           self.setGeneTaskBadges();

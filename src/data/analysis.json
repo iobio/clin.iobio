@@ -1,24 +1,14 @@
 {
   "payload": {
     "genes": [
-      "MPZ",
-      "EGR2",
-      "PMP22",
       "PRX",
-      "GDAP1",
-      "NEFL",
-      "GJB1",
-      "FGD4",
-      "DNM2",
-      "HSPB1",
-      "FIG4",
-      "DYNC1H1",
-      "MFN2",
-      "TSEN54",
-      "MTMR2",
-      "GAN",
-      "MED25",
-      "PHYH"
+      "LMNA",
+      "SCN8A",
+      "DLL4",
+      "ABCA3",
+      "MROH8",
+      "DVL3" ,
+      "NOTCH4" 
     ],
     "VennDiagramData": {
       "gtr": {
@@ -97,7 +87,7 @@
         "tasks": [
           {
             "key": "review-full",
-            "badge": 34,
+            "badge": 9,
             "passed": false,
             "complete": false
           }
