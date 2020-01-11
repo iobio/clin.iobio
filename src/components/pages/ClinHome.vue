@@ -132,7 +132,8 @@ $horizontal-dashboard-height: 140px
         :pedigree="rawPedigree"
         :sampleId="params.sample_id"
         :allVarCounts="allVarCounts"
-        :coverageHistos="coverageHistos">
+        :coverageHistos="coverageHistos"
+        :launchedFromMosaic="launchedFromMosaic">
         </review-case>
       </v-card>
 
@@ -556,7 +557,6 @@ export default {
 
             self.coverageHistos = data.coverageHistos;
             self.rawPedigree = data.rawPedigree;
-            console.log("coverageHistos in clin home", self.coverageHistos);
             self.allVarCounts = data.allVarCounts;
 
             self.mosaicSession.promiseGetProject(self.params.project_id)
