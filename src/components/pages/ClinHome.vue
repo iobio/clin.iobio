@@ -77,6 +77,9 @@ $horizontal-dashboard-height: 140px
 #clin-container
   font-size: 14px
 
+@media (min-width: 1550px)
+  .container
+    max-width: 1500px !important
 
 
 
@@ -152,7 +155,9 @@ $horizontal-dashboard-height: 140px
             @GtrGeneList="GtrGeneList($event)"
             @PhenolyzerGeneList="PhenolyzerGeneList($event)"
             @HpoGeneList="HpoGeneList($event)"
-            :AddedGenes="AddedGenes">
+            :AddedGenes="AddedGenes"
+            @vennData="vennData($event)"
+            @VennDiagramData="VennDiagramData($event)">
           </PhenotypeExtractor>
         </keep-alive>
 
@@ -162,7 +167,8 @@ $horizontal-dashboard-height: 140px
             v-if="analysis && workflow && currentStep == 2 && !showFindings"
             :summaryGeneList="analysis.payload.genesReport"
             @importedGenes="importedGenes($event)"
-            @UpdateListOnDelete="UpdateListOnDelete($event)">
+            @UpdateListOnDelete="UpdateListOnDelete($event)"
+            :venn_diag_data="venn_diag_data">
           </GeneList>
         </keep-alive>
 
@@ -390,6 +396,7 @@ export default {
       rawPedigree: null,
       allVarCounts: null,
       coverageHistos: null,
+      venn_diag_data: {}
     }
 
   },
@@ -1539,6 +1546,12 @@ export default {
     onHideSnackbar: function() {
       this.showSnackbar = false;
     },
+    vennData(data){
+      this.venn_diag_data = data;
+    },
+    VennDiagramData(obj){
+      this.analysis.payload.VennDiagramData = obj
+    }
 
   }
 }
