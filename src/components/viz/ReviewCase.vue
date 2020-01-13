@@ -112,7 +112,7 @@
         {{sampleIds[i]}}
           <PedigreeGraph :data="allPedigreeDataArrays[i]" :id="sampleIds[i]" :width="200" :height="150" :pedigree="pedigree"></PedigreeGraph>
           <QualitativeBarChart :data="allVarCounts[i].counts" :width="200" :height="150"></QualitativeBarChart>
-          <BarChart :data="coverageDataArray[i]" :width="200" :height="150" :x-domain="xDomain" :y-domain="yDomain"></BarChart>
+          <BarChart :data="coverageDataArray[i]" :width="200" :height="150" :x-domain="xDomain" :y-domain="yDomain" ></BarChart>
         </div>
      </div>
     </div>
@@ -153,6 +153,7 @@ export default {
       coverageDataArray: null,
       xDomain: null,
       yDomain: null,
+
     }
 
   },

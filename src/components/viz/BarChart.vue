@@ -352,15 +352,15 @@
 
 <style scoped>
     .axis-label {
-        font-size: 14px;
-        fill: var(--text-black-medium-emphasis)
+        font-size: 11px;
+        fill: black
     }
     .axis >>> text {
-        font-size: 12px;
-        fill: var(--text-black-medium-emphasis)
+        font-size: 9px;
+        fill: black
     }
     .extent {
-        font-size: 14px;
-        fill: var(--text-black-medium-emphasis)
+        font-size: 11px;
+        fill: black
     }
 </style>
