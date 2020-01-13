@@ -107,8 +107,6 @@ export default {
 
     init() {
 
-      console.log("this.rawPed inside PedigreeGraph", this.pedigree);
-
       const self = this;
       const pedigraph = self.$refs.pedigreeGraph;
       const pedigree = this.data;

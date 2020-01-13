@@ -109,14 +109,17 @@
         </div>
       </div>
 
-    <div v-for="(d, i) in allVarCounts" >
-      <div style="display: inline-flex">
-      {{sampleIds[i]}}
-        <PedigreeGraph :data="allPedigreeDataArrays[i]" :id="sampleIds[i]" :width="200" :height="150" :pedigree="pedigree"></PedigreeGraph>
-        <QualitativeBarChart :data="allVarCounts[i].counts" :width="200" :height="150"></QualitativeBarChart>
-        <BarChart :data="coverageDataArray[i]" :width="200" :height="150"></BarChart>
-      </div>
-   </div>
+
+    <div v-if="launchedFromMosaic  && coverageDataArray !== null">
+      <div v-for="(d, i) in allVarCounts" >
+        <div style="display: inline-flex">
+        {{sampleIds[i]}}
+          <PedigreeGraph :data="allPedigreeDataArrays[i]" :id="sampleIds[i]" :width="200" :height="150" :pedigree="pedigree"></PedigreeGraph>
+          <QualitativeBarChart :data="allVarCounts[i].counts" :width="200" :height="150"></QualitativeBarChart>
+          <BarChart :data="coverageDataArray[i]" :width="200" :height="150"></BarChart>
+        </div>
+     </div>
+    </div>
   </div>
 </template>
 
@@ -142,7 +145,8 @@ export default {
     pedigree:    null,
     sampleId:    null,
     allVarCounts: null,
-    coverageHistos: null
+    coverageHistos: null,
+    launchedFromMosaic: null
   },
   data() {
     return {
@@ -156,9 +160,12 @@ export default {
   },
 
   mounted: function(){
-    this.formatPedigreeData();
-    this.formatCoverageData();
-    this.assignProbandToEachSample();
+
+    if(this.launchedFromMosaic) {
+      this.formatPedigreeData();
+      this.formatCoverageData();
+      this.assignProbandToEachSample();
+    }
   },
 
   methods: {
