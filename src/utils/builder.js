@@ -22,7 +22,7 @@ import * as d3 from 'd3';
 
 // import colors from '@/config/colors';
 
-const pedigreeColors = {affected: "blue", selected: "grey"};
+const pedigreeColors = {affected: "#ccc", selected: "#ed5858"};
 
 export default class TreeBuilder {
     constructor(root, siblings, opts) {

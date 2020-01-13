@@ -36,11 +36,7 @@
   .pedigree-graph
     margin-left: -5px !important
     margin-top:  5px !important
-    svg
-      g
 
-        rect
-          stroke: gray !important
 
   .card-title
     font-size: 18px
@@ -116,7 +112,7 @@
         {{sampleIds[i]}}
           <PedigreeGraph :data="allPedigreeDataArrays[i]" :id="sampleIds[i]" :width="200" :height="150" :pedigree="pedigree"></PedigreeGraph>
           <QualitativeBarChart :data="allVarCounts[i].counts" :width="200" :height="150"></QualitativeBarChart>
-          <BarChart :data="coverageDataArray[i]" :width="200" :height="150"></BarChart>
+          <BarChart :data="coverageDataArray[i]" :width="200" :height="150" :x-domain="xDomain" :y-domain="yDomain"></BarChart>
         </div>
      </div>
     </div>
@@ -155,6 +151,8 @@ export default {
       pedigreeDataArray: null,
       allPedigreeDataArrays: null,
       coverageDataArray: null,
+      xDomain: null,
+      yDomain: null,
     }
 
   },
@@ -165,16 +163,52 @@ export default {
       this.formatPedigreeData();
       this.formatCoverageData();
       this.assignProbandToEachSample();
+      this.populateDomains();
     }
   },
 
   methods: {
+
+
+    populateDomains(){
+      console.log("coverageDataArray", this.coverageDataArray);
+
+      let xMin = Math.min();
+      let xMax = Math.max();
+      let yMin = Math.min();
+      let yMax = Math.max();
+
+      for(let i = 0; i < this.coverageDataArray.length; i++){
+        for(let j = 0; j < this.coverageDataArray[i].length; j++){
+          if(parseInt(this.coverageDataArray[i][j][0]) < xMin){
+            xMin = parseInt(this.coverageDataArray[i][j][0]);
+          }
+          if(parseInt(this.coverageDataArray[i][j][0]) > xMax) {
+            xMax = parseInt(this.coverageDataArray[i][j][0]);
+          }
+          if(this.coverageDataArray[i][j][1] < yMin){
+            yMin = this.coverageDataArray[i][j][1];
+          }
+          if(this.coverageDataArray[i][j][1] > yMax) {
+            yMax = this.coverageDataArray[i][j][1];
+          }
+        }
+      }
+
+
+      this.xDomain = [xMin, xMax];
+      this.yDomain =  [yMin, yMax];
+
+      console.log("yMin, yMax", yMin, yMax);
+
+    },
+
     formatPedDict(d){
       this.sampleIds.push(d.pedigree.sample_id);
       let pedDict ={
         id: d.id,
         pedigree: {
-          affection_status: 1,
+          affection_status: d.affection_status,
           maternal_id: d.maternal_id,
           paternal_id: d.paternal_id,
           sample_id: d.sample_id,

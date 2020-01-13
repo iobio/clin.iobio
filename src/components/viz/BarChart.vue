@@ -93,11 +93,11 @@
             },
             xAxisLabel: {
                 type: String,
-                default: 'Score',
+                default: 'Coverage',
             },
             yAxisLabel: {
                 type: String,
-                default: 'Sample Count',
+                default: '% of Targeted Regions',
             },
             xDomain: {
                 type: [Boolean, Array],

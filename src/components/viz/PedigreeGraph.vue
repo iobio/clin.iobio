@@ -12,7 +12,7 @@
 <script>
 import dTree from '../../utils/dtree.js';
 import { makeMultiDTreeData } from '../../utils/pedigreePreprocess.js';
-const { pedigree: pedigreeColors } = {affected: "blue", selected: "grey"};
+const { pedigree: pedigreeColors } = {affected: "#ccc", selected: "#ed5858"};
 export default {
   name: 'PedigreeGraph',
   props: {
@@ -74,33 +74,34 @@ export default {
   },
   mounted() {
 
+    console.log("this.data for pedigreeGraph", this.data);
     this.init();
-    this.highlightProband();
+    // this.highlightProband();
   },
   methods: {
 
     highlightProband() {
       const self = this;
       d3.select(this.$el).selectAll('circle')
-              .attr('fill', (d) => {
+              .attr('stroke', (d) => {
                 if (!d.data.extra) {
                   return 'white';
                 }
                 if (d.data.extra.id === self.id) {
-                  return "grey";
+                  return "red";
                 }
-                return 'white';
+                return 'grey';
               });
 
       d3.select(this.$el).selectAll('rect')
-              .attr('fill', (d) => {
+              .attr('stroke', (d) => {
                 if (!d.data.extra) {
                   return 'white';
                 }
                 if (d.data.extra.id === self.id) {
-                  return "grey";
+                  return "red";
                 }
-                return 'white';
+                return 'grey';
               });
 
     },
