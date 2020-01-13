@@ -107,12 +107,19 @@
 
 
     <div v-if="launchedFromMosaic  && coverageDataArray !== null">
+      <div style=" width: 100%; display: inline-flex; flex-direction: row; justify-content: space-around;">
+        <div>Sample</div> <div>Read Coverage</div><div>Variant Type Distribution</div>
+      </div>
       <div v-for="(d, i) in allVarCounts" >
-        <div style="display: inline-flex">
-        {{sampleIds[i]}}
-          <PedigreeGraph :data="allPedigreeDataArrays[i]" :id="sampleIds[i]" :width="200" :height="150" :pedigree="pedigree"></PedigreeGraph>
-          <QualitativeBarChart :data="allVarCounts[i].counts" :width="200" :height="150"></QualitativeBarChart>
-          <BarChart :data="coverageDataArray[i]" :width="200" :height="150" :x-domain="xDomain" :y-domain="yDomain" ></BarChart>
+        <div style=" width: 100%; display: inline-flex; flex-direction: row; justify-content: space-around;">
+
+          <div class="sample">
+            {{sampleIds[i]}}
+          <PedigreeGraph :data="allPedigreeDataArrays[i]" :id="sampleIds[i]" :width="150" :height="150" :pedigree="pedigree"></PedigreeGraph>
+          </div>
+          <BarChart :data="coverageDataArray[i]" :width="400" :height="200" :x-domain="xDomain" :y-domain="yDomain" ></BarChart>
+          <QualitativeBarChart :data="allVarCounts[i].counts" :width="300" :height="200"></QualitativeBarChart>
+
         </div>
      </div>
     </div>
