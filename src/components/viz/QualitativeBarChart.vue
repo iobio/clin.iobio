@@ -107,8 +107,34 @@
         },
         mounted() {
             this.drawChart();
+            this.addCountsToBars();
         },
         methods: {
+
+            addCountsToBars(){
+              console.log("this.data", this.data)
+            },
+
+            nFormatter(num, digits) {
+        var si = [
+            { value: 1, symbol: "" },
+            { value: 1E3, symbol: "k" },
+            { value: 1E6, symbol: "M" },
+            { value: 1E9, symbol: "G" },
+            { value: 1E12, symbol: "T" },
+            { value: 1E15, symbol: "P" },
+            { value: 1E18, symbol: "E" }
+        ];
+        var rx = /\.0+$|(\.[0-9]*[1-9])0+$/;
+        var i;
+        for (i = si.length - 1; i > 0; i--) {
+            if (num >= si[i].value) {
+                break;
+            }
+        }
+        return (num / si[i].value).toFixed(digits).replace(rx, "$1") + si[i].symbol;
+    },
+
             setSvgSize() {
                 if (!this.showChart) {
                     return;
@@ -130,6 +156,11 @@
                     .ticks(4, 's') // Use approximately 4 tick marks.
                     .tickSizeOuter(0);
                 this.gMain.select('.axis__y').call(yAxis);
+
+
+                console.log("this.dataArray", this.dataArray);
+
+
                 const bars = this.gMain
                     .selectAll('rect')
                     .data(this.dataArray);
@@ -142,6 +173,8 @@
                     .attr('y', (d) => this.yScale(d[yColumn]))
                     .attr('height', (d) => this.innerHeight - this.yScale(d[yColumn]))
                     .attr('fill', (d) => this.colorScale(d[xColumn]));
+
+
                 const typeLabels = this.gMain.selectAll('.type-label').data(this.dataArray);
                 typeLabels.enter().append('text')
                     .merge(typeLabels)
@@ -152,6 +185,21 @@
                     .text((d) => d[xColumn])
                     .attr('fill', (d) => this.colorScale(d[xColumn]));
                 typeLabels.exit().remove();
+
+
+                let labels = this.gMain
+                    .selectAll(".textLables")
+                    .data(this.dataArray);
+
+                labels
+                    .enter()
+                    .append('text')
+                    .merge(labels)
+                    .attr('x', (d) => this.xScale(d[xColumn]) + (this.xScale.bandwidth() / 2))
+                    .attr('y', (d) => this.yScale(d[yColumn]/2))
+                    .attr("fill", "white")
+                    .attr("text-anchor", "middle")
+                    .text(d => this.nFormatter(d.count, 1));
             },
         },
     };
