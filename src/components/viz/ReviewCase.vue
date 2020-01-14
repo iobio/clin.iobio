@@ -106,7 +106,7 @@
       </div>
 
 
-    <div v-if="launchedFromMosaic  && coverageDataArray !== null">
+    <div v-if="launchedFromMosaic  && isSorted">
       <div style=" width: 100%; display: inline-flex; flex-direction: row; justify-content: space-around;">
         <div>Sample</div> <div>Read Coverage</div><div>Variant Type Distribution</div>
       </div>
@@ -114,11 +114,11 @@
         <div style=" width: 100%; display: inline-flex; flex-direction: row; justify-content: space-around;">
 
           <div class="sample">
-            {{sampleIds[i]}}
-          <PedigreeGraph :data="allPedigreeDataArrays[i]" :id="sampleIds[i]" :width="150" :height="150" :pedigree="pedigree"></PedigreeGraph>
+            {{sampleIdsAndRelationships[i]}}
+          <PedigreeGraph :data="allPedigreeDataArrays[i]" :id="sampleUuids[i]" :width="150" :height="150" :pedigree="pedigree"></PedigreeGraph>
           </div>
           <BarChart :data="coverageDataArray[i]" :width="400" :height="200" :x-domain="xDomain" :y-domain="yDomain" ></BarChart>
-          <QualitativeBarChart :data="allVarCounts[i].counts" :width="300" :height="200"></QualitativeBarChart>
+          <QualitativeBarChart :data="varCountsArray[i].counts" :width="300" :height="200"></QualitativeBarChart>
 
         </div>
      </div>
@@ -155,32 +155,101 @@ export default {
     return {
       uuid: 10,
       sampleIds: null,
+      sampleUuids: null,
+      sampleIdsAndRelationships: null,
       pedigreeDataArray: null,
       allPedigreeDataArrays: null,
       coverageDataArray: null,
       xDomain: null,
       yDomain: null,
+      sampleIdRelationshipMap: null,
+      sortedIndices: null,
+      varCountsArray: null,
+      isSorted: false,
 
     }
 
   },
 
   mounted: function(){
-
+    this.varCountsArray = this.allVarCounts;
     if(this.launchedFromMosaic) {
+      this.populateRelationshipMap();
       this.formatPedigreeData();
       this.formatCoverageData();
       this.assignProbandToEachSample();
       this.populateDomains();
+      this.sortIndicesByRelationship();
+      this.sortData();
     }
   },
 
   methods: {
 
+    sortData(){
+
+      let tempPed = [null,null,null,null];
+      let tempCoverage = [null,null,null,null];
+      let tempVarCounts = [null,null,null,null];
+      let tempSampleRelationship = [null,null,null,null];
+      let tempSamples = [null,null,null,null];
+      let tempUuids = [null,null,null,null];
+
+      for(let i = 0; i < this.sortedIndices.length; i++){
+        let index = this.sortedIndices[i];
+        tempPed[index] = this.pedigreeDataArray[i];
+        tempCoverage[index] = this.coverageDataArray[i];
+        tempVarCounts[index] = this.varCountsArray[i];
+        tempSampleRelationship[index] = this.sampleIdsAndRelationships[i];
+        tempSamples[index] = this.sampleIds[i];
+        tempUuids[index] = this.sampleUuids[i];
+      }
+
+      this.pedigreeDataArray = tempPed.filter(function(el) { return el; });
+      this.coverageDataArray = tempCoverage.filter(function(el) { return el; });
+      this.varCountsArray = tempVarCounts.filter(function(el) { return el; });
+      this.sampleIdsAndRelationships = tempSampleRelationship.filter(function(el) { return el; });
+      this.sampleIds = tempSamples.filter(function(el) { return el; });
+      this.sampleUuids = tempUuids.filter(function(el) { return el; });
+
+      this.isSorted = true;
+    },
+
+    sortIndicesByRelationship(){
+      this.sortedIndices = [0,0,0,0];
+      for(let i = 0; i < this.sampleIds.length; i++){
+        let relationship = this.getRelationshipFromId(this.sampleIds[i]);
+         if(relationship === "proband"){
+           this.sortedIndices[0] = i;
+         }
+         else if(relationship === "mother"){
+           this.sortedIndices[1] = i;
+         }
+         else if(relationship === "father"){
+           this.sortedIndices[2] = i;
+         }
+         else{
+           this.sortedIndices[3] = i;
+         }
+        }
+    },
+
+    getRelationshipFromId(id){
+      if(this.sampleIdRelationshipMap.hasOwnProperty(id)){
+        return this.sampleIdRelationshipMap[id];
+      }
+      return "relationship unknown";
+    },
+
+    populateRelationshipMap(){
+      this.sampleIdRelationshipMap = {};
+      for(let i = 0; i < this.modelInfos.length; i++){
+        this.sampleIdRelationshipMap[this.modelInfos[i].sample] = this.modelInfos[i].relationship
+      }
+    },
+
 
     populateDomains(){
-      console.log("coverageDataArray", this.coverageDataArray);
-
       let xMin = Math.min();
       let xMax = Math.max();
       let yMin = Math.min();
@@ -202,17 +271,15 @@ export default {
           }
         }
       }
-
-
-      this.xDomain = [xMin, xMax];
+      this.xDomain = [xMin, xMax+1];
       this.yDomain =  [yMin, yMax];
-
-      console.log("yMin, yMax", yMin, yMax);
-
     },
 
     formatPedDict(d){
-      this.sampleIds.push(d.pedigree.sample_id);
+      let sampleIdRelationship = this.getRelationshipFromId(d.vcf_sample_name) + '\t' + d.vcf_sample_name ;
+      this.sampleIdsAndRelationships.push(sampleIdRelationship);
+      this.sampleUuids.push(d.id);
+      this.sampleIds.push(d.vcf_sample_name);
       let pedDict ={
         id: d.id,
         pedigree: {
@@ -238,6 +305,8 @@ export default {
     formatPedigreeData(){
       this.pedigreeDataArray = [];
       this.sampleIds = [];
+      this.sampleUuids = [];
+      this.sampleIdsAndRelationships = [];
       for(const k in this.pedigree){
         const pedDict = this.formatPedDict(this.pedigree[k]);
         this.pedigreeDataArray.push(pedDict);

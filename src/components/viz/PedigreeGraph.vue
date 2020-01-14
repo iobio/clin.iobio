@@ -73,11 +73,9 @@ export default {
     },
   },
   mounted() {
-
-    console.log("this.data for pedigreeGraph", this.data);
     this.init();
-    // this.highlightProband();
-  },
+    this.highlightProband();
+      },
   methods: {
 
     highlightProband() {
