@@ -3,9 +3,9 @@
     <div :style="`height: ${height}px`">
         <svg v-if="showChart">
             <g class="g-main">
-                <g class="axis axis__x" />
-                <g class="axis axis__y" />
-                <g class="scores" />
+                <g class="axis axis__x"/>
+                <g class="axis axis__y"/>
+                <g class="scores"/>
                 <g class="brush">
                     <text
                             class="extent extent--e"
@@ -17,8 +17,8 @@
                     />
                 </g>
             </g>
-            <text class="axis-label axis-label--x" />
-            <text class="axis-label axis-label--y" />
+            <text class="axis-label axis-label--x"/>
+            <text class="axis-label axis-label--y"/>
         </svg>
         <v-layout
                 v-else
@@ -28,14 +28,16 @@
                 justify-center
                 align-center
         >
-            <v-icon>warning</v-icon> No Data
+            <v-icon>warning</v-icon>
+            No Data
         </v-layout>
     </div>
 </template>
 
 <script>
     import * as d3 from 'd3';
-    import { formatNumber } from '../../utils/formatNumber.js';
+    import {formatNumber} from '../../utils/formatNumber.js';
+
     export default {
         name: 'BarChart',
         props: {
@@ -69,11 +71,13 @@
             },
             onBrushEnd: {
                 type: Function,
-                default: () => {},
+                default: () => {
+                },
             },
             stashDomain: {
                 type: Function,
-                default: () => {},
+                default: () => {
+                },
             },
             tickFormatX: {
                 type: Function,
@@ -117,6 +121,7 @@
                 labelHeight: 16,
                 xScale: null,
                 yScale: null,
+                medianCoverage: null,
             };
         },
         computed: {
@@ -169,11 +174,53 @@
             yAxisLabel() {
                 this.update();
             },
+            medianCoverage() {
+                this.update();
+            }
         },
         mounted() {
             this.checkForData(this.drawChart);
+            this.calculateMedianCoverage();
         },
         methods: {
+
+            calculateMedian(values) {
+                let total = 0;
+
+                for(let i = 0; i < values.length; i++){
+                    total += values[i];
+                }
+
+                return total / 2;
+            },
+
+
+            findMedianFromCummulativeFrequencies(medianFreq, cumFreqs){
+                for(let i =0; i < cumFreqs.length; i++){
+                    if(medianFreq >= cumFreqs[i][1] && medianFreq <= cumFreqs[i][2]){
+                        return cumFreqs[i][0];
+                    }
+                }
+                return -1;
+            },
+
+            calculateMedianCoverage() {
+                let freqs = [];
+                let cumFreqs = [];
+                let start = 0;
+                let end = 0;
+                for (let i = 0; i < this.data.length; i++) {
+                    freqs.push(this.data[i][1] * 1000000);
+                    end += (this.data[i][1] * 1000000);
+                    let d = [this.data[i][0], start, end];
+                    start = end;
+                    cumFreqs.push(d);
+                }
+                const medianFreq = this.calculateMedian(freqs);
+                this.medianCoverage = this.findMedianFromCummulativeFrequencies(medianFreq, cumFreqs);
+                console.log("median coverage", this.medianCoverage);
+            },
+
             checkForData(func) {
                 if (!this.showChart) {
                     return;
@@ -355,10 +402,12 @@
         font-size: 11px;
         fill: black
     }
+
     .axis >>> text {
         font-size: 9px;
         fill: black
     }
+
     .extent {
         font-size: 11px;
         fill: black

@@ -173,7 +173,10 @@ export default {
 
   mounted: function(){
     this.varCountsArray = this.allVarCounts;
+    console.log("inside review case");
+    console.log("this.launchedFromMosaic", this.launchedFromMosaic);
     if(this.launchedFromMosaic) {
+      console.log("inside launched from mosaic");
       this.populateRelationshipMap();
       this.formatPedigreeData();
       this.formatCoverageData();
