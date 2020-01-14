@@ -208,6 +208,14 @@
                     .attr('x2', this.xScale(this.medianCoverage))
                     .attr('y2', this.yScale(max))
 
+                svg.append('text')
+                    .attr("id", "medianText")
+                    .attr("fill", "black")
+                    .attr("font-size", "12px")
+                    .attr('x', this.xScale(this.medianCoverage) + 5)
+                    .attr('y', this.yScale(max - (0.05*max)))
+                    .text(this.medianCoverage.toString() + 'X Median')
+
             },
 
             calculateMedian(values) {
@@ -433,6 +441,7 @@
         font-size: 9px;
         fill: black
     }
+
 
     .extent {
         font-size: 11px;
