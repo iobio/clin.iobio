@@ -181,8 +181,34 @@
         mounted() {
             this.checkForData(this.drawChart);
             this.calculateMedianCoverage();
+            this.plotMedian();
         },
         methods: {
+
+            plotMedian(){
+
+                let svg = d3.select(this.$el)
+                    .select('svg');
+
+                //todo: unhardcode max coverage
+                let max = Math.max.apply(Math, this.data.map(function(a) { return a[1]; }))
+                max = max + 0.05*max;
+                console.log("max", max);
+
+
+
+                //todo: create group, append median coverage text to median rect
+                //todo: refactor rect to line or path element
+                svg.append('line')
+                    .attr("id", "medianLine")
+                    .attr("stroke", "black")
+                    .attr("stroke-dasharray", "10 5")
+                    .attr('x1', this.xScale(this.medianCoverage))
+                    .attr('y1', this.yScale(0))
+                    .attr('x2', this.xScale(this.medianCoverage))
+                    .attr('y2', this.yScale(max))
+
+            },
 
             calculateMedian(values) {
                 let total = 0;
