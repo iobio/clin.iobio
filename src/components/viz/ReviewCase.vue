@@ -110,7 +110,7 @@
       <div style=" width: 100%; display: inline-flex; flex-direction: row; justify-content: space-around;">
         <div>Sample</div> <div>Read Coverage</div><div>Variant Type Distribution</div>
       </div>
-      <div v-for="(d, i) in allVarCounts" >
+      <div v-for="(d, i) in varCountsArray" >
         <div style=" width: 100%; display: inline-flex; flex-direction: row; justify-content: space-around;">
 
           <div class="sample">
@@ -216,7 +216,7 @@ export default {
     },
 
     sortIndicesByRelationship(){
-      this.sortedIndices = [0,0,0,0];
+      this.sortedIndices = [null, null, null, null];
       for(let i = 0; i < this.sampleIds.length; i++){
         let relationship = this.getRelationshipFromId(this.sampleIds[i]);
          if(relationship === "proband"){
@@ -228,10 +228,13 @@ export default {
          else if(relationship === "father"){
            this.sortedIndices[2] = i;
          }
-         else{
+         else if(relationship === "sibling"){
            this.sortedIndices[3] = i;
          }
         }
+
+      this.sortedIndices = this.sortedIndices.filter(function(el) { return el !== null; });
+
     },
 
     getRelationshipFromId(id){
