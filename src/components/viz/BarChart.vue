@@ -36,7 +36,7 @@
 
 <script>
     import * as d3 from 'd3';
-    import {formatNumber} from '../../utils/formatNumber.js';
+    import formatNumber from './../../utils/formatNumber.js';
 
     export default {
         name: 'BarChart',
@@ -193,12 +193,7 @@
                 //todo: unhardcode max coverage
                 let max = Math.max.apply(Math, this.data.map(function(a) { return a[1]; }))
                 max = max + 0.05*max;
-                console.log("max", max);
 
-
-
-                //todo: create group, append median coverage text to median rect
-                //todo: refactor rect to line or path element
                 svg.append('line')
                     .attr("id", "medianLine")
                     .attr("stroke", "black")
@@ -252,7 +247,6 @@
                 }
                 const medianFreq = this.calculateMedian(freqs);
                 this.medianCoverage = this.findMedianFromCummulativeFrequencies(medianFreq, cumFreqs);
-                console.log("median coverage", this.medianCoverage);
             },
 
             checkForData(func) {
