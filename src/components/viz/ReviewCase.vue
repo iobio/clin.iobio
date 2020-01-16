@@ -113,10 +113,10 @@
       <div v-for="(d, i) in varCountsArray" >
         <div style=" width: 100%; display: inline-flex; flex-direction: row; justify-content: space-around;">
 
-          <div class="sample">
-            {{sampleIdsAndRelationships[i]}}
-          <PedigreeGraph :data="allPedigreeDataArrays[i]" :id="sampleUuids[i]" :width="150" :height="150" :pedigree="pedigree"></PedigreeGraph>
-          </div>
+            <div style="padding-top: 25px">
+              {{sampleIdsAndRelationships[i]}}
+              <PedigreeGraph :data="allPedigreeDataArrays[i]" :id="sampleUuids[i]" :width="100" :height="100" :pedigree="pedigree"></PedigreeGraph>
+            </div>
           <BarChart :data="coverageDataArray[i]" :width="400" :height="200" :x-domain="xDomain" :y-domain="yDomain" ></BarChart>
           <QualitativeBarChart :data="varCountsArray[i].counts" :width="300" :height="200"></QualitativeBarChart>
 
@@ -374,3 +374,5 @@ export default {
   },
 }
 </script>
+
+
