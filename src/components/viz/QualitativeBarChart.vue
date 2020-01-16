@@ -20,6 +20,7 @@
                 >
                     <g class="axis axis__y"/>
                 </g>
+                <text class="axis-label axis-label--y"/>
             </svg>
         </div>
     </div>
@@ -52,9 +53,13 @@
                 type: Object,
                 default() {
                     return {
-                        top: 30, right: 30, bottom: 10, left: 30,
+                        top: 30, right: 30, bottom: 10, left: 50,
                     };
                 },
+            },
+            yAxisLabel: {
+                type: String,
+                default: 'Variant Count',
             },
             colorScale: {
                 type: Function,
@@ -65,7 +70,8 @@
             return {
                 barPadding: 0.2,
                 topOffset: 50,
-                totalVarCount: 0
+                totalVarCount: 0,
+                maxCount: null,
             };
         },
         computed: {
@@ -109,10 +115,16 @@
             },
         },
         mounted() {
+            this.populateMaxCount();
             this.drawChart();
             this.drawTotalVarCount();
         },
         methods: {
+
+            populateMaxCount(){
+                this.maxCount = Math.max(parseInt(this.data.SNP), parseInt(this.data.other), parseInt(this.data.indel));
+                console.log("this.maxCount", this.maxCount);
+            },
 
             drawTotalVarCount() {
                 this.totalVarCount = parseInt(this.data.SNP) + parseInt(this.data.other) + parseInt(this.data.indel);
@@ -123,6 +135,20 @@
                     .attr("fill", "black")
                     .attr("text-anchor", "middle")
                     .text(this.nFormatter(this.totalVarCount, 1));
+            },
+
+            formatLabel(count){
+
+                console.log("count", count);
+                console.log("maxCount/10", this.maxCount/10);
+
+                if(count > (this.maxCount / 5)){
+                return this.nFormatter(count, 1)
+                }
+                else{
+                    return "";
+                }
+
             },
 
             nFormatter(num, digits) {
@@ -165,6 +191,20 @@
                     .tickSizeOuter(0);
                 this.gMain.select('.axis__y').call(yAxis);
 
+                const yAxisLength = this.height - this.margin.top - this.margin.bottom;
+                const middleOfYAxis = this.margin.top + (yAxisLength / 2);
+                d3.select(this.$el).select('svg')
+                    .select('.axis-label--y')
+                    .attr('text-anchor', 'middle')
+                    .attr('transform', 'rotate(-90)')
+                    .attr('y', 0)
+                    .attr('x', -middleOfYAxis + 20)
+                    .attr('dy', '10px')
+                    .attr("font-size", "11px")
+                    .attr("fill", "black")
+                    .text(this.yAxisLabel);
+
+
                 const bars = this.gMain
                     .selectAll('rect')
                     .data(this.dataArray);
@@ -203,7 +243,7 @@
                     .attr('y', (d) => this.yScale(d[yColumn] / 2))
                     .attr("fill", "white")
                     .attr("text-anchor", "middle")
-                    .text(d => this.nFormatter(d.count, 1));
+                    .text(d => this.formatLabel(d.count));
             },
         },
     };
