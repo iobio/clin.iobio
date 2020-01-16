@@ -112,9 +112,8 @@ $badge-inactive-color:  #d8d3d3
       display: inline-block
       position: relative
       font-size: 11px
-      padding: 3px 7px
-      right: -35px
-      top: -5px
+      right: -25px
+      top: 1px
       color: $workflow-inactive-color
       background-color: transparent
 
@@ -389,8 +388,9 @@ $badge-inactive-color:  #d8d3d3
           :class="{'task': true, 'active' : currentTask && task.key == currentTask.key  ? true : false, 'complete': task.complete}">
             <div style="display:inline-block">
               <div class="task-label">
-                <v-badge  right
-                 :class="{'task-badge': true, 'empty': task.badge == null, 'active': currentStep && step.key == currentStep.key  ? true : false}">{{ task.badge }}</v-badge>
+                <v-badge  right color="transparent">
+                  <span :class="{'task-badge': true, 'empty': task.badge == null, 'active': currentStep && step.key == currentStep.key  ? true : false}" slot="badge">{{ task.badge }}</span>
+               </v-badge>
                 <div class="task-text">
                   {{ getTaskName(step.key, task.key) }}
                 </div>
