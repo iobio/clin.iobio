@@ -9,7 +9,8 @@
                 justify-center
                 align-center
         >
-            <v-icon>warning</v-icon> No Data
+            <v-icon>warning</v-icon>
+            No Data
         </v-layout>
         <div v-else>
             <svg>
@@ -17,7 +18,7 @@
                         :transform="`translate(${margin.left},${margin.top})`"
                         class="g-main"
                 >
-                    <g class="axis axis__y" />
+                    <g class="axis axis__y"/>
                 </g>
             </svg>
         </div>
@@ -63,6 +64,8 @@
         data() {
             return {
                 barPadding: 0.2,
+                topOffset: 50,
+                totalVarCount: 0
             };
         },
         computed: {
@@ -70,7 +73,7 @@
                 return d3.select(this.$el).select('.g-main');
             },
             innerHeight() {
-                return this.height - this.margin.top - this.margin.bottom;
+                return this.height - this.margin.top - this.margin.bottom - this.topOffset;
             },
             innerWidth() {
                 return this.outerWidth - this.margin.left - this.margin.right;
@@ -107,8 +110,39 @@
         },
         mounted() {
             this.drawChart();
+            this.drawTotalVarCount();
         },
         methods: {
+
+            drawTotalVarCount() {
+                this.totalVarCount = parseInt(this.data.SNP) + parseInt(this.data.other) + parseInt(this.data.indel);
+                d3.select(this.$el).select('svg')
+                    .append("text")
+                    .attr('y', 10)
+                    .attr('x', this.width / 2)
+                    .attr("fill", "black")
+                    .attr("text-anchor", "middle")
+                    .text(this.nFormatter(this.totalVarCount, 1));
+            },
+
+            nFormatter(num, digits) {
+                var si = [
+                    {value: 1, symbol: ""},
+                    {value: 1E3, symbol: "K"},
+                    {value: 1E6, symbol: "M"},
+                    {value: 1E9, symbol: "B"},
+                    {value: 1E12, symbol: "T"}
+                ];
+                var rx = /\.0+$|(\.[0-9]*[1-9])0+$/;
+                var i;
+                for (i = si.length - 1; i > 0; i--) {
+                    if (num >= si[i].value) {
+                        break;
+                    }
+                }
+                return (num / si[i].value).toFixed(digits).replace(rx, "$1") + si[i].symbol;
+            },
+
             setSvgSize() {
                 if (!this.showChart) {
                     return;
@@ -130,6 +164,7 @@
                     .ticks(4, 's') // Use approximately 4 tick marks.
                     .tickSizeOuter(0);
                 this.gMain.select('.axis__y').call(yAxis);
+
                 const bars = this.gMain
                     .selectAll('rect')
                     .data(this.dataArray);
@@ -142,6 +177,8 @@
                     .attr('y', (d) => this.yScale(d[yColumn]))
                     .attr('height', (d) => this.innerHeight - this.yScale(d[yColumn]))
                     .attr('fill', (d) => this.colorScale(d[xColumn]));
+
+
                 const typeLabels = this.gMain.selectAll('.type-label').data(this.dataArray);
                 typeLabels.enter().append('text')
                     .merge(typeLabels)
@@ -152,6 +189,21 @@
                     .text((d) => d[xColumn])
                     .attr('fill', (d) => this.colorScale(d[xColumn]));
                 typeLabels.exit().remove();
+
+
+                let labels = this.gMain
+                    .selectAll(".textLables")
+                    .data(this.dataArray);
+
+                labels
+                    .enter()
+                    .append('text')
+                    .merge(labels)
+                    .attr('x', (d) => this.xScale(d[xColumn]) + (this.xScale.bandwidth() / 2))
+                    .attr('y', (d) => this.yScale(d[yColumn] / 2))
+                    .attr("fill", "white")
+                    .attr("text-anchor", "middle")
+                    .text(d => this.nFormatter(d.count, 1));
             },
         },
     };
@@ -161,9 +213,11 @@
     .axis text {
         fill: #666666;
     }
+
     text.type-label {
         text-anchor: middle;
     }
+
     .axis path, .axis line {
         fill: none;
         stroke: #666666;
