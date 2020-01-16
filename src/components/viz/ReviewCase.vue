@@ -108,17 +108,17 @@
 
     <div v-if="isSorted">
       <div style=" width: 100%; display: inline-flex; flex-direction: row; justify-content: space-around;">
-        <div>Sample</div> <div>Read Coverage</div><div>Variant Type Distribution</div>
+        <div class="columnHeader" style="margin-right: 130px">Sample</div> <div class="columnHeader" style="margin-right: 130px">Read Coverage</div><div class="columnHeader">Variant Type Distribution</div>
       </div>
       <div v-for="(d, i) in varCountsArray" >
         <div style=" width: 100%; display: inline-flex; flex-direction: row; justify-content: space-around;">
 
-            <div style="padding-top: 25px">
+            <div style="padding-top: 25px; text-align: center" class="capitalize">
               {{sampleIdsAndRelationships[i]}}
               <PedigreeGraph :data="allPedigreeDataArrays[i]" :id="sampleUuids[i]" :width="100" :height="100" :pedigree="pedigree"></PedigreeGraph>
             </div>
           <BarChart :data="coverageDataArray[i]" :width="400" :height="200" :x-domain="xDomain" :y-domain="yDomain" ></BarChart>
-          <QualitativeBarChart :data="varCountsArray[i].counts" :width="300" :height="200"></QualitativeBarChart>
+          <QualitativeBarChart :data="varCountsArray[i].counts" :width="300" :height="200" style="padding-top: 20px"></QualitativeBarChart>
 
         </div>
      </div>
@@ -196,14 +196,13 @@ export default {
       let tempVarCounts = this.varCountsArray;
 
       for(let i = 0; i < tempVarCounts.length; i++){
-        console.log("tempVarCounts[i]", tempVarCounts[i]);
         tempVarCounts[i].counts.SNP = parseInt(tempVarCounts[i].counts.SNP);
         tempVarCounts[i].counts.indel = parseInt(tempVarCounts[i].counts.indel);
         tempVarCounts[i].counts.other = parseInt(tempVarCounts[i].counts.other);
       }
       this.varCountsArray = tempVarCounts;
     },
-    
+
     buildPage(){
       this.populateRelationshipMap();
       this.formatPedigreeData();
@@ -321,7 +320,6 @@ export default {
       }
       this.xDomain = [xMin, xMax+1];
       this.yDomain =  [yMin, yMax];
-      console.log("this.yDomain", this.yDomain);
     },
 
     formatPedDict(d){
@@ -391,5 +389,23 @@ export default {
   },
 }
 </script>
+
+<style scoped>
+  .capitalize {
+    text-transform: capitalize;
+  }
+
+  .columnHeader{
+    font-size: 12px;
+    font-weight: bold;
+  }
+
+  .columnHeader:after {
+    content: "";
+    flex: 0 1 200px;
+    margin: 5px;
+  }
+
+</style>
 
 

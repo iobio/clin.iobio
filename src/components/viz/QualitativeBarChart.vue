@@ -19,6 +19,8 @@
                         class="g-main"
                 >
                     <g class="axis axis__y"/>
+                    <g class="axis axis__x"/>
+
                 </g>
                 <text class="axis-label axis-label--y"/>
             </svg>
@@ -123,7 +125,6 @@
 
             populateMaxCount(){
                 this.maxCount = Math.max(parseInt(this.data.SNP), parseInt(this.data.other), parseInt(this.data.indel));
-                console.log("this.maxCount", this.maxCount);
             },
 
             drawTotalVarCount() {
@@ -138,10 +139,6 @@
             },
 
             formatLabel(count){
-
-                console.log("count", count);
-                console.log("maxCount/10", this.maxCount/10);
-
                 if(count > (this.maxCount / 5)){
                 return this.nFormatter(count, 1)
                 }
@@ -204,6 +201,14 @@
                     .attr("fill", "black")
                     .text(this.yAxisLabel);
 
+                const xAxis = d3.axisBottom()
+                    .scale(this.xScale)
+                    .tickSize(0);
+
+                this.gMain.select('.axis__x')
+                    .attr('transform', `translate(0,${this.innerHeight - this.margin.bottom + 10})`)
+                    .call(xAxis);
+
 
                 const bars = this.gMain
                     .selectAll('rect')
@@ -263,4 +268,14 @@
         stroke: #666666;
         shape-rendering: crispEdges;
     }
+
+    .axis__x text{
+        fill: none;
+    }
+
+    .axis__x .tick{
+        fill: none;
+    }
+
+
 </style>
