@@ -112,7 +112,6 @@ $badge-inactive-color:  #d8d3d3
       display: inline-block
       position: relative
       font-size: 11px
-      // padding: 3px 7px
       right: -25px
       top: 1px
       color: $workflow-inactive-color
