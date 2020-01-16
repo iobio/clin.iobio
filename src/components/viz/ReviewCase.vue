@@ -176,13 +176,9 @@ export default {
 
   mounted: function(){
     this.varCountsArray = this.allVarCounts;
-    // console.log("this.pedigree", JSON.stringify(this.pedigree));
-    // console.log("this.modelInfos", JSON.stringify(this.modelInfos));
-    // console.log("this.sampleId", this.sampleId);
-    // console.log("this.allVarCounts", JSON.stringify(this.allVarCounts));
-    // console.log("this.coverageHistos", JSON.stringify(this.coverageHistos));
 
     if(this.launchedFromMosaic) {
+      this.formatVarCountsArray();
       this.convertPropsToData();
       this.buildPage();
     }
@@ -195,6 +191,19 @@ export default {
 
   methods: {
 
+
+    formatVarCountsArray(){
+      let tempVarCounts = this.varCountsArray;
+
+      for(let i = 0; i < tempVarCounts.length; i++){
+        console.log("tempVarCounts[i]", tempVarCounts[i]);
+        tempVarCounts[i].counts.SNP = parseInt(tempVarCounts[i].counts.SNP);
+        tempVarCounts[i].counts.indel = parseInt(tempVarCounts[i].counts.indel);
+        tempVarCounts[i].counts.other = parseInt(tempVarCounts[i].counts.other);
+      }
+      this.varCountsArray = tempVarCounts;
+    },
+    
     buildPage(){
       this.populateRelationshipMap();
       this.formatPedigreeData();

@@ -134,7 +134,7 @@
                     .attr('x', this.width / 2)
                     .attr("fill", "black")
                     .attr("text-anchor", "middle")
-                    .text(this.nFormatter(this.totalVarCount, 1));
+                    .text("Total: " + this.nFormatter(this.totalVarCount, 1));
             },
 
             formatLabel(count){
