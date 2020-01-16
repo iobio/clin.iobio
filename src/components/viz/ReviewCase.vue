@@ -110,7 +110,7 @@
       <div style=" width: 100%; display: inline-flex; flex-direction: row; justify-content: space-around;">
         <div class="columnHeader" style="margin-right: 130px">Sample</div> <div class="columnHeader" style="margin-right: 130px">Read Coverage</div><div class="columnHeader">Variant Type Distribution</div>
       </div>
-      <div v-for="(d, i) in varCountsArray" >
+      <div v-for="(d, i) in sampleIdsAndRelationships" >
         <div style=" width: 100%; display: inline-flex; flex-direction: row; justify-content: space-around;">
 
             <div style="padding-top: 25px; text-align: center" class="capitalize">
@@ -183,7 +183,6 @@ export default {
       this.buildPage();
     }
     else{
-
       this.overridePropsWithDemoData();
       this.buildPage();
     }
@@ -396,15 +395,12 @@ export default {
   }
 
   .columnHeader{
-    font-size: 12px;
+    font-size: 14px;
     font-weight: bold;
+    font-family: Poppins,sans-serif;
   }
 
-  .columnHeader:after {
-    content: "";
-    flex: 0 1 200px;
-    margin: 5px;
-  }
+
 
 </style>
 
