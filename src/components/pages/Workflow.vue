@@ -232,10 +232,10 @@ $badge-inactive-color:  #d8d3d3
       height: 2px
 
       &.short
-        width: 30px
+        width: 40px
 
       &.long
-        width: 30px
+        width: 40px
 
       &.invisible
         visibility: hidden
