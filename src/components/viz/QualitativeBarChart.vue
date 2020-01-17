@@ -19,7 +19,10 @@
                         class="g-main"
                 >
                     <g class="axis axis__y"/>
+                    <g class="axis axis__x"/>
+
                 </g>
+                <text class="axis-label axis-label--y"/>
             </svg>
         </div>
     </div>
@@ -52,9 +55,13 @@
                 type: Object,
                 default() {
                     return {
-                        top: 30, right: 30, bottom: 10, left: 30,
+                        top: 30, right: 30, bottom: 10, left: 50,
                     };
                 },
+            },
+            yAxisLabel: {
+                type: String,
+                default: 'Variant Count',
             },
             colorScale: {
                 type: Function,
@@ -65,7 +72,8 @@
             return {
                 barPadding: 0.2,
                 topOffset: 50,
-                totalVarCount: 0
+                totalVarCount: 0,
+                maxCount: null,
             };
         },
         computed: {
@@ -109,10 +117,15 @@
             },
         },
         mounted() {
+            this.populateMaxCount();
             this.drawChart();
             this.drawTotalVarCount();
         },
         methods: {
+
+            populateMaxCount(){
+                this.maxCount = Math.max(parseInt(this.data.SNP), parseInt(this.data.other), parseInt(this.data.indel));
+            },
 
             drawTotalVarCount() {
                 this.totalVarCount = parseInt(this.data.SNP) + parseInt(this.data.other) + parseInt(this.data.indel);
@@ -122,7 +135,17 @@
                     .attr('x', this.width / 2)
                     .attr("fill", "black")
                     .attr("text-anchor", "middle")
-                    .text(this.nFormatter(this.totalVarCount, 1));
+                    .text("Total: " + this.nFormatter(this.totalVarCount, 1));
+            },
+
+            formatLabel(count){
+                if(count > (this.maxCount / 5)){
+                return this.nFormatter(count, 1)
+                }
+                else{
+                    return "";
+                }
+
             },
 
             nFormatter(num, digits) {
@@ -165,6 +188,28 @@
                     .tickSizeOuter(0);
                 this.gMain.select('.axis__y').call(yAxis);
 
+                const yAxisLength = this.height - this.margin.top - this.margin.bottom;
+                const middleOfYAxis = this.margin.top + (yAxisLength / 2);
+                d3.select(this.$el).select('svg')
+                    .select('.axis-label--y')
+                    .attr('text-anchor', 'middle')
+                    .attr('transform', 'rotate(-90)')
+                    .attr('y', 0)
+                    .attr('x', -middleOfYAxis + 20)
+                    .attr('dy', '10px')
+                    .attr("font-size", "11px")
+                    .attr("fill", "black")
+                    .text(this.yAxisLabel);
+
+                const xAxis = d3.axisBottom()
+                    .scale(this.xScale)
+                    .tickSize(0);
+
+                this.gMain.select('.axis__x')
+                    .attr('transform', `translate(0,${this.innerHeight - this.margin.bottom + 10})`)
+                    .call(xAxis);
+
+
                 const bars = this.gMain
                     .selectAll('rect')
                     .data(this.dataArray);
@@ -203,7 +248,7 @@
                     .attr('y', (d) => this.yScale(d[yColumn] / 2))
                     .attr("fill", "white")
                     .attr("text-anchor", "middle")
-                    .text(d => this.nFormatter(d.count, 1));
+                    .text(d => this.formatLabel(d.count));
             },
         },
     };
@@ -223,4 +268,14 @@
         stroke: #666666;
         shape-rendering: crispEdges;
     }
+
+    .axis__x text{
+        fill: none;
+    }
+
+    .axis__x .tick{
+        fill: none;
+    }
+
+
 </style>

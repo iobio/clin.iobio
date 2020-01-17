@@ -43,7 +43,7 @@
         props: {
             barPadding: {
                 type: Number,
-                default: 1,
+                default: 0,
             },
             canFilter: {
                 type: Boolean,
@@ -122,6 +122,8 @@
                 xScale: null,
                 yScale: null,
                 medianCoverage: null,
+                widthNorm: null,
+                xDiff: null,
             };
         },
         computed: {
@@ -148,6 +150,11 @@
             xRange() {
                 return [this.margin.left + this.labelHeight, this.width - this.margin.right];
             },
+            xRangeNorm(){
+                return [this.margin.left + this.labelHeight, this.widthNorm - this.margin.right];
+
+            },
+
             yRange() {
                 return [this.height - this.margin.bottom - this.labelHeight, this.margin.top];
             },
@@ -180,10 +187,21 @@
         },
         mounted() {
             this.checkForData(this.drawChart);
+            this.calculateWidthNorm();
             this.calculateMedianCoverage();
             this.plotMedian();
         },
         methods: {
+
+            calculateWidthNorm(){
+
+                let x = this.xDomain[1] - this.xDomain[0];
+                let xLocal = this.xDomainLocal[1] - this.xDomainLocal[0];
+
+                this.xDiff = x - xLocal;
+
+                this.widthNorm = this.width * (xLocal/x);
+            },
 
             plotMedian(){
 
@@ -326,7 +344,7 @@
                     .attr('fill', this.color)
                     .attr('x', (d) => this.xScale(d[0]) + 1)
                     .attr('y', (d) => this.yScale(d[1]))
-                    .attr('width', () => Math.abs(((this.xRange[1] - this.xRange[0]) / this.typedData.length) - this.barPadding))
+                    .attr('width', () => Math.abs(((this.xRange[1] - this.xRange[0]) / (this.typedData.length + this.xDiff))) - this.barPadding)
                     .attr('height', (d) => this.yScale(this.yScale.domain()[0]) - this.yScale(d[1]));
                 dataJoin.exit().remove();
             },
