@@ -63,6 +63,8 @@ $nav-background-color: #153d52
 $app-color:            #8ee3f8
 $app-color-darker:     #77d0e6
 
+$app-header-color:     #434343
+
 
 $sig-color:         #bf1414
 $unknown-sig-color: #ca6328
@@ -79,9 +81,17 @@ $called-variant-color:        $coverage-problem-color
 $called-variant-color-darker: $coverage-problem-color
 $loaded-variant-color:        $app-gray
 
+$danger-color:                    #b32f2f
+$success-color:                   rgba(156,194,49,1)
+$unremarkable-color:              #878787
+$warning-background-color:        rgb(217, 123, 123)
+$warning-border-color:            #b67272
+$multi-allelic-color:             #a8c99d
+
 $hom-color:                   rgba(173, 38, 38, 0.65)
 $het-color:                   rgb(181, 181, 181)
 $homref-color:                rgb(216, 216, 216)
+
 
 $bookmark-color:              #3773A7
 
@@ -98,18 +108,41 @@ $level-likely-low-color:     rgba(181, 207, 107, 1)
 $level-conflicting-color:    rgb(111, 182, 180)
 $level-other-color:          rgb(189, 189, 189)
 
-$significant-color:          #831b1c
-$unknown-significance-color: $level-likely-high-color
-$not-significant-color:      #b1b2ae
-$not-reviewed-color:         #858585
+$significant-color:            $high-impact-color
+$unknown-significance-color:   $level-medium-color
+$not-significant-color:        #adabab
+$poor-qual-color:              $coverage-problem-color
+$not-reviewed-color:           #d3d3d3
 
-$clinvar-path-color:        #ad494A
-$clinvar-lpath-color:       #FB7737
-$clinvar-uc-color:          rgba(231,186,82,1)
-$clinvar-benign-color:      rgba(156,194,49,1)
-$clinvar-lbenign-color:     rgba(181,207,107,1)
-$clinvar-other-color:       rgb(189,189,189)
-$clinvar-cd-color:          rgb(111, 182, 180)
+$clinvar-path-color:     $high-impact-color
+$clinvar-lpath-color:    $level-likely-high-color
+$clinvar-uc-color:       rgba(231,186,82,1)
+$clinvar-benign-color:   $success-color
+$clinvar-lbenign-color:  rgba(181,207,107,1)
+$clinvar-other-color:    rgb(189,189,189)
+$clinvar-cd-color:       rgb(111, 182, 180)
 
 
 $test-color:                green
+
+
+$danger-color:                    #b32f2f
+$success-color:                   rgba(156,194,49,1)
+$unremarkable-color:              #878787
+$warning-background-color:        rgb(217, 123, 123)
+$warning-border-color:            #b67272
+$multi-allelic-color:             #a8c99d
+
+$danger-exon-color:              rgba(230, 115, 115, .5)
+$danger-exon-border-color:       rgba(230, 115, 115, .75)
+$coverage-problem-color:         rgba(230, 115, 115, 1)
+$coverage-problem-region-color:  rgba(230, 115, 115, .43)
+$coverage-problem-region-border-color:  rgba(230, 115, 115, .82)
+$coverage-problem-tooltip-color: rgb(247, 136, 136)
+$coverage-problem-glyph-color:   rgb(247, 136, 136)
+
+$app-button-color:               #30638e
+$arrow-color:                    $current-color
+
+$poor-qual-color:                $coverage-problem-color
+

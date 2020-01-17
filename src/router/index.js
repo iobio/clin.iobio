@@ -18,16 +18,6 @@ const routes = [
         localStorage.setItem('hub-iobio-tkn', token_type + ' ' + access_token);
         next('/' + Qs.stringify(otherQueryParams, { addQueryPrefix: true, arrayFormat: 'brackets' }));
 
-
-        // temp workaround
-        //localStorage.setItem('param_sample_id',             queryParams.sample_id)
-        //localStorage.setItem('param_project_id',            queryParams.project_id)
-        //localStorage.setItem('param_analysis_id',           queryParams.analysis_id)
-        //localStorage.setItem('param_source',                queryParams.source)
-        //localStorage.setItem('param_iobio_source',          queryParams.iobio_source)
-        //localStorage.setItem('param_client_application_id', queryParams.client_application_id)
-
-
       } else {
         next();
       }
@@ -46,6 +36,8 @@ const routes = [
         paramIobioSource:           route.query.iobio_source,
         paramGeneBatchSize:         route.query.gene_batch_size,
         paramClientApplicationId:   route.query.client_application_id,
+
+        paramBuild:                 route.query.build,
 
         paramTheme:                 route.query.theme
     })

@@ -177,23 +177,15 @@ $horizontal-dashboard-height: 140px
 
       <v-card  class="clin-card"
         v-if="analysis && workflow"
-        v-show="analysis && workflow && currentStep == 6 && !showFindings "
+        v-show="analysis && workflow && currentStep == 4 || showFindings "
       >
         <findings
         ref="findingsRef"
-        v-if="analysis && workflow && params.sample_id"
-        v-show="analysis && workflow"
-        :workflow="workflow"
-        :analysis="analysis.payload"
-        :caseSummary="caseSummary"
+        v-if="analysis && workflow && variantsByInterpretation"
+        :genomeBuildHelper="genomeBuildHelper"
         :modelInfos="modelInfos"
-        :pedigree="mosaicSession ? mosaicSession.pedigreeSamples : null"
-        :sampleId="params.sample_id"
-        :phenotypes="analysis.payload.phenotypes"
-        :genes="analysis.payload.genes"
-        :variants="analysis.payload.variants"
         :variantsByInterpretation="variantsByInterpretation"
-        :filters="analysis.payload.filters">
+        :interpretationMap="interpretationMap">
         </findings>
       </v-card>
 
@@ -253,6 +245,7 @@ import AppIcon       from  '../partials/AppIcon.vue'
 
 import AWSSession    from  '../../models/AWSSession.js'
 import MosaicSession from  '../../models/MosaicSession.js'
+import GenomeBuildHelper from '../../models/GenomeBuildHelper.js'
 
 
 import SaveButton  from '../partials/SaveButton.vue'
@@ -293,7 +286,8 @@ export default {
     paramSource:         null,
     paramIobioSource:    null,
     paramGeneBatchSize:  null,
-    paramClientApplicationId: null
+    paramClientApplicationId: null,
+    paramBuild: null
   },
   data() {
     let self = this;
@@ -311,16 +305,20 @@ export default {
       user: null,
       showSaveModal: false,
 
+      genomeBuildHelper: null,
+
       workflows:        workflowData,
       importedVariants: variantData,
 
       variantSetCounts: {},
 
 
-      variantsByInterpretation: [
+      variantsByInterpretationTemplate: [
        { key: 'sig',         display: 'Significant Variants',  abbrev: 'Significant', organizedVariants: []},
        { key: 'unknown-sig', display: 'Variants of Unknown Significance', abbrev: 'Unknown Sig', organizedVariants: []}
       ],
+
+      variantsByInterpretation: [],
 
       showFindings: false,
 
@@ -396,7 +394,17 @@ export default {
       rawPedigree: null,
       allVarCounts: null,
       coverageHistos: null,
-      venn_diag_data: {}
+      venn_diag_data: {},
+
+
+      interpretationMap: {
+        'sig': 'Significant',
+        'unknown-sig': 'Unknown significance',
+        'not-sig': 'Not significant',
+        'poor-qual': 'Poor quality',
+        'not-reviewed': 'Not reviewed'
+      },
+
     }
 
   },
@@ -528,9 +536,20 @@ export default {
       self.promiseIFramesMounted()
       .then(function() {
 
+        self.globalApp.initServices();
 
-        if (localStorage.getItem('hub-iobio-tkn') && localStorage.getItem('hub-iobio-tkn').length > 0
-           && self.paramSampleId && self.paramSource) {
+        self.genomeBuildHelper = new GenomeBuildHelper(self.globalApp);
+        return self.genomeBuildHelper.promiseInit({DEFAULT_BUILD: 'GRCh37'})
+      })
+      .then(function() {
+        if (self.paramBuild && self.paramBuild.length > 0) {
+          self.genomeBuildHelper.setCurrentBuild(self.paramBuild);
+        } else {
+          // TODO - genome build is required
+          self.genomeBuildHelper.setCurrentBuild("GRCh37")
+        }
+
+        if (localStorage.getItem('hub-iobio-tkn') && localStorage.getItem('hub-iobio-tkn').length > 0 && self.paramSampleId && self.paramSource) {
 
           // Temporary workaround until router is fixed to pass paramSampleId, paramSource, etc
           self.params.sample_id             = self.paramSampleId
@@ -596,6 +615,11 @@ export default {
 
         }
       })
+      .catch(function(error) {
+        alert("Unable to set genome build")
+        console.log(error)
+      })
+
     },
 
     getDemoVcf: function() {
@@ -627,6 +651,7 @@ export default {
     onAuthenticated: function(callback) {
       let self = this;
       self.isAuthenticated = true;
+
 
       self.workflow = self.workflows[self.idWorkflow];
 
@@ -936,6 +961,7 @@ export default {
         this.promiseCompleteStepTask('genes', taskMap[messageObject.source]);
       } else if (messageObject.type == "save-analysis") {
           this.analysis = messageObject.analysis;
+          this.organizeVariantsByInterpretation();
           this.promiseAutosaveAnalysis({notify: true})
           .then(function() {
 
@@ -1357,11 +1383,14 @@ export default {
 
     organizeVariantsByInterpretation: function() {
       let self = this;
+      self.variantsByInterpretation = [];
 
-      self.variantsByInterpretation.forEach(function(interpretation) {
+      self.variantsByInterpretationTemplate.forEach(function(interpretationTemplate) {
+        let interpretation = $.extend({}, interpretationTemplate)
         interpretation.organizedVariants = self.organizeVariantsByFilter(interpretation.key);
         interpretation.variantCount      = self.getVariantCount(interpretation.organizedVariants);
         interpretation.genes             = self.getUniqueGenes(interpretation.organizedVariants);
+        self.variantsByInterpretation.push(interpretation)
       })
     },
     organizeVariantsByFilter: function(interpretation) {
@@ -1435,8 +1464,11 @@ export default {
       if (theVariants.length > 0) {
         let theGenes   = [];
         theVariants.forEach(function(variant) {
-          if ((userFlagged && variant.isUserFlagged) ||
-            (filterName && variant.filtersPassed && variant.filtersPassed.indexOf(filterName) >= 0)) {
+          let isReviewed = (variant.notes && variant.notes.length > 0) 
+                    || (variant.interpretation != null 
+                    && (variant.interpretation == "sig" || variant.interpretation == "unknown-sig"));
+
+          if (isReviewed && filterName && filterName == 'reviewed') {
 
             let theGene = null;
             var idx = theGenes.indexOf(variant.gene);
@@ -1449,8 +1481,8 @@ export default {
               theGenes.push(theGene);
             }
             theGene.variants.push(variant);
-
           }
+
         })
         return theGenes;
       } else {
