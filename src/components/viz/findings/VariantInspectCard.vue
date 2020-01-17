@@ -1,6 +1,6 @@
 <template>
 
-  <v-card v-show="selectedVariant" id="variant-inspect" class="app-card full-width">
+  <div v-show="selectedVariant" id="variant-inspect" class="app-card full-width">
 
     <div v-if="selectedGene" style="display:flex;align-items:flex-start;justify-content:flex-start;margin-bottom:10px">
       <div  id="variant-heading" v-if="selectedVariant" class="text-xs-left">
@@ -278,7 +278,7 @@
 
     </div>
 
-  </v-card>
+  </div>
 
 </template>
 
@@ -1033,6 +1033,7 @@ export default {
   padding-right: 10px
   padding-bottom: 10px
   margin-bottom: 7px
+  border-bottom: solid .5px rgba(0,0,0,.20)
 
   .multialign-loader
     font-size: 12px
