@@ -79,7 +79,7 @@ $horizontal-dashboard-height: 140px
 
 @media (min-width: 1550px)
   .container
-    max-width: 1500px !important
+    max-width: 1550px !important
 
 
 
@@ -1464,8 +1464,8 @@ export default {
       if (theVariants.length > 0) {
         let theGenes   = [];
         theVariants.forEach(function(variant) {
-          let isReviewed = (variant.notes && variant.notes.length > 0) 
-                    || (variant.interpretation != null 
+          let isReviewed = (variant.notes && variant.notes.length > 0)
+                    || (variant.interpretation != null
                     && (variant.interpretation == "sig" || variant.interpretation == "unknown-sig"));
 
           if (isReviewed && filterName && filterName == 'reviewed') {
