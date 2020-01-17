@@ -79,6 +79,11 @@
       </div>
     -->
 
+      <variant-notes-menu
+       :variant="selectedVariant">
+      </variant-notes-menu>
+
+
     </div>
 
 
@@ -288,6 +293,7 @@ import VariantLinksMenu         from "../../partials/findings/VariantLinksMenu.v
 import VariantAliasesMenu       from "../../partials/findings/VariantAliasesMenu.vue"
 import InfoPopup                from "../../partials/findings/InfoPopup.vue"
 import ToggleButton             from '../../partials/findings/ToggleButton.vue'
+import VariantNotesMenu         from '../../partials/findings/VariantNotesMenu.vue'
 import GeneViz                  from "../../viz/findings/GeneViz.vue"
 import PedigreeGenotypeViz      from "../../viz/findings/PedigreeGenotypeViz.vue"
 import ConservationScoresViz    from "../../viz/findings/ConservationScoresViz.vue"
@@ -309,6 +315,7 @@ export default {
     VariantInspectRow,
     VariantInspectQualityRow,
     VariantInspectInheritanceRow,
+    VariantNotesMenu,
     GeneViz,
     PedigreeGenotypeViz,
     ToggleButton,
