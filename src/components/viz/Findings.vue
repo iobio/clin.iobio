@@ -16,7 +16,7 @@
 
 
   .findings-section
-    margin-bottom: 30px
+    margin-bottom: 40px
 
     .interpretation-list
       margin-bottom: 10px
