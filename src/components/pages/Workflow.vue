@@ -236,7 +236,7 @@ $badge-inactive-color:  #d8d3d3
         width: 40px
 
       &.long
-        width: 40px
+        width: 70px
 
       &.invisible
         visibility: hidden
@@ -528,7 +528,7 @@ export default {
 
           let offsetLeft = $('#workflow-steps')[0].offsetLeft;
 
-          let offset = taskIdx == 0 ? 32 : 32;
+          let offset = taskIdx == 0 ? 38 : 38;
           self.currentTaskLeft = $('.task.active')[0].offsetLeft - offsetLeft + offset + 'px';
 
           if (taskIdx == self.currentStep.tasks.length - 1 && stepIdx == self.analysisSteps.length - 1) {
