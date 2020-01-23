@@ -27,7 +27,7 @@
           "tasks": [
             {
               "key": "review-phenotypes-genes",
-              "name": "Generate phenotypes and prioritized gene list"
+              "name": "Generate phenotypes & prioritized genes"
             }
           ],
           "title": "Review Phenotypes"

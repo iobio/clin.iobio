@@ -288,11 +288,12 @@ $badge-inactive-color:  #d8d3d3
 
       .task-label
         width:       80px
-        font-size:   12px
-        line-height: 13px
+        font-size:   13px
+        line-height: 14px
         text-align:  center
         min-height:  76px
         max-height:  76px
+        font-weight: 500
 
       .avatar-button
         height:      24px !important
