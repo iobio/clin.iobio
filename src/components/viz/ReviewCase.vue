@@ -1,10 +1,10 @@
-<style lang="sass"  >
+<style lang="sass" scoped >
 
 @import ../../assets/sass/variables
 
 #review-case-panel
-  padding: 5px 20px 5px 20px
-  overflow-y: auto
+  padding: 5px 20px 5px 30px
+  /*overflow-y: auto*/
   height: -webkit-fill-available
   height: -moz-available
   background-color:  white
@@ -41,7 +41,7 @@
   .card-title
     font-size: 18px
     color:   $app-header-color
-    margin-bottom: 20px
+    margin-bottom: 5px
     display: inline-block
 
   .card-heading
@@ -76,21 +76,21 @@
         <div class="review-section">
 
           <div style="display:flex;flex-direction:row;justify-content:flex-start">
-            <div  class="subsection"  >
-              <span class="card-subheading">{{ caseSummary.name }} </span>
-              <div style="display:flex">
-                <div style="margin-left:15px">
-                  <div  class="sample" v-for="modelInfo in modelInfos" :key="modelInfo.sample">
-                    <span class="rel">{{ modelInfo.relationship }}</span>
-                    <span class="name">{{ modelInfo.sample }}</span>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <!--<div  class="subsection"  >-->
+              <!--<span class="card-subheading">{{ caseSummary.name }} </span>-->
+              <!--<div style="display:flex">-->
+                <!--<div style="margin-left:15px">-->
+                  <!--<div  class="sample" v-for="modelInfo in modelInfos" :key="modelInfo.sample">-->
+                    <!--<span class="rel">{{ modelInfo.relationship }}</span>-->
+                    <!--<span class="name">{{ modelInfo.sample }}</span>-->
+                  <!--</div>-->
+                <!--</div>-->
+              <!--</div>-->
+            <!--</div>-->
 
             <div class="subsection">
               <div v-if="false" class="card-subheading">Description</div>
-              <div style="margin-top:30px;font-size:13px;line-height:15px;width:400px;white-space: normal">
+              <div style="margin-top:10px;font-size:13px;line-height:15px;width:50%;white-space: normal">
                 {{ caseSummary.description }}
               </div>
             </div>
@@ -112,22 +112,24 @@
       </div>
       <div v-for="(d, i) in sampleIdsAndRelationships" >
         <div style=" width: 100%; display: inline-flex; flex-direction: row; justify-content: space-around;">
-
             <div style="padding-top: 25px; text-align: center" class="capitalize">
               {{sampleIdsAndRelationships[i]}}
               <PedigreeGraph :data="allPedigreeDataArrays[i]" :id="sampleUuids[i]" :width="100" :height="100" :pedigree="pedigree"></PedigreeGraph>
             </div>
           <BarChart :data="coverageDataArray[i]" :width="400" :height="200" :x-domain="xDomain" :y-domain="yDomain" ></BarChart>
+          <BoxPlot :width="250" :height="150" :data="exomeMedianCoverageData"></BoxPlot>
           <QualitativeBarChart :data="varCountsArray[i].counts" :width="300" :height="200" style="padding-top: 20px"></QualitativeBarChart>
 
         </div>
      </div>
     </div>
+    <div style="height:20px"></div>
   </div>
 </template>
 
 <script>
 import PedigreeGraph from './PedigreeGraph.vue';
+import BoxPlot from './BoxPlot'
 import AppIcon       from '../partials/AppIcon.vue';
 import QualitativeBarChart from './QualitativeBarChart.vue'
 import BarChart from './BarChart.vue'
@@ -140,7 +142,8 @@ export default {
     QualitativeBarChart,
     BarChart,
     PedigreeGraph,
-    AppIcon
+    AppIcon,
+    BoxPlot
   },
   props: {
     workflow:    null,
@@ -169,6 +172,14 @@ export default {
       varCountsArray: null,
       isSorted: false,
       demoData: null,
+
+      exomeMedianCoverageData: {
+        min: 15,
+        q1: 30,
+        q2: 45,
+        q3: 60,
+        max: 75,
+      }
 
     }
 
