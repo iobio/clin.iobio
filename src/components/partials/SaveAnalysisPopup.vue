@@ -3,8 +3,8 @@
 
 .save-analysis-dialog
   position: fixed
-  right: 150px
-  bottom: 0
+  right: 50px
+  top: 0
   z-index: 999
 
 
