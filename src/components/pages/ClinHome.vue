@@ -223,6 +223,7 @@ $horizontal-dashboard-height: 140px
   <save-button
   v-if="launchedFromMosaic"
     :showing-save-modal="showSaveModal"
+    :analysis="analysis"
     @save-modal:set-visibility="toggleSaveModal"
   />
   <save-analysis-popup

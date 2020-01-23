@@ -1,10 +1,11 @@
 /* Copyright 2017-2018, Frameshift Labs, Inc., All rights reserved. */
 <template>
   <a
+    v-if="analysis"
     class="analysis-save-button"
     @click.prevent="toggleSaveModal"
   >
-    <span>Save analysis</span>
+    <span>{{ buttonLabel }}</span>
   </a>
 </template>
 
@@ -16,9 +17,17 @@ export default {
     showingSaveModal: {
       type: Boolean,
       required: true,
-    }
+    },
+    analysis: null
   },
   computed: {
+    buttonLabel() {
+      if (this.analysis && this.analysis.id) {
+        return "Edit analysis info";
+      } else{ 
+        return "Save new analysis";
+      }
+    },
     iconName() {
       return this.showingSaveModal ? 'keyboard_arrow_down' : 'launch';
     },
@@ -36,7 +45,7 @@ export default {
   position: fixed;
   top: 60px;
   right: 10px;
-  width: 120px;
+  width: 170px;
   height: 35px;
   border-radius: 15px;
   border-radius: 35px;
