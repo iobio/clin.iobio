@@ -22,7 +22,7 @@
     "debug": "^2.6.8",
     "express": "^4.15.3",
     "file-saver": "^2.0.2",
-    "iobio-phenotype-extractor-vue": "^0.1.45",
+    "iobio-phenotype-extractor-vue": "^0.1.47",
     "is-number": "^7.0.0",
     "jquery": "^3.4.1",
     "material-design-icons-iconfont": "^5.0.1",

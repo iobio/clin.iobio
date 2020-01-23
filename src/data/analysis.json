@@ -1112,7 +1112,38 @@
 
       ],
       [
-        "The patient is diagnosed Dejerine sottas disease. The suspected phenotypes for this patient are hammertoes; distal muscle weakness; pes cavus."
+        {
+          "note":"The patient is diagnosed Dejerine sottas disease. The suspected phenotypes for this patient are hammertoes; distal muscle weakness; pes cavus.",
+          "gtr_terms": [
+            {
+              "DiseaseName": "Dejerine-Sottas disease",
+              "ConceptID": "C0011195",
+              "general": true,
+              "gtrSearchStatus": "Completed"
+            }
+          ],
+          "phenolyzer_terms": [
+            {
+              "id": "dejerine sottas disease",
+              "label": "dejerine sottas disease",
+              "value": "dejerine sottas disease",
+              "general": true,
+              "phenolyzerSearchStatus": "Completed"
+            }
+          ],
+          "hpo_terms": [
+
+          ],
+          "LevenshteinResults": [
+            "Dejerine-Sottas disease",
+            "Hammertoe",
+            "Distal muscle weakness",
+            "Late-onset distal muscle weakness",
+            "Muscle weakness",
+            "Progressive distal muscle weakness",
+            "Pes cavus"
+          ]
+        }
       ]
     ],
     "project_id": "32",
