@@ -111,15 +111,16 @@ $badge-inactive-color:  #d8d3d3
     .task-badge
       display: inline-block
       position: relative
-      font-size: 11px
+      font-size: 13px
+      font-weight: 500
       right: -25px
       top: 1px
-      color: $workflow-inactive-color
+      color: $text-color
       background-color: transparent
 
       &.active
         background-color:  transparent
-        color: $text-color
+        color: $workflow-active-color
 
       &.empty
         visibility:  hidden
@@ -290,7 +291,8 @@ $badge-inactive-color:  #d8d3d3
         font-size:   12px
         line-height: 13px
         text-align:  center
-        min-height:  46px
+        min-height:  76px
+        max-height:  76px
 
       .avatar-button
         height:      24px !important
