@@ -2,7 +2,6 @@
 
 
   <v-menu
-    v-if="variant.notes && variant.notes.length > 0"
     offset-y
     :close-on-content-click="false"
     v-model="showMenu"
@@ -10,7 +9,8 @@
     :max-width="420"
     bottom>
     <template v-slot:activator="{ on }">
-      <v-btn class="findings-show-notes-button" text v-on="on">
+      <v-btn 
+      :class="{'findings-show-notes-button': true, 'v-btn--disabled': variant.notes == null || variant.notes.length == 0}" text v-on="on">
         <v-icon style="padding-right:2px">notes</v-icon>
         Notes
         <v-icon style="padding-left:10px">expand_more</v-icon>
@@ -178,6 +178,10 @@ export default {
   margin-top: 5px
   .v-btn__content
     color: $app-header-color
+
+  &.v-btn--disabled
+    .v-btn__content
+      color: #bdbebd
 
 
 </style>
