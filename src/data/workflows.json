@@ -13,7 +13,7 @@
           "tasks": [
             {
               "key": "review-patient",
-              "name": "Review patient"
+              "name": "Review relatedness, case description, data quality"
             }
           ],
           "title": "Review Case"
@@ -27,7 +27,7 @@
           "tasks": [
             {
               "key": "review-phenotypes-genes",
-              "name": "Generate phenotypes & prioritized genes"
+              "name": "Generate phenotypes and prioritized gene list"
             }
           ],
           "title": "Review Phenotypes"
