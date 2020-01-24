@@ -29,14 +29,6 @@
   <div id="findings-panel" >
 
 
-
-      <span class="card-title">
-        Review results
-      </span>
-
-     
-
-
       <div class="findings-section" v-for="interpretation in variantsByInterpretation" :key="interpretation.key" >
 
 
