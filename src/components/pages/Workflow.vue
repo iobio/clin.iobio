@@ -108,23 +108,30 @@ $badge-inactive-color:  #d8d3d3
     text-align: center
     margin-left: 0px
 
+    .task-label
+      .v-badge__badge 
+        justify-content: flex-start !important
+
     .task-badge
       display: inline-block
       position: relative
-      font-size: 13px
+      font-size: 12px
       font-weight: 500
-      right: -25px
+      font-style: italic
+      right: -65px
       top: 1px
-      color: $text-color
+      color: $current-color
       background-color: transparent
+      line-height: 13px
 
       &.active
         background-color:  transparent
-        color: $workflow-active-color
-
+        
       &.empty
         visibility:  hidden
         height: 16px
+
+  
 
     .task-text
       margin-top: -10px
@@ -233,10 +240,10 @@ $badge-inactive-color:  #d8d3d3
       height: 2px
 
       &.short
-        width: 40px
+        width: 60px
 
       &.long
-        width: 70px
+        width: 100px
 
       &.invisible
         visibility: hidden
@@ -287,12 +294,12 @@ $badge-inactive-color:  #d8d3d3
             color: white !important
 
       .task-label
-        width:       80px
+        width:       120px
         font-size:   13px
         line-height: 14px
         text-align:  center
-        min-height:  76px
-        max-height:  76px
+        min-height:  66px
+        max-height:  66px
         font-weight: 500
 
       .avatar-button
@@ -391,9 +398,14 @@ $badge-inactive-color:  #d8d3d3
           :class="{'task': true, 'active' : currentTask && task.key == currentTask.key  ? true : false, 'complete': task.complete}">
             <div style="display:inline-block">
               <div class="task-label">
-                <v-badge  right color="transparent">
-                  <span :class="{'task-badge': true, 'empty': task.badge == null, 'active': currentStep && step.key == currentStep.key  ? true : false}" slot="badge">{{ task.badge }}</span>
-               </v-badge>
+                <v-badge right color="transparent" >
+                  
+                  <span v-if="task-badges" v-for="taskBadge, idx in task.badges" :key="taskBadge"
+                  :class="{'task-badge': true, 'empty': taskBadge == null, 'active': currentStep && step.key == currentStep.key  ? true : false}" slot="badge">{{ taskBadge }}</span>
+
+                  <span v-if="!task.badges" :class="{'task-badge': true, 'empty': true, 'active': false}" slot="badge">{{ taskBadge }}</span>
+                </v-badge>
+  
                 <div class="task-text">
                   {{ getTaskName(step.key, task.key) }}
                 </div>
@@ -529,7 +541,7 @@ export default {
 
           let offsetLeft = $('#workflow-steps')[0].offsetLeft;
 
-          let offset = taskIdx == 0 ? 38 : 38;
+          let offset = taskIdx == 0 ? 58 : 58;
           self.currentTaskLeft = $('.task.active')[0].offsetLeft - offsetLeft + offset + 'px';
 
           if (taskIdx == self.currentStep.tasks.length - 1 && stepIdx == self.analysisSteps.length - 1) {

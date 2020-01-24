@@ -87,7 +87,7 @@
         "tasks": [
           {
             "key": "review-full",
-            "badge": 9,
+            "badges": ["9 variants", "1 recessive", "4 de novo", "4 comp het"],
             "passed": false,
             "complete": false
           }

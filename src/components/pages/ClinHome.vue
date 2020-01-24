@@ -986,21 +986,21 @@ export default {
         step.tasks.forEach(function(task) {
           if (task.key == 'gtr-genes' && self.analysis.payload.genesGtr) {
             if  (self.analysis.payload.genesGtr.length > 0) {
-              task.badge = self.analysis.payload.genesGtr.length;
+              task.badges = [self.analysis.payload.genesGtr.length];
             } else {
-              delete task.badge;
+              delete task.badges;
             }
           } else if (task.key == 'phenotype-genes' && self.analysis.payload.genesPhenolyzer) {
             if (self.analysis.payload.genesPhenolyzer.length > 0) {
-              task.badge = self.analysis.payload.genesPhenolyzer.length;
+              task.badges = [self.analysis.payload.genesPhenolyzer.length];
             } else {
-              delete task.badge;
+              delete task.badges;
             }
           } else if (task.key == 'summary-genes' && self.analysis.genes ) {
             if (self.analysis.payload.genes.length > 0) {
-              task.badge = self.analysis.payload.genes.length;
+              task.badges = [self.analysis.payload.genes.length];
             } else {
-              delete task.badge;
+              delete task.badges;
             }
           }
         })
@@ -1017,20 +1017,20 @@ export default {
           step.tasks.forEach(function(task) {
             if (task.key == 'review' ) {
               if (variantsCandidateGenes.length > 0) {
-                task.badge =  variantsCandidateGenes.length;
+                task.badges =  [variantsCandidateGenes.length + ' genes '];
               } else {
                 delete task.badge;
               }
             } else if (task.key == 'coverage' ) {
               if (variantsCandidateGenes.length == 0) {
-                delete task.badge;
+                delete task.badges;
               }
             } else if (task.key == 'review-full') {
-              let fullAnalysisCount = self.analysis.payload.variants.length - variantsCandidateGenes.length;
+              let fullAnalysisCount = self.analysis.payload.variants.length;
               if (fullAnalysisCount > 0) {
-                task.badge =  fullAnalysisCount;
+                task.badges =  [fullAnalysisCount + ' variants'];
               } else {
-                delete task.badge;
+                delete task.badges;
               }
             }
           })
@@ -1043,9 +1043,9 @@ export default {
       self.analysis.payload.steps.forEach(function(step) {
         step.tasks.forEach(function(task) {
           if (task.key == 'review' ) {
-              delete task.badge;
+              delete task.badges;
           } else if (task.key == 'coverage') {
-              delete task.badge;
+              delete task.badges;
           }
         })
       })
@@ -1057,7 +1057,7 @@ export default {
         self.analysis.payload.steps.forEach(function(step) {
           step.tasks.forEach(function(task) {
             if (task.key == 'coverage') {
-              task.badge =  geneCount
+              task.badges =  [geneCount + ' genes'];
             }
           })
         })
