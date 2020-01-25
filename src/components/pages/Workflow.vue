@@ -403,7 +403,7 @@ $badge-inactive-color:  #d8d3d3
                   <span v-if="task-badges" v-for="taskBadge, idx in task.badges" :key="taskBadge"
                   :class="{'task-badge': true, 'empty': taskBadge == null, 'active': currentStep && step.key == currentStep.key  ? true : false}" slot="badge">{{ taskBadge }}</span>
 
-                  <span v-if="!task.badges" :class="{'task-badge': true, 'empty': true, 'active': false}" slot="badge">{{ taskBadge }}</span>
+                  <span v-if="!task.badges" :class="{'task-badge': true, 'empty': true, 'active': false}" slot="badge"></span>
                 </v-badge>
   
                 <div class="task-text">
