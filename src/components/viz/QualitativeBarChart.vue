@@ -55,7 +55,7 @@
                 type: Object,
                 default() {
                     return {
-                        top: 30, right: 30, bottom: 10, left: 50,
+                        top: 25, right: 30, bottom: 5, left: 50,
                     };
                 },
             },
@@ -124,11 +124,24 @@
         methods: {
 
             populateMaxCount(){
-                this.maxCount = Math.max(parseInt(this.data.SNP), parseInt(this.data.other), parseInt(this.data.indel));
+
+                let indel = parseInt(this.data.indel);
+
+                if(isNaN(indel)){
+                    indel = 0;
+                }
+                this.maxCount = Math.max(parseInt(this.data.SNP), parseInt(this.data.other), indel);
             },
 
             drawTotalVarCount() {
-                this.totalVarCount = parseInt(this.data.SNP) + parseInt(this.data.other) + parseInt(this.data.indel);
+
+                let indel = parseInt(this.data.indel);
+
+                if(isNaN(indel)){
+                    indel = 0;
+                }
+
+                this.totalVarCount = parseInt(this.data.SNP) + parseInt(this.data.other) + indel;
                 d3.select(this.$el).select('svg')
                     .append("text")
                     .attr('y', 10)
@@ -139,6 +152,11 @@
             },
 
             formatLabel(count){
+
+                if(isNaN(count)){
+                    return "";
+                }
+
                 return this.nFormatter(count, 1)
             },
 
@@ -200,7 +218,7 @@
                     .tickSize(0);
 
                 this.gMain.select('.axis__x')
-                    .attr('transform', `translate(0,${this.innerHeight - this.margin.bottom + 10})`)
+                    .attr('transform', `translate(0,${this.innerHeight - this.margin.bottom + 5})`)
                     .call(xAxis);
 
 

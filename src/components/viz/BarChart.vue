@@ -232,7 +232,7 @@
                     .attr("fill", "black")
                     .attr("font-size", "12px")
                     .attr('x', this.xScale(this.medianCoverage) + 5)
-                    .attr('y', this.yScale(max - (0.05*max)))
+                    .attr('y', this.yScale(max - (0.1*max)))
                     .text(this.medianCoverage.toString() + 'X Median');
 
                 svg.append('line')
@@ -246,10 +246,17 @@
 
                 svg.append('text')
                     .attr("id", "minText")
-                    .attr("fill", "black")
+                    .attr("fill", "darkgray")
                     .attr("font-size", "12px")
-                    .attr('x', this.xScale(this.minCutoff) - 50)
-                    .attr('y', this.yScale(max + (0.05*max)))
+                    .attr('x',d => {
+                        if(this.medianCoverage  <= this.minCutoff) {
+                            return this.xScale(this.minCutoff) +5
+                        }
+                        else{
+                            return this.xScale(this.minCutoff) - 90;
+                        }
+                    })
+                    .attr('y', this.yScale(max) +20)
                     .text('min. coverage')
 
             },
@@ -321,7 +328,7 @@
                     .attr('text-anchor', 'middle')
                     .attr('x', middleOfXAxis)
                     .attr('y', this.height)
-                    .attr('dy', '-5px')
+                    .attr('dy', '-20px')
                     .text(this.xAxisLabel);
             },
             drawBars() {

@@ -27,8 +27,7 @@
       width: 100px
 
   .review-section
-    margin-bottom: 30px
-    padding-bottom: 35px
+    margin-bottom: 25px
 
     .subsection
       margin-right: 50px
@@ -83,7 +82,7 @@
             <!--</div>-->
 
               <div style="margin-top:10px;font-size:13px;line-height:15px;width:50%;white-space: normal">
-                {{ caseSummary.description }}
+                <span style="font-size:13px; font-weight: bold">Case Summary </span> - {{ caseSummary.description }}
               </div>
 
             <div v-if="false" class="subsection">
@@ -97,18 +96,18 @@
 
 
     <div v-if="isSorted">
-      <div style=" width: 100%; display: inline-flex; flex-direction: row; justify-content: space-around;">
+      <div style=" width: 100%; display: inline-flex; flex-direction: row; justify-content: space-around; padding-bottom: 10px">
         <div class="columnHeader" style="margin-right: 130px">Sample</div> <div class="columnHeader" style="margin-right: 130px">Read Coverage</div><div class="columnHeader">Variant Type Distribution</div>
       </div>
       <div v-for="(d, i) in sampleIdsAndRelationships" >
         <div style=" width: 100%; display: inline-flex; flex-direction: row; justify-content: space-around;">
-            <div style="padding-top: 25px; text-align: center" class="capitalize">
+            <div style="text-align: center" class="capitalize">
               {{sampleIdsAndRelationships[i]}}
-              <PedigreeGraph :data="allPedigreeDataArrays[i]" :id="sampleUuids[i]" :width="100" :height="100" :pedigree="pedigree"></PedigreeGraph>
+              <PedigreeGraph :data="allPedigreeDataArrays[i]" :id="sampleUuids[i]" :width="100" :height="75" :pedigree="pedigree"></PedigreeGraph>
             </div>
 
           <div style="display: inline-flex;">
-            <BarChart :data="coverageDataArray[i]" :width="400" :height="200" :x-domain="xDomain" :y-domain="yDomain" :median-coverage="medianCoverages[i]" :minCutoff="minCutoff"></BarChart>
+            <BarChart :data="coverageDataArray[i]" :width="400" :height="150" :x-domain="xDomain" :y-domain="yDomain" :median-coverage="medianCoverages[i]" :minCutoff="minCutoff"></BarChart>
 
             <div style="padding-top: 20px" v-show="goodCoverage(i)">
             <v-tooltip top class="valign">
@@ -122,7 +121,7 @@
             <div style="padding-top: 20px" v-show="!goodCoverage(i)">
               <v-tooltip top class="valign">
                 <template v-slot:activator="{ on }">
-                  <v-icon v-on="on" top color="red">mdi-alert-circle</v-icon>
+                  <v-icon v-on="on" top color="#B33A3A">mdi-alert-circle</v-icon>
                 </template>
                 <span>Median coverage is below expected threshold</span>
 
@@ -131,7 +130,7 @@
 
           </div>
           <!--<BoxPlot :width="250" :height="150" :data="exomeMedianCoverageData"></BoxPlot>-->
-          <QualitativeBarChart :data="varCountsArray[i].counts" :width="300" :height="200" style="padding-top: 20px"></QualitativeBarChart>
+          <QualitativeBarChart :data="varCountsArray[i].counts" :width="300" :height="150" style="padding-top: 20px"></QualitativeBarChart>
 
         </div>
      </div>
@@ -254,11 +253,9 @@ export default {
       this.medianCoverages = [];
       for(let i = 0; i < this.coverageDataArray.length; i++){
         let data = this.coverageDataArray[i];
-        console.log("coverage data", data);
         let medianCoverage = this.calculateMedianCoverage(data);
         this.medianCoverages.push(medianCoverage);
       }
-      console.log("this.medianCoverages", this.medianCoverages);
     },
 
     calculateMedian(values) {
@@ -300,28 +297,27 @@ export default {
 
     checkIsExome(){
       let totalVarCounts = 0;
-
-      console.log("this.varCountsArray", this.varCountsArray);
-
       for(let i = 0; i < this.varCountsArray.length; i++){
         let counts = this.varCountsArray[i].counts;
 
-        console.log("counts", counts);
-        totalVarCounts = totalVarCounts + (counts.SNP + counts.indel + counts.other);
+        let indel = counts.indel;
+
+        if(isNaN(indel)){
+          indel = 0;
+        }
+        totalVarCounts = totalVarCounts + (counts.SNP + indel + counts.other);
       }
 
       let averageCount = totalVarCounts / this.varCountsArray.length;
 
       if(averageCount < 1000000){
         this.isExome = true;
-        this.minCutoff = 50.5;
+        this.minCutoff = 95;
       }
-      else{
+      else if(averageCount >= 1000000){
         this.isExome = false;
-        this.minCutoff = 25;
+        this.minCutoff = 30;
       }
-
-      console.log("averageCount, isExome", averageCount, this.isExome);
     },
 
 
