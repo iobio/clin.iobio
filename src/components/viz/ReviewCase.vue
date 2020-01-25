@@ -312,7 +312,7 @@ export default {
 
       if(averageCount < 1000000){
         this.isExome = true;
-        this.minCutoff = 95;
+        this.minCutoff = 51;
       }
       else if(averageCount >= 1000000){
         this.isExome = false;
