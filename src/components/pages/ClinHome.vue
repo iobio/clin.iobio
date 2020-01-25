@@ -504,7 +504,7 @@ export default {
         }
 
         // We have moved to a new step.  Save the workflow step.
-        if (self.analysis && self.analysis.id) {
+        if (self.analysis) {
           self.promiseUpdateWorkflow();
         }
       }
@@ -798,8 +798,21 @@ export default {
 
     onTaskCompleted: function(step, task) {
       let self = this;
+
       // We have moved to a new step.  Save the workflow step.
-      if (self.analysis && self.analysis.id) {
+      if (self.analysis) {
+        // For some reason, the step object on the analysis needs
+        // to be refreshed.
+        self.analysis.payload.steps.forEach(function(st) {
+          if ( st.key == step.key) {
+            st.complete = step.complete;
+            st.tasks.forEach(function(t) {
+              if (t.key == task.key) {
+                t.complete = task.complete;
+              }
+            })
+          }
+        })
         self.promiseUpdateWorkflow();
       }
     },
