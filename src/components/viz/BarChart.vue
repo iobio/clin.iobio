@@ -65,7 +65,7 @@
                 type: Object,
                 default() {
                     return {
-                        top: 20, right: 40, bottom: 30, left: 50,
+                        top: 20, right: 10, bottom: 30, left: 50,
                     };
                 },
             },
@@ -111,6 +111,7 @@
                 type: [Boolean, Array],
                 default: false,
             },
+            minCutoff: null,
         },
         data() {
             return {
@@ -124,6 +125,7 @@
                 medianCoverage: null,
                 widthNorm: null,
                 xDiff: null,
+                goodCoverage: false,
             };
         },
         computed: {
@@ -190,8 +192,12 @@
             this.calculateWidthNorm();
             this.calculateMedianCoverage();
             this.plotMedian();
+            this.plotQCIcon();
         },
         methods: {
+
+            plotQCIcon(){
+            },
 
             calculateWidthNorm(){
 
@@ -227,7 +233,24 @@
                     .attr("font-size", "12px")
                     .attr('x', this.xScale(this.medianCoverage) + 5)
                     .attr('y', this.yScale(max - (0.05*max)))
-                    .text(this.medianCoverage.toString() + 'X Median')
+                    .text(this.medianCoverage.toString() + 'X Median');
+
+                svg.append('line')
+                    .attr("id", "meinLine")
+                    .attr("stroke", "black")
+                    .attr("stroke-dasharray", "10 5")
+                    .attr('x1', this.xScale(this.minCutoff))
+                    .attr('y1', this.yScale(0))
+                    .attr('x2', this.xScale(this.minCutoff))
+                    .attr('y2', this.yScale(max))
+
+                svg.append('text')
+                    .attr("id", "minText")
+                    .attr("fill", "black")
+                    .attr("font-size", "12px")
+                    .attr('x', this.xScale(this.minCutoff) - 50)
+                    .attr('y', this.yScale(max + (0.05*max)))
+                    .text('min. coverage')
 
             },
 
@@ -453,7 +476,6 @@
         font-size: 9px;
         fill: black
     }
-
 
     .extent {
         font-size: 11px;

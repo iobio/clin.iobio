@@ -139,13 +139,7 @@
             },
 
             formatLabel(count){
-                if(count > (this.maxCount / 5)){
                 return this.nFormatter(count, 1)
-                }
-                else{
-                    return "";
-                }
-
             },
 
             nFormatter(num, digits) {
@@ -224,16 +218,16 @@
                     .attr('fill', (d) => this.colorScale(d[xColumn]));
 
 
-                const typeLabels = this.gMain.selectAll('.type-label').data(this.dataArray);
-                typeLabels.enter().append('text')
-                    .merge(typeLabels)
-                    .attr('class', 'type-label')
-                    .attr('dy', '-2')
-                    .attr('x', (d) => this.xScale(d[xColumn]) + (this.xScale.bandwidth() / 2))
-                    .attr('y', (d) => this.yScale(d[yColumn]))
-                    .text((d) => d[xColumn])
-                    .attr('fill', (d) => this.colorScale(d[xColumn]));
-                typeLabels.exit().remove();
+                // const typeLabels = this.gMain.selectAll('.type-label').data(this.dataArray);
+                // typeLabels.enter().append('text')
+                //     .merge(typeLabels)
+                //     .attr('class', 'type-label')
+                //     .attr('dy', '-2')
+                //     .attr('x', (d) => this.xScale(d[xColumn]) + (this.xScale.bandwidth() / 2))
+                //     .attr('y', (d) => this.yScale(d[yColumn]))
+                //     .text((d) => d[xColumn])
+                //     .attr('fill', (d) => this.colorScale(d[xColumn]));
+                // typeLabels.exit().remove();
 
 
                 let labels = this.gMain
@@ -244,10 +238,10 @@
                     .enter()
                     .append('text')
                     .merge(labels)
+                    .attr('class', 'type-label')
+                    .attr('dy', '-2')
                     .attr('x', (d) => this.xScale(d[xColumn]) + (this.xScale.bandwidth() / 2))
-                    .attr('y', (d) => this.yScale(d[yColumn] / 2))
-                    .attr("fill", "white")
-                    .attr("text-anchor", "middle")
+                    .attr('y', (d) => this.yScale(d[yColumn]))
                     .text(d => this.formatLabel(d.count));
             },
         },
@@ -264,17 +258,17 @@
     }
 
     .axis path, .axis line {
-        fill: none;
+        /*fill: none;*/
         stroke: #666666;
         shape-rendering: crispEdges;
     }
 
     .axis__x text{
-        fill: none;
+        /*fill: none;*/
     }
 
     .axis__x .tick{
-        fill: none;
+        /*fill: none;*/
     }
 
 

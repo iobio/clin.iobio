@@ -33,7 +33,7 @@
                 xScale: null,
                 yScale: null,
                 yDomain: [0,1],
-                labelHeight: 0,
+                labelHeight: 10,
                 margin: {
                     top: 10, right: 20, bottom: 15, left: 25,
                 },
@@ -104,7 +104,7 @@
                     .attr("y", this.yScale(0.9))
                     .attr("width", this.xScale(this.data.q2) - this.xScale(this.data.q1))
                     .attr("height", this.yScale(0.3))
-                    .attr("fill", "red")
+                    .attr("fill", "#c62828")
                     .attr("stroke", "black");
 
                 this.gMain.append("rect")
@@ -112,7 +112,7 @@
                     .attr("y", this.yScale(0.9))
                     .attr("width", this.xScale(this.data.q3)-this.xScale(this.data.q2))
                     .attr("height", this.yScale(0.3))
-                    .attr("fill", "red")
+                    .attr("fill", "#c62828")
                     .attr("stroke", "black");
 
                 this.gMain.append("line")
@@ -137,3 +137,11 @@
         }
     }
 </script>
+
+<style scoped>
+
+    .axis >>> text {
+        font-size: 9px;
+        fill: black
+    }
+</style>

@@ -67,12 +67,6 @@
 
   <div id="review-case-panel" >
 
-      <span class="card-title">
-        Review patient
-      </span>
-
-      <div style="display:flex;flex-flow:row">
-
         <div class="review-section">
 
           <div style="display:flex;flex-direction:row;justify-content:flex-start">
@@ -88,12 +82,9 @@
               <!--</div>-->
             <!--</div>-->
 
-            <div class="subsection">
-              <div v-if="false" class="card-subheading">Description</div>
               <div style="margin-top:10px;font-size:13px;line-height:15px;width:50%;white-space: normal">
                 {{ caseSummary.description }}
               </div>
-            </div>
 
             <div v-if="false" class="subsection">
               <div class="card-subheading">Condition / Phenotype Search Terms</div>
@@ -102,7 +93,6 @@
               </div>
             </div>
           </div>
-        </div>
       </div>
 
 
@@ -116,8 +106,22 @@
               {{sampleIdsAndRelationships[i]}}
               <PedigreeGraph :data="allPedigreeDataArrays[i]" :id="sampleUuids[i]" :width="100" :height="100" :pedigree="pedigree"></PedigreeGraph>
             </div>
-          <BarChart :data="coverageDataArray[i]" :width="400" :height="200" :x-domain="xDomain" :y-domain="yDomain" ></BarChart>
-          <BoxPlot :width="250" :height="150" :data="exomeMedianCoverageData"></BoxPlot>
+
+          <div style="display: inline-flex;">
+            <BarChart :data="coverageDataArray[i]" :width="400" :height="200" :x-domain="xDomain" :y-domain="yDomain" :minCutoff="minCutoff"></BarChart>
+
+            <div style="padding-top: 20px">
+            <v-tooltip top class="valign">
+              <template v-slot:activator="{ on }">
+                <v-icon v-on="on" top color="green">check_circle</v-icon>
+              </template>
+              <span>Median coverage is above expected threshold</span>
+
+            </v-tooltip>
+            </div>
+
+          </div>
+          <!--<BoxPlot :width="250" :height="150" :data="exomeMedianCoverageData"></BoxPlot>-->
           <QualitativeBarChart :data="varCountsArray[i].counts" :width="300" :height="200" style="padding-top: 20px"></QualitativeBarChart>
 
         </div>
@@ -126,6 +130,7 @@
     <div style="height:20px"></div>
   </div>
 </template>
+
 
 <script>
 import PedigreeGraph from './PedigreeGraph.vue';
@@ -179,7 +184,10 @@ export default {
         q2: 45,
         q3: 60,
         max: 75,
-      }
+      },
+
+      isExome: false,
+      minCutoff: null,
 
     }
 
@@ -221,6 +229,33 @@ export default {
       this.populateDomains();
       this.sortIndicesByRelationship();
       this.sortData();
+      this.checkIsExome();
+    },
+
+    checkIsExome(){
+      let totalVarCounts = 0;
+
+      console.log("this.varCountsArray", this.varCountsArray);
+
+      for(let i = 0; i < this.varCountsArray.length; i++){
+        let counts = this.varCountsArray[i].counts;
+
+        console.log("counts", counts);
+        totalVarCounts = totalVarCounts + (counts.SNP + counts.indel + counts.other);
+      }
+
+      let averageCount = totalVarCounts / this.varCountsArray.length;
+
+      if(averageCount < 1000000){
+        this.isExome = true;
+        this.minCutoff = 45;
+      }
+      else{
+        this.isExome = false;
+        this.minCutoff = 25;
+      }
+
+      console.log("averageCount, isExome", averageCount, this.isExome);
     },
 
 
@@ -239,6 +274,7 @@ export default {
 
 
     },
+
 
     sortData(){
 
@@ -411,6 +447,9 @@ export default {
     font-family: Poppins,sans-serif;
   }
 
+  .valign{
+    vertical-align: top;
+  }
 
 
 </style>
