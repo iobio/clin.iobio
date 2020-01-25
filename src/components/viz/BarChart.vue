@@ -253,11 +253,11 @@
                             return this.xScale(this.minCutoff) +5
                         }
                         else{
-                            return this.xScale(this.minCutoff) - 90;
+                            return this.xScale(this.minCutoff) -30;
                         }
                     })
                     .attr('y', this.yScale(max) +20)
-                    .text('min. coverage')
+                    .text('min.')
 
             },
 
