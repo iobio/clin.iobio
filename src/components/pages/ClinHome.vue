@@ -961,6 +961,7 @@ export default {
       } else if (messageObject.type == "apply-genes" && messageObject.sender == 'genepanel.iobio.io') {
         this.promiseCompleteStepTask('genes', taskMap[messageObject.source]);
       } else if (messageObject.type == "save-analysis") {
+          this.analysis.payload.filters  = messageObject.analysis.payload.filters;
           this.analysis.payload.variants = messageObject.analysis.payload.variants;
           this.organizeVariantsByInterpretation();
           this.promiseAutosaveAnalysis({notify: true})
