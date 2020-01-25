@@ -13,7 +13,7 @@
           "tasks": [
             {
               "key": "review-patient",
-              "name": "Review patient"
+              "name": "Review relatedness, case description, data quality"
             }
           ],
           "title": "Review Case"
@@ -27,10 +27,10 @@
           "tasks": [
             {
               "key": "review-phenotypes-genes",
-              "name": "Review Phenotypes & Genes"
+              "name": "Generate phenotypes and prioritized gene list"
             }
           ],
-          "title": "Phenotypist"
+          "title": "Review Phenotypes"
         },
         {
           "app": "genefull",
@@ -41,7 +41,7 @@
           "tasks": [
             {
               "key": "review-full",
-              "name": "Review Variants",
+              "name": "Mark variants as significant, add notes",
               "tooltip": "After the variants in all genes in the genome/exome are analyzed on the server, the left side panel will show all variants that pass the preset filters.  Click on each variant in the list to examine the variant's annotations.  Upon reviewing the variant, designate the 'interpretation' from the dropdown and provide any additional notes."
             }
           ],
@@ -52,7 +52,7 @@
           "description": "Review findings",
           "key": "review-findings",
           "number": 4,
-          "summary": "Show Findings",
+          "summary": "Findings",
           "tasks": [
             {
               "key": "review-results",
@@ -60,7 +60,7 @@
               "tooltip": "tooltip"
             }
           ],
-          "title": "Show Findings"
+          "title": "Findings"
         }
       ],
       "summary": "Review findings. ",

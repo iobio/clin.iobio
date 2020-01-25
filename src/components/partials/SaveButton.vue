@@ -1,10 +1,11 @@
 /* Copyright 2017-2018, Frameshift Labs, Inc., All rights reserved. */
 <template>
   <a
+    v-if="analysis"
     class="analysis-save-button"
     @click.prevent="toggleSaveModal"
   >
-    <i class="material-icons analysis-save-button__icon">{{ iconName }}</i>
+    <span>{{ buttonLabel }}</span>
   </a>
 </template>
 
@@ -16,9 +17,17 @@ export default {
     showingSaveModal: {
       type: Boolean,
       required: true,
-    }
+    },
+    analysis: null
   },
   computed: {
+    buttonLabel() {
+      if (this.analysis && this.analysis.id) {
+        return "Edit analysis info";
+      } else{ 
+        return "Save new analysis";
+      }
+    },
     iconName() {
       return this.showingSaveModal ? 'keyboard_arrow_down' : 'launch';
     },
@@ -34,18 +43,26 @@ export default {
 <style lang="scss" scoped>
 .analysis-save-button {
   position: fixed;
-    bottom: 50px;
-    right: 50px;
-  width: 70px;
-  height: 70px;
+  top: 60px;
+  right: 10px;
+  width: 170px;
+  height: 35px;
+  border-radius: 15px;
   border-radius: 35px;
-  z-index: 9;
   background-image: linear-gradient(to right top, #0f56bb, #007dd4, #009cce, #00b7b2, #2bcd8f);
   box-shadow: 0 4px 5px 0 rgba(0, 0, 0, .14),
               0 1px 10px 0 rgba(0, 0, 0, .12),
               0 2px 4px -1px rgba(0, 0, 0, .2);
   cursor: pointer;
   user-select: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  span {
+    color: white;
+    font-weight: 500;
+  }
 
   &:hover {
     text-decoration: none;

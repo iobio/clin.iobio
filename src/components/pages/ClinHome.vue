@@ -79,7 +79,7 @@ $horizontal-dashboard-height: 140px
 
 @media (min-width: 1550px)
   .container
-    max-width: 1500px !important
+    max-width: 1550px !important
 
 
 
@@ -177,23 +177,15 @@ $horizontal-dashboard-height: 140px
 
       <v-card  class="clin-card"
         v-if="analysis && workflow"
-        v-show="analysis && workflow && currentStep == 6 && !showFindings "
+        v-show="analysis && workflow && currentStep == 4 || showFindings "
       >
         <findings
         ref="findingsRef"
-        v-if="analysis && workflow && params.sample_id"
-        v-show="analysis && workflow"
-        :workflow="workflow"
-        :analysis="analysis.payload"
-        :caseSummary="caseSummary"
+        v-if="analysis && workflow && variantsByInterpretation"
+        :genomeBuildHelper="genomeBuildHelper"
         :modelInfos="modelInfos"
-        :pedigree="mosaicSession ? mosaicSession.pedigreeSamples : null"
-        :sampleId="params.sample_id"
-        :phenotypes="analysis.payload.phenotypes"
-        :genes="analysis.payload.genes"
-        :variants="analysis.payload.variants"
         :variantsByInterpretation="variantsByInterpretation"
-        :filters="analysis.payload.filters">
+        :interpretationMap="interpretationMap">
         </findings>
       </v-card>
 
@@ -231,6 +223,7 @@ $horizontal-dashboard-height: 140px
   <save-button
   v-if="launchedFromMosaic"
     :showing-save-modal="showSaveModal"
+    :analysis="analysis"
     @save-modal:set-visibility="toggleSaveModal"
   />
   <save-analysis-popup
@@ -253,6 +246,7 @@ import AppIcon       from  '../partials/AppIcon.vue'
 
 import AWSSession    from  '../../models/AWSSession.js'
 import MosaicSession from  '../../models/MosaicSession.js'
+import GenomeBuildHelper from '../../models/GenomeBuildHelper.js'
 
 
 import SaveButton  from '../partials/SaveButton.vue'
@@ -293,7 +287,8 @@ export default {
     paramSource:         null,
     paramIobioSource:    null,
     paramGeneBatchSize:  null,
-    paramClientApplicationId: null
+    paramClientApplicationId: null,
+    paramBuild: null
   },
   data() {
     let self = this;
@@ -311,16 +306,20 @@ export default {
       user: null,
       showSaveModal: false,
 
+      genomeBuildHelper: null,
+
       workflows:        workflowData,
       importedVariants: variantData,
 
       variantSetCounts: {},
 
 
-      variantsByInterpretation: [
+      variantsByInterpretationTemplate: [
        { key: 'sig',         display: 'Significant Variants',  abbrev: 'Significant', organizedVariants: []},
        { key: 'unknown-sig', display: 'Variants of Unknown Significance', abbrev: 'Unknown Sig', organizedVariants: []}
       ],
+
+      variantsByInterpretation: [],
 
       showFindings: false,
 
@@ -396,7 +395,17 @@ export default {
       rawPedigree: null,
       allVarCounts: null,
       coverageHistos: null,
-      venn_diag_data: {}
+      venn_diag_data: {},
+
+
+      interpretationMap: {
+        'sig': 'Significant',
+        'unknown-sig': 'Unknown significance',
+        'not-sig': 'Not significant',
+        'poor-qual': 'Poor quality',
+        'not-reviewed': 'Not reviewed'
+      },
+
     }
 
   },
@@ -495,7 +504,7 @@ export default {
         }
 
         // We have moved to a new step.  Save the workflow step.
-        if (self.analysis && self.analysis.id) {
+        if (self.analysis) {
           self.promiseUpdateWorkflow();
         }
       }
@@ -528,9 +537,20 @@ export default {
       self.promiseIFramesMounted()
       .then(function() {
 
+        self.globalApp.initServices();
 
-        if (localStorage.getItem('hub-iobio-tkn') && localStorage.getItem('hub-iobio-tkn').length > 0
-           && self.paramSampleId && self.paramSource) {
+        self.genomeBuildHelper = new GenomeBuildHelper(self.globalApp);
+        return self.genomeBuildHelper.promiseInit({DEFAULT_BUILD: 'GRCh37'})
+      })
+      .then(function() {
+        if (self.paramBuild && self.paramBuild.length > 0) {
+          self.genomeBuildHelper.setCurrentBuild(self.paramBuild);
+        } else {
+          // TODO - genome build is required
+          self.genomeBuildHelper.setCurrentBuild("GRCh37")
+        }
+
+        if (localStorage.getItem('hub-iobio-tkn') && localStorage.getItem('hub-iobio-tkn').length > 0 && self.paramSampleId && self.paramSource) {
 
           // Temporary workaround until router is fixed to pass paramSampleId, paramSource, etc
           self.params.sample_id             = self.paramSampleId
@@ -596,6 +616,11 @@ export default {
 
         }
       })
+      .catch(function(error) {
+        alert("Unable to set genome build")
+        console.log(error)
+      })
+
     },
 
     getDemoVcf: function() {
@@ -627,6 +652,7 @@ export default {
     onAuthenticated: function(callback) {
       let self = this;
       self.isAuthenticated = true;
+
 
       self.workflow = self.workflows[self.idWorkflow];
 
@@ -772,8 +798,21 @@ export default {
 
     onTaskCompleted: function(step, task) {
       let self = this;
+
       // We have moved to a new step.  Save the workflow step.
-      if (self.analysis && self.analysis.id) {
+      if (self.analysis) {
+        // For some reason, the step object on the analysis needs
+        // to be refreshed.
+        self.analysis.payload.steps.forEach(function(st) {
+          if ( st.key == step.key) {
+            st.complete = step.complete;
+            st.tasks.forEach(function(t) {
+              if (t.key == task.key) {
+                t.complete = task.complete;
+              }
+            })
+          }
+        })
         self.promiseUpdateWorkflow();
       }
     },
@@ -935,7 +974,9 @@ export default {
       } else if (messageObject.type == "apply-genes" && messageObject.sender == 'genepanel.iobio.io') {
         this.promiseCompleteStepTask('genes', taskMap[messageObject.source]);
       } else if (messageObject.type == "save-analysis") {
-          this.analysis = messageObject.analysis;
+          this.analysis.payload.filters  = messageObject.analysis.payload.filters;
+          this.analysis.payload.variants = messageObject.analysis.payload.variants;
+          this.organizeVariantsByInterpretation();
           this.promiseAutosaveAnalysis({notify: true})
           .then(function() {
 
@@ -959,21 +1000,21 @@ export default {
         step.tasks.forEach(function(task) {
           if (task.key == 'gtr-genes' && self.analysis.payload.genesGtr) {
             if  (self.analysis.payload.genesGtr.length > 0) {
-              task.badge = self.analysis.payload.genesGtr.length;
+              task.badges = [self.analysis.payload.genesGtr.length];
             } else {
-              delete task.badge;
+              delete task.badges;
             }
           } else if (task.key == 'phenotype-genes' && self.analysis.payload.genesPhenolyzer) {
             if (self.analysis.payload.genesPhenolyzer.length > 0) {
-              task.badge = self.analysis.payload.genesPhenolyzer.length;
+              task.badges = [self.analysis.payload.genesPhenolyzer.length];
             } else {
-              delete task.badge;
+              delete task.badges;
             }
           } else if (task.key == 'summary-genes' && self.analysis.genes ) {
             if (self.analysis.payload.genes.length > 0) {
-              task.badge = self.analysis.payload.genes.length;
+              task.badges = [self.analysis.payload.genes.length];
             } else {
-              delete task.badge;
+              delete task.badges;
             }
           }
         })
@@ -990,20 +1031,20 @@ export default {
           step.tasks.forEach(function(task) {
             if (task.key == 'review' ) {
               if (variantsCandidateGenes.length > 0) {
-                task.badge =  variantsCandidateGenes.length;
+                task.badges =  [variantsCandidateGenes.length + ' genes '];
               } else {
                 delete task.badge;
               }
             } else if (task.key == 'coverage' ) {
               if (variantsCandidateGenes.length == 0) {
-                delete task.badge;
+                delete task.badges;
               }
             } else if (task.key == 'review-full') {
-              let fullAnalysisCount = self.analysis.payload.variants.length - variantsCandidateGenes.length;
+              let fullAnalysisCount = self.analysis.payload.variants.length;
               if (fullAnalysisCount > 0) {
-                task.badge =  fullAnalysisCount;
+                task.badges =  [fullAnalysisCount + ' variants'];
               } else {
-                delete task.badge;
+                delete task.badges;
               }
             }
           })
@@ -1016,9 +1057,9 @@ export default {
       self.analysis.payload.steps.forEach(function(step) {
         step.tasks.forEach(function(task) {
           if (task.key == 'review' ) {
-              delete task.badge;
+              delete task.badges;
           } else if (task.key == 'coverage') {
-              delete task.badge;
+              delete task.badges;
           }
         })
       })
@@ -1030,7 +1071,7 @@ export default {
         self.analysis.payload.steps.forEach(function(step) {
           step.tasks.forEach(function(task) {
             if (task.key == 'coverage') {
-              task.badge =  geneCount
+              task.badges =  [geneCount + ' genes'];
             }
           })
         })
@@ -1357,11 +1398,14 @@ export default {
 
     organizeVariantsByInterpretation: function() {
       let self = this;
+      self.variantsByInterpretation = [];
 
-      self.variantsByInterpretation.forEach(function(interpretation) {
+      self.variantsByInterpretationTemplate.forEach(function(interpretationTemplate) {
+        let interpretation = $.extend({}, interpretationTemplate)
         interpretation.organizedVariants = self.organizeVariantsByFilter(interpretation.key);
         interpretation.variantCount      = self.getVariantCount(interpretation.organizedVariants);
         interpretation.genes             = self.getUniqueGenes(interpretation.organizedVariants);
+        self.variantsByInterpretation.push(interpretation)
       })
     },
     organizeVariantsByFilter: function(interpretation) {
@@ -1435,8 +1479,11 @@ export default {
       if (theVariants.length > 0) {
         let theGenes   = [];
         theVariants.forEach(function(variant) {
-          if ((userFlagged && variant.isUserFlagged) ||
-            (filterName && variant.filtersPassed && variant.filtersPassed.indexOf(filterName) >= 0)) {
+          let isReviewed = (variant.notes && variant.notes.length > 0)
+                    || (variant.interpretation != null
+                    && (variant.interpretation == "sig" || variant.interpretation == "unknown-sig"));
+
+          if (isReviewed && filterName && filterName == 'reviewed') {
 
             let theGene = null;
             var idx = theGenes.indexOf(variant.gene);
@@ -1449,8 +1496,8 @@ export default {
               theGenes.push(theGene);
             }
             theGene.variants.push(variant);
-
           }
+
         })
         return theGenes;
       } else {
