@@ -112,6 +112,8 @@
                 default: false,
             },
             minCutoff: null,
+            medianCoverage: null,
+
         },
         data() {
             return {
@@ -122,7 +124,6 @@
                 labelHeight: 16,
                 xScale: null,
                 yScale: null,
-                medianCoverage: null,
                 widthNorm: null,
                 xDiff: null,
                 goodCoverage: false,
@@ -162,35 +163,34 @@
             },
         },
         watch: {
-            color() {
-                this.update();
-            },
-            data() {
-                this.update();
-            },
-            width() {
-                this.update();
-            },
-            xDomain() {
-                this.update();
-            },
-            yDomain() {
-                this.update();
-            },
-            xAxisLabel() {
-                this.update();
-            },
-            yAxisLabel() {
-                this.update();
-            },
-            medianCoverage() {
-                this.update();
-            }
+            // color() {
+            //     this.update();
+            // },
+            // data() {
+            //     this.update();
+            // },
+            // width() {
+            //     this.update();
+            // },
+            // xDomain() {
+            //     this.update();
+            // },
+            // yDomain() {
+            //     this.update();
+            // },
+            // xAxisLabel() {
+            //     this.update();
+            // },
+            // yAxisLabel() {
+            //     this.update();
+            // },
+            // medianCoverage() {
+            //     this.update();
+            // }
         },
         mounted() {
             this.checkForData(this.drawChart);
             this.calculateWidthNorm();
-            this.calculateMedianCoverage();
             this.plotMedian();
             this.plotQCIcon();
         },
@@ -236,13 +236,13 @@
                     .text(this.medianCoverage.toString() + 'X Median');
 
                 svg.append('line')
-                    .attr("id", "meinLine")
-                    .attr("stroke", "black")
-                    .attr("stroke-dasharray", "10 5")
+                    .attr("id", "minLine")
+                    .attr("stroke", "darkgray")
+                    .attr("stroke-dasharray", "5 2")
                     .attr('x1', this.xScale(this.minCutoff))
                     .attr('y1', this.yScale(0))
                     .attr('x2', this.xScale(this.minCutoff))
-                    .attr('y2', this.yScale(max))
+                    .attr('y2', this.yScale(max));
 
                 svg.append('text')
                     .attr("id", "minText")
@@ -254,41 +254,7 @@
 
             },
 
-            calculateMedian(values) {
-                let total = 0;
 
-                for(let i = 0; i < values.length; i++){
-                    total += values[i];
-                }
-
-                return total / 2;
-            },
-
-
-            findMedianFromCummulativeFrequencies(medianFreq, cumFreqs){
-                for(let i =0; i < cumFreqs.length; i++){
-                    if(medianFreq >= cumFreqs[i][1] && medianFreq <= cumFreqs[i][2]){
-                        return cumFreqs[i][0];
-                    }
-                }
-                return -1;
-            },
-
-            calculateMedianCoverage() {
-                let freqs = [];
-                let cumFreqs = [];
-                let start = 0;
-                let end = 0;
-                for (let i = 0; i < this.data.length; i++) {
-                    freqs.push(this.data[i][1] * 1000000);
-                    end += (this.data[i][1] * 1000000);
-                    let d = [this.data[i][0], start, end];
-                    start = end;
-                    cumFreqs.push(d);
-                }
-                const medianFreq = this.calculateMedian(freqs);
-                this.medianCoverage = this.findMedianFromCummulativeFrequencies(medianFreq, cumFreqs);
-            },
 
             checkForData(func) {
                 if (!this.showChart) {
@@ -456,6 +422,7 @@
                 this.createAxis();
                 this.drawBars();
                 this.addLabels();
+                this.plotMedian();
                 this.updateBrushExtent();
                 this.stashDomain(this.xScale, this.yScale);
             },

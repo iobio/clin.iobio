@@ -108,9 +108,9 @@
             </div>
 
           <div style="display: inline-flex;">
-            <BarChart :data="coverageDataArray[i]" :width="400" :height="200" :x-domain="xDomain" :y-domain="yDomain" :minCutoff="minCutoff"></BarChart>
+            <BarChart :data="coverageDataArray[i]" :width="400" :height="200" :x-domain="xDomain" :y-domain="yDomain" :median-coverage="medianCoverages[i]" :minCutoff="minCutoff"></BarChart>
 
-            <div style="padding-top: 20px">
+            <div style="padding-top: 20px" v-show="goodCoverage(i)">
             <v-tooltip top class="valign">
               <template v-slot:activator="{ on }">
                 <v-icon v-on="on" top color="green">check_circle</v-icon>
@@ -118,6 +118,15 @@
               <span>Median coverage is above expected threshold</span>
 
             </v-tooltip>
+            </div>
+            <div style="padding-top: 20px" v-show="!goodCoverage(i)">
+              <v-tooltip top class="valign">
+                <template v-slot:activator="{ on }">
+                  <v-icon v-on="on" top color="red">mdi-alert-circle</v-icon>
+                </template>
+                <span>Median coverage is below expected threshold</span>
+
+              </v-tooltip>
             </div>
 
           </div>
@@ -188,6 +197,7 @@ export default {
 
       isExome: false,
       minCutoff: null,
+      medianCoverages: null,
 
     }
 
@@ -209,6 +219,13 @@ export default {
 
   methods: {
 
+    goodCoverage(i){
+      if(this.medianCoverages[i] >= this.minCutoff){
+        return true;
+      }
+      return false;
+    },
+
 
     formatVarCountsArray(){
       let tempVarCounts = this.varCountsArray;
@@ -228,8 +245,57 @@ export default {
       this.assignProbandToEachSample();
       this.populateDomains();
       this.sortIndicesByRelationship();
-      this.sortData();
       this.checkIsExome();
+      this.populateCoverageMedians();
+      this.sortData();
+    },
+
+    populateCoverageMedians(){
+      this.medianCoverages = [];
+      for(let i = 0; i < this.coverageDataArray.length; i++){
+        let data = this.coverageDataArray[i];
+        console.log("coverage data", data);
+        let medianCoverage = this.calculateMedianCoverage(data);
+        this.medianCoverages.push(medianCoverage);
+      }
+      console.log("this.medianCoverages", this.medianCoverages);
+    },
+
+    calculateMedian(values) {
+      let total = 0;
+
+      for(let i = 0; i < values.length; i++){
+        total += values[i];
+      }
+
+      return total / 2;
+    },
+
+
+    findMedianFromCummulativeFrequencies(medianFreq, cumFreqs){
+      for(let i =0; i < cumFreqs.length; i++){
+        if(medianFreq >= cumFreqs[i][1] && medianFreq <= cumFreqs[i][2]){
+          return cumFreqs[i][0];
+        }
+      }
+      return -1;
+    },
+
+    calculateMedianCoverage(data) {
+      let freqs = [];
+      let cumFreqs = [];
+      let start = 0;
+      let end = 0;
+      for (let i = 0; i < data.length; i++) {
+        freqs.push(data[i][1] * 1000000);
+        end += (data[i][1] * 1000000);
+        let d = [data[i][0], start, end];
+        start = end;
+        cumFreqs.push(d);
+      }
+      const medianFreq = this.calculateMedian(freqs);
+      let medianCoverage = this.findMedianFromCummulativeFrequencies(medianFreq, cumFreqs);
+      return medianCoverage;
     },
 
     checkIsExome(){
@@ -248,7 +314,7 @@ export default {
 
       if(averageCount < 1000000){
         this.isExome = true;
-        this.minCutoff = 45;
+        this.minCutoff = 50.5;
       }
       else{
         this.isExome = false;
@@ -284,6 +350,7 @@ export default {
       let tempSampleRelationship = [null,null,null,null];
       let tempSamples = [null,null,null,null];
       let tempUuids = [null,null,null,null];
+      let tempMedianCoverages = [null,null,null,null]
 
       for(let i = 0; i < this.sortedIndices.length; i++){
         let index = this.sortedIndices[i];
@@ -293,6 +360,7 @@ export default {
         tempSampleRelationship[index] = this.sampleIdsAndRelationships[i];
         tempSamples[index] = this.sampleIds[i];
         tempUuids[index] = this.sampleUuids[i];
+        tempMedianCoverages[index] = this.medianCoverages[i]
       }
 
       this.pedigreeDataArray = tempPed.filter(function(el) { return el; });
@@ -301,6 +369,7 @@ export default {
       this.sampleIdsAndRelationships = tempSampleRelationship.filter(function(el) { return el; });
       this.sampleIds = tempSamples.filter(function(el) { return el; });
       this.sampleUuids = tempUuids.filter(function(el) { return el; });
+      this.medianCoverages = tempMedianCoverages.filter(function(el) { return el; });
 
       this.isSorted = true;
     },
