@@ -334,8 +334,8 @@ export default {
 
       appUrls: {
         'localhost': {
-          'gene':      'http://localhost:4026/?launchedFromClin=true&frame_source=' + window.document.URL,
-          'genefull':  'http://localhost:4026/?launchedFromClin=true&frame_source=' + window.document.URL,
+          'gene':      'https://stage.gene.iobio.io/?launchedFromClin=true&frame_source=' + window.document.URL,
+          'genefull':  'https://stage.gene.iobio.io/?launchedFromClin=true&frame_source=' + window.document.URL,
           //'bam':       'http://localhost:4027'
         },
         'tony.iobio.io': {
@@ -1292,7 +1292,7 @@ export default {
                   }
                 };
       analysis.payload.genesGtr = [];
-      analysis.payload.phenotypes = [[],[], []];
+      analysis.payload.phenotypes = [[],[], [], []];
       analysis.payload.genesManual = [];
       analysis.payload.genesReport = [];
       analysis.payload.gtrFullList = [];
@@ -1312,7 +1312,7 @@ export default {
       self.analysis.payload.gtrFullList        = messageObject.gtrFullList;
       self.analysis.payload.phenolyzerFullList = messageObject.phenolyzerFullList;
       self.analysis.payload.genes              = messageObject.genes;
-      self.analysis.payload.phenotypes         = messageObject.searchTerms;
+      self.analysis.payload.phenotypes         = messageObject.phenotypes;
       self.setGeneTaskBadges();
 
 
@@ -1506,11 +1506,21 @@ export default {
     },
 
     generatePDF: function(){
-      axios.post('http://nv-dev-new.iobio.io/analysistoreport/create-pdf', this.analysis)
-        .then(()=> axios.get('http://nv-dev-new.iobio.io/analysistoreport/fetch-pdf', { responseType: 'blob' }))
-        .then((res) => {
+      let analysis_sample = JSON.stringify(this.analysis)
+      let config = {
+        headers: {
+          'Content-Type': 'text/plain'
+        },
+        responseType: 'blob'
+      }
+      axios.post('https://backend.iobio.io/clinReport', analysis_sample, config)
+        .then((res)=>{
           const pdfBlob = new Blob([res.data], { type: 'application/pdf' })
           saveAs(pdfBlob, "analysis.pdf")
+        })
+        .catch((err)=>{
+          console.log(err);
+          alert("Failed to generate report. Please try again")
         })
     },
 
@@ -1521,6 +1531,8 @@ export default {
 
     saveSearchedPhenotypes(phenotypes){
       this.analysis.payload.phenotypes = phenotypes;
+      this.promiseUpdateGenesData(this.analysis);
+      this.promiseUpdatePhenotypes(phenotypes);
     },
 
     GtrGeneList(genes){
