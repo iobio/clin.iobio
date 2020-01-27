@@ -1,10 +1,10 @@
-<style lang="sass"  >
+<style lang="sass" scoped >
 
 @import ../../assets/sass/variables
 
 #review-case-panel
-  padding: 5px 20px 5px 20px
-  overflow-y: auto
+  padding: 5px 20px 5px 30px
+  /*overflow-y: auto*/
   height: -webkit-fill-available
   height: -moz-available
   background-color:  white
@@ -27,8 +27,7 @@
       width: 100px
 
   .review-section
-    margin-bottom: 30px
-    padding-bottom: 35px
+    margin-bottom: 25px
 
     .subsection
       margin-right: 50px
@@ -41,7 +40,7 @@
   .card-title
     font-size: 18px
     color:   $app-header-color
-    margin-bottom: 20px
+    margin-bottom: 5px
     display: inline-block
 
   .card-heading
@@ -67,33 +66,24 @@
 
   <div id="review-case-panel" >
 
-      <span class="card-title">
-        Review patient
-      </span>
-
-      <div style="display:flex;flex-flow:row">
-
         <div class="review-section">
 
           <div style="display:flex;flex-direction:row;justify-content:flex-start">
-            <div  class="subsection"  >
-              <span class="card-subheading">{{ caseSummary.name }} </span>
-              <div style="display:flex">
-                <div style="margin-left:15px">
-                  <div  class="sample" v-for="modelInfo in modelInfos" :key="modelInfo.sample">
-                    <span class="rel">{{ modelInfo.relationship }}</span>
-                    <span class="name">{{ modelInfo.sample }}</span>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <!--<div  class="subsection"  >-->
+              <!--<span class="card-subheading">{{ caseSummary.name }} </span>-->
+              <!--<div style="display:flex">-->
+                <!--<div style="margin-left:15px">-->
+                  <!--<div  class="sample" v-for="modelInfo in modelInfos" :key="modelInfo.sample">-->
+                    <!--<span class="rel">{{ modelInfo.relationship }}</span>-->
+                    <!--<span class="name">{{ modelInfo.sample }}</span>-->
+                  <!--</div>-->
+                <!--</div>-->
+              <!--</div>-->
+            <!--</div>-->
 
-            <div class="subsection">
-              <div v-if="false" class="card-subheading">Description</div>
-              <div style="margin-top:30px;font-size:13px;line-height:15px;width:400px;white-space: normal">
-                {{ caseSummary.description }}
+              <div style="margin-top:10px;font-size:13px;line-height:15px;width:50%;white-space: normal">
+                <span style="font-size:13px; font-weight: bold">Case Summary </span> - {{ caseSummary.description }}
               </div>
-            </div>
 
             <div v-if="false" class="subsection">
               <div class="card-subheading">Condition / Phenotype Search Terms</div>
@@ -102,32 +92,57 @@
               </div>
             </div>
           </div>
-        </div>
       </div>
 
 
     <div v-if="isSorted">
-      <div style=" width: 100%; display: inline-flex; flex-direction: row; justify-content: space-around;">
+      <div style=" width: 100%; display: inline-flex; flex-direction: row; justify-content: space-around; padding-bottom: 10px">
         <div class="columnHeader" style="margin-right: 130px">Sample</div> <div class="columnHeader" style="margin-right: 130px">Read Coverage</div><div class="columnHeader">Variant Type Distribution</div>
       </div>
       <div v-for="(d, i) in sampleIdsAndRelationships" >
         <div style=" width: 100%; display: inline-flex; flex-direction: row; justify-content: space-around;">
-
-            <div style="padding-top: 25px; text-align: center" class="capitalize">
+            <div style="text-align: center" class="capitalize">
               {{sampleIdsAndRelationships[i]}}
-              <PedigreeGraph :data="allPedigreeDataArrays[i]" :id="sampleUuids[i]" :width="100" :height="100" :pedigree="pedigree"></PedigreeGraph>
+              <PedigreeGraph :data="allPedigreeDataArrays[i]" :id="sampleUuids[i]" :width="100" :height="75" :pedigree="pedigree"></PedigreeGraph>
             </div>
-          <BarChart :data="coverageDataArray[i]" :width="400" :height="200" :x-domain="xDomain" :y-domain="yDomain" ></BarChart>
-          <QualitativeBarChart :data="varCountsArray[i].counts" :width="300" :height="200" style="padding-top: 20px"></QualitativeBarChart>
+
+          <div style="display: inline-flex;">
+            <BarChart :data="coverageDataArray[i]" :width="400" :height="150" :x-domain="xDomain" :y-domain="yDomain" :median-coverage="medianCoverages[i]" :minCutoff="minCutoff"></BarChart>
+
+            <div style="padding-top: 20px" v-show="goodCoverage(i)">
+            <v-tooltip top class="valign">
+              <template v-slot:activator="{ on }">
+                <v-icon v-on="on" top color="green">check_circle</v-icon>
+              </template>
+              <span>Median coverage is above expected threshold</span>
+
+            </v-tooltip>
+            </div>
+            <div style="padding-top: 20px" v-show="!goodCoverage(i)">
+              <v-tooltip top class="valign">
+                <template v-slot:activator="{ on }">
+                  <v-icon v-on="on" top color="#B33A3A">mdi-alert-circle</v-icon>
+                </template>
+                <span>Median coverage is below expected threshold</span>
+
+              </v-tooltip>
+            </div>
+
+          </div>
+          <!--<BoxPlot :width="250" :height="150" :data="exomeMedianCoverageData"></BoxPlot>-->
+          <QualitativeBarChart :data="varCountsArray[i].counts" :width="300" :height="150" style="padding-top: 20px"></QualitativeBarChart>
 
         </div>
      </div>
     </div>
+    <div style="height:20px"></div>
   </div>
 </template>
 
+
 <script>
 import PedigreeGraph from './PedigreeGraph.vue';
+import BoxPlot from './BoxPlot'
 import AppIcon       from '../partials/AppIcon.vue';
 import QualitativeBarChart from './QualitativeBarChart.vue'
 import BarChart from './BarChart.vue'
@@ -140,7 +155,8 @@ export default {
     QualitativeBarChart,
     BarChart,
     PedigreeGraph,
-    AppIcon
+    AppIcon,
+    BoxPlot
   },
   props: {
     workflow:    null,
@@ -170,6 +186,18 @@ export default {
       isSorted: false,
       demoData: null,
 
+      exomeMedianCoverageData: {
+        min: 15,
+        q1: 30,
+        q2: 45,
+        q3: 60,
+        max: 75,
+      },
+
+      isExome: false,
+      minCutoff: null,
+      medianCoverages: null,
+
     }
 
   },
@@ -190,6 +218,13 @@ export default {
 
   methods: {
 
+    goodCoverage(i){
+      if(this.medianCoverages[i] >= this.minCutoff){
+        return true;
+      }
+      return false;
+    },
+
 
     formatVarCountsArray(){
       let tempVarCounts = this.varCountsArray;
@@ -209,7 +244,80 @@ export default {
       this.assignProbandToEachSample();
       this.populateDomains();
       this.sortIndicesByRelationship();
+      this.checkIsExome();
+      this.populateCoverageMedians();
       this.sortData();
+    },
+
+    populateCoverageMedians(){
+      this.medianCoverages = [];
+      for(let i = 0; i < this.coverageDataArray.length; i++){
+        let data = this.coverageDataArray[i];
+        let medianCoverage = this.calculateMedianCoverage(data);
+        this.medianCoverages.push(medianCoverage);
+      }
+    },
+
+    calculateMedian(values) {
+      let total = 0;
+
+      for(let i = 0; i < values.length; i++){
+        total += values[i];
+      }
+
+      return total / 2;
+    },
+
+
+    findMedianFromCummulativeFrequencies(medianFreq, cumFreqs){
+      for(let i =0; i < cumFreqs.length; i++){
+        if(medianFreq >= cumFreqs[i][1] && medianFreq <= cumFreqs[i][2]){
+          return cumFreqs[i][0];
+        }
+      }
+      return -1;
+    },
+
+    calculateMedianCoverage(data) {
+      let freqs = [];
+      let cumFreqs = [];
+      let start = 0;
+      let end = 0;
+      for (let i = 0; i < data.length; i++) {
+        freqs.push(data[i][1] * 1000000);
+        end += (data[i][1] * 1000000);
+        let d = [data[i][0], start, end];
+        start = end;
+        cumFreqs.push(d);
+      }
+      const medianFreq = this.calculateMedian(freqs);
+      let medianCoverage = this.findMedianFromCummulativeFrequencies(medianFreq, cumFreqs);
+      return medianCoverage;
+    },
+
+    checkIsExome(){
+      let totalVarCounts = 0;
+      for(let i = 0; i < this.varCountsArray.length; i++){
+        let counts = this.varCountsArray[i].counts;
+
+        let indel = counts.indel;
+
+        if(isNaN(indel)){
+          indel = 0;
+        }
+        totalVarCounts = totalVarCounts + (counts.SNP + indel + counts.other);
+      }
+
+      let averageCount = totalVarCounts / this.varCountsArray.length;
+
+      if(averageCount < 1000000){
+        this.isExome = true;
+        this.minCutoff = 51;
+      }
+      else if(averageCount >= 1000000){
+        this.isExome = false;
+        this.minCutoff = 30;
+      }
     },
 
 
@@ -229,6 +337,7 @@ export default {
 
     },
 
+
     sortData(){
 
       let tempPed = [null,null,null,null];
@@ -237,6 +346,7 @@ export default {
       let tempSampleRelationship = [null,null,null,null];
       let tempSamples = [null,null,null,null];
       let tempUuids = [null,null,null,null];
+      let tempMedianCoverages = [null,null,null,null]
 
       for(let i = 0; i < this.sortedIndices.length; i++){
         let index = this.sortedIndices[i];
@@ -246,6 +356,7 @@ export default {
         tempSampleRelationship[index] = this.sampleIdsAndRelationships[i];
         tempSamples[index] = this.sampleIds[i];
         tempUuids[index] = this.sampleUuids[i];
+        tempMedianCoverages[index] = this.medianCoverages[i]
       }
 
       this.pedigreeDataArray = tempPed.filter(function(el) { return el; });
@@ -254,6 +365,7 @@ export default {
       this.sampleIdsAndRelationships = tempSampleRelationship.filter(function(el) { return el; });
       this.sampleIds = tempSamples.filter(function(el) { return el; });
       this.sampleUuids = tempUuids.filter(function(el) { return el; });
+      this.medianCoverages = tempMedianCoverages.filter(function(el) { return el; });
 
       this.isSorted = true;
     },
@@ -400,6 +512,9 @@ export default {
     font-family: Poppins,sans-serif;
   }
 
+  .valign{
+    vertical-align: top;
+  }
 
 
 </style>

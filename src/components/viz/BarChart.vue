@@ -65,7 +65,7 @@
                 type: Object,
                 default() {
                     return {
-                        top: 20, right: 40, bottom: 30, left: 50,
+                        top: 20, right: 10, bottom: 30, left: 50,
                     };
                 },
             },
@@ -111,6 +111,9 @@
                 type: [Boolean, Array],
                 default: false,
             },
+            minCutoff: null,
+            medianCoverage: null,
+
         },
         data() {
             return {
@@ -121,9 +124,9 @@
                 labelHeight: 16,
                 xScale: null,
                 yScale: null,
-                medianCoverage: null,
                 widthNorm: null,
                 xDiff: null,
+                goodCoverage: false,
             };
         },
         computed: {
@@ -160,38 +163,41 @@
             },
         },
         watch: {
-            color() {
-                this.update();
-            },
-            data() {
-                this.update();
-            },
-            width() {
-                this.update();
-            },
-            xDomain() {
-                this.update();
-            },
-            yDomain() {
-                this.update();
-            },
-            xAxisLabel() {
-                this.update();
-            },
-            yAxisLabel() {
-                this.update();
-            },
-            medianCoverage() {
-                this.update();
-            }
+            // color() {
+            //     this.update();
+            // },
+            // data() {
+            //     this.update();
+            // },
+            // width() {
+            //     this.update();
+            // },
+            // xDomain() {
+            //     this.update();
+            // },
+            // yDomain() {
+            //     this.update();
+            // },
+            // xAxisLabel() {
+            //     this.update();
+            // },
+            // yAxisLabel() {
+            //     this.update();
+            // },
+            // medianCoverage() {
+            //     this.update();
+            // }
         },
         mounted() {
             this.checkForData(this.drawChart);
             this.calculateWidthNorm();
-            this.calculateMedianCoverage();
             this.plotMedian();
+            this.plotQCIcon();
         },
         methods: {
+
+            plotQCIcon(){
+            },
 
             calculateWidthNorm(){
 
@@ -226,46 +232,36 @@
                     .attr("fill", "black")
                     .attr("font-size", "12px")
                     .attr('x', this.xScale(this.medianCoverage) + 5)
-                    .attr('y', this.yScale(max - (0.05*max)))
-                    .text(this.medianCoverage.toString() + 'X Median')
+                    .attr('y', this.yScale(max - (0.1*max)))
+                    .text(this.medianCoverage.toString() + 'X Median');
+
+                svg.append('line')
+                    .attr("id", "minLine")
+                    .attr("stroke", "darkgray")
+                    .attr("stroke-dasharray", "5 2")
+                    .attr('x1', this.xScale(this.minCutoff))
+                    .attr('y1', this.yScale(0))
+                    .attr('x2', this.xScale(this.minCutoff))
+                    .attr('y2', this.yScale(max));
+
+                svg.append('text')
+                    .attr("id", "minText")
+                    .attr("fill", "darkgray")
+                    .attr("font-size", "12px")
+                    .attr('x',d => {
+                        if(this.medianCoverage  <= this.minCutoff) {
+                            return this.xScale(this.minCutoff) +5
+                        }
+                        else{
+                            return this.xScale(this.minCutoff) -30;
+                        }
+                    })
+                    .attr('y', this.yScale(max) +20)
+                    .text('min.')
 
             },
 
-            calculateMedian(values) {
-                let total = 0;
 
-                for(let i = 0; i < values.length; i++){
-                    total += values[i];
-                }
-
-                return total / 2;
-            },
-
-
-            findMedianFromCummulativeFrequencies(medianFreq, cumFreqs){
-                for(let i =0; i < cumFreqs.length; i++){
-                    if(medianFreq >= cumFreqs[i][1] && medianFreq <= cumFreqs[i][2]){
-                        return cumFreqs[i][0];
-                    }
-                }
-                return -1;
-            },
-
-            calculateMedianCoverage() {
-                let freqs = [];
-                let cumFreqs = [];
-                let start = 0;
-                let end = 0;
-                for (let i = 0; i < this.data.length; i++) {
-                    freqs.push(this.data[i][1] * 1000000);
-                    end += (this.data[i][1] * 1000000);
-                    let d = [this.data[i][0], start, end];
-                    start = end;
-                    cumFreqs.push(d);
-                }
-                const medianFreq = this.calculateMedian(freqs);
-                this.medianCoverage = this.findMedianFromCummulativeFrequencies(medianFreq, cumFreqs);
-            },
 
             checkForData(func) {
                 if (!this.showChart) {
@@ -332,7 +328,7 @@
                     .attr('text-anchor', 'middle')
                     .attr('x', middleOfXAxis)
                     .attr('y', this.height)
-                    .attr('dy', '-5px')
+                    .attr('dy', '-20px')
                     .text(this.xAxisLabel);
             },
             drawBars() {
@@ -433,6 +429,7 @@
                 this.createAxis();
                 this.drawBars();
                 this.addLabels();
+                this.plotMedian();
                 this.updateBrushExtent();
                 this.stashDomain(this.xScale, this.yScale);
             },
@@ -453,7 +450,6 @@
         font-size: 9px;
         fill: black
     }
-
 
     .extent {
         font-size: 11px;
