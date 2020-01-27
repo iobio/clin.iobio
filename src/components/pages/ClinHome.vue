@@ -361,8 +361,8 @@ export default {
 
       appUrls: {
         'localhost': {
-          'gene':      'https://stage.gene.iobio.io/?launchedFromClin=true&frame_source=' + window.document.URL,
-          'genefull':  'https://stage.gene.iobio.io/?launchedFromClin=true&frame_source=' + window.document.URL,
+          'gene':      'http://localhost:4026/?launchedFromClin=true&frame_source=' + window.document.URL,
+          'genefull':  'http://localhost:4026/?launchedFromClin=true&frame_source=' + window.document.URL,
           //'bam':       'http://localhost:4027'
         },
         'tony.iobio.io': {
