@@ -77,9 +77,37 @@ $horizontal-dashboard-height: 140px
 #clin-container
   font-size: 14px
 
+@media (min-width: 960px)
+  .container
+    max-width: 960px !important
+
+@media (min-width: 1050px)
+  .container
+    max-width: 1050px !important
+
+@media (min-width: 1175px)
+  .container
+    max-width: 1175px !important
+
+@media (min-width: 1264px)
+  .container
+    max-width: 1264px !important
+
+@media (min-width: 1330px)
+  .container
+    max-width: 1330px !important
+
+@media (min-width: 1440px)
+  .container
+    max-width: 1440px !important
+
 @media (min-width: 1550px)
   .container
     max-width: 1550px !important
+
+@media (min-width: 1635px)
+  .container
+    max-width: 1635px !important
 
 
 
@@ -161,7 +189,6 @@ $horizontal-dashboard-height: 140px
           </PhenotypeExtractor>
         </keep-alive>
 
-        <br>
         <keep-alive>
           <GeneList
             v-if="analysis && workflow && currentStep == 2 && !showFindings"
