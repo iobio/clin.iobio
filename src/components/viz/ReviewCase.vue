@@ -81,8 +81,15 @@
               <!--</div>-->
             <!--</div>-->
 
-              <div style="margin-top:10px;font-size:13px;line-height:15px;width:50%;white-space: normal">
-                <span style="font-size:13px; font-weight: bold">Case Summary </span> - {{ caseSummary.description }}
+              <div style="width:80%">
+                <span class="heading">Case Summary </span> <div class="reviewCase">
+                {{ caseSummary.description }}
+              </div>
+
+                <br>
+                <div class="heading">
+                  Sample Quality
+                </div>
               </div>
 
             <div v-if="false" class="subsection">
@@ -97,35 +104,36 @@
 
     <div v-if="isSorted">
       <div style=" width: 100%; display: inline-flex; flex-direction: row; justify-content: space-around; padding-bottom: 10px">
-        <div class="columnHeader" style="margin-right: 130px">Sample</div> <div class="columnHeader" style="margin-right: 130px">Read Coverage</div><div class="columnHeader">Variant Type Distribution</div>
+        <div class="heading" style="margin-right: 130px">Sample</div> <div class="heading" style="margin-right: 130px">Read Coverage</div><div class="heading">Variant Type Distribution</div>
       </div>
       <div v-for="(d, i) in sampleIdsAndRelationships" >
         <div style=" width: 100%; display: inline-flex; flex-direction: row; justify-content: space-around;">
-            <div style="text-align: center" class="capitalize">
+            <div style="text-align: center; width: 150px" class="capitalize">
               {{sampleIdsAndRelationships[i]}}
               <PedigreeGraph :data="allPedigreeDataArrays[i]" :id="sampleUuids[i]" :width="100" :height="75" :pedigree="pedigree"></PedigreeGraph>
             </div>
 
           <div style="display: inline-flex;">
-            <BarChart :data="coverageDataArray[i]" :width="400" :height="150" :x-domain="xDomain" :y-domain="yDomain" :median-coverage="medianCoverages[i]" :minCutoff="minCutoff"></BarChart>
+            <BarChart :data="coverageDataArray[i]" :width="400" :height="150" :x-domain="xDomain" :y-domain="yDomain" :median-coverage="medianCoverages[i]" :minCutoff="minCutoff" :onHover="onHover"></BarChart>
 
             <div style="padding-top: 20px" v-show="goodCoverage(i)">
             <v-tooltip top class="valign">
               <template v-slot:activator="{ on }">
-                <v-icon v-on="on" top color="green">check_circle</v-icon>
+                <v-icon v-on="on" top color="green"
+                        @mouseover="onHover = true" @mouseleave="onHover = false">check_circle</v-icon>
               </template>
-              <span>Median coverage is above expected threshold</span>
+              <span>Median coverage is above expected {{isExomeText}} coverage threshold of {{minCutoff}}X</span>
 
             </v-tooltip>
+              <div v-if="badCoverage" style=" display: inline-flex; width: 120px; line-height: 16px; font-size: 12px; padding-left: 5px;"></div>
             </div>
             <div style="padding-top: 20px" v-show="!goodCoverage(i)">
-              <v-tooltip top class="valign">
-                <template v-slot:activator="{ on }">
-                  <v-icon v-on="on" top color="#B33A3A">mdi-alert-circle</v-icon>
-                </template>
-                <span>Median coverage is below expected threshold</span>
+                  <v-icon v-on="on"     @mouseover="onHover = true" @mouseleave="onHover = false"
+                          top color="#B33A3A">mdi-alert-circle</v-icon>
 
-              </v-tooltip>
+
+              <div v-if="badCoverage" style=" display: inline-flex; width: 120px; line-height: 16px; font-size: 12px; padding-left: 5px;">Median coverage is below expected {{isExomeText}} coverage threshold of {{minCutoff}}X</div>
+
             </div>
 
           </div>
@@ -185,6 +193,8 @@ export default {
       varCountsArray: null,
       isSorted: false,
       demoData: null,
+      onHover: false,
+      on: null,
 
       exomeMedianCoverageData: {
         min: 15,
@@ -194,7 +204,10 @@ export default {
         max: 75,
       },
 
+      badCoverage: false,
+
       isExome: false,
+      isExomeText: null,
       minCutoff: null,
       medianCoverages: null,
 
@@ -222,6 +235,7 @@ export default {
       if(this.medianCoverages[i] >= this.minCutoff){
         return true;
       }
+      this.badCoverage = true;
       return false;
     },
 
@@ -313,10 +327,12 @@ export default {
       if(averageCount < 1000000){
         this.isExome = true;
         this.minCutoff = 51;
+        this.isExomeText = "exome"
       }
       else if(averageCount >= 1000000){
         this.isExome = false;
         this.minCutoff = 30;
+        this.isExomeText = "genome"
       }
     },
 
@@ -507,13 +523,29 @@ export default {
   }
 
   .columnHeader{
-    font-size: 14px;
-    font-weight: bold;
+    font-size: 16px;
+    font-weight: 500;
     font-family: Poppins,sans-serif;
   }
 
   .valign{
     vertical-align: top;
+  }
+
+  .heading{
+    font-size: 16px;
+    font-weight: 500;
+    font-family: Poppins,sans-serif;
+    color: #6A6A6A;
+
+  }
+
+  .reviewCase{
+    color: #6A6A6A;
+    line-height: 16px;
+    font-size: 15px;
+    font-weight: normal;
+    font-family: 'Poppins', sans-serif
   }
 
 
