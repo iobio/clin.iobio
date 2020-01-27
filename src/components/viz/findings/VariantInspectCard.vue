@@ -22,12 +22,15 @@
       :info="info">
       </variant-links-menu>
 -->
+
+<!--
       <span v-if="!info || (info.HGVSpLoading && info.HGVScLoading)"
         style="font-size:13px;margin-top:2px;min-width:80px;margin-left:0px;margin-right:0px"
         v-show="selectedVariantRelationship != 'known-variants'" class=" loader vcfloader" >
         <img src="../../../assets/images/wheel.gif">
         HGVS
       </span>
+-->
 
 <!--
       <variant-aliases-menu

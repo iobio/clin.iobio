@@ -813,6 +813,9 @@ export default {
       for (var appName in self.apps) {
         let app = self.apps[appName];
         if (app.step == stepNumber) {
+          if (app.step.key == 'review-findings') {
+            self.organizeVariantsByInterpretation();
+          }
           var msgObject = {
             type:                  'show-' + task.key,
             sender:                'clin.iobio',
