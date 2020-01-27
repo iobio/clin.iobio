@@ -77,9 +77,37 @@ $horizontal-dashboard-height: 140px
 #clin-container
   font-size: 14px
 
+@media (min-width: 960px)
+  .container
+    max-width: 960px !important
+
+@media (min-width: 1050px)
+  .container
+    max-width: 1050px !important
+
+@media (min-width: 1175px)
+  .container
+    max-width: 1175px !important
+
+@media (min-width: 1264px)
+  .container
+    max-width: 1264px !important
+
+@media (min-width: 1330px)
+  .container
+    max-width: 1330px !important
+
+@media (min-width: 1440px)
+  .container
+    max-width: 1440px !important
+
 @media (min-width: 1550px)
   .container
     max-width: 1550px !important
+
+@media (min-width: 1635px)
+  .container
+    max-width: 1635px !important
 
 
 
@@ -161,7 +189,6 @@ $horizontal-dashboard-height: 140px
           </PhenotypeExtractor>
         </keep-alive>
 
-        <br>
         <keep-alive>
           <GeneList
             v-if="analysis && workflow && currentStep == 2 && !showFindings"
@@ -1292,7 +1319,7 @@ export default {
                   }
                 };
       analysis.payload.genesGtr = [];
-      analysis.payload.phenotypes = [[],[], []];
+      analysis.payload.phenotypes = [[],[], [], []];
       analysis.payload.genesManual = [];
       analysis.payload.genesReport = [];
       analysis.payload.gtrFullList = [];
@@ -1312,7 +1339,7 @@ export default {
       self.analysis.payload.gtrFullList        = messageObject.gtrFullList;
       self.analysis.payload.phenolyzerFullList = messageObject.phenolyzerFullList;
       self.analysis.payload.genes              = messageObject.genes;
-      self.analysis.payload.phenotypes         = messageObject.searchTerms;
+      self.analysis.payload.phenotypes         = messageObject.phenotypes;
       self.setGeneTaskBadges();
 
 
@@ -1506,11 +1533,21 @@ export default {
     },
 
     generatePDF: function(){
-      axios.post('http://nv-dev-new.iobio.io/analysistoreport/create-pdf', this.analysis)
-        .then(()=> axios.get('http://nv-dev-new.iobio.io/analysistoreport/fetch-pdf', { responseType: 'blob' }))
-        .then((res) => {
+      let analysis_sample = JSON.stringify(this.analysis)
+      let config = {
+        headers: {
+          'Content-Type': 'text/plain'
+        },
+        responseType: 'blob'
+      }
+      axios.post('https://backend.iobio.io/clinReport', analysis_sample, config)
+        .then((res)=>{
           const pdfBlob = new Blob([res.data], { type: 'application/pdf' })
           saveAs(pdfBlob, "analysis.pdf")
+        })
+        .catch((err)=>{
+          console.log(err);
+          alert("Failed to generate report. Please try again")
         })
     },
 
@@ -1521,6 +1558,8 @@ export default {
 
     saveSearchedPhenotypes(phenotypes){
       this.analysis.payload.phenotypes = phenotypes;
+      this.promiseUpdateGenesData(this.analysis);
+      this.promiseUpdatePhenotypes(phenotypes);
     },
 
     GtrGeneList(genes){
