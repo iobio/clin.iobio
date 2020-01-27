@@ -109,7 +109,7 @@ $badge-inactive-color:  #d8d3d3
     margin-left: 0px
 
     .task-label
-      .v-badge__badge 
+      .v-badge__badge
         justify-content: flex-start !important
 
     .task-badge
@@ -126,12 +126,12 @@ $badge-inactive-color:  #d8d3d3
 
       &.active
         background-color:  transparent
-        
+
       &.empty
         visibility:  hidden
         height: 16px
 
-  
+
 
     .task-text
       margin-top: -10px
@@ -399,13 +399,13 @@ $badge-inactive-color:  #d8d3d3
             <div style="display:inline-block">
               <div class="task-label">
                 <v-badge right color="transparent" >
-                  
+
                   <span v-if="task-badges" v-for="taskBadge, idx in task.badges" :key="taskBadge"
                   :class="{'task-badge': true, 'empty': taskBadge == null, 'active': currentStep && step.key == currentStep.key  ? true : false}" slot="badge">{{ taskBadge }}</span>
 
                   <span v-if="!task.badges" :class="{'task-badge': true, 'empty': true, 'active': false}" slot="badge"></span>
                 </v-badge>
-  
+
                 <div class="task-text">
                   {{ getTaskName(step.key, task.key) }}
                 </div>
@@ -471,13 +471,11 @@ export default {
       currentTaskLeft: '0px',
       disableNext: false,
       disablePrev: false,
-      taskIsCheckbox: true
+      taskIsCheckbox: true,
+      badges: null
     }
   },
   watch: {
-    analysisSteps(){
-      console.log("analysisSteps", this.analysisSteps)
-    },
     currentTask: function() {
       let self = this;
       self.$emit("on-task-changed")

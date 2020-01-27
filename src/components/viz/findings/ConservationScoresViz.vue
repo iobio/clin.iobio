@@ -138,6 +138,11 @@ export default {
       font-family: 'Raleway'
       font-size: 11px
       fill: $text-color
+    line,  path 
+      fill: none
+      stroke: lightgrey
+      shape-rendering: crispEdges
+      stroke-width: 1px
 
 .conservation-scores-viz
   .bar
