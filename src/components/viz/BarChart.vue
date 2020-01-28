@@ -19,6 +19,7 @@
             </g>
             <text class="axis-label axis-label--x"/>
             <text class="axis-label axis-label--y"/>
+
         </svg>
         <v-layout
                 v-else
@@ -51,7 +52,7 @@
             },
             color: {
                 type: String,
-                default: '#c62828',
+                default: '#0080A8',
             },
             data: {
                 type: Array,
@@ -113,6 +114,7 @@
             },
             minCutoff: null,
             medianCoverage: null,
+            onHover: false,
 
         },
         data() {
@@ -187,17 +189,19 @@
             // medianCoverage() {
             //     this.update();
             // }
+
+            onHover(){
+              this.update();
+            },
         },
         mounted() {
             this.checkForData(this.drawChart);
             this.calculateWidthNorm();
             this.plotMedian();
-            this.plotQCIcon();
+            this.plotMin();
+            this.update();
         },
         methods: {
-
-            plotQCIcon(){
-            },
 
             calculateWidthNorm(){
 
@@ -209,16 +213,60 @@
                 this.widthNorm = this.width * (xLocal/x);
             },
 
+            plotMin(){
+
+                let svg = d3.select(this.$el)
+                    .select('svg');
+
+
+                let minHeight = 0;
+
+                for(let i = 0; i < this.data.length; i++){
+                    if(parseInt(this.data[i][0]) === this.minCutoff){
+                        minHeight = this.data[i][1];
+                    }
+                }
+
+
+                svg.append('line')
+                    .attr("id", "minLine")
+                    .attr("stroke-dasharray", "5 2")
+                    .style("stroke", "none")
+                    .attr('x1', this.xScale(this.minCutoff))
+                    .attr('y1', this.yScale(0))
+                    .attr('x2', this.xScale(this.minCutoff))
+                    .attr('y2', this.yScale(minHeight));
+
+
+                svg.append('text')
+                    .attr("id", "minText")
+                    .style("fill", "none")
+                    .attr("font-size", "12px")
+                    .attr('x', d => {
+                        if (this.medianCoverage <= this.minCutoff) {
+                            return this.xScale(this.minCutoff) + 2
+                        } else {
+                            return this.xScale(this.minCutoff) + 2;
+                        }
+                    })
+                    .attr('y', 100)
+                    .text('min. threshold')
+            },
+
             plotMedian(){
 
                 let svg = d3.select(this.$el)
                     .select('svg');
 
+                svg.select("#medianLine").remove();
+                svg.select("#medianText").remove();
+
+
                 //todo: unhardcode max coverage
                 let max = Math.max.apply(Math, this.data.map(function(a) { return a[1]; }))
-                max = max + 0.05*max;
+                max = max + 0.1*max;
 
-                svg.append('line')
+                svg.append("line")
                     .attr("id", "medianLine")
                     .attr("stroke", "black")
                     .attr("stroke-dasharray", "10 5")
@@ -227,37 +275,27 @@
                     .attr('x2', this.xScale(this.medianCoverage))
                     .attr('y2', this.yScale(max))
 
-                svg.append('text')
+                svg.append("text")
                     .attr("id", "medianText")
                     .attr("fill", "black")
                     .attr("font-size", "12px")
-                    .attr('x', this.xScale(this.medianCoverage) + 5)
-                    .attr('y', this.yScale(max - (0.1*max)))
+                    .attr('x', this.xScale(this.medianCoverage) + 2)
+                    .attr('y', this.yScale(max))
                     .text(this.medianCoverage.toString() + 'X Median');
 
-                svg.append('line')
-                    .attr("id", "minLine")
-                    .attr("stroke", "darkgray")
-                    .attr("stroke-dasharray", "5 2")
-                    .attr('x1', this.xScale(this.minCutoff))
-                    .attr('y1', this.yScale(0))
-                    .attr('x2', this.xScale(this.minCutoff))
-                    .attr('y2', this.yScale(max));
 
-                svg.append('text')
-                    .attr("id", "minText")
-                    .attr("fill", "darkgray")
-                    .attr("font-size", "12px")
-                    .attr('x',d => {
-                        if(this.medianCoverage  <= this.minCutoff) {
-                            return this.xScale(this.minCutoff) +5
-                        }
-                        else{
-                            return this.xScale(this.minCutoff) -30;
-                        }
-                    })
-                    .attr('y', this.yScale(max) +20)
-                    .text('min.')
+                if(this.onHover) {
+
+                    svg.select("#minLine").transition().style("stroke", "white").duration(750);
+                    svg.select("#minText").transition().style("fill", "white").duration(750);
+
+                }
+
+                else{
+                    svg.select("#minLine").transition().style("stroke", "transparent").duration(750);
+                    svg.select("#minText").transition().style("fill", "transparent").duration(750);
+
+                }
 
             },
 
