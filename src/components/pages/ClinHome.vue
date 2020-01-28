@@ -1007,6 +1007,7 @@ export default {
           this.analysis.payload.filters  = messageObject.analysis.payload.filters;
           this.analysis.payload.variants = messageObject.analysis.payload.variants;
           this.organizeVariantsByInterpretation();
+          this.setVariantTaskBadges();
           this.promiseAutosaveAnalysis({notify: true})
           .then(function() {
 
@@ -1059,7 +1060,7 @@ export default {
         })
         self.analysis.payload.steps.forEach(function(step) {
           step.tasks.forEach(function(task) {
-            if (task.key == 'review' ) {
+            if (task.key == 'review-patient' ) {
               if (variantsCandidateGenes.length > 0) {
                 task.badges =  [variantsCandidateGenes.length + ' genes '];
               } else {
@@ -1076,6 +1077,11 @@ export default {
               } else {
                 delete task.badges;
               }
+            } else if (task.key == 'review-results') {
+              task.badges = []
+              self.variantsByInterpretation.forEach(function(interpretation) {
+                task.badges.push( interpretation.variantCount + ' ' + self.interpretationMap[interpretation.key] + ' variants');
+              })
             }
           })
         })
