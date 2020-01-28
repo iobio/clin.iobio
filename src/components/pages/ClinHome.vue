@@ -1341,7 +1341,14 @@ export default {
       self.analysis.payload.genesManual        = messageObject.genesManual;
       self.analysis.payload.gtrFullList        = messageObject.gtrFullList;
       self.analysis.payload.phenolyzerFullList = messageObject.phenolyzerFullList;
-      self.analysis.payload.genes              = messageObject.genes;
+
+      // WORKAROUND so that genes aren't blanked out
+      if (self.analysis.payload.genes == null) {
+        self.analysis.payload.genes = [];
+      }
+      //self.analysis.payload.genes              = messageObject.genes;
+
+      
       self.analysis.payload.phenotypes         = messageObject.phenotypes;
       self.setGeneTaskBadges();
 
