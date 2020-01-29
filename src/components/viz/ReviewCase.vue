@@ -86,10 +86,10 @@
                 {{ caseSummary.description }}
               </div>
 
-                <br>
-                <div class="heading">
-                  Sample Quality
-                </div>
+                <!--<br>-->
+                <!--<div class="heading">-->
+                  <!--Sample Quality-->
+                <!--</div>-->
               </div>
 
             <div v-if="false" class="subsection">
@@ -104,7 +104,7 @@
 
     <div v-if="isSorted">
       <div style=" width: 100%; display: inline-flex; flex-direction: row; justify-content: space-around; padding-bottom: 10px">
-        <div class="heading" style="margin-right: 130px">Sample</div> <div class="heading" style="margin-right: 130px">Read Coverage</div><div class="heading">Variant Type Distribution</div>
+        <div class="heading" style="margin-right: 130px">Sample</div> <div class="heading" style="margin-right: 130px">Read Coverage</div><div class="heading">Variant Types</div>
       </div>
       <div v-for="(d, i) in sampleIdsAndRelationships" >
         <div style=" width: 100%; display: inline-flex; flex-direction: row; justify-content: space-around;">
