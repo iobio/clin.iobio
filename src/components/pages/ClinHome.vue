@@ -430,8 +430,9 @@ export default {
         'unknown-sig': 'Unknown significance',
         'not-sig': 'Not significant',
         'poor-qual': 'Poor quality',
+        'reviewed': 'Reviewed',
         'not-reviewed': 'Not reviewed'
-      },
+      }
 
     }
 
@@ -1062,7 +1063,7 @@ export default {
           step.tasks.forEach(function(task) {
             if (task.key == 'review-patient' ) {
               if (variantsCandidateGenes.length > 0) {
-                task.badges =  [variantsCandidateGenes.length + ' genes '];
+                task.badges =  [{label: variantsCandidateGenes.length + ' genes '}];
               } else {
                 delete task.badge;
               }
@@ -1073,15 +1074,65 @@ export default {
             } else if (task.key == 'review-full') {
               let fullAnalysisCount = self.analysis.payload.variants.length;
               if (fullAnalysisCount > 0) {
-                task.badges =  [fullAnalysisCount + ' variants'];
+                task.badges =  [{label: fullAnalysisCount + ' variants'}];
               } else {
                 delete task.badges;
               }
             } else if (task.key == 'review-results') {
               task.badges = []
+
+              let badgeLabels = [];
+              let badgeCounts = [];
+              let badgeClasses = [];
               self.variantsByInterpretation.forEach(function(interpretation) {
-                task.badges.push( interpretation.variantCount + ' ' + self.interpretationMap[interpretation.key] + ' variants');
+                interpretation.organizedVariants.forEach(function(orgVariants) {
+                  if (interpretation.key == 'sig' || interpretation.key == 'unknown-sig') {
+                    orgVariants.genes.forEach(function(geneInfo) {
+                      geneInfo.variants.forEach(function(variant) {
+
+                        let theFilter = "";
+                        if (variant.filtersPassed == 'denovo') {
+                          theFilter = 'De novo'
+                        } else if (variant.filtersPassed == 'compoundHet') {
+                          theFilter = 'Compound het'
+                        } else if ( variant.filtersPassed == 'pathogenic') {
+                          theFilter = 'Clinvar path. ';
+                          if (variant.inheritance.indexOf("none") == -1) {
+                            theFilter = variant.inheritance == 'denovo' ? 'De novo' : self.globalApp.utility.capitalizeFirstLetter(variant.inheritance);
+                          } else {
+                            theFilter = "";
+                          }
+                        } else {
+                          theFilter = self.globalApp.utility.capitalizeFirstLetter(variant.filtersPassed);
+                        }
+                        
+                        let label = 
+                          theFilter 
+                          + " in " + geneInfo.gene.gene_name
+                        let idx = badgeLabels.indexOf(label);
+                        if (idx == -1 || badgeLabels.length == 0) {
+                          badgeLabels.push(label);
+                          badgeCounts.push(1);
+                          badgeClasses.push([interpretation.key])
+                        } else {
+                          badgeCounts[idx]++;
+                          let theBadgeClass = badgeClasses[idx];
+                          if (theBadgeClass.indexOf(interpretation.key) == -1) {
+                            theBadgeClass.push(interpretation.key)
+                          }
+                        }
+                      })
+                    })
+                  }
+                })
               })
+
+              for (var i=0; i < badgeLabels.length; i++) {
+                task.badges.push({label: badgeCounts[i] + " " + badgeLabels[i],
+                                  class: badgeClasses[i].join(" ")});
+              }
+                
+
             }
           })
         })

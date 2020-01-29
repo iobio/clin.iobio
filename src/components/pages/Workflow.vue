@@ -131,6 +131,11 @@ $badge-inactive-color:  #d8d3d3
         visibility:  hidden
         height: 16px
 
+      &.sig
+        color: $sig-color !important
+      &.unknown-sig
+        color: $unknown-sig-color !important 
+
 
 
     .task-text
@@ -400,8 +405,8 @@ $badge-inactive-color:  #d8d3d3
               <div class="task-label">
                 <v-badge right color="transparent" >
 
-                  <span v-if="task-badges" v-for="taskBadge, idx in task.badges" :key="taskBadge"
-                  :class="{'task-badge': true, 'empty': taskBadge == null, 'active': currentStep && step.key == currentStep.key  ? true : false}" slot="badge">{{ taskBadge }}</span>
+                  <span v-if="task.badges" v-for="taskBadge, idx in task.badges" :key="taskBadge.label"
+                  :class="getTaskBadgeClass(taskBadge, currentStep && step.key == currentStep.key)" slot="badge">{{ taskBadge.label }}</span>
 
                   <span v-if="!task.badges" :class="{'task-badge': true, 'empty': true, 'active': false}" slot="badge"></span>
                 </v-badge>
@@ -628,6 +633,14 @@ export default {
     getTaskName: function(stepKey, taskKey) {
       var theTask = this.getWorkflowTask(stepKey, taskKey);
       return theTask ? theTask.name : "";
+    },
+    getTaskBadgeClass: function(taskBadge, active) {
+      let buf = "task-badge ";
+      buf += taskBadge.class ? taskBadge.class : "";
+      if (active) {
+        buf += " active";
+      }
+      return buf;
     }
 
 
