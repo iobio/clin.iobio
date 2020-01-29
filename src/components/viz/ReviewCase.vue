@@ -247,12 +247,7 @@ export default {
     populateReviewCaseBadges(){
       this.reviewCaseBadges = [{label: "Family," + this.sampleIds.length + " samples"}];
       if(this.badCoverage){
-        if(this.badCoverageCount === 1) {
-          this.reviewCaseBadges.push({label: "Insufficient coverage for " + this.badCoverageCount + " sample"})
-        }
-        else{
-          this.reviewCaseBadges.push({label: "Insufficient coverage for " + this.badCoverageCount + " samples"})
-        }
+        this.reviewCaseBadges.push({label:  + this.badCoverageCount + " failed QC"})
       }
       this.$emit('update', this.reviewCaseBadges);
     },

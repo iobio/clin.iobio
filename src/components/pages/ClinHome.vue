@@ -1076,7 +1076,7 @@ export default {
           step.tasks.forEach(function(task) {
             if (task.key == 'review-patient' ) {
 
-              //this is handled inside reviewCaseBadge watcher, can refactor if preffered 
+              //this is handled inside reviewCaseBadge watcher, can refactor if preffered
 
             } else if (task.key == 'coverage' ) {
               if (variantsCandidateGenes.length == 0) {
