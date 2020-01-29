@@ -86,10 +86,10 @@
                 {{ caseSummary.description }}
               </div>
 
-                <br>
-                <div class="heading">
-                  Sample Quality
-                </div>
+                <!--<br>-->
+                <!--<div class="heading">-->
+                  <!--Sample Quality-->
+                <!--</div>-->
               </div>
 
             <div v-if="false" class="subsection">
@@ -104,7 +104,7 @@
 
     <div v-if="isSorted">
       <div style=" width: 100%; display: inline-flex; flex-direction: row; justify-content: space-around; padding-bottom: 10px">
-        <div class="heading" style="margin-right: 130px">Sample</div> <div class="heading" style="margin-right: 130px">Read Coverage</div><div class="heading">Variant Type Distribution</div>
+        <div class="heading" style="margin-right: 130px">Sample</div> <div class="heading" style="margin-right: 130px">Read Coverage</div><div class="heading">Variant Types</div>
       </div>
       <div v-for="(d, i) in sampleIdsAndRelationships" >
         <div style=" width: 100%; display: inline-flex; flex-direction: row; justify-content: space-around;">
@@ -210,6 +210,8 @@ export default {
       isExomeText: null,
       minCutoff: null,
       medianCoverages: null,
+      reviewCaseBadges: null,
+      badCoverageCount: null,
 
     }
 
@@ -231,6 +233,25 @@ export default {
 
   methods: {
 
+    populateBadCoverageCount(){
+      this.badCoverageCount = 0;
+      for(let i = 0; i < this.medianCoverages.length; i++){
+        if(this.medianCoverages[i] < this.minCutoff) {
+          this.badCoverage = true;
+          this.badCoverageCount += 1;
+          }
+
+        }
+    },
+
+    populateReviewCaseBadges(){
+      this.reviewCaseBadges = [{label: "Family, " + this.sampleIds.length + " samples"}];
+      if(this.badCoverage){
+        this.reviewCaseBadges.push({label:  + this.badCoverageCount + " failed QC"})
+      }
+      this.$emit('update', this.reviewCaseBadges);
+    },
+
     goodCoverage(i){
       if(this.medianCoverages[i] >= this.minCutoff){
         return true;
@@ -240,7 +261,7 @@ export default {
     },
 
 
-    formatVarCountsArray(){
+    formatVarCountsArray(){3
       let tempVarCounts = this.varCountsArray;
 
       for(let i = 0; i < tempVarCounts.length; i++){
@@ -261,6 +282,8 @@ export default {
       this.checkIsExome();
       this.populateCoverageMedians();
       this.sortData();
+      this.populateBadCoverageCount();
+      this.populateReviewCaseBadges();
     },
 
     populateCoverageMedians(){
