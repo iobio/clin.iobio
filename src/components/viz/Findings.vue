@@ -3,7 +3,7 @@
 @import ../../assets/sass/variables
 
 #findings-panel
-  padding: 5px 20px 5px 20px
+  padding: 15px 20px 5px 20px
   overflow-y: auto
   height: -webkit-fill-available
   height: -moz-available

@@ -10,11 +10,11 @@ $badge-inactive-color:  #d8d3d3
   // height: 140px
   // margin-top: 50px
   height: auto
-  margin-bottom: 10px
-  padding-top: 10px
-  padding-bottom: 0px
+  margin-bottom: 8px
   padding-right: 10px
   padding-left: 10px
+  padding-top: 5px
+  padding-bottom: 10px
   text-align: center
 
 
@@ -118,8 +118,8 @@ $badge-inactive-color:  #d8d3d3
       font-size: 12px
       font-weight: 500
       font-style: italic
-      right: -65px
-      top: 1px
+      right: -70px
+      top: 6px
       color: $current-color
       background-color: transparent
       line-height: 13px
@@ -130,6 +130,11 @@ $badge-inactive-color:  #d8d3d3
       &.empty
         visibility:  hidden
         height: 16px
+
+      &.sig
+        color: $sig-color !important
+      &.unknown-sig
+        color: $unknown-sig-color !important 
 
 
 
@@ -240,10 +245,10 @@ $badge-inactive-color:  #d8d3d3
       height: 2px
 
       &.short
-        width: 60px
+        width: 70px
 
       &.long
-        width: 100px
+        width: 80px
 
       &.invisible
         visibility: hidden
@@ -257,6 +262,7 @@ $badge-inactive-color:  #d8d3d3
       font-family: Raleway
       font-size: 15px
       text-align: center
+      margin-left: 100px
 
 
       &.first
@@ -294,12 +300,12 @@ $badge-inactive-color:  #d8d3d3
             color: white !important
 
       .task-label
-        width:       120px
+        width:       140px
         font-size:   13px
         line-height: 14px
         text-align:  center
-        min-height:  66px
-        max-height:  66px
+        min-height:  55px
+        max-height:  55px
         font-weight: 500
 
       .avatar-button
@@ -340,6 +346,7 @@ $badge-inactive-color:  #d8d3d3
   #current-checkbox-container
     margin-top: -52px
     max-width: 30px
+    height: 35px
 
     label
       display: none
@@ -351,8 +358,11 @@ $badge-inactive-color:  #d8d3d3
     padding-top: 3px
 
     &.active
-      background-color: #f6f6f6
-      border: solid thin #dbd4d4
+
+      .step-label
+        background-color: #f6f6f6
+        border: solid .5px #d1d1d1
+
       .task
         &.active
           .avatar-button
@@ -400,8 +410,8 @@ $badge-inactive-color:  #d8d3d3
               <div class="task-label">
                 <v-badge right color="transparent" >
 
-                  <span v-if="task-badges" v-for="taskBadge, idx in task.badges" :key="taskBadge"
-                  :class="{'task-badge': true, 'empty': taskBadge == null, 'active': currentStep && step.key == currentStep.key  ? true : false}" slot="badge">{{ taskBadge }}</span>
+                  <span v-if="task.badges" v-for="taskBadge, idx in task.badges" :key="taskBadge.label"
+                  :class="getTaskBadgeClass(taskBadge, currentStep && step.key == currentStep.key)" slot="badge">{{ taskBadge.label }}</span>
 
                   <span v-if="!task.badges" :class="{'task-badge': true, 'empty': true, 'active': false}" slot="badge"></span>
                 </v-badge>
@@ -539,7 +549,7 @@ export default {
 
           let offsetLeft = $('#workflow-steps')[0].offsetLeft;
 
-          let offset = taskIdx == 0 ? 58 : 58;
+          let offset = taskIdx == 0 ? 67 : 67;
           self.currentTaskLeft = $('.task.active')[0].offsetLeft - offsetLeft + offset + 'px';
 
           if (taskIdx == self.currentStep.tasks.length - 1 && stepIdx == self.analysisSteps.length - 1) {
@@ -628,6 +638,14 @@ export default {
     getTaskName: function(stepKey, taskKey) {
       var theTask = this.getWorkflowTask(stepKey, taskKey);
       return theTask ? theTask.name : "";
+    },
+    getTaskBadgeClass: function(taskBadge, active) {
+      let buf = "task-badge ";
+      buf += taskBadge.class ? taskBadge.class : "";
+      if (active) {
+        buf += " active";
+      }
+      return buf;
     }
 
 
