@@ -210,6 +210,8 @@ export default {
       isExomeText: null,
       minCutoff: null,
       medianCoverages: null,
+      reviewCaseBadges: null,
+      badCoverageCount: null,
 
     }
 
@@ -230,6 +232,30 @@ export default {
   },
 
   methods: {
+
+    populateBadCoverageCount(){
+      this.badCoverageCount = 0;
+      for(let i = 0; i < this.medianCoverages.length; i++){
+        if(this.medianCoverages[i] < this.minCutoff) {
+          this.badCoverage = true;
+          this.badCoverageCount += 1;
+          }
+
+        }
+    },
+
+    populateReviewCaseBadges(){
+      this.reviewCaseBadges = [{label: "Family," + this.sampleIds.length + " samples"}];
+      if(this.badCoverage){
+        if(this.badCoverageCount === 1) {
+          this.reviewCaseBadges.push({label: "Insufficient coverage for " + this.badCoverageCount + " sample"})
+        }
+        else{
+          this.reviewCaseBadges.push({label: "Insufficient coverage for " + this.badCoverageCount + " samples"})
+        }
+      }
+      this.$emit('update', this.reviewCaseBadges);
+    },
 
     goodCoverage(i){
       if(this.medianCoverages[i] >= this.minCutoff){
@@ -261,6 +287,8 @@ export default {
       this.checkIsExome();
       this.populateCoverageMedians();
       this.sortData();
+      this.populateBadCoverageCount();
+      this.populateReviewCaseBadges();
     },
 
     populateCoverageMedians(){

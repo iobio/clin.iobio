@@ -164,7 +164,8 @@ $horizontal-dashboard-height: 140px
         :sampleId="params.sample_id"
         :allVarCounts="allVarCounts"
         :coverageHistos="coverageHistos"
-        :launchedFromMosaic="launchedFromMosaic">
+        :launchedFromMosaic="launchedFromMosaic"
+        @update="updateReviewCaseBadges">
         </review-case>
       </v-card>
 
@@ -432,7 +433,8 @@ export default {
         'poor-qual': 'Poor quality',
         'reviewed': 'Reviewed',
         'not-reviewed': 'Not reviewed'
-      }
+      },
+      reviewCaseBadges: null,
 
     }
 
@@ -483,6 +485,17 @@ export default {
   },
 
   watch: {
+    reviewCaseBadges: function(){
+      let self = this;
+      self.analysis.payload.steps.forEach(function(step) {
+        step.tasks.forEach(function(task) {
+          if (task.key == 'review-patient') {
+            task.badges = self.reviewCaseBadges;
+          }
+        })
+      })
+    },
+
     workflow(){
       // console.log("workflow data in clinhome", this.workflow)
     },
@@ -1062,11 +1075,9 @@ export default {
         self.analysis.payload.steps.forEach(function(step) {
           step.tasks.forEach(function(task) {
             if (task.key == 'review-patient' ) {
-              if (variantsCandidateGenes.length > 0) {
-                task.badges =  [{label: variantsCandidateGenes.length + ' genes '}];
-              } else {
-                delete task.badge;
-              }
+
+              //this is handled inside reviewCaseBadge watcher, can refactor if preffered 
+
             } else if (task.key == 'coverage' ) {
               if (variantsCandidateGenes.length == 0) {
                 delete task.badges;
@@ -1105,9 +1116,9 @@ export default {
                         } else {
                           theFilter = self.globalApp.utility.capitalizeFirstLetter(variant.filtersPassed);
                         }
-                        
-                        let label = 
-                          theFilter 
+
+                        let label =
+                          theFilter
                           + " in " + geneInfo.gene.gene_name
                         let idx = badgeLabels.indexOf(label);
                         if (idx == -1 || badgeLabels.length == 0) {
@@ -1131,7 +1142,7 @@ export default {
                 task.badges.push({label: badgeCounts[i] + " " + badgeLabels[i],
                                   class: badgeClasses[i].join(" ")});
               }
-                
+
 
             }
           })
@@ -1405,7 +1416,7 @@ export default {
       }
       //self.analysis.payload.genes              = messageObject.genes;
 
-      
+
       self.analysis.payload.phenotypes         = messageObject.phenotypes;
       self.setGeneTaskBadges();
 
@@ -1704,7 +1715,11 @@ export default {
     },
     VennDiagramData(obj){
       this.analysis.payload.VennDiagramData = obj
-    }
+    },
+
+    updateReviewCaseBadges(badges){
+      this.reviewCaseBadges = badges;
+    },
 
   }
 }
