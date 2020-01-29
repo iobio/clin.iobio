@@ -245,7 +245,7 @@ export default {
     },
 
     populateReviewCaseBadges(){
-      this.reviewCaseBadges = [{label: "Family," + this.sampleIds.length + " samples"}];
+      this.reviewCaseBadges = [{label: "Family, " + this.sampleIds.length + " samples"}];
       if(this.badCoverage){
         this.reviewCaseBadges.push({label:  + this.badCoverageCount + " failed QC"})
       }
@@ -261,7 +261,7 @@ export default {
     },
 
 
-    formatVarCountsArray(){
+    formatVarCountsArray(){3
       let tempVarCounts = this.varCountsArray;
 
       for(let i = 0; i < tempVarCounts.length; i++){
