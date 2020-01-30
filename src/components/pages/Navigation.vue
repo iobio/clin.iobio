@@ -29,12 +29,12 @@ header.theme--dark.v-sheet
       margin-left: 50px
 
       .v-progress-linear__background.primary
-        background-color: $workflow-bright-color !important
-        border-color: $workflow-bright-color !important
-        opacity: 0.8
-      .v-progress-linear__bar__determinate.primary
-        background-color: $workflow-bright-color-color !important
-        border-color: $workflow-bright-color !important
+        background-color: $workflow-progress-color !important
+        border-color: $workflow-progress-color !important
+        opacity: 0.4
+      .v-progress-linear__determinate.primary
+        background-color: $workflow-progress-color !important
+        border-color: $workflow-progress-color !important
 
       span
         margin-left: 8px

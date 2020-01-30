@@ -119,7 +119,7 @@ $badge-inactive-color:  #d8d3d3
       font-style: italic
       right: -70px
       top: 10px
-      color: $current-color
+      color: $workflow-badge-color
       background-color: transparent
       line-height: 13px
 
@@ -131,9 +131,9 @@ $badge-inactive-color:  #d8d3d3
         height: 16px
 
       &.sig
-        color: $sig-color !important
+        color: $workflow-badge-red-color !important
       &.unknown-sig
-        color: $unknown-sig-color !important 
+        color: $workflow-badge-orange-color  !important 
 
 
 
