@@ -35,6 +35,7 @@ header.theme--dark.v-sheet
       .v-progress-linear__determinate.primary
         background-color: $workflow-progress-color !important
         border-color: $workflow-progress-color !important
+        opacity: .8 !important
 
       span
         margin-left: 8px

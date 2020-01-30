@@ -115,13 +115,14 @@ $badge-inactive-color:  #d8d3d3
       display: inline-block
       position: relative
       font-size: 12px
-      font-weight: 500
+      font-weight: 600
       font-style: italic
       right: -70px
       top: 10px
       color: $workflow-badge-color
       background-color: transparent
       line-height: 13px
+
 
       &.active
         background-color:  transparent
@@ -317,7 +318,7 @@ $badge-inactive-color:  #d8d3d3
           display:           inline-block
           margin-top:        3px
           border: solid 2px  $workflow-inactive-color
-          background-color:  white
+          background-color:  transparent
 
           .material-icons
             color: $workflow-inactive-color
@@ -359,8 +360,9 @@ $badge-inactive-color:  #d8d3d3
     &.active
 
       .step-label
-        background-color: white
-        border: solid 1.5px $workflow-progress-color
+        color: white
+        background-color: $workflow-progress-color
+        border: solid 1.5px $workflow-active-color
 
       .task
         &.active
