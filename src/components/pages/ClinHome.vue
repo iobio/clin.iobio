@@ -1034,28 +1034,20 @@ export default {
       return (this.apps.genefull.url.indexOf(event.origin) >= 0 || this.apps.genepanel.url.indexOf(event.origin) >= 0);
     },
 
-    setGeneTaskBadges: function() {
+    setGeneTaskBadges() {
       let self = this;
+      let phenotypesCount = 0;
+      if(self.analysis.payload.phenotypes!==undefined){
+        phenotypesCount = self.analysis.payload.phenotypes[0].length + self.analysis.payload.phenotypes[1].length + self.analysis.payload.phenotypes[2].length;
+      }
+
       self.analysis.payload.steps.forEach(function(step) {
         step.tasks.forEach(function(task) {
-          if (task.key == 'gtr-genes' && self.analysis.payload.genesGtr) {
-            if  (self.analysis.payload.genesGtr.length > 0) {
-              task.badges = [self.analysis.payload.genesGtr.length];
-            } else {
-              delete task.badges;
-            }
-          } else if (task.key == 'phenotype-genes' && self.analysis.payload.genesPhenolyzer) {
-            if (self.analysis.payload.genesPhenolyzer.length > 0) {
-              task.badges = [self.analysis.payload.genesPhenolyzer.length];
-            } else {
-              delete task.badges;
-            }
-          } else if (task.key == 'summary-genes' && self.analysis.genes ) {
-            if (self.analysis.payload.genes.length > 0) {
-              task.badges = [self.analysis.payload.genes.length];
-            } else {
-              delete task.badges;
-            }
+          if (task.key == 'review-phenotypes-genes') {
+            task.badges = [{label: phenotypesCount + " " + (phenotypesCount > 1 ? 'phenotypes' : 'phenotype') }];
+          }
+          else {
+            delete task.badges;
           }
         })
         if (self.$refs.workflowRef) {
@@ -1424,7 +1416,6 @@ export default {
 
 
       self.analysis.payload.phenotypes         = messageObject.phenotypes;
-      self.setGeneTaskBadges();
 
 
       self.analysis.payload.datetime_last_modified = self.getCurrentDateTime();
@@ -1435,6 +1426,7 @@ export default {
     promiseUpdatePhenotypes: function(phenotypes) {
       let self = this;
       self.analysis.payload.phenotypes = phenotypes;
+      self.setGeneTaskBadges();
       self.analysis.payload.datetime_last_modified = self.getCurrentDateTime();
       return self.promiseAutosaveAnalysis();
     },
