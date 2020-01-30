@@ -230,24 +230,10 @@
                     .append('rect')
                     .merge(bars)
                     .attr('width', this.xScale.bandwidth())
-                    .attr('log', d => console.log(d))
                     .attr('x', (d) => this.xScale(d[xColumn]))
                     .attr('y', (d) => this.yScale(d[yColumn]))
                     .attr('height', (d) => this.innerHeight - this.yScale(d[yColumn]))
                     .attr('fill', (d) => this.colorScale(d[xColumn]));
-
-
-                // const typeLabels = this.gMain.selectAll('.type-label').data(this.dataArray);
-                // typeLabels.enter().append('text')
-                //     .merge(typeLabels)
-                //     .attr('class', 'type-label')
-                //     .attr('dy', '-2')
-                //     .attr('x', (d) => this.xScale(d[xColumn]) + (this.xScale.bandwidth() / 2))
-                //     .attr('y', (d) => this.yScale(d[yColumn]))
-                //     .text((d) => d[xColumn])
-                //     .attr('fill', (d) => this.colorScale(d[xColumn]));
-                // typeLabels.exit().remove();
-
 
                 let labels = this.gMain
                     .selectAll(".textLables")
