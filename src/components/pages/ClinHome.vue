@@ -1037,17 +1037,48 @@ export default {
     setGeneTaskBadges() {
       let self = this;
       let phenotypesCount = 0;
+      let notesCount = 0;
+      let allPhenotypes =[];
       if(self.analysis.payload.phenotypes!==undefined){
-        phenotypesCount = self.analysis.payload.phenotypes[0].length + self.analysis.payload.phenotypes[1].length + self.analysis.payload.phenotypes[2].length;
+        let gtr_phenotypes = self.analysis.payload.phenotypes[0];
+        let phenolyzer_phenotypes = self.analysis.payload.phenotypes[1];
+        let hpo_phenotypes = self.analysis.payload.phenotypes[2];
+        notesCount = self.analysis.payload.phenotypes[3].length;
+
+        if(gtr_phenotypes.length){
+          gtr_phenotypes.map(term => {
+            let cleaned_str = term.DiseaseName.replace(/-/g, " ").replace(/\s\s+/g, ' ').toLowerCase().trim();
+            allPhenotypes.push(cleaned_str);
+          })
+        }
+
+        if(phenolyzer_phenotypes.length){
+          phenolyzer_phenotypes.map(term => {
+            let cleaned_str = term.value.replace("-", " ").replace(/\s\s+/g, ' ').toLowerCase().trim();
+            allPhenotypes.push(cleaned_str)
+          })
+        }
+
+        if(hpo_phenotypes.length){
+          hpo_phenotypes.map(term => {
+            if(term.phenotype!==undefined){
+              allPhenotypes.push(term.phenotype.toLowerCase().trim())
+            }
+          })
+        }
       }
+
+      let uniqueSet = new Set(allPhenotypes);
+      let uniqueArray = [...uniqueSet];
+      phenotypesCount = uniqueArray.length;
 
       self.analysis.payload.steps.forEach(function(step) {
         step.tasks.forEach(function(task) {
           if (task.key == 'review-phenotypes-genes') {
-            task.badges = [{label: phenotypesCount + " " + (phenotypesCount > 1 ? 'phenotypes' : 'phenotype') }];
-          }
-          else {
-            delete task.badges;
+            task.badges = [
+              {label: phenotypesCount + " " + (phenotypesCount > 1 ? 'phenotypes' : 'phenotype') },
+              {label: notesCount + " " + (notesCount > 1 ? 'notes' : 'note')}
+            ];
           }
         })
         if (self.$refs.workflowRef) {
