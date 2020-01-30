@@ -148,7 +148,7 @@
             <v-tooltip top class="valign">
               <template v-slot:activator="{ on }">
                 <v-icon v-on="on" top color="green"
-                        @mouseover="onHover = true" @mouseleave="onHover = false">check_circle</v-icon>
+                        @mouseover="onHover = true" @mouseleave="onHover = false" @click="">check_circle</v-icon>
               </template>
               <span>Median coverage is above expected {{isExomeText}} coverage threshold of {{minCutoff}}X</span>
 
@@ -156,7 +156,7 @@
               <div v-if="badCoverage" style=" display: inline-flex; width: 120px; line-height: 16px; font-size: 12px; padding-left: 5px;"></div>
             </div>
             <div style="padding-top: 20px" v-show="!goodCoverage(i)">
-                  <v-icon v-on="on"     @mouseover="onHover = true" @mouseleave="onHover = false"
+                  <v-icon v-on="on"     @mouseover="onHover = true; " @mouseleave="onHover = false" @click=""
                           top color="#B33A3A">mdi-alert-circle</v-icon>
 
 
