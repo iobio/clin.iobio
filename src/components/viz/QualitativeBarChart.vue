@@ -13,7 +13,7 @@
             No Data
         </v-layout>
         <div v-else>
-            <svg>
+            <svg class="variant-types-bar-chart">
                 <g
                         :transform="`translate(${margin.left},${margin.top})`"
                         class="g-main"
@@ -230,6 +230,7 @@
                     .append('rect')
                     .merge(bars)
                     .attr('width', this.xScale.bandwidth())
+                    .attr('log', d => console.log(d))
                     .attr('x', (d) => this.xScale(d[xColumn]))
                     .attr('y', (d) => this.yScale(d[yColumn]))
                     .attr('height', (d) => this.innerHeight - this.yScale(d[yColumn]))
