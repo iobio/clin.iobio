@@ -33,6 +33,9 @@ $horizontal-dashboard-height: 140px
 .application--wrap, #application-content
   background-color: $light-grey-background
 
+.v-content 
+  background-color: $light-grey-background
+
 
 
 #clin-container
