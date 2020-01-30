@@ -26,6 +26,7 @@ header.theme--dark.v-sheet
     #workflow-progress
       display: flex
       padding-bottom: 10px
+      margin-left: 30px
 
       .v-progress-linear__background.primary
         background-color: $workflow-active-color !important
@@ -114,15 +115,11 @@ header.theme--dark.v-sheet
           {{ caseSummary.name }}
         </v-btn>
       </template>
-        <!-- <v-btn v-if="caseSummary && caseSummary.name"  text slot="activator">
-          {{ caseSummary.name }}
-        </v-btn> -->
 
         <v-card>
         </v-card>
       </v-menu>
 
-      <v-spacer></v-spacer>
 
 
       <span id="workflow-progress">

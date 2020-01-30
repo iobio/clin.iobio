@@ -1207,7 +1207,7 @@ export default {
           promiseSave
           .then(function(analysis) {
             if (options && options.notify) {
-              self.onShowSnackbar( {message: 'Analysis  \'' + self.analysis.title + '\'  saved.', timeout: 3000, top: true, right: true });
+              self.onShowSnackbar( {message: '\'' + self.analysis.title + '\'  saved.', timeout: 3000, top: true, right: true });
             }
             self.analysis = analysis;
             resolve();
