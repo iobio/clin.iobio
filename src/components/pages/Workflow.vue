@@ -386,8 +386,8 @@ $badge-inactive-color:  #d8d3d3
 
 <template>
   <v-card light id="workflow-card" :class="{'task-is-checkbox': taskIsCheckbox}" >
-    <div id="workflow-steps" v-if="analysisSteps">
-      <div  v-for="(step, stepIndex) in analysisSteps" :key="step.key"
+    <div id="workflow-steps" v-if="analysisStepsRefreshed">
+      <div  v-for="(step, stepIndex) in analysisStepsRefreshed" :key="step.key"
       :class="{'step-container': true, 'active' : currentStep && step.key == currentStep.key  ? true : false, 'complete': step.complete}">
 
         <div :class="{'step-label': true, 'first': stepIndex == 0}" >
@@ -482,7 +482,8 @@ export default {
       disableNext: false,
       disablePrev: false,
       taskIsCheckbox: true,
-      badges: null
+      badges: null,
+      analysisStepsRefreshed: []
     }
   },
   watch: {
@@ -505,9 +506,23 @@ export default {
         }
         self.$emit("on-task-completed", self.currentStep, self.currentTask);
       }
+    },
+    analysisSteps: function() {
+      this.analysisStepsRefreshed = this.analysisSteps;
     }
   },
   methods: {
+    refresh: function() {
+      let self = this;
+
+      self.$set(self, "analysisStepsRefreshed", [])
+      let theSteps = [];
+      self.analysisSteps.forEach(function(analysisStep) {
+        theSteps.push(analysisStep);
+      })
+      self.$set(self, "analysisStepsRefreshed", theSteps)
+
+    },
     onStepClick: function(step) {
       let self = this;
       self.setStepAndTask(step, step.tasks[0]);
@@ -654,6 +669,7 @@ export default {
   },
   mounted: function() {
     let self = this;
+    self.analysisStepsRefreshed = self.analysisSteps;
     self.currentStep = self.analysisSteps[0];
     self.currentTask = self.currentStep.tasks[0];
     self.currentTaskComplete = self.currentTask.complete;

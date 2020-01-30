@@ -1063,6 +1063,10 @@ export default {
             }
           }
         })
+        if (self.$refs.workflowRef) {
+          self.$refs.workflowRef.refresh();
+        }
+
       })
     },
 
@@ -1142,11 +1146,12 @@ export default {
                 task.badges.push({label: badgeCounts[i] + " " + badgeLabels[i],
                                   class: badgeClasses[i].join(" ")});
               }
-
-
             }
           })
         })
+        if (self.$refs.workflowRef) {
+          self.$refs.workflowRef.refresh();
+        }
       }
     },
 
@@ -1161,6 +1166,9 @@ export default {
           }
         })
       })
+      if (self.$refs.workflowRef) {
+        self.$refs.workflowRef.refresh();
+      }
     },
 
     setCoverageTaskBadge: function(geneCount) {
@@ -1173,6 +1181,9 @@ export default {
             }
           })
         })
+        if (self.$refs.workflowRef) {
+          self.$refs.workflowRef.refresh();
+        }
       }
     },
 
