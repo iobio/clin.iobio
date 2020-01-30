@@ -203,6 +203,25 @@
         },
         methods: {
 
+            updateHover(){
+
+                let svg = d3.select(this.$el)
+                    .select('svg');
+
+                if(this.onHover) {
+
+                    svg.select("#minLine").transition().style("stroke", "white").duration(750);
+                    svg.select("#minText").transition().style("fill", "white").duration(750);
+
+                }
+
+                else{
+                    svg.select("#minLine").transition().style("stroke", "transparent").duration(750);
+                    svg.select("#minText").transition().style("fill", "transparent").duration(750);
+
+                }
+            },
+
             calculateWidthNorm(){
 
                 let x = this.xDomain[1] - this.xDomain[0];
@@ -258,8 +277,8 @@
                 let svg = d3.select(this.$el)
                     .select('svg');
 
-                svg.select("#medianLine").remove();
-                svg.select("#medianText").remove();
+                // svg.select("#medianLine").remove();
+                // svg.select("#medianText").remove();
 
 
                 //todo: unhardcode max coverage
@@ -283,19 +302,6 @@
                     .attr('y', this.yScale(max))
                     .text(this.medianCoverage.toString() + 'X Median');
 
-
-                if(this.onHover) {
-
-                    svg.select("#minLine").transition().style("stroke", "white").duration(750);
-                    svg.select("#minText").transition().style("fill", "white").duration(750);
-
-                }
-
-                else{
-                    svg.select("#minLine").transition().style("stroke", "transparent").duration(750);
-                    svg.select("#minText").transition().style("fill", "transparent").duration(750);
-
-                }
 
             },
 
@@ -466,8 +472,8 @@
                 this.createAxis();
                 this.drawBars();
                 this.addLabels();
-                this.plotMedian();
                 this.updateBrushExtent();
+                this.updateHover();
                 this.stashDomain(this.xScale, this.yScale);
             },
             clearFilters() {
