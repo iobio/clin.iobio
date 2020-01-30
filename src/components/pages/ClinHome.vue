@@ -1037,17 +1037,19 @@ export default {
     setGeneTaskBadges() {
       let self = this;
       let phenotypesCount = 0;
+      let notesCount = 0;
       if(self.analysis.payload.phenotypes!==undefined){
         phenotypesCount = self.analysis.payload.phenotypes[0].length + self.analysis.payload.phenotypes[1].length + self.analysis.payload.phenotypes[2].length;
+        notesCount = self.analysis.payload.phenotypes[3].length
       }
 
       self.analysis.payload.steps.forEach(function(step) {
         step.tasks.forEach(function(task) {
           if (task.key == 'review-phenotypes-genes') {
-            task.badges = [{label: phenotypesCount + " " + (phenotypesCount > 1 ? 'phenotypes' : 'phenotype') }];
-          }
-          else {
-            delete task.badges;
+            task.badges = [
+              {label: phenotypesCount + " " + (phenotypesCount > 1 ? 'phenotypes' : 'phenotype') },
+              {label: notesCount + " " + (notesCount > 1 ? 'notes' : 'note')}
+            ];
           }
         })
         if (self.$refs.workflowRef) {
