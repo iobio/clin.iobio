@@ -26,14 +26,15 @@ header.theme--dark.v-sheet
     #workflow-progress
       display: flex
       padding-bottom: 10px
-      margin-left: 30px
+      margin-left: 50px
 
       .v-progress-linear__background.primary
-        background-color: $workflow-active-color !important
-        border-color: $workflow-active-color !important
+        background-color: $workflow-bright-color !important
+        border-color: $workflow-bright-color !important
+        opacity: 0.8
       .v-progress-linear__bar__determinate.primary
-        background-color: $workflow-active-color !important
-        border-color: $workflow-active-color !important
+        background-color: $workflow-bright-color-color !important
+        border-color: $workflow-bright-color !important
 
       span
         margin-left: 8px
