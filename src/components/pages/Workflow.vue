@@ -7,8 +7,6 @@ $badge-inactive-color:  #d8d3d3
 
 #workflow-card
   color: $workflow-inactive-color
-  // height: 140px
-  // margin-top: 50px
   height: auto
   margin-bottom: 8px
   padding-right: 10px
@@ -16,6 +14,7 @@ $badge-inactive-color:  #d8d3d3
   padding-top: 5px
   padding-bottom: 10px
   text-align: center
+  background-color: #eeeeee
 
 
   #ab-switch
@@ -116,13 +115,14 @@ $badge-inactive-color:  #d8d3d3
       display: inline-block
       position: relative
       font-size: 12px
-      font-weight: 500
+      font-weight: 600
       font-style: italic
       right: -70px
-      top: 6px
-      color: $current-color
+      top: 10px
+      color: $workflow-badge-color
       background-color: transparent
       line-height: 13px
+
 
       &.active
         background-color:  transparent
@@ -132,9 +132,9 @@ $badge-inactive-color:  #d8d3d3
         height: 16px
 
       &.sig
-        color: $sig-color !important
+        color: $workflow-badge-red-color !important
       &.unknown-sig
-        color: $unknown-sig-color !important 
+        color: $workflow-badge-orange-color  !important 
 
 
 
@@ -198,7 +198,7 @@ $badge-inactive-color:  #d8d3d3
               color: $text-color !important
         &.active
           .v-avatar
-            background-color:  white !important
+            background-color:  transparent !important
             border-color: $workflow-active-color  !important
             .material-icons
               color: white !important
@@ -318,7 +318,7 @@ $badge-inactive-color:  #d8d3d3
           display:           inline-block
           margin-top:        3px
           border: solid 2px  $workflow-inactive-color
-          background-color:  white
+          background-color:  transparent
 
           .material-icons
             color: $workflow-inactive-color
@@ -360,8 +360,9 @@ $badge-inactive-color:  #d8d3d3
     &.active
 
       .step-label
-        background-color: #f6f6f6
-        border: solid .5px #d1d1d1
+        color: white
+        background-color: $workflow-progress-color
+        border: solid 1.5px $workflow-active-color
 
       .task
         &.active
@@ -386,8 +387,8 @@ $badge-inactive-color:  #d8d3d3
 
 <template>
   <v-card light id="workflow-card" :class="{'task-is-checkbox': taskIsCheckbox}" >
-    <div id="workflow-steps" v-if="analysisSteps">
-      <div  v-for="(step, stepIndex) in analysisSteps" :key="step.key"
+    <div id="workflow-steps" v-if="analysisStepsRefreshed">
+      <div  v-for="(step, stepIndex) in analysisStepsRefreshed" :key="step.key"
       :class="{'step-container': true, 'active' : currentStep && step.key == currentStep.key  ? true : false, 'complete': step.complete}">
 
         <div :class="{'step-label': true, 'first': stepIndex == 0}" >
@@ -482,7 +483,8 @@ export default {
       disableNext: false,
       disablePrev: false,
       taskIsCheckbox: true,
-      badges: null
+      badges: null,
+      analysisStepsRefreshed: []
     }
   },
   watch: {
@@ -505,9 +507,23 @@ export default {
         }
         self.$emit("on-task-completed", self.currentStep, self.currentTask);
       }
+    },
+    analysisSteps: function() {
+      this.analysisStepsRefreshed = this.analysisSteps;
     }
   },
   methods: {
+    refresh: function() {
+      let self = this;
+
+      self.$set(self, "analysisStepsRefreshed", [])
+      let theSteps = [];
+      self.analysisSteps.forEach(function(analysisStep) {
+        theSteps.push(analysisStep);
+      })
+      self.$set(self, "analysisStepsRefreshed", theSteps)
+
+    },
     onStepClick: function(step) {
       let self = this;
       self.setStepAndTask(step, step.tasks[0]);
@@ -654,6 +670,7 @@ export default {
   },
   mounted: function() {
     let self = this;
+    self.analysisStepsRefreshed = self.analysisSteps;
     self.currentStep = self.analysisSteps[0];
     self.currentTask = self.currentStep.tasks[0];
     self.currentTaskComplete = self.currentTask.complete;

@@ -1,4 +1,4 @@
-<style lang="sass" scoped >
+<style lang="sass"  >
 
 @import ../../assets/sass/variables
 
@@ -8,6 +8,30 @@
   height: -webkit-fill-available
   height: -moz-available
   background-color:  white
+
+  svg
+    #minText
+      font-weight: 600 !important
+    #minLine
+      stroke-dasharray: 3 1 !important
+      stroke-width: 2px !important
+    #medianLine
+      stroke-width: 2px !important
+      stroke: #404040 !important
+      stroke-dasharray: 8 2 !important
+    .g-main
+      rect
+        fill: #3388c2ba !important
+        stroke: #265073
+
+
+
+    .g-main
+      .scores
+        rect
+          fill: #3388c2ba !important
+          stroke: none !important
+
 
   .avatar.big
     border: #d5d5d5 solid thin
@@ -59,6 +83,10 @@
   .card
     min-height: 70px !important
 
+  i.material-icons
+    font-size: 35px !important
+  i.mdi-alert-circle
+    font-size: 35px !important
 
 </style>
 
@@ -132,7 +160,7 @@
                           top color="#B33A3A">mdi-alert-circle</v-icon>
 
 
-              <div v-if="badCoverage" style=" display: inline-flex; width: 120px; line-height: 16px; font-size: 12px; padding-left: 5px;">Median coverage is below expected {{isExomeText}} coverage threshold of {{minCutoff}}X</div>
+              <div v-if="badCoverage" style=" display: inline-flex; width: 120px; line-height: 14px; font-size: 13px; padding-left: 5px;">Median coverage is below expected {{isExomeText}} coverage threshold of {{minCutoff}}X</div>
 
             </div>
 
@@ -246,6 +274,7 @@ export default {
 
     populateReviewCaseBadges(){
       this.reviewCaseBadges = [{label: this.sampleIds.length + " samples (Family)" }];
+
       if(this.badCoverage){
         this.reviewCaseBadges.push({label:  + this.badCoverageCount + " failed QC"})
       }

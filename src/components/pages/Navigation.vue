@@ -26,13 +26,16 @@ header.theme--dark.v-sheet
     #workflow-progress
       display: flex
       padding-bottom: 10px
+      margin-left: 50px
 
       .v-progress-linear__background.primary
-        background-color: $workflow-active-color !important
-        border-color: $workflow-active-color !important
-      .v-progress-linear__bar__determinate.primary
-        background-color: $workflow-active-color !important
-        border-color: $workflow-active-color !important
+        background-color: $workflow-progress-color !important
+        border-color: $workflow-progress-color !important
+        opacity: 0.4
+      .v-progress-linear__determinate.primary
+        background-color: $workflow-progress-color !important
+        border-color: $workflow-progress-color !important
+        opacity: .8 !important
 
       span
         margin-left: 8px
@@ -114,15 +117,11 @@ header.theme--dark.v-sheet
           {{ caseSummary.name }}
         </v-btn>
       </template>
-        <!-- <v-btn v-if="caseSummary && caseSummary.name"  text slot="activator">
-          {{ caseSummary.name }}
-        </v-btn> -->
 
         <v-card>
         </v-card>
       </v-menu>
 
-      <v-spacer></v-spacer>
 
 
       <span id="workflow-progress">
@@ -177,6 +176,14 @@ header.theme--dark.v-sheet
         Report
       </v-btn>
 
+      <save-button
+      v-if="launchedFromMosaic"
+        :showing-save-modal="true"
+        :analysis="analysis"
+        @save-modal:set-visibility="toggleSaveModal"
+      />
+
+
     </v-toolbar>
 
 
@@ -186,16 +193,18 @@ header.theme--dark.v-sheet
 
 <script>
 
-import { bus } from '../../main';
+import { bus }     from '../../main';
+import SaveButton  from '../partials/SaveButton.vue'
 
 export default {
   name: 'navigation',
   components: {
+    SaveButton
   },
   props: {
     caseSummary: null,
-    analysis: null
-
+    analysis: null,
+    launchedFromMosaic: null
   },
   data () {
     let self = this;
@@ -218,7 +227,12 @@ export default {
     },
     createAnalysisPDF(){
       bus.$emit("getAnalysisObject");
-    }
+    },
+
+    toggleSaveModal(bool) {
+      this.$emit("show-save-analysis", bool)
+    },
+
   },
   created: function() {
   },

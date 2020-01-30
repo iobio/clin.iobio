@@ -5,6 +5,7 @@
     class="analysis-save-button"
     @click.prevent="toggleSaveModal"
   >
+    <v-icon>{{ iconName }}</v-icon>
     <span>{{ buttonLabel }}</span>
   </a>
 </template>
@@ -23,13 +24,17 @@ export default {
   computed: {
     buttonLabel() {
       if (this.analysis && this.analysis.id) {
-        return "Edit analysis info";
+        return "Analysis";
       } else{ 
-        return "Save new analysis";
+        return "Add analysis";
       }
     },
     iconName() {
-      return this.showingSaveModal ? 'keyboard_arrow_down' : 'launch';
+      if (this.analysis && this.analysis.id) {
+        return "edit";
+      } else{ 
+        return "add";
+      }
     },
   },
   methods: {
@@ -42,14 +47,12 @@ export default {
 
 <style lang="scss" scoped>
 .analysis-save-button {
-  position: fixed;
-  top: 60px;
-  right: 10px;
-  width: 170px;
-  height: 35px;
-  border-radius: 15px;
-  border-radius: 35px;
-  background-image: linear-gradient(to right top, #0f56bb, #007dd4, #009cce, #00b7b2, #2bcd8f);
+  margin-left: 50px;
+  height: 30px;
+  margin-bottom: 4px;  
+  width: 140px;
+  border-radius: 5px;
+  background-color: #007dd4;
   box-shadow: 0 4px 5px 0 rgba(0, 0, 0, .14),
               0 1px 10px 0 rgba(0, 0, 0, .12),
               0 2px 4px -1px rgba(0, 0, 0, .2);
@@ -62,6 +65,7 @@ export default {
   span {
     color: white;
     font-weight: 500;
+    margin-left: 2px;
   }
 
   &:hover {
@@ -72,6 +76,10 @@ export default {
     box-shadow: 0 2px 2px 0 rgba(0, 0, 0, .14),
                 0 3px 1px -2px rgba(0, 0, 0, .2),
                 0 1px 5px 0 rgba(0, 0, 0, .12);
+  }
+
+  i.material-icons {
+    font-size: 18px;
   }
 
   &__icon {

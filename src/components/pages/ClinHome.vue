@@ -8,7 +8,7 @@
 
 
 .v-snack--right
-  margin-right: 120px !important
+  margin-right: 350px !important
 
 .v-snack
   top: 0px !important
@@ -22,6 +22,7 @@
       padding-top: 10px !important
       padding-bottom: 2px !important
       font-size: 12px !important
+      font-weight: 500 !important
 
 .v-btn
   letter-spacing: initial !important
@@ -119,7 +120,9 @@ $horizontal-dashboard-height: 140px
 <div id="application-content">
   <navigation v-if="!showSplash && isAuthenticated  && workflow && analysis"
    :caseSummary="caseSummary"
-   :analysis="analysis">
+   :analysis="analysis"
+   :launchedFromMosaic="launchedFromMosaic"
+   @show-save-analysis="toggleSaveModal(true)">
   </navigation>
 
   <workflow v-if="iframesMounted && !showSplash && isAuthenticated && workflow && analysis"
@@ -248,12 +251,6 @@ $horizontal-dashboard-height: 140px
 
 
   </div>
-  <save-button
-  v-if="launchedFromMosaic"
-    :showing-save-modal="showSaveModal"
-    :analysis="analysis"
-    @save-modal:set-visibility="toggleSaveModal"
-  />
   <save-analysis-popup
     :showIt="showSaveModal"
     :analysis="analysis"
@@ -277,7 +274,6 @@ import MosaicSession from  '../../models/MosaicSession.js'
 import GenomeBuildHelper from '../../models/GenomeBuildHelper.js'
 
 
-import SaveButton  from '../partials/SaveButton.vue'
 import SaveAnalysisPopup  from '../partials/SaveAnalysisPopup.vue'
 
 import workflowData  from '../../data/workflows.json'
@@ -300,7 +296,6 @@ export default {
     ReviewCase,
     Findings,
     AppIcon,
-    SaveButton,
     SaveAnalysisPopup,
     ...NewComponents
   },
@@ -1039,30 +1034,57 @@ export default {
       return (this.apps.genefull.url.indexOf(event.origin) >= 0 || this.apps.genepanel.url.indexOf(event.origin) >= 0);
     },
 
-    setGeneTaskBadges: function() {
+    setGeneTaskBadges() {
       let self = this;
+      let phenotypesCount = 0;
+      let notesCount = 0;
+      let allPhenotypes =[];
+      if(self.analysis.payload.phenotypes!==undefined){
+        let gtr_phenotypes = self.analysis.payload.phenotypes[0];
+        let phenolyzer_phenotypes = self.analysis.payload.phenotypes[1];
+        let hpo_phenotypes = self.analysis.payload.phenotypes[2];
+        notesCount = self.analysis.payload.phenotypes[3].length;
+
+        if(gtr_phenotypes.length){
+          gtr_phenotypes.map(term => {
+            let cleaned_str = term.DiseaseName.replace(/-/g, " ").replace(/\s\s+/g, ' ').toLowerCase().trim();
+            allPhenotypes.push(cleaned_str);
+          })
+        }
+
+        if(phenolyzer_phenotypes.length){
+          phenolyzer_phenotypes.map(term => {
+            let cleaned_str = term.value.replace("-", " ").replace(/\s\s+/g, ' ').toLowerCase().trim();
+            allPhenotypes.push(cleaned_str)
+          })
+        }
+
+        if(hpo_phenotypes.length){
+          hpo_phenotypes.map(term => {
+            if(term.phenotype!==undefined){
+              allPhenotypes.push(term.phenotype.toLowerCase().trim())
+            }
+          })
+        }
+      }
+
+      let uniqueSet = new Set(allPhenotypes);
+      let uniqueArray = [...uniqueSet];
+      phenotypesCount = uniqueArray.length;
+
       self.analysis.payload.steps.forEach(function(step) {
         step.tasks.forEach(function(task) {
-          if (task.key == 'gtr-genes' && self.analysis.payload.genesGtr) {
-            if  (self.analysis.payload.genesGtr.length > 0) {
-              task.badges = [self.analysis.payload.genesGtr.length];
-            } else {
-              delete task.badges;
-            }
-          } else if (task.key == 'phenotype-genes' && self.analysis.payload.genesPhenolyzer) {
-            if (self.analysis.payload.genesPhenolyzer.length > 0) {
-              task.badges = [self.analysis.payload.genesPhenolyzer.length];
-            } else {
-              delete task.badges;
-            }
-          } else if (task.key == 'summary-genes' && self.analysis.genes ) {
-            if (self.analysis.payload.genes.length > 0) {
-              task.badges = [self.analysis.payload.genes.length];
-            } else {
-              delete task.badges;
-            }
+          if (task.key == 'review-phenotypes-genes') {
+            task.badges = [
+              {label: phenotypesCount + " " + (phenotypesCount > 1 ? 'phenotypes' : 'phenotype') },
+              {label: notesCount + " " + (notesCount > 1 ? 'notes' : 'note')}
+            ];
           }
         })
+        if (self.$refs.workflowRef) {
+          self.$refs.workflowRef.refresh();
+        }
+
       })
     },
 
@@ -1142,11 +1164,12 @@ export default {
                 task.badges.push({label: badgeCounts[i] + " " + badgeLabels[i],
                                   class: badgeClasses[i].join(" ")});
               }
-
-
             }
           })
         })
+        if (self.$refs.workflowRef) {
+          self.$refs.workflowRef.refresh();
+        }
       }
     },
 
@@ -1161,6 +1184,9 @@ export default {
           }
         })
       })
+      if (self.$refs.workflowRef) {
+        self.$refs.workflowRef.refresh();
+      }
     },
 
     setCoverageTaskBadge: function(geneCount) {
@@ -1173,6 +1199,9 @@ export default {
             }
           })
         })
+        if (self.$refs.workflowRef) {
+          self.$refs.workflowRef.refresh();
+        }
       }
     },
 
@@ -1201,7 +1230,7 @@ export default {
           promiseSave
           .then(function(analysis) {
             if (options && options.notify) {
-              self.onShowSnackbar( {message: 'Analysis  \'' + self.analysis.title + '\'  saved.', timeout: 3000, top: true, right: true });
+              self.onShowSnackbar( {message: '\'' + self.analysis.title + '\'  saved.', timeout: 3000, top: true, right: true });
             }
             self.analysis = analysis;
             resolve();
@@ -1418,7 +1447,6 @@ export default {
 
 
       self.analysis.payload.phenotypes         = messageObject.phenotypes;
-      self.setGeneTaskBadges();
 
 
       self.analysis.payload.datetime_last_modified = self.getCurrentDateTime();
@@ -1429,6 +1457,7 @@ export default {
     promiseUpdatePhenotypes: function(phenotypes) {
       let self = this;
       self.analysis.payload.phenotypes = phenotypes;
+      self.setGeneTaskBadges();
       self.analysis.payload.datetime_last_modified = self.getCurrentDateTime();
       return self.promiseAutosaveAnalysis();
     },
