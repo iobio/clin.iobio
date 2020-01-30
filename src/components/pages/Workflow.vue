@@ -7,8 +7,6 @@ $badge-inactive-color:  #d8d3d3
 
 #workflow-card
   color: $workflow-inactive-color
-  // height: 140px
-  // margin-top: 50px
   height: auto
   margin-bottom: 8px
   padding-right: 10px
