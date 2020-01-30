@@ -360,7 +360,7 @@ $badge-inactive-color:  #d8d3d3
 
       .step-label
         background-color: white
-        border: solid .5px #d1d1d1
+        border: solid 1.5px $workflow-progress-color
 
       .task
         &.active
