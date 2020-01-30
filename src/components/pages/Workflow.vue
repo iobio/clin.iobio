@@ -197,7 +197,7 @@ $badge-inactive-color:  #d8d3d3
               color: $text-color !important
         &.active
           .v-avatar
-            background-color:  white !important
+            background-color:  transparent !important
             border-color: $workflow-active-color  !important
             .material-icons
               color: white !important
