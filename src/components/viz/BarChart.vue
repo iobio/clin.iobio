@@ -1,7 +1,7 @@
 /* Copyright 2017-2020, Frameshift Labs, Inc., All rights reserved. */
 <template>
     <div :style="`height: ${height}px`">
-        <svg v-if="showChart">
+        <svg v-if="showChart" class="coverage-bar-chart">
             <g class="g-main">
                 <g class="axis axis__x"/>
                 <g class="axis axis__y"/>
@@ -203,6 +203,25 @@
         },
         methods: {
 
+            updateHover(){
+
+                let svg = d3.select(this.$el)
+                    .select('svg');
+
+                if(this.onHover) {
+
+                    svg.select("#minLine").transition().style("stroke", "white").duration(750);
+                    svg.select("#minText").transition().style("fill", "white").duration(750);
+
+                }
+
+                else{
+                    svg.select("#minLine").transition().style("stroke", "transparent").duration(750);
+                    svg.select("#minText").transition().style("fill", "transparent").duration(750);
+
+                }
+            },
+
             calculateWidthNorm(){
 
                 let x = this.xDomain[1] - this.xDomain[0];
@@ -258,8 +277,8 @@
                 let svg = d3.select(this.$el)
                     .select('svg');
 
-                svg.select("#medianLine").remove();
-                svg.select("#medianText").remove();
+                // svg.select("#medianLine").remove();
+                // svg.select("#medianText").remove();
 
 
                 //todo: unhardcode max coverage
@@ -283,19 +302,6 @@
                     .attr('y', this.yScale(max))
                     .text(this.medianCoverage.toString() + 'X Median');
 
-
-                if(this.onHover) {
-
-                    svg.select("#minLine").transition().style("stroke", "white").duration(750);
-                    svg.select("#minText").transition().style("fill", "white").duration(750);
-
-                }
-
-                else{
-                    svg.select("#minLine").transition().style("stroke", "transparent").duration(750);
-                    svg.select("#minText").transition().style("fill", "transparent").duration(750);
-
-                }
 
             },
 
@@ -373,9 +379,8 @@
                 const dataJoin = this.gMain.select('.scores').selectAll('rect').data(this.typedData, (d) => d);
                 dataJoin.enter()
                     .append('rect')
-                    .attr('class', 'bar')
                     .merge(dataJoin)
-                    .attr('fill', this.color)
+                    .attr("fill", this.color)
                     .attr('x', (d) => this.xScale(d[0]) + 1)
                     .attr('y', (d) => this.yScale(d[1]))
                     .attr('width', () => Math.abs(((this.xRange[1] - this.xRange[0]) / (this.typedData.length + this.xDiff))) - this.barPadding)
@@ -467,8 +472,8 @@
                 this.createAxis();
                 this.drawBars();
                 this.addLabels();
-                this.plotMedian();
                 this.updateBrushExtent();
+                this.updateHover();
                 this.stashDomain(this.xScale, this.yScale);
             },
             clearFilters() {
@@ -481,16 +486,17 @@
 <style scoped>
     .axis-label {
         font-size: 11px;
-        fill: black
+        fill: black;
     }
 
     .axis >>> text {
         font-size: 9px;
-        fill: black
+        fill: black;
     }
 
     .extent {
         font-size: 11px;
-        fill: black
+        fill: black;
     }
+
 </style>

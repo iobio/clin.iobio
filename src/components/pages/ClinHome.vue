@@ -646,7 +646,7 @@ export default {
 
           self.caseSummary = {}
           self.caseSummary.name = "Demo Platinum"
-          self.caseSummary.description = "Case summary..."
+          self.caseSummary.description = "The platinum data set (NA12878) is high quality exome sequencing data from three individuals. It serves as a truthset and benchmark for genomic tools. The original manuscript was published in 2017 doi: 10.1101/gr.210500.116";
 
 
 

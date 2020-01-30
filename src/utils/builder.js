@@ -151,20 +151,7 @@ export default class TreeBuilder {
                 return `${2 * d3.min([d.cWidth, d.cHeight])}px`;
             })
             .attr('height', (d) => `${2 * d3.min([d.cWidth, d.cHeight])}px`)
-            .attr('id', (d) => d.data.id)
-            .style('cursor', 'pointer')
-            .on('mouseover', (d) => {
-                opts.callbacks.nodeHover(d.data.name, d.data.extra);
-            })
-            .on('mouseleave', (d) => {
-                opts.callbacks.nodeLeave(d.data.name, d.data.extra);
-            })
-            .on('click', (d) => {
-                if (d.data.hidden) {
-                    return;
-                }
-                opts.callbacks.nodeClick(d.data.name, d.data.extra);
-            });
+            .attr('id', (d) => d.data.id);
 
         // we rotate the square by 90 degrees
         // to keep the height and width the same we need to scale by
@@ -237,20 +224,7 @@ export default class TreeBuilder {
                 return `${d.y}px`;
             })
             .attr('r', (d) => `${d3.min([d.cWidth, d.cHeight])}px`)
-            .attr('id', (d) => d.data.id)
-            .style('cursor', 'pointer')
-            .on('mouseover', (d) => {
-                opts.callbacks.nodeHover(d.data.name, d.data.extra);
-            })
-            .on('mouseleave', (d) => {
-                opts.callbacks.nodeLeave(d.data.name, d.data.extra);
-            })
-            .on('click', (d) => {
-                if (d.data.hidden) {
-                    return;
-                }
-                opts.callbacks.nodeClick(d.data.name, d.data.extra, d.data.id);
-            });
+            .attr('id', (d) => d.data.id);
 
         // now get bounding box + color it in
         const mySvg = this.svg;
