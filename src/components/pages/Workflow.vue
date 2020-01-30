@@ -14,6 +14,7 @@ $badge-inactive-color:  #d8d3d3
   padding-top: 5px
   padding-bottom: 10px
   text-align: center
+  background-color: #eeeeee
 
 
   #ab-switch
@@ -117,7 +118,7 @@ $badge-inactive-color:  #d8d3d3
       font-weight: 500
       font-style: italic
       right: -70px
-      top: 6px
+      top: 10px
       color: $current-color
       background-color: transparent
       line-height: 13px
@@ -358,7 +359,7 @@ $badge-inactive-color:  #d8d3d3
     &.active
 
       .step-label
-        background-color: #f6f6f6
+        background-color: white
         border: solid .5px #d1d1d1
 
       .task
