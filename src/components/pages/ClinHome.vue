@@ -8,7 +8,7 @@
 
 
 .v-snack--right
-  margin-right: 120px !important
+  margin-right: 350px !important
 
 .v-snack
   top: 0px !important
@@ -22,6 +22,7 @@
       padding-top: 10px !important
       padding-bottom: 2px !important
       font-size: 12px !important
+      font-weight: 500 !important
 
 .v-btn
   letter-spacing: initial !important
@@ -119,7 +120,9 @@ $horizontal-dashboard-height: 140px
 <div id="application-content">
   <navigation v-if="!showSplash && isAuthenticated  && workflow && analysis"
    :caseSummary="caseSummary"
-   :analysis="analysis">
+   :analysis="analysis"
+   :launchedFromMosaic="launchedFromMosaic"
+   @show-save-analysis="toggleSaveModal(true)">
   </navigation>
 
   <workflow v-if="iframesMounted && !showSplash && isAuthenticated && workflow && analysis"
@@ -248,12 +251,6 @@ $horizontal-dashboard-height: 140px
 
 
   </div>
-  <save-button
-  v-if="launchedFromMosaic"
-    :showing-save-modal="showSaveModal"
-    :analysis="analysis"
-    @save-modal:set-visibility="toggleSaveModal"
-  />
   <save-analysis-popup
     :showIt="showSaveModal"
     :analysis="analysis"
@@ -277,7 +274,6 @@ import MosaicSession from  '../../models/MosaicSession.js'
 import GenomeBuildHelper from '../../models/GenomeBuildHelper.js'
 
 
-import SaveButton  from '../partials/SaveButton.vue'
 import SaveAnalysisPopup  from '../partials/SaveAnalysisPopup.vue'
 
 import workflowData  from '../../data/workflows.json'
@@ -300,7 +296,6 @@ export default {
     ReviewCase,
     Findings,
     AppIcon,
-    SaveButton,
     SaveAnalysisPopup,
     ...NewComponents
   },

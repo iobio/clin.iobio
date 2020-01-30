@@ -177,6 +177,14 @@ header.theme--dark.v-sheet
         Report
       </v-btn>
 
+      <save-button
+      v-if="launchedFromMosaic"
+        :showing-save-modal="true"
+        :analysis="analysis"
+        @save-modal:set-visibility="toggleSaveModal"
+      />
+
+
     </v-toolbar>
 
 
@@ -186,16 +194,18 @@ header.theme--dark.v-sheet
 
 <script>
 
-import { bus } from '../../main';
+import { bus }     from '../../main';
+import SaveButton  from '../partials/SaveButton.vue'
 
 export default {
   name: 'navigation',
   components: {
+    SaveButton
   },
   props: {
     caseSummary: null,
-    analysis: null
-
+    analysis: null,
+    launchedFromMosaic: null
   },
   data () {
     let self = this;
@@ -218,7 +228,12 @@ export default {
     },
     createAnalysisPDF(){
       bus.$emit("getAnalysisObject");
-    }
+    },
+
+    toggleSaveModal(bool) {
+      this.$emit("show-save-analysis", bool)
+    },
+
   },
   created: function() {
   },

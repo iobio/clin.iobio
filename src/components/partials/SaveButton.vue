@@ -42,13 +42,11 @@ export default {
 
 <style lang="scss" scoped>
 .analysis-save-button {
-  position: fixed;
-  top: 60px;
-  right: 10px;
+  margin-left: 50px;
+  height: 30px;
+  margin-bottom: 4px;  
   width: 170px;
-  height: 35px;
-  border-radius: 15px;
-  border-radius: 35px;
+  border-radius: 5px;
   background-image: linear-gradient(to right top, #0f56bb, #007dd4, #009cce, #00b7b2, #2bcd8f);
   box-shadow: 0 4px 5px 0 rgba(0, 0, 0, .14),
               0 1px 10px 0 rgba(0, 0, 0, .12),
