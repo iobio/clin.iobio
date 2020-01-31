@@ -33,16 +33,33 @@
     font-size: 14px
     padding-top: 5px
 
+  .case-summary
+    width: 80%
+
   .clinical-note
     display: flex
     justify-content: space-between
 
-    .note
-      width: 50%
-      margin-right: 30px
-    .phenotypes
-      width: 50%
+    .note, .note-header
+      min-width: 40%
 
+    .note
+      padding: 10px
+      border: thin solid #e4e3e3
+
+    .arrow
+      max-width: 80px
+      min-width: 80px
+      align-self: center
+      text-align: center
+
+    .phenotypes, .phenotypes-header
+      min-width: 40%
+     
+
+    .phenotypes
+      padding: 10px
+      border: thin solid #e4e3e3
 
 
 </style>
@@ -51,7 +68,7 @@
 
   <div id="findings-panel" >
 
-      <div style="width:80%;margin-bottom: 20px">
+      <div style="margin-bottom: 20px">
         <span class="sub-heading">Case Summary </span> 
         <div class="case-summary">
         {{ caseSummary.description }}
@@ -60,14 +77,14 @@
       </div>
 
       <div v-if="clinicalNotes && clinicalNotes.length > 0" style="width:80%;margin-bottom:20px">
-        <hr>
+        <hr style="border-top:transparent">
         <span class="sub-heading">Phenotypes</span> 
         <div class="clinical-note" style="margin-bottom:5px">
 
-          <div class="note" style="font-weight:500">
-            Clinical note
+          <div class="note-header" style="font-weight:500">
+            Input
           </div>
-          <div class="phenotypes" style="font-weight:500">
+          <div class="phenotypes-header" style="font-weight:500">
             Phenotypes terms
           </div>
         </div>
@@ -76,6 +93,9 @@
           <div class="note">
             {{ clinicalNote.note }}
           </div>
+          <div class="arrow">
+            <v-icon>arrow_forward</v-icon>
+          </div>
           <div class="phenotypes">
             {{ clinicalNote.phenotypes.join(", ") }}
           </div>
@@ -83,7 +103,7 @@
 
       </div>
 
-      <hr>
+      <hr style="border-top:transparent">
 
       <div class="sub-heading" style="margin-top:20px;margin-bottom:10px">Reviewed Variants</div> 
 
@@ -93,12 +113,6 @@
         <div v-if="interpretation.organizedVariants && interpretation.organizedVariants.length > 0"
         class="interpretation-list"
         >
-
-          <variant-interpretation-badge
-           :interpretation="interpretation.key"
-           :interpretationMap="interpretationMap">
-          </variant-interpretation-badge>
-
         </div>
 
 
@@ -118,6 +132,7 @@
                  :selectedTranscript="variant.variantInspect.transcriptObject"
                  :info="variant.variantInspect.infoObject"
                  :genePhenotypeHits="variant.variantInspect.genePhenotypeHits"
+                 :interpretationMap="interpretationMap"
                 >
 
                 </variant-inspect-card>
@@ -141,14 +156,12 @@
 
 import AppIcon       from '../partials/AppIcon.vue';
 import VariantInspectCard   from '../viz/findings/VariantInspectCard.vue';
-import VariantInterpretationBadge from '../partials/findings/VariantInterpretationBadge.vue';
 
 export default {
   name: 'findings',
   components: {
     AppIcon,
-    VariantInspectCard,
-    VariantInterpretationBadge
+    VariantInspectCard
   },
   props: {
     analysis: null,

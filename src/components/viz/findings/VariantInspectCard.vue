@@ -2,8 +2,16 @@
 
   <div v-show="selectedVariant" id="variant-inspect" class="app-card full-width">
 
+
+
     <div v-if="selectedGene" style="display:flex;align-items:flex-start;justify-content:flex-start;margin-bottom:10px">
-      <div  id="variant-heading" v-if="selectedVariant" class="text-xs-left">
+      
+      <variant-interpretation-badge
+         :interpretation="selectedVariant.interpretation"
+         :interpretationMap="interpretationMap">
+      </variant-interpretation-badge>
+
+      <div  id="variant-heading" v-if="selectedVariant" style="margin-left:20px" class="text-xs-left">
         <span class="pr-1" v-if="selectedVariantRelationship != 'proband'">
           <span class="rel-header">{{ selectedVariantRelationship | showRelationship }}</span>
         </span>
@@ -297,6 +305,7 @@ import VariantAliasesMenu       from "../../partials/findings/VariantAliasesMenu
 import InfoPopup                from "../../partials/findings/InfoPopup.vue"
 import ToggleButton             from '../../partials/findings/ToggleButton.vue'
 import VariantNotesMenu         from '../../partials/findings/VariantNotesMenu.vue'
+import VariantInterpretationBadge from '../../partials/findings/VariantInterpretationBadge.vue'
 import GeneViz                  from "../../viz/findings/GeneViz.vue"
 import PedigreeGenotypeViz      from "../../viz/findings/PedigreeGenotypeViz.vue"
 import ConservationScoresViz    from "../../viz/findings/ConservationScoresViz.vue"
@@ -323,7 +332,8 @@ export default {
     PedigreeGenotypeViz,
     ToggleButton,
     ConservationScoresViz,
-    MultialignSeqViz
+    MultialignSeqViz,
+    VariantInterpretationBadge
   },
   props: {
     selectedVariant: null,
@@ -332,7 +342,8 @@ export default {
     selectedGene: null,
     selectedTranscript: null,
     info: null,
-    genePhenotypeHits: null
+    genePhenotypeHits: null,
+    interpretationMap: null
   },
   data() {
     return {
@@ -1031,12 +1042,11 @@ export default {
 
 
 #variant-inspect
-  padding-left: 10px
+  padding-left: 0px
   padding-top: 10px
   padding-right: 10px
   padding-bottom: 10px
   margin-bottom: 7px
-  border-bottom: solid .5px rgba(0,0,0,.20)
 
   .multialign-loader
     font-size: 12px
