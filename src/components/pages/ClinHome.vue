@@ -33,7 +33,7 @@ $horizontal-dashboard-height: 140px
 .application--wrap, #application-content
   background-color: $light-grey-background
 
-.v-content 
+.v-content
   background-color: $light-grey-background
 
 
@@ -192,6 +192,7 @@ $horizontal-dashboard-height: 140px
             @HpoGeneList="HpoGeneList($event)"
             :AddedGenes="AddedGenes"
             @vennData="vennData($event)"
+            :demoTextNote="analysis.payload.demoTextNote"
             @VennDiagramData="VennDiagramData($event)">
           </PhenotypeExtractor>
         </keep-alive>
@@ -1431,6 +1432,7 @@ export default {
       analysis.payload.genesPhenolyzer = [];
       analysis.payload.hpoFullList = [];
       analysis.payload.phenolyzerFullList = [];
+      analysis.payload.demoTextNote = ""
     },
 
 
