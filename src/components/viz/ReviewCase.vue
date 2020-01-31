@@ -569,36 +569,39 @@ export default {
 }
 </script>
 
-<style scoped>
-  .capitalize {
-    text-transform: capitalize;
-  }
+<style lang="sass" scoped>
 
-  .columnHeader{
-    font-size: 16px;
-    font-weight: 500;
-    font-family: Poppins,sans-serif;
-  }
+  @import ../../assets/sass/variables
 
-  .valign{
-    vertical-align: top;
-  }
+  .capitalize
+    text-transform: capitalize
 
-  .heading{
-    font-size: 16px;
-    font-weight: 500;
-    font-family: Poppins,sans-serif;
-    color: #6A6A6A;
 
-  }
+  .columnHeader
+    font-size: 16px
+    font-weight: 500
+    font-family: $iobio-font
 
-  .reviewCase{
-    color: #6A6A6A;
-    line-height: 16px;
-    font-size: 15px;
-    font-weight: normal;
-    font-family: 'Poppins', sans-serif
-  }
+
+  .valign
+    vertical-align: top
+
+
+  .heading
+    font-size: 16px
+    font-weight: 500
+    font-family: $iobio-font
+    color: $text-color
+
+
+
+  .reviewCase
+    color: $text-color
+    line-height: 16px
+    font-size: 15px
+    font-weight: normal
+    font-family: $iobio-font
+
 
 
 </style>
