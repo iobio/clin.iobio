@@ -274,7 +274,16 @@ export default {
     },
 
     populateReviewCaseBadges(){
-      this.reviewCaseBadges = [{label: this.sampleIds.length + " samples (Family)" }];
+
+      let famName = "Family";
+
+      if(this.sampleIds.length === 3){
+        famName = "trio"
+      }
+      else if(this.sampleIds.length === 4){
+        famName = "quad"
+      }
+      this.reviewCaseBadges = [{label: this.sampleIds.length + " samples (" + famName + ")" }];
 
       if(this.badCoverage){
         this.reviewCaseBadges.push({label:  + this.badCoverageCount + " failed QC"})
