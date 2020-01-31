@@ -277,11 +277,22 @@ export default {
 
       let famName = "Family";
 
+      if(this.sampleIds.length === 1){
+        famName = "individual"
+      }
+
+      if(this.sampleIds.length === 2){
+        famName = "duo"
+      }
+      else if(this.sample)
       if(this.sampleIds.length === 3){
         famName = "trio"
       }
       else if(this.sampleIds.length === 4){
         famName = "quad"
+      }
+      else if(this.sampleIds.length > 4){
+        famName = "family"
       }
       this.reviewCaseBadges = [{label: this.sampleIds.length + " samples (" + famName + ")" }];
 
@@ -579,7 +590,6 @@ export default {
 }
 </script>
 
-<<<<<<< HEAD
 <style lang="sass" scoped>
 
   @import ../../assets/sass/variables
