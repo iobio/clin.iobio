@@ -16,7 +16,7 @@
 
 
   .findings-section
-    margin-bottom: 40px
+    margin-bottom: 0px
 
     .interpretation-list
       margin-bottom: 10px
@@ -41,20 +41,22 @@
     justify-content: space-between
 
     .note, .note-header
-      min-width: 40%
+      min-width:  60%
+      max-width: 60%
 
     .note
       padding: 10px
       border: thin solid #e4e3e3
 
     .arrow
-      max-width: 80px
-      min-width: 80px
+      max-width: 50px
+      min-width: 50px
       align-self: center
       text-align: center
 
     .phenotypes, .phenotypes-header
       min-width: 40%
+      max-width: 40%
      
 
     .phenotypes
@@ -76,13 +78,15 @@
 
       </div>
 
-      <div v-if="clinicalNotes && clinicalNotes.length > 0" style="width:80%;margin-bottom:20px">
+      <div v-if="clinicalNotes && clinicalNotes.length > 0" style="width:80%;margin-top:40px;margin-bottom:20px">
         <hr style="border-top:transparent">
         <span class="sub-heading">Phenotypes</span> 
         <div class="clinical-note" style="margin-bottom:5px">
 
           <div class="note-header" style="font-weight:500">
             Input
+          </div>
+          <div class="arrow">
           </div>
           <div class="phenotypes-header" style="font-weight:500">
             Phenotypes terms
@@ -105,7 +109,7 @@
 
       <hr style="border-top:transparent">
 
-      <div class="sub-heading" style="margin-top:20px;margin-bottom:0px">Reviewed Variants</div> 
+      <div class="sub-heading" style="margin-top:40px;margin-bottom:0px">Reviewed Variants</div> 
 
       <div class="findings-section" v-for="interpretation in variantsByInterpretation" :key="interpretation.key" >
 

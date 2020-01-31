@@ -14,7 +14,7 @@ $badge-inactive-color:  #d8d3d3
   padding-top: 5px
   padding-bottom: 10px
   text-align: center
-  background-color: #eeeeee
+  background-color: #f1efe9
 
 
   #ab-switch
@@ -255,7 +255,7 @@ $badge-inactive-color:  #d8d3d3
 
 
     .step-label
-      margin-bottom: 0px
+      margin-bottom: 5px
       color:  $text-color
       text-transform: uppercase
       font-weight: 600
@@ -263,6 +263,7 @@ $badge-inactive-color:  #d8d3d3
       font-size: 15px
       text-align: center
       margin-left: 100px
+
 
 
       &.first
@@ -361,8 +362,9 @@ $badge-inactive-color:  #d8d3d3
 
       .step-label
         color: white
-        background-color: $workflow-progress-color
-        border: solid 1.5px $workflow-active-color
+        background-color: $workflow-active-color
+        box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.65)
+        -webkit-box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.65)
 
       .task
         &.active
