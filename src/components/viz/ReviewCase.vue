@@ -110,7 +110,7 @@
             <!--</div>-->
 
               <div style="width:80%">
-                <span class="heading">Case Summary </span> 
+                <span class="heading">Case Summary </span>
                 <div class="reviewCase">
                 {{ caseSummary.description }}
                 </div>
@@ -570,36 +570,40 @@ export default {
 }
 </script>
 
-<style scoped>
-  .capitalize {
-    text-transform: capitalize;
-  }
+<<<<<<< HEAD
+<style lang="sass" scoped>
 
-  .columnHeader{
-    font-size: 16px;
-    font-weight: 500;
-    font-family: Poppins,sans-serif;
-  }
+  @import ../../assets/sass/variables
 
-  .valign{
-    vertical-align: top;
-  }
+  .capitalize
+    text-transform: capitalize
 
-  .heading{
-    font-size: 16px;
-    font-weight: 500;
-    font-family: Poppins,sans-serif;
-    color: #6A6A6A;
-  }
 
-  .reviewCase{
-    color: #6A6A6A;
-    line-height: 16px;
-    font-size: 15px;
-    padding-top: 5px;
-    font-weight: normal;
-    font-family: 'Poppins', sans-serif
-  }
+  .columnHeader
+    font-size: 16px
+    font-weight: 500
+    font-family: $iobio-font
+
+
+  .valign
+    vertical-align: top
+
+
+  .heading
+    font-size: 16px
+    font-weight: 500
+    font-family: $iobio-font
+    color: $text-color
+
+
+
+  .reviewCase
+    color: $text-color
+    line-height: 16px
+    font-size: 15px
+    font-weight: normal
+    font-family: $iobio-font
+
 
 
 </style>
