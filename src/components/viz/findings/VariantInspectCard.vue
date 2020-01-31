@@ -1042,11 +1042,12 @@ export default {
 
 
 #variant-inspect
-  padding-left: 0px
+  padding-left: 10px
   padding-top: 10px
   padding-right: 10px
   padding-bottom: 10px
-  margin-bottom: 7px
+  margin-bottom: 20px
+  border: thin solid #e4e3e3
 
   .multialign-loader
     font-size: 12px
