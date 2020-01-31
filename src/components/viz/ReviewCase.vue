@@ -3,7 +3,7 @@
 @import ../../assets/sass/variables
 
 #review-case-panel
-  padding: 5px 20px 5px 30px
+  padding: 10px 20px 5px 30px
   /*overflow-y: auto*/
   height: -webkit-fill-available
   height: -moz-available
@@ -110,9 +110,10 @@
             <!--</div>-->
 
               <div style="width:80%">
-                <span class="heading">Case Summary </span> <div class="reviewCase">
+                <span class="heading">Case Summary </span>
+                <div class="reviewCase">
                 {{ caseSummary.description }}
-              </div>
+                </div>
 
                 <!--<br>-->
                 <!--<div class="heading">-->
@@ -569,6 +570,7 @@ export default {
 }
 </script>
 
+<<<<<<< HEAD
 <style lang="sass" scoped>
 
   @import ../../assets/sass/variables
