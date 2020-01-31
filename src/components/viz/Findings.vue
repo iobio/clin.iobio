@@ -42,15 +42,15 @@
 
     .note, .note-header
       min-width:  60%
-      max-weight: 60%
+      max-width: 60%
 
     .note
       padding: 10px
       border: thin solid #e4e3e3
 
     .arrow
-      max-width: 80px
-      min-width: 80px
+      max-width: 50px
+      min-width: 50px
       align-self: center
       text-align: center
 
@@ -85,6 +85,8 @@
 
           <div class="note-header" style="font-weight:500">
             Input
+          </div>
+          <div class="arrow">
           </div>
           <div class="phenotypes-header" style="font-weight:500">
             Phenotypes terms
