@@ -75,6 +75,7 @@ i.material-icons.interpretation
 .interpretation-label
   color: white  !important
   padding-left: 0px
+  font-weight: 500
 
 #badge-interpretation
   font-family: $app-font
@@ -82,32 +83,37 @@ i.material-icons.interpretation
   padding-right: 3px
   font-size: 13px
   color: white
-  width: 175px
+  width: 185px
   margin-bottom: 3px
-  padding-top: 4px
-  padding-bottom: 4px
+  padding-top: 2px
+  padding-bottom: 2px
   border-radius: 4px
+  background-color: $workflow-active-color
 
-
-  -webkit-box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.02), 0px 2px 2px 0px rgba(0, 0, 0, 0.07), 0px 1px 5px 0px rgba(0, 0, 0, 0.14)
-  box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.02), 0px 2px 2px 0px rgba(0, 0, 0, 0.07), 0px 1px 5px 0px rgba(0, 0, 0, 0.14)
-
-
+  i.material-icons
+    font-size: 18px !important
+    margin-right: 0px
+    padding-right: 0px
 
   &.not-reviewed
-    background-color: $not-reviewed-color
+    i.material-icons
+      color: $not-reviewed-color !important
 
   &.sig
-    background-color: $significant-color
+    i.material-icons
+      color: $significant-color !important
 
   &.not-sig
-    background-color: $not-significant-color
+    i.material-icons
+      color: $not-significant-color  !important
 
   &.poor-qual
-    background-color: $poor-qual-color
+    i.material-icons
+      color: $poor-qual-color !important
 
   &.unknown-sig
-    background-color: $unknown-significance-color
+    i.material-icons
+      color: $unknown-significance-color !important
 
 
 
