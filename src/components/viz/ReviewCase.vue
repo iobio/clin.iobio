@@ -3,7 +3,7 @@
 @import ../../assets/sass/variables
 
 #review-case-panel
-  padding: 5px 20px 5px 30px
+  padding: 10px 20px 5px 30px
   /*overflow-y: auto*/
   height: -webkit-fill-available
   height: -moz-available
@@ -110,9 +110,10 @@
             <!--</div>-->
 
               <div style="width:80%">
-                <span class="heading">Case Summary </span> <div class="reviewCase">
+                <span class="heading">Case Summary </span> 
+                <div class="reviewCase">
                 {{ caseSummary.description }}
-              </div>
+                </div>
 
                 <!--<br>-->
                 <!--<div class="heading">-->
@@ -589,13 +590,13 @@ export default {
     font-weight: 500;
     font-family: Poppins,sans-serif;
     color: #6A6A6A;
-
   }
 
   .reviewCase{
     color: #6A6A6A;
     line-height: 16px;
     font-size: 15px;
+    padding-top: 5px;
     font-weight: normal;
     font-family: 'Poppins', sans-serif
   }

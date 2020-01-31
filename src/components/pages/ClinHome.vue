@@ -218,6 +218,8 @@ $horizontal-dashboard-height: 140px
         v-if="analysis && workflow && variantsByInterpretation"
         :genomeBuildHelper="genomeBuildHelper"
         :modelInfos="modelInfos"
+        :caseSummary="caseSummary"
+        :analysis="analysis"
         :variantsByInterpretation="variantsByInterpretation"
         :interpretationMap="interpretationMap">
         </findings>

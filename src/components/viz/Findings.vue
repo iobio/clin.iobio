@@ -22,12 +22,70 @@
       margin-bottom: 10px
 
 
+  .sub-heading
+    font-size: 16px
+    font-weight: 500
+    color: $text-color
+
+  .case-summary, .clinical-note
+    color: $text-color
+    line-height: 16px
+    font-size: 14px
+    padding-top: 5px
+
+  .clinical-note
+    display: flex
+    justify-content: space-between
+
+    .note
+      width: 50%
+      margin-right: 30px
+    .phenotypes
+      width: 50%
+
+
+
 </style>
 
 <template>
 
   <div id="findings-panel" >
 
+      <div style="width:80%;margin-bottom: 20px">
+        <span class="sub-heading">Case Summary </span> 
+        <div class="case-summary">
+        {{ caseSummary.description }}
+        </div>
+
+      </div>
+
+      <div v-if="clinicalNotes && clinicalNotes.length > 0" style="width:80%;margin-bottom:20px">
+        <hr>
+        <span class="sub-heading">Phenotypes</span> 
+        <div class="clinical-note" style="margin-bottom:5px">
+
+          <div class="note" style="font-weight:500">
+            Clinical note
+          </div>
+          <div class="phenotypes" style="font-weight:500">
+            Phenotypes terms
+          </div>
+        </div>
+        <div style="margin-bottom:20px" class="clinical-note" v-for="clinicalNote in clinicalNotes" :key="note">
+
+          <div class="note">
+            {{ clinicalNote.note }}
+          </div>
+          <div class="phenotypes">
+            {{ clinicalNote.phenotypes.join(", ") }}
+          </div>
+        </div>
+
+      </div>
+
+      <hr>
+
+      <div class="sub-heading" style="margin-top:20px;margin-bottom:10px">Reviewed Variants</div> 
 
       <div class="findings-section" v-for="interpretation in variantsByInterpretation" :key="interpretation.key" >
 
@@ -93,13 +151,16 @@ export default {
     VariantInterpretationBadge
   },
   props: {
+    analysis: null,
     modelInfos:  null,
     genomeBuildHelper: null,
+    caseSummary: null,
     variantsByInterpretation: null,
-    interpretationMap: null
+    interpretationMap: null,
   },
   data() {
     return {
+      clinicalNotes: null
 
     }
 
@@ -134,11 +195,56 @@ export default {
         return buf;
       }
     },
+    initClinicalNotes: function() {
+      let self = this;
+      self.clinicalNotes = [];
+      if (self.analysis && self.analysis.payload && self.analysis.payload.phenotypes && self.analysis.payload.phenotypes.length > 3) {
+        let noteObjects = self.analysis.payload.phenotypes[3];
+        noteObjects.forEach(function(noteObject) {
+          let clinNote = {};
+          clinNote.note = noteObject.note;
+          clinNote.phenotypes = [];
+          if (noteObject.gtr_terms && noteObject.gtr_terms.length > 0) {
+            noteObject.gtr_terms.forEach(function(gtrTerm) {
+              let phen = gtrTerm.DiseaseName.toLowerCase();
+              if (clinNote.phenotypes.indexOf(phen) == -1){
+                clinNote.phenotypes.push(phen)
+              }
+            })
+          }
+          if (noteObject.phenolyzer_terms && noteObject.phenolyzer_terms.length > 0) {
+            noteObject.phenolyzer_terms.forEach(function(phenolyzerTerm) {
+              let phen = phenolyzerTerm.label.toLowerCase();
+              if (clinNote.phenotypes.indexOf(phen) == -1) {
+                clinNote.phenotypes.push(phen)
+              }
+            })
+          }
+          if (noteObject.hpo_terms && noteObject.hpo_terms.length > 0) {
+            noteObject.hpo_terms.forEach(function(hpoTerm) {
+              let phen = hpoTerm.phenotype.toLowerCase();
+              if (clinNote.phenotypes.indexOf(phen) == -1) {
+                clinNote.phenotypes.push(phen)
+              }
+            })
+          }
+          self.clinicalNotes.push(clinNote);
+        })
+      }
+    }
   },
   computed: {
 
+   
+
   },
   watch: {
+    analysis: function() {
+      this.initClinicalNotes();
+    },
+    variantsByInterpretation: function() {
+      this.initClinicalNotes();
+    }
   },
 }
 </script>
