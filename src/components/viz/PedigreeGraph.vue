@@ -12,7 +12,8 @@
 <script>
 import dTree from '../../utils/dtree.js';
 import { makeMultiDTreeData } from '../../utils/pedigreePreprocess.js';
-const { pedigree: pedigreeColors } = {affected: "#ccc", selected: "#ed5858"};
+const pedigreeColors = {affected: "#ccc", selected: "rgb(53, 134, 192)"};
+
 export default {
   name: 'PedigreeGraph',
   props: {
@@ -74,35 +75,10 @@ export default {
   },
   mounted() {
     this.init();
-    this.highlightProband();
+    // this.highlightProband();
       },
   methods: {
 
-    highlightProband() {
-      const self = this;
-      d3.select(this.$el).selectAll('circle')
-              .attr('stroke', (d) => {
-                if (!d.data.extra) {
-                  return 'white';
-                }
-                if (d.data.extra.id === self.id) {
-                  return "red";
-                }
-                return 'grey';
-              });
-
-      d3.select(this.$el).selectAll('rect')
-              .attr('stroke', (d) => {
-                if (!d.data.extra) {
-                  return 'white';
-                }
-                if (d.data.extra.id === self.id) {
-                  return "red";
-                }
-                return 'grey';
-              });
-
-    },
 
     init() {
 

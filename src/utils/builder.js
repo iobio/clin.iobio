@@ -22,7 +22,7 @@ import * as d3 from 'd3';
 
 // import colors from '@/config/colors';
 
-const pedigreeColors = {affected: "#ccc", selected: "#ed5858"};
+const pedigreeColors = {affected: "#ccc", selected: "rgb(53, 134, 192)"};
 
 export default class TreeBuilder {
     constructor(root, siblings, opts) {
@@ -133,7 +133,14 @@ export default class TreeBuilder {
                 }
                 return 'gray';
             })
-            .attr('stroke-width', this.strokeWidth)
+            .attr('stroke-width', d => {
+                if (d.data.extra.isMainSample) {
+                    return "4px";
+                }
+                else{
+                    return this.strokeWidth
+                }
+            })
             .attr('fill', (d) => {
                 if (d.data.extra.affected) {
                     return pedigreeColors.affected;
@@ -167,7 +174,14 @@ export default class TreeBuilder {
                 }
                 return 'gray';
             })
-            .attr('stroke-width', this.strokeWidth)
+            .attr('stroke-width', d => {
+                if (d.data.extra.isMainSample){
+                    return "4px";
+                }
+                else{
+                    return this.strokeWidth
+                }
+            })
             .attr('fill', (d) => {
                 if (d.data.extra.affected) {
                     return pedigreeColors.affected;
@@ -211,7 +225,14 @@ export default class TreeBuilder {
                 }
                 return 'gray';
             })
-            .attr('stroke-width', this.strokeWidth)
+            .attr('stroke-width', d => {
+                if (d.data.extra.isMainSample){
+                    return "4px";
+                }
+                else{
+                    return this.strokeWidth
+                }
+            })
             .attr('fill', (d) => {
                 if (d.data.extra.affected) {
                     return pedigreeColors.affected;
