@@ -105,7 +105,7 @@
 
       <hr style="border-top:transparent">
 
-      <div class="sub-heading" style="margin-top:20px;margin-bottom:10px">Reviewed Variants</div> 
+      <div class="sub-heading" style="margin-top:20px;margin-bottom:0px">Reviewed Variants</div> 
 
       <div class="findings-section" v-for="interpretation in variantsByInterpretation" :key="interpretation.key" >
 
