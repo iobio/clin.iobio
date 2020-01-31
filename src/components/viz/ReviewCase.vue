@@ -17,11 +17,11 @@
       stroke-width: 2px !important
     #medianLine
       stroke-width: 2px !important
-      stroke: #404040 !important
+      stroke: $current-color !important
       stroke-dasharray: 8 2 !important
     .g-main
       rect
-        fill: #3388c2ba !important
+        fill: #75a2c1ba  !important
         stroke: #265073
 
 
@@ -29,7 +29,7 @@
     .g-main
       .scores
         rect
-          fill: #3388c2ba !important
+          fill: #a2a2a2b3  !important
           stroke: none !important
 
 
