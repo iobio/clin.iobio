@@ -223,25 +223,31 @@ export default {
           clinNote.phenotypes = [];
           if (noteObject.gtr_terms && noteObject.gtr_terms.length > 0) {
             noteObject.gtr_terms.forEach(function(gtrTerm) {
-              let phen = gtrTerm.DiseaseName.toLowerCase();
-              if (clinNote.phenotypes.indexOf(phen) == -1){
-                clinNote.phenotypes.push(phen)
+              if (gtrTerm) {
+                let phen = gtrTerm.DiseaseName.toLowerCase();
+                if (clinNote.phenotypes.indexOf(phen) == -1){
+                  clinNote.phenotypes.push(phen)
+                }                
               }
             })
           }
           if (noteObject.phenolyzer_terms && noteObject.phenolyzer_terms.length > 0) {
             noteObject.phenolyzer_terms.forEach(function(phenolyzerTerm) {
-              let phen = phenolyzerTerm.label.toLowerCase();
-              if (clinNote.phenotypes.indexOf(phen) == -1) {
-                clinNote.phenotypes.push(phen)
+              if (phenolyzerTerm) {
+                let phen = phenolyzerTerm.label.toLowerCase();
+                if (clinNote.phenotypes.indexOf(phen) == -1) {
+                  clinNote.phenotypes.push(phen)
+                }                
               }
             })
           }
           if (noteObject.hpo_terms && noteObject.hpo_terms.length > 0) {
             noteObject.hpo_terms.forEach(function(hpoTerm) {
-              let phen = hpoTerm.phenotype.toLowerCase();
-              if (clinNote.phenotypes.indexOf(phen) == -1) {
-                clinNote.phenotypes.push(phen)
+              if (hpoTerm) {
+                let phen = hpoTerm.phenotype.toLowerCase();
+                if (clinNote.phenotypes.indexOf(phen) == -1) {
+                  clinNote.phenotypes.push(phen)
+                }                
               }
             })
           }
