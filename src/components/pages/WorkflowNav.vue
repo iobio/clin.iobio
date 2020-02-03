@@ -90,7 +90,7 @@ export default {
                     number:       step.number, 
                     name:         workflowStep.title, 
                     complete:     task.complete, 
-                    current:      task.current, 
+                    current:      step.current, 
                     description:  workflowTask.name, 
                     badges:       task.badges, 
                     workflowStep: workflowStep, 
@@ -103,6 +103,7 @@ export default {
       let self = this;
       self.currentStepNumber = theStep.number;
       self.currentStepComplete = theStep.complete;
+      theStep.current = true;
       self.steps.forEach(function(step) {
         step.current = (step.number == theStep.number ? true : false)
       })
@@ -134,6 +135,7 @@ export default {
 
   },
   mounted: function() {
+    this.analysisSteps[0].current = true;
     this.refresh();
   },
   watch: {
