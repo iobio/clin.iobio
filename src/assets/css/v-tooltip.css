@@ -1,13 +1,14 @@
 .tooltip {
   display: block !important;
   z-index: 10000;
-  font-family: 'Open Sans', 'Quattrocento Sans', 'sans serif';
-  font-size: 12px;
+  font-family: 'Raleway', 'Open Sans', 'Quattrocento Sans', 'sans serif';
+  font-size: 14px;
+  font-weight: 500;
 }
 
 .tooltip .tooltip-inner {
-  background: rgb(80,80,80);
-  opacity: .9;
+  background: black;
+  opacity: 1;
   color: white;
   border-radius: 16px;
   padding: 5px 10px 4px;
@@ -84,7 +85,7 @@
 }
 
 .tooltip.popover .popover-inner {
-  background: #f9f9f9;
+  background: black;
   color: black;
   padding: 24px;
   border-radius: 5px;
@@ -92,7 +93,7 @@
 }
 
 .tooltip.popover .popover-arrow {
-  border-color: #f9f9f9;
+  border-color: black;
 }
 
 .tooltip[aria-hidden='true'] {

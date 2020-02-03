@@ -19,9 +19,9 @@
             <div class="step-container" >
                  <div  v-for="step in steps" :key="step.number" :class="{'step': true, 'current': step.current}" @click="onStepClicked(step)">
 
-                        <div  style="display:flex;flex-flow:column;align-items:center;justify-content:center"v-tooltip="step.description">
+                        <div  style="display:flex;flex-flow:column;align-items:center;justify-content:center">
                           <div class="step-label">{{ step.name }}</div>
-                          <div class="step-icon">
+                          <div class="step-icon" v-tooltip.right="step.description">
                             <case-icon v-if="step.number == 1" ></case-icon>
                             <phenotype-icon v-if="step.number == 2" ></phenotype-icon>
                             <variants-icon v-if="step.number == 3" ></variants-icon>
