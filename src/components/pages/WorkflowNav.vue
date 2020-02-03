@@ -81,6 +81,7 @@ export default {
         self.steps = []
         let theSteps = [];
 
+        /*
         let lastCompleteStep = null;
         let lastCompleteTask = null;
         self.analysisSteps.forEach(function(step) {
@@ -93,7 +94,7 @@ export default {
           lastCompleteStep = self.analysisSteps[0];
           lastCompleteTask = lastCompleteStep.tasks[0];
         }
-        if (lastCompleteStep) {
+        if (lastCompleteStep && self.currentStepNumber == 1) {
           self.currentStepNumber = lastCompleteStep.number;
           self.analysisSteps.forEach(function(step) {
             step.tasks.forEach(function(task) {
@@ -101,6 +102,7 @@ export default {
             })
           })
         } 
+        */
 
 
         self.analysisSteps.forEach(function(step) {
@@ -116,7 +118,7 @@ export default {
                     number:       step.number, 
                     name:         workflowStep.title, 
                     complete:     task.complete, 
-                    current:      task.current, 
+                    current:      self.currentStepNumber == step.number, 
                     description:  workflowTask.name, 
                     badges:       task.badges, 
                     workflowStep: workflowStep, 
