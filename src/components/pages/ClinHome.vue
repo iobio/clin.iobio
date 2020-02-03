@@ -340,7 +340,7 @@ export default {
   data() {
     let self = this;
     return {
-      newWorkflow: false,
+      newWorkflow: true,
       showSplash: true,
       splashMessage: "Initializing clin.iobio",
       showSplashProgress: true,
@@ -1177,9 +1177,13 @@ export default {
                           theFilter = self.globalApp.utility.capitalizeFirstLetter(variant.filtersPassed);
                         }
 
-                        let label =
-                          theFilter
+                        let label = "";
+                        if (interpretation.key == 'sig') {
+                          label = theFilter
                           + " in " + geneInfo.gene.gene_name
+                        } else {
+                          label = geneInfo.gene.gene_name
+                        }
                         let idx = badgeLabels.indexOf(label);
                         if (idx == -1 || badgeLabels.length == 0) {
                           badgeLabels.push(label);

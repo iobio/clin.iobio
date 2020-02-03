@@ -19,7 +19,7 @@
             <div class="step-container" >
                  <div  v-for="step in steps" :key="step.number" :class="{'step': true, 'current': step.current}" @click="onStepClicked(step)">
 
-                        <div  style="display:flex;flex-flow:column;align-items:center;justify-content:center">
+                        <div  style="display:flex;flex-flow:column;align-items:center;justify-content:center"v-tooltip="step.description">
                           <div class="step-label">{{ step.name }}</div>
                           <div class="step-icon">
                             <case-icon v-if="step.number == 1" ></case-icon>
@@ -216,6 +216,7 @@ export default {
     flex-flow: row
     margin-left: 135px
     margin-bottom: 10px
+    margin-right: -135px
 
 
 
