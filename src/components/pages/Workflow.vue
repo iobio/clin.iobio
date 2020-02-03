@@ -15,7 +15,7 @@ $badge-inactive-color:  #d8d3d3
   padding-bottom: 10px
   text-align: center
   background-color: #f1efe9
-
+  
 
   #ab-switch
     position: absolute
@@ -414,7 +414,7 @@ $badge-inactive-color:  #d8d3d3
                 <v-badge right color="transparent" >
 
                   <span v-if="task.badges" v-for="taskBadge, idx in task.badges" :key="taskBadge.label"
-                  :class="getTaskBadgeClass(taskBadge, currentStep && step.key == currentStep.key)" slot="badge">{{ taskBadge.label }}</span>
+                  :class="getTaskBadgeClass(taskBadge, currentStep && step.key == currentStep.key)" slot="badge">{{ taskBadge.count + ' ' + taskBadge.label }}</span>
 
                   <span v-if="!task.badges" :class="{'task-badge': true, 'empty': true, 'active': false}" slot="badge"></span>
                 </v-badge>
@@ -662,6 +662,9 @@ export default {
       buf += taskBadge.class ? taskBadge.class : "";
       if (active) {
         buf += " active";
+      }
+      if (taskBadge.count == null || taskBadge.count == 0 || taskBadge.count == '') {
+        buf += " hide";
       }
       return buf;
     }

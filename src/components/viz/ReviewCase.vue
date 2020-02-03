@@ -275,7 +275,7 @@ export default {
 
     populateReviewCaseBadges(){
 
-      let famName = "Family";
+      let famName = "family";
 
       if(this.sampleIds.length === 1){
         famName = "individual"
@@ -294,10 +294,10 @@ export default {
       else if(this.sampleIds.length > 4){
         famName = "family"
       }
-      this.reviewCaseBadges = [{label: this.sampleIds.length + " samples (" + famName + ")" }];
+      this.reviewCaseBadges = [{label: "samples (" + famName + ")", count: this.sampleIds.length  }];
 
       if(this.badCoverage){
-        this.reviewCaseBadges.push({label:  + this.badCoverageCount + " failed QC"})
+        this.reviewCaseBadges.push({label:  "failed QC", count: this.badCoverageCount, class: 'failed'})
       }
       this.$emit('update', this.reviewCaseBadges);
     },

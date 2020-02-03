@@ -27,6 +27,10 @@
 .v-btn
   letter-spacing: initial !important
 
+.theme--dark.v-toolbar.v-sheet 
+  background-color: $nav-color !important
+
+
 $light-grey-background: #eaeaea
 $horizontal-dashboard-height: 140px
 
@@ -120,7 +124,7 @@ $horizontal-dashboard-height: 140px
 
 
 <template>
-<div id="application-content">
+<div id="application-content" :class="{'workflow-new': newWorkflow ? true : false}">
   <navigation v-if="!showSplash && isAuthenticated  && workflow && analysis"
    :caseSummary="caseSummary"
    :analysis="analysis"
@@ -128,7 +132,8 @@ $horizontal-dashboard-height: 140px
    @show-save-analysis="toggleSaveModal(true)">
   </navigation>
 
-  <workflow v-if="iframesMounted && !showSplash && isAuthenticated && workflow && analysis"
+
+  <workflow v-if="!newWorkflow && iframesMounted && !showSplash && isAuthenticated && workflow && analysis"
    ref="workflowRef"
    :caseSummary="caseSummary"
    :analysisSteps="analysis.payload.steps"
@@ -137,6 +142,17 @@ $horizontal-dashboard-height: 140px
    @on-task-changed="onTaskChanged"
    @on-task-completed="onTaskCompleted">
   </workflow>
+
+
+  <workflow-nav v-if="newWorkflow && iframesMounted && !showSplash && isAuthenticated && workflow && analysis"
+   ref="workflowRefNew"
+   :caseSummary="caseSummary"
+   :analysisSteps="analysis.payload.steps"
+   :workflow="workflow"
+   @on-step-changed="onStepChanged"
+   @on-task-changed="onTaskChanged"
+   @on-task-completed="onTaskCompleted">
+  </workflow-nav>
 
   <div id="clin-container" style="display:flex" :class="{authenticated: isAuthenticated}">
 
@@ -270,6 +286,7 @@ $horizontal-dashboard-height: 140px
 <script>
 import Navigation    from  '../pages/Navigation.vue'
 import Workflow      from  '../pages/Workflow.vue'
+import WorkflowNav      from  '../pages/WorkflowNav.vue'
 import ReviewCase    from  '../viz/ReviewCase.vue'
 import Findings      from  '../viz/Findings.vue'
 import LoginMosaic   from  '../partials/LoginMosaic.vue'
@@ -298,6 +315,7 @@ export default {
   components: {
     Navigation,
     Workflow,
+    WorkflowNav,
     LoginMosaic,
     ReviewCase,
     Findings,
@@ -322,6 +340,7 @@ export default {
   data() {
     let self = this;
     return {
+      newWorkflow: false,
       showSplash: true,
       splashMessage: "Initializing clin.iobio",
       showSplashProgress: true,
@@ -1082,16 +1101,29 @@ export default {
         step.tasks.forEach(function(task) {
           if (task.key == 'review-phenotypes-genes') {
             task.badges = [
-              {label: phenotypesCount + " " + (phenotypesCount > 1 ? 'phenotypes' : 'phenotype') },
-              {label: notesCount + " " + (notesCount > 1 ? 'notes' : 'note')}
+              {count: phenotypesCount > 0 ? phenotypesCount : '', label: (phenotypesCount > 1 ? 'phenotypes' : 'phenotype') },
+              {count: notesCount > 0 ? notesCount : '', label: (notesCount > 1 ? 'notes' : 'note')}
             ];
           }
         })
-        if (self.$refs.workflowRef) {
-          self.$refs.workflowRef.refresh();
-        }
+        self.refreshWorkflowSteps();
 
       })
+    },
+
+    refreshWorkflowSteps: function() {
+      let self = this;
+      if (self.newWorkflow) {
+        if (self.$refs.workflowRefNew) {
+          self.$refs.workflowRefNew.refresh();
+        }          
+      } else {
+        if (self.$refs.workflowRef) {
+          self.$refs.workflowRef.refresh();
+        }          
+
+      }
+
     },
 
    setVariantTaskBadges: function() {
@@ -1113,7 +1145,7 @@ export default {
             } else if (task.key == 'review-full') {
               let fullAnalysisCount = self.analysis.payload.variants.length;
               if (fullAnalysisCount > 0) {
-                task.badges =  [{label: fullAnalysisCount + ' variants'}];
+                task.badges =  [{count: fullAnalysisCount, label: 'variants'}];
               } else {
                 delete task.badges;
               }
@@ -1167,15 +1199,13 @@ export default {
               })
 
               for (var i=0; i < badgeLabels.length; i++) {
-                task.badges.push({label: badgeCounts[i] + " " + badgeLabels[i],
+                task.badges.push({count: badgeCounts[i], label: badgeLabels[i],
                                   class: badgeClasses[i].join(" ")});
               }
             }
           })
         })
-        if (self.$refs.workflowRef) {
-          self.$refs.workflowRef.refresh();
-        }
+        self.refreshWorkflowSteps();
       }
     },
 
@@ -1190,9 +1220,7 @@ export default {
           }
         })
       })
-      if (self.$refs.workflowRef) {
-        self.$refs.workflowRef.refresh();
-      }
+      self.refreshWorkflowSteps();
     },
 
     setCoverageTaskBadge: function(geneCount) {
@@ -1201,13 +1229,11 @@ export default {
         self.analysis.payload.steps.forEach(function(step) {
           step.tasks.forEach(function(task) {
             if (task.key == 'coverage') {
-              task.badges =  [geneCount + ' genes'];
+              task.badges =  [{count: geneCount > 0 ? geneCount : null, 'label': 'genes'}];
             }
           })
         })
-        if (self.$refs.workflowRef) {
-          self.$refs.workflowRef.refresh();
-        }
+        self.refreshWorkflowSteps();
       }
     },
 
