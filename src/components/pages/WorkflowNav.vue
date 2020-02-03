@@ -31,7 +31,7 @@
 
                     <div class="badges">
                       <div v-for="badge in step.badges" :key="badge.label">
-                      <v-icon class="failed-icon"  v-if="badge.class && badge.class == 'failed'">warning</v-icon>
+                       <v-icon dark id="failed-icon"  v-if="false && badge.class && badge.class == 'failed'">error</v-icon>
                         <v-badge
                           v-if="badge.count && badge.count != ''"
                           :content="badge.count" :class="badge.class ? badge.class : ''">
@@ -80,9 +80,35 @@ export default {
         let self = this;
         self.steps = []
         let theSteps = [];
+
+        let lastCompleteStep = null;
+        let lastCompleteTask = null;
+        self.analysisSteps.forEach(function(step) {
+          if (step.tasks[0].complete) {
+            lastCompleteTask = step.tasks[0];
+            lastCompleteStep = step;
+          }
+        })
+        if (lastCompleteStep == null && self.currentStepNumber == 1) {
+          lastCompleteStep = self.analysisSteps[0];
+          lastCompleteTask = lastCompleteStep.tasks[0];
+        }
+        if (lastCompleteStep) {
+          self.currentStepNumber = lastCompleteStep.number;
+          self.analysisSteps.forEach(function(step) {
+            step.tasks.forEach(function(task) {
+              task.current = (task.key == lastCompleteTask.key ? true : false);
+            })
+          })
+        } 
+
+
         self.analysisSteps.forEach(function(step) {
             let workflowStep = self.getWorkflowStep(step.key)
             step.tasks.forEach(function(task) {
+              if (step.number == self.currentStepNumber) {
+                self.currentStepComplete = task.complete
+              }
               let workflowTask = self.getWorkflowTask(workflowStep, task.key)
               theSteps.push(
                    {key:          task.key,
@@ -137,6 +163,8 @@ export default {
   mounted: function() {
     let self = this;
     this.refresh();
+    this.$emit('on-step-changed',self.currentStepNumber)
+
     
   },
   watch: {
@@ -149,7 +177,7 @@ export default {
                       {key: step.stepKey, complete: step.complete}, step)
         }
       })
-    }
+    },
 
   }
 }
@@ -304,7 +332,7 @@ export default {
 
         margin-top: 20px
 
-        .failed-icon
+        #failed-icon
           font-size: 20px !important
           color: $wf-badge-red-color !important
 
