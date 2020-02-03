@@ -90,7 +90,7 @@ export default {
                     number:       step.number, 
                     name:         workflowStep.title, 
                     complete:     task.complete, 
-                    current:      step.current, 
+                    current:      task.current, 
                     description:  workflowTask.name, 
                     badges:       task.badges, 
                     workflowStep: workflowStep, 
@@ -135,8 +135,9 @@ export default {
 
   },
   mounted: function() {
-    this.analysisSteps[0].current = true;
+    let self = this;
     this.refresh();
+    
   },
   watch: {
     currentStepComplete: function() {
