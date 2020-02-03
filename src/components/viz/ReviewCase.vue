@@ -88,6 +88,9 @@
   i.mdi-alert-circle
     font-size: 35px !important
 
+  i.material-icons.good-coverage
+    color: #9cc231  !important
+
 </style>
 
 <template>
@@ -148,7 +151,7 @@
             <div style="padding-top: 20px" v-show="goodCoverage(i)">
             <v-tooltip top class="valign">
               <template v-slot:activator="{ on }">
-                <v-icon v-on="on" top color="green"
+                <v-icon class="good-coverage" v-on="on" top color="green"
                         @mouseover="onHover = true" @mouseleave="onHover = false" @click="">check_circle</v-icon>
               </template>
               <span>Median coverage is above expected {{isExomeText}} coverage threshold of {{minCutoff}}X</span>
@@ -593,6 +596,8 @@ export default {
 <style lang="sass" scoped>
 
   @import ../../assets/sass/variables
+
+
 
   .capitalize
     text-transform: capitalize
