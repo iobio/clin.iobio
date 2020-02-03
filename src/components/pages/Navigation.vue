@@ -125,7 +125,7 @@ header.theme--dark.v-sheet
 
 
       <span id="workflow-progress">
-        <v-progress-linear class="primary--text" :value="percentComplete" style="margin-bottom:0px;width:120px" height="16" >
+        <v-progress-linear class="primary--text" :value="percentComplete" style="margin-bottom:0px;width:120px;margin-top:4px" height="8" >
         </v-progress-linear>
         <span class="percent-label">{{ percentComplete }}% complete</span>
       </span>
