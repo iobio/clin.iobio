@@ -27,7 +27,7 @@
 .v-btn
   letter-spacing: initial !important
 
-.theme--dark.v-toolbar.v-sheet 
+.theme--dark.v-toolbar.v-sheet
   background-color: $nav-color !important
 
 
@@ -1116,11 +1116,11 @@ export default {
       if (self.newWorkflow) {
         if (self.$refs.workflowRefNew) {
           self.$refs.workflowRefNew.refresh();
-        }          
+        }
       } else {
         if (self.$refs.workflowRef) {
           self.$refs.workflowRef.refresh();
-        }          
+        }
 
       }
 
@@ -1499,6 +1499,20 @@ export default {
       return self.promiseAutosaveAnalysis();
     },
 
+    promiseUpdateVennDiagramData: function(data) {
+      let self = this;
+      self.analysis.payload.VennDiagramData = data;
+      console.log("self.analysis.payload.VennDiagramData", self.analysis.payload.VennDiagramData)
+      self.analysis.payload.datetime_last_modified = self.getCurrentDateTime();
+      return self.promiseAutosaveAnalysis();
+    },
+
+    promiseUpdateGenesReport: function(genes) {
+      let self = this;
+      self.analysis.payload.genesReport = genes;
+      self.analysis.payload.datetime_last_modified = self.getCurrentDateTime();
+      return self.promiseAutosaveAnalysis();
+    },
 
     promiseUpdateAnalysis: function(analysis) {
       let self = this;
@@ -1698,11 +1712,12 @@ export default {
     summaryGenes(genes){
       this.summaryGeneList = genes;
       this.analysis.payload.genesReport = this.summaryGeneList;
+      this.promiseUpdateGenesReport(genes);
     },
 
     saveSearchedPhenotypes(phenotypes){
       this.analysis.payload.phenotypes = phenotypes;
-      this.promiseUpdateGenesData(this.analysis);
+      // this.promiseUpdateGenesData(this.analysis);
       this.promiseUpdatePhenotypes(phenotypes);
     },
 
@@ -1780,7 +1795,8 @@ export default {
       this.venn_diag_data = data;
     },
     VennDiagramData(obj){
-      this.analysis.payload.VennDiagramData = obj
+      this.analysis.payload.VennDiagramData = obj;
+      this.promiseUpdateVennDiagramData(obj);
     },
 
     updateReviewCaseBadges(badges){
