@@ -1502,7 +1502,6 @@ export default {
     promiseUpdateVennDiagramData: function(data) {
       let self = this;
       self.analysis.payload.VennDiagramData = data;
-      console.log("self.analysis.payload.VennDiagramData", self.analysis.payload.VennDiagramData)
       self.analysis.payload.datetime_last_modified = self.getCurrentDateTime();
       return self.promiseAutosaveAnalysis();
     },
@@ -1717,7 +1716,6 @@ export default {
 
     saveSearchedPhenotypes(phenotypes){
       this.analysis.payload.phenotypes = phenotypes;
-      // this.promiseUpdateGenesData(this.analysis);
       this.promiseUpdatePhenotypes(phenotypes);
     },
 
