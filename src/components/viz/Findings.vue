@@ -57,7 +57,7 @@
     .phenotypes, .phenotypes-header
       min-width: 40%
       max-width: 40%
-     
+
 
     .phenotypes
       padding: 10px
@@ -71,7 +71,7 @@
   <div id="findings-panel" >
 
       <div style="margin-bottom: 20px">
-        <span class="sub-heading">Case Summary </span> 
+        <span class="sub-heading">Case Summary </span>
         <div class="case-summary">
         {{ caseSummary.description }}
         </div>
@@ -80,7 +80,7 @@
 
       <div v-if="clinicalNotes && clinicalNotes.length > 0" style="width:80%;margin-top:40px;margin-bottom:20px">
         <hr style="border-top:transparent">
-        <span class="sub-heading">Phenotypes</span> 
+        <span class="sub-heading">Phenotypes</span>
         <div class="clinical-note" style="margin-bottom:5px">
 
           <div class="note-header" style="font-weight:500">
@@ -109,7 +109,7 @@
 
       <hr style="border-top:transparent">
 
-      <div class="sub-heading" style="margin-top:40px;margin-bottom:0px">Reviewed Variants</div> 
+      <div class="sub-heading" style="margin-top:40px;margin-bottom:0px">Reviewed Variants</div>
 
       <div class="findings-section" v-for="interpretation in variantsByInterpretation" :key="interpretation.key" >
 
@@ -177,8 +177,8 @@ export default {
   },
   data() {
     return {
-      clinicalNotes: null
-
+      clinicalNotes: null,
+      note: null
     }
 
   },
@@ -227,7 +227,7 @@ export default {
                 let phen = gtrTerm.DiseaseName.toLowerCase();
                 if (clinNote.phenotypes.indexOf(phen) == -1){
                   clinNote.phenotypes.push(phen)
-                }                
+                }
               }
             })
           }
@@ -237,7 +237,7 @@ export default {
                 let phen = phenolyzerTerm.label.toLowerCase();
                 if (clinNote.phenotypes.indexOf(phen) == -1) {
                   clinNote.phenotypes.push(phen)
-                }                
+                }
               }
             })
           }
@@ -247,7 +247,7 @@ export default {
                 let phen = hpoTerm.phenotype.toLowerCase();
                 if (clinNote.phenotypes.indexOf(phen) == -1) {
                   clinNote.phenotypes.push(phen)
-                }                
+                }
               }
             })
           }
@@ -258,7 +258,7 @@ export default {
   },
   computed: {
 
-   
+
 
   },
   watch: {
