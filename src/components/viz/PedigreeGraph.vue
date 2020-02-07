@@ -2,6 +2,7 @@
 <template>
   <div
     class="pedigree-graph"
+    id="pedGraph"
     ref="pedigreeGraph"
     style="margin: auto"
     :style="{ width: width }"
@@ -9,44 +10,78 @@
 </template>
 
 <script>
-import dTree from '../../js/thirdparty/dtree';
-import { makeMultiDTreeData } from '../../js/thirdparty/pedigreePreprocess';
+import dTree from '../../utils/dtree.js';
+import { makeMultiDTreeData } from '../../utils/pedigreePreprocess.js';
+const pedigreeColors = {affected: "#ccc", selected: "rgb(53, 134, 192)"};
+
 export default {
   name: 'PedigreeGraph',
   props: {
     data: {
       type: Array,
-      default: () => []
+      default: () => [],
     },
     enableProbandSelect: {
       type: Boolean,
-      default: false
+      default: false,
     },
     height: {
       type: Number,
-      default: 300
+      default: 300,
     },
     highlighted: {
       type: [String, Number],
-      default: null
+      default: null,
     },
     linkNodes: {
       type: Boolean,
-      default: true
+      default: true,
     },
-    uuid: {
-      validator: (val) => {
-        return val === null || typeof val === 'string' || typeof val === 'number'
-      },
-      required: true
+    path: {
+      type: String,
+      default: '',
+    },
+    strokeWidth: {
+      type: Number,
+      default: 2,
+    },
+    // eslint-disable-next-line
+    id: {
+      validator: (val) => val === null || typeof val === 'string' || typeof val === 'number',
+      required: true,
     },
     width: {
       type: Number,
-      default: 300
-    }
+      default: 300,
+    },
+
+    pedigree: null
+
   },
+  watch: {
+    id() {
+      this.init();
+    },
+    data() {
+      this.init();
+    },
+
+    width() {
+      this.init();
+    },
+    highlighted() {
+      this.applyHighlight();
+    },
+  },
+  mounted() {
+    this.init();
+    // this.highlightProband();
+      },
   methods: {
+
+
     init() {
+
       const self = this;
       const pedigraph = self.$refs.pedigreeGraph;
       const pedigree = this.data;
@@ -58,109 +93,65 @@ export default {
       if (!pedigree || pedigree.length === 0) {
         return;
       }
-      const dTreeData = makeMultiDTreeData(pedigree, +self.uuid);
+      const dTreeData = makeMultiDTreeData(pedigree, Number(self.id));
       // init dTree
       dTree.init(dTreeData, {
         target: pedigraph,
         debug: true,
         height: self.height,
         width: self.width,
-        callbacks: {
-          nodeHover(name, extra) {
-            self.$emit('update:highlighted', extra.uuid);
-          },
-          nodeLeave(name, extra) {
-            self.$emit('update:highlighted', null);
-          },
-          nodeClick(name, extra) {
-            if (self.enableProbandSelect) {
-              self.$emit('pedigree-graph--select-pedigree-node', extra);
-            }
-            if (self.linkNodes) {
-              self.$router.push(`/samples/${extra.uuid}`);
-            }
-          },
-        },
+        strokeWidth: this.strokeWidth,
+        // callbacks: {
+        //   nodeHover(name, extra) {
+        //     self.$emit('update:highlighted', extra.id);
+        //   },
+        //   nodeLeave() {
+        //     self.$emit('update:highlighted', null);
+        //   },
+        //   // nodeClick(name, extra) {
+        //   //   if (self.enableProbandSelect) {
+        //   //     self.$emit('pedigree-graph:select-pedigree-node', extra);
+        //   //   }
+        //   //   if (self.linkNodes) {
+        //   //     self.$router.push(`${self.path}/samples/${extra.id}/pedigree`);
+        //   //   }
+        //   // },
+        // },
       });
       if (this.highlighted !== null) {
         this.applyHighlight();
       }
     },
     applyHighlight() {
-      // find the element with the appropriate uuid
+      // find the element with the appropriate id
       const self = this;
       d3.select(this.$el).selectAll('rect')
-        .attr('stroke', function (d) {
-          if (!d.extra) {
-            return;
-          }
-          if (+d.extra.uuid === +self.highlighted) {
-            return 'black';
-          } else if (d.extra.isMainSample) {
-            return '#c62828';
-          } else {
-            return 'gray';
-          }
-        })
-        .attr('fill', function (d) {
-          if (!d.extra) {
-            return;
-          }
-          if (+d.extra.uuid === +self.highlighted) {
-            return 'black';
-          } else if (d.extra.affected) {
-            return '#ccc';
-          } else {
-            return 'white';
-          }
-        });
+              .attr('fill', (d) => {
+                if (!d.data.extra) {
+                  return 'white';
+                }
+                if (Number(d.data.extra.id) === (self.highlighted)) {
+                  return pedigreeColors.highlighted;
+                }
+                if (d.data.extra.affected) {
+                  return pedigreeColors.affected;
+                }
+                return 'white';
+              });
       d3.select(this.$el).selectAll('circle')
-        .attr('stroke', function (d) {
-          if (!d.extra) {
-            return;
-          }
-          if (+d.extra.uuid === +self.highlighted) {
-            return 'black';
-          } else if (d.extra.isMainSample) {
-            return '#c62828';
-          } else {
-            return 'gray';
-          }
-        })
-        .attr('fill', function (d) {
-          if (!d.extra) {
-            return;
-          }
-          if (+d.extra.uuid === +self.highlighted) {
-            return 'black';
-          } else if (d.extra.affected) {
-            return '#ccc';
-          } else {
-            return 'white';
-          }
-        });
-    },
-  },
-  mounted() {
-    this.init();
-  },
-  watch: {
-    uuid() {
-      this.init();
-    },
-    data() {
-      this.init();
-    },
-    highlighted() {
-      this.applyHighlight();
+              .attr('fill', (d) => {
+                if (!d.data.extra) {
+                  return 'white';
+                }
+                if (Number(d.data.extra.id) === Number(self.highlighted)) {
+                  return pedigreeColors.highlighted;
+                }
+                if (d.data.extra.affected) {
+                  return pedigreeColors.affected;
+                }
+                return 'white';
+              });
     },
   },
 };
 </script>
-
-<style>
-  .pedigree-graph rect:hover,
-  .pedigree-graph circle:hover {
-    stroke-width: 4;
-  }
-</style>

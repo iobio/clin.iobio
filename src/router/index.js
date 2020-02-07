@@ -17,14 +17,14 @@ const routes = [
         let { access_token, expires_in, token_type, ...otherQueryParams } = queryParams;
         localStorage.setItem('hub-iobio-tkn', token_type + ' ' + access_token);
         next('/' + Qs.stringify(otherQueryParams, { addQueryPrefix: true, arrayFormat: 'brackets' }));
+
       } else {
         next();
       }
     },
     props: (route) => ({
         //paramIdProject:        route.query.idProject,
-
-        paramDebug:            route.query.debug,
+        paramDebug:                 route.query.debug,
 
         paramAnalysisId:            route.query.analysis_id,
         paramProjectId:             route.query.project_id,
@@ -35,6 +35,9 @@ const routes = [
 
         paramIobioSource:           route.query.iobio_source,
         paramGeneBatchSize:         route.query.gene_batch_size,
+        paramClientApplicationId:   route.query.client_application_id,
+
+        paramBuild:                 route.query.build,
 
         paramTheme:                 route.query.theme
     })

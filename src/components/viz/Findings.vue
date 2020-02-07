@@ -3,234 +3,66 @@
 @import ../../assets/sass/variables
 
 #findings-panel
-  padding: 5px 20px 5px 20px
+  padding: 15px 20px 5px 20px
   overflow-y: auto
   height: -webkit-fill-available
   height: -moz-available
   background-color:  white
 
-  .avatar.big
-    border: #d5d5d5 solid thin
-    background-color: white
-    color: $text-color
-    margin-right: 7px
-
-  .phenotype-search-terms
-    margin-top: -15px
-    margin-left: 50px
-
-  .phenotype-search-term
-    font-size: 13px
-    line-height: 15px
-    white-space: normal
-    font-style: italic
-
-
-
-  .sample
-    line-height: 15px
-    font-size: 13px
-    .rel
-      display: inline-block
-      width: 70px
-    .name
-      display: inline-block
-      width: 100px
-
-  .findings-section
-    margin-bottom: 30px
-    padding-bottom: 15px
-
-    .subsection
-      margin-right: 50px
-
-  .pedigree-graph
-    margin-left: -5px !important
-    margin-top:  5px !important
-    svg
-      g
-
-        rect
-          stroke: gray !important
-
   .card-title
     font-size: 18px
-    color:   $app-header-color
     margin-bottom: 20px
     display: inline-block
 
-  .card-heading
-    display: inline-block
+
+  .findings-section
+    margin-bottom: 0px
+
+    .interpretation-list
+      margin-bottom: 10px
+
+
+  .sub-heading
     font-size: 16px
-    color:  $app-header-color
-    margin-bottom: 10px
+    font-weight: 500
+    color: $text-color
 
-  .card-subheading
-    display: inline-block
+  .case-summary, .clinical-note
+    color: $text-color
+    line-height: 16px
     font-size: 14px
-    color:  $app-header-color
-    margin-bottom: 10px
+    padding-top: 5px
 
+  .case-summary
+    width: 80%
 
-  .card-metric
+  .clinical-note
     display: flex
-    margin-right: 10px
+    justify-content: space-between
 
-    .avatar
-      margin-right: 7px
+    .note, .note-header
+      min-width:  60%
+      max-width: 60%
 
-    .card-heading-metric
-      display: inline-block
-      font-size: 14px
-      color:  $app-header-color
-      width: 90px
-      white-space: normal
-      line-height: 15px
+    .note
+      padding: 10px
+      border: thin solid #e4e3e3
+
+    .arrow
+      max-width: 50px
+      min-width: 50px
       align-self: center
+      text-align: center
 
+    .phenotypes, .phenotypes-header
+      min-width: 40%
+      max-width: 40%
+     
 
-  .sig
-    i.material-icons
-      color: $sig-color !important
-      margin-right: 3px
-  .unknown-sig
-    i.material-icons
-      color: $unknown-sig-color !important
-      margin-right: 3px
+    .phenotypes
+      padding: 10px
+      border: thin solid #e4e3e3
 
-  .card
-    min-height: 70px !important
-
-  .list--three-line
-    padding-right: 10px
-
-    padding-top: 0px
-    .subheader
-      height: initial
-      font-size: 13px
-      margin-left: -3px
-      margin-top: 5px
-
-    li
-      margin-left: 10px
-
-
-    .list__tile__avatar
-      margin-left: 5px
-      margin-right: 5px
-
-      .avatar
-        align-items: flex-end
-
-
-    hr
-      margin-bottom: 4px
-      margin-top: 4px
-
-    .divider--inset
-      margin-left: 22px
-      width: calc(100% - 42px)
-
-    .list__tile
-      padding: 0px
-      height: initial
-      padding-left: 13px
-      padding-top: 10px
-      align-items: flex-start
-
-
-    .list__tile__sub-title
-      height: initial
-      line-height: 18px
-      -webkit-line-clamp: initial
-
-    .list__tile__title
-      height: unset
-      line-height: 22px
-
-    .variant-number
-      margin-right: 4px
-      margin-left: 0px
-      display: inline-block
-      vertical-align: top
-      margin-bottom: 0px
-      margin-top: 35px
-      border: none
-
-      .chip__content
-        width: 24px !important
-        height: 24px !important
-        justify-content: space-around
-        padding: 0px
-        font-size: 11px
-        background-color: white
-        color: $text-color
-        border: #d5d5d5 solid thin
-
-
-    .gene-name
-      display: inline-block
-      vertical-align: top
-      width: 105px
-      font-size: 13px
-      line-height: 15px
-      white-space: normal
-
-
-    .hgvs
-      display: inline-block
-      width: 140px
-      vertical-align: top
-      line-height: 15px
-      white-space: normal
-      word-break: break-all
-      margin-right: 5px
-
-    .vep-consequence
-      display: inline-block
-      width: 120px
-      vertical-align: top
-      line-height: 15px
-      white-space: normal
-      padding-right: 5px
-
-    .inheritance
-      display: inline-block
-      width: 120px
-      vertical-align: top
-      font-size: 13px
-      line-height: 15px
-      white-space: normal
-      margin-right: 5px
-
-    .clinvar
-      display: inline-block
-      width: 100px
-      vertical-align: top
-      font-size: 13px
-      line-height: 15px
-      white-space: normal
-      margin-right: 5px
-
-    .clinvar-trait
-      display: inline-block
-      width: 220px
-      vertical-align: top
-      font-size: 13px
-      word-break: break-word
-      white-space: normal
-      line-height: 15px
-      margin-right: 5px
-
-    .variant-notes
-      display: inline-block
-      width: calc(100% - 870px)
-      vertical-align: top
-      font-size: 13px
-      word-break: break-word
-      white-space: normal
-      line-height: 15px
-      font-style: italic
 
 </style>
 
@@ -238,134 +70,85 @@
 
   <div id="findings-panel" >
 
+      <div style="margin-bottom: 20px">
+        <span class="sub-heading">Case Summary </span> 
+        <div class="case-summary">
+        {{ caseSummary.description }}
+        </div>
 
-
-      <span class="card-title">
-        Review results
-      </span>
-
-      <div style="display:flex;flex-flow:row">
-
-        <v-card v-show="false && genes && genes.length > 0" class="findings-section" style="margin-left:10px;max-width:480px">
-
-            <span class="card-heading">Analysis Summary</span>
-
-            <div style="display: flex">
-              <div class="card-metric">
-                <v-avatar class="big">
-                  <span class="headline">{{ genes.length }}</span>
-                </v-avatar>
-                <div class="card-heading-metric">candidate genes</div>
-              </div>
-
-              <div class="card-metric">
-                <v-avatar class="big">
-                  <span class="headline">{{ variantsCandidateGenes ? variantsCandidateGenes.length : 0 }}</span>
-                </v-avatar>
-                <div class="card-heading-metric">filtered variants in candidate genes</div>
-              </div>
-
-              <div class="card-metric">
-                <v-avatar class="big">
-                  <span class="headline">{{ variantsFullAnalysis ? variantsFullAnalysis.length  : 0 }}</span>
-                </v-avatar>
-                <div class="card-heading-metric">filtered variants in all genes</div>
-              </div>
-
-            </div>
-        </v-card>
       </div>
 
+      <div v-if="clinicalNotes && clinicalNotes.length > 0" style="width:80%;margin-top:40px;margin-bottom:20px">
+        <hr style="border-top:transparent">
+        <span class="sub-heading">Phenotypes</span> 
+        <div class="clinical-note" style="margin-bottom:5px">
 
-      <v-card v-show="genes && genes.length > 0" class="findings-section" v-for="interpretation in variantsByInterpretation" :key="interpretation.key" >
+          <div class="note-header" style="font-weight:500">
+            Input
+          </div>
+          <div class="arrow">
+          </div>
+          <div class="phenotypes-header" style="font-weight:500">
+            Phenotypes terms
+          </div>
+        </div>
+        <div style="margin-bottom:20px" class="clinical-note" v-for="clinicalNote in clinicalNotes" :key="note">
+
+          <div class="note">
+            {{ clinicalNote.note }}
+          </div>
+          <div class="arrow">
+            <v-icon>arrow_forward</v-icon>
+          </div>
+          <div class="phenotypes">
+            {{ clinicalNote.phenotypes.join(", ") }}
+          </div>
+        </div>
+
+      </div>
+
+      <hr style="border-top:transparent">
+
+      <div class="sub-heading" style="margin-top:40px;margin-bottom:0px">Reviewed Variants</div> 
+
+      <div class="findings-section" v-for="interpretation in variantsByInterpretation" :key="interpretation.key" >
 
 
-        <div
+        <div v-if="interpretation.organizedVariants && interpretation.organizedVariants.length > 0"
         class="interpretation-list"
         >
-
-          <app-icon
-            :class="interpretation.key"
-            :icon="interpretation.key" height="22" width="22">
-          </app-icon>
-          <span class="card-heading">
-            {{ interpretation.display }}
-          </span>
-
         </div>
 
 
 
         <template v-for="geneList in interpretation.organizedVariants">
-          <v-list three-line>
-            <template
-             v-for="geneObject in geneList.genes">
 
-              <div v-for="(variant, index) in geneObject.variants">
+          <template
+           v-for="geneObject in geneList.genes">
 
-                <v-list-tile ripple
-                @click="onVariantSelected(variant)"
-                :key="variant.start + ' ' + variant.ref + ' ' + variant.alt">
+            <template v-for="(variant, index) in geneObject.variants">
+              <div>
+                <variant-inspect-card
+                 :modelInfos="modelInfos"
+                 :genomeBuildHelper="genomeBuildHelper"
+                 :selectedVariant="variant"
+                 :selectedGene="variant.variantInspect.geneObject"
+                 :selectedTranscript="variant.variantInspect.transcriptObject"
+                 :info="variant.variantInspect.infoObject"
+                 :genePhenotypeHits="variant.variantInspect.genePhenotypeHits"
+                 :interpretationMap="interpretationMap"
+                >
 
-                  <v-list-tile-content>
-
-                    <v-list-tile-title>
-
-                      <div class="variant-symbols">
-
-                        <span class="gene-name"> {{ variant.gene }}</span>
-
-
-                        <span class="inheritance">
-                           <app-icon
-                           :icon="variant.inheritance"
-                           v-if="variant.inheritance && variant.inheritance != '' && variant.inheritance != 'none'"
-                           class="inheritance-badge" height="15" width="15">
-                          </app-icon>
-
-                          {{ variant.inheritance }}
-                        </span>
-
-
-                        <span class="vep-consequence">{{ vepConsequence(variant) }}</span>
-                        <span class="hgvs">  {{ hgvsP(variant) }} </span>
-
-                        <span class="clinvar">
-                          <app-icon
-                           icon="clinvar"
-                           v-if="clinvar(variant) == 'clinvar_path' || clinvar(variant) == 'clinvar_lpath'"
-                           :level="clinvar(variant) == 'clinvar_path' ? 'high' : 'likely-high'"
-                           class="clinvar-badge" height="13" width="13">
-                          </app-icon>
-                          {{ variant.clinvarClinSig }}
-                        </span>
-
-                        <span class="clinvar-trait"> {{ variant.clinvarTrait }} </span>
-
-
-                        <div class="variant-notes" v-if="variant.notes && variant.notes.length > 0">
-                          {{ variant.notes }}
-                        </div>
-
-                      </div>
-
-                    </v-list-tile-title>
-
-                    <v-list-tile-sub-title >
-                    </v-list-tile-sub-title>
-
-                  </v-list-tile-content>
-
-                </v-list-tile>
-
+                </variant-inspect-card>
               </div>
-
             </template>
-          </v-list>
+          </template>
+
+
         </template>
 
 
-      </v-card>
+      </div>
 
 
 
@@ -374,66 +157,32 @@
 
 <script>
 
-import PedigreeGraph from '../viz/PedigreeGraph.vue';
+
 import AppIcon       from '../partials/AppIcon.vue';
+import VariantInspectCard   from '../viz/findings/VariantInspectCard.vue';
 
 export default {
   name: 'findings',
   components: {
-    PedigreeGraph,
-    AppIcon
+    AppIcon,
+    VariantInspectCard
   },
   props: {
-    workflow:    null,
-    analysis:    null,
-    caseSummary: null,
+    analysis: null,
     modelInfos:  null,
-    pedigree:    null,
-    sampleId:    null,
-    phenotypes:  null,
-    genes:       null,
-    variants:    null,
-    filters:     null,
-    variantsByInterpretation: null
+    genomeBuildHelper: null,
+    caseSummary: null,
+    variantsByInterpretation: null,
+    interpretationMap: null,
   },
   data() {
     return {
+      clinicalNotes: null
 
     }
 
   },
   methods: {
-    mappedReadsPercent: function(sample) {
-      if (sample) {
-        return this.percentage(sample.metrics.mapped_reads / sample.metrics.total_reads);
-      } else {
-        return "";
-      }
-    },
-    duplicatesPercent: function(sample) {
-      if (sample) {
-        return this.percentage(sample.metrics.duplicates / sample.metrics.total_reads);
-      } else {
-        return "";
-      }
-    },
-
-    onVariantSelected: function(variant) {
-      this.$emit("flagged-variant-selected", variant);
-    },
-    refreshReport: function() {
-
-    },
-
-    clinvar: function(variant) {
-      if (variant.clinvarClinSig == "pathogenic") {
-        return "clinvar_path";
-      } else if (variant.clinvarClinSig == "likely pathogenic") {
-        return "clinvar_lpath";
-      } else {
-        return "";
-      }
-    },
     vepConsequence: function(variant) {
       return variant.consequence;
     },
@@ -463,81 +212,62 @@ export default {
         return buf;
       }
     },
-    endsWith: function(str, suffix) {
-      return str.indexOf(suffix, str.length - suffix.length) !== -1;
-    },
-    percentage: function(a, showSign=true) {
+    initClinicalNotes: function() {
       let self = this;
-      var pct = a * 100;
-      var places = 0;
-      if (pct < .001) {
-        places = 4;
-      } else if (pct < .01) {
-        places = 3;
-      } else if (pct < .1) {
-        places = 2
-      } else if (pct < 1) {
-        places = 1;
-      } else {
-        places = 0;
+      self.clinicalNotes = [];
+      if (self.analysis && self.analysis.payload && self.analysis.payload.phenotypes && self.analysis.payload.phenotypes.length > 3) {
+        let noteObjects = self.analysis.payload.phenotypes[3];
+        noteObjects.forEach(function(noteObject) {
+          let clinNote = {};
+          clinNote.note = noteObject.note;
+          clinNote.phenotypes = [];
+          if (noteObject.gtr_terms && noteObject.gtr_terms.length > 0) {
+            noteObject.gtr_terms.forEach(function(gtrTerm) {
+              if (gtrTerm) {
+                let phen = gtrTerm.DiseaseName.toLowerCase();
+                if (clinNote.phenotypes.indexOf(phen) == -1){
+                  clinNote.phenotypes.push(phen)
+                }                
+              }
+            })
+          }
+          if (noteObject.phenolyzer_terms && noteObject.phenolyzer_terms.length > 0) {
+            noteObject.phenolyzer_terms.forEach(function(phenolyzerTerm) {
+              if (phenolyzerTerm) {
+                let phen = phenolyzerTerm.label.toLowerCase();
+                if (clinNote.phenotypes.indexOf(phen) == -1) {
+                  clinNote.phenotypes.push(phen)
+                }                
+              }
+            })
+          }
+          if (noteObject.hpo_terms && noteObject.hpo_terms.length > 0) {
+            noteObject.hpo_terms.forEach(function(hpoTerm) {
+              if (hpoTerm) {
+                let phen = hpoTerm.phenotype.toLowerCase();
+                if (clinNote.phenotypes.indexOf(phen) == -1) {
+                  clinNote.phenotypes.push(phen)
+                }                
+              }
+            })
+          }
+          self.clinicalNotes.push(clinNote);
+        })
       }
-      return self.round(pct, places) + (showSign ? "%" : "");
-    },
-
-    round: function(value, places) {
-      return +(Math.round(value + "e+" + places)  + "e-" + places);
     }
   },
   computed: {
-    pedigreeCoverageQuartiles: function() {
-      let self = this;
-      let coverageQuartiles = [];
-      if (self.pedigree) {
-        self.pedigree.forEach(function(sample) {
-          let quartile = {};
-          quartile.label = sample.relationship;
-          quartile.quartiles = sample.distributions.coverage_hist.quartiles;
-          quartile.whiskers = sample.distributions.coverage_hist.whiskers;
-          coverageQuartiles.push(quartile);
-        })
-      }
-      return coverageQuartiles;
-    },
-    phenotypeList: function() {
-      let self = this;
-      let phenotypeList = [];
 
-      if (self.phenotypes) {
-        self.phenotypes.forEach(function(phenotypeArray) {
-          if (phenotypeArray) {
-            phenotypeArray.forEach(function(phenotype) {
-              phenotypeList.push(phenotype);
-            })
-          }
-        })
-      }
-
-      return phenotypeList;
-    },
-    variantsCandidateGenes: function() {
-      let self = this;
-      if (self.variants) {
-        return self.variants.filter(function(variant) {
-          return self.genes.indexOf(variant.gene) >= 0;
-        })
-      }
-    },
-    variantsFullAnalysis: function() {
-      let self = this;
-      if (self.variants) {
-        return self.variants.filter(function(variant) {
-          return self.genes.indexOf(variant.gene) == -1;
-        })
-      }
-    }
+   
 
   },
   watch: {
+    analysis: function() {
+      this.initClinicalNotes();
+    },
+    variantsByInterpretation: function() {
+      this.initClinicalNotes();
+    }
   },
 }
 </script>

@@ -13,7 +13,7 @@
           "tasks": [
             {
               "key": "review-patient",
-              "name": "Review patient"
+              "name": "Review relatedness, case description, data quality"
             }
           ],
           "title": "Review Case"
@@ -26,36 +26,22 @@
           "summary": "Generate candidate gene list based on patient's phenotype using commercially available tests and gene-to-phenotype associations.",
           "tasks": [
             {
-              "key": "review-phenotypes",
-              "name": "Review Phenotypes"
+              "key": "review-phenotypes-genes",
+              "name": "Generate phenotypes and prioritized gene list"
             }
           ],
-          "title": "Phenotypist"
-        },
-        {
-          "app": "genepanel",
-          "description": "Generate candidate gene list based on patient's phenotype using commercially available tests and gene-to-phenotype associations.",
-          "key": "genes",
-          "number": 3,
-          "summary": "Generate candidate gene list based on patient's phenotype using commercially available tests and gene-to-phenotype associations.",
-          "tasks": [
-            {
-              "key": "gtr-genes",
-              "name": "Review Genes"
-            }
-          ],
-          "title": "Gene List"
+          "title": "Review Phenotypes"
         },
         {
           "app": "genefull",
           "description": "The GENE.IOBIO app is used to review variants from whole exome/genome variant analysis",
           "key": "variants-full",
-          "number": 4,
+          "number": 3,
           "summary": "Review possible causative variants found in whole exome/genome of proband.",
           "tasks": [
             {
               "key": "review-full",
-              "name": "Review Variants",
+              "name": "Mark variants as significant, add notes",
               "tooltip": "After the variants in all genes in the genome/exome are analyzed on the server, the left side panel will show all variants that pass the preset filters.  Click on each variant in the list to examine the variant's annotations.  Upon reviewing the variant, designate the 'interpretation' from the dropdown and provide any additional notes."
             }
           ],
@@ -65,8 +51,8 @@
           "app": "review-findings",
           "description": "Review findings",
           "key": "review-findings",
-          "number": 5,
-          "summary": "Show Findings",
+          "number": 4,
+          "summary": "Findings",
           "tasks": [
             {
               "key": "review-results",
@@ -74,7 +60,7 @@
               "tooltip": "tooltip"
             }
           ],
-          "title": "Show Findings"
+          "title": "Findings"
         }
       ],
       "summary": "Review findings. ",

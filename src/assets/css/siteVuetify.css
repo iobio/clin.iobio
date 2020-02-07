@@ -31,6 +31,9 @@ html {
   fill:  rgb(113,113,113);
 }
 
+.v-content__wrap {
+  background-color: #e5e4e4 !important
+}
 
 .application.theme--light a {
   cursor: pointer;

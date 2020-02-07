@@ -7,16 +7,15 @@ $badge-inactive-color:  #d8d3d3
 
 #workflow-card
   color: $workflow-inactive-color
-  // height: 140px
-  // margin-top: 50px
   height: auto
-  margin-bottom: 10px
-  padding-top: 10px
-  padding-bottom: 0px
+  margin-bottom: 8px
   padding-right: 10px
   padding-left: 10px
+  padding-top: 5px
+  padding-bottom: 10px
   text-align: center
-
+  background-color: #f1efe9
+  
 
   #ab-switch
     position: absolute
@@ -108,23 +107,36 @@ $badge-inactive-color:  #d8d3d3
     text-align: center
     margin-left: 0px
 
+    .task-label
+      .v-badge__badge
+        justify-content: flex-start !important
+
     .task-badge
       display: inline-block
       position: relative
-      font-size: 11px
-      padding: 3px 7px
-      right: -35px
-      top: -5px
-      color: $workflow-inactive-color
+      font-size: 12px
+      font-weight: 600
+      font-style: italic
+      right: -70px
+      top: 10px
+      color: $workflow-badge-color
       background-color: transparent
+      line-height: 13px
+
 
       &.active
         background-color:  transparent
-        color: $text-color
 
       &.empty
         visibility:  hidden
         height: 16px
+
+      &.sig
+        color: $workflow-badge-red-color !important
+      &.unknown-sig
+        color: $workflow-badge-orange-color  !important 
+
+
 
     .task-text
       margin-top: -10px
@@ -186,7 +198,7 @@ $badge-inactive-color:  #d8d3d3
               color: $text-color !important
         &.active
           .v-avatar
-            background-color:  white !important
+            background-color:  transparent !important
             border-color: $workflow-active-color  !important
             .material-icons
               color: white !important
@@ -233,23 +245,25 @@ $badge-inactive-color:  #d8d3d3
       height: 2px
 
       &.short
-        width: 30px
+        width: 70px
 
       &.long
-        width: 30px
+        width: 80px
 
       &.invisible
         visibility: hidden
 
 
     .step-label
-      margin-bottom: 0px
+      margin-bottom: 5px
       color:  $text-color
       text-transform: uppercase
       font-weight: 600
       font-family: Raleway
       font-size: 15px
       text-align: center
+      margin-left: 100px
+
 
 
       &.first
@@ -287,11 +301,13 @@ $badge-inactive-color:  #d8d3d3
             color: white !important
 
       .task-label
-        width:       80px
-        font-size:   11px
-        line-height: 12px
+        width:       140px
+        font-size:   13px
+        line-height: 14px
         text-align:  center
-        min-height:  46px
+        min-height:  55px
+        max-height:  55px
+        font-weight: 500
 
       .avatar-button
         height:      24px !important
@@ -303,7 +319,7 @@ $badge-inactive-color:  #d8d3d3
           display:           inline-block
           margin-top:        3px
           border: solid 2px  $workflow-inactive-color
-          background-color:  white
+          background-color:  transparent
 
           .material-icons
             color: $workflow-inactive-color
@@ -331,6 +347,7 @@ $badge-inactive-color:  #d8d3d3
   #current-checkbox-container
     margin-top: -52px
     max-width: 30px
+    height: 35px
 
     label
       display: none
@@ -342,8 +359,13 @@ $badge-inactive-color:  #d8d3d3
     padding-top: 3px
 
     &.active
-      background-color: #f6f6f6
-      border: solid thin #dbd4d4
+
+      .step-label
+        color: white
+        background-color: $workflow-active-color
+        box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.65)
+        -webkit-box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.65)
+
       .task
         &.active
           .avatar-button
@@ -367,8 +389,8 @@ $badge-inactive-color:  #d8d3d3
 
 <template>
   <v-card light id="workflow-card" :class="{'task-is-checkbox': taskIsCheckbox}" >
-    <div id="workflow-steps" v-if="analysisSteps">
-      <div  v-for="(step, stepIndex) in analysisSteps" :key="step.key"
+    <div id="workflow-steps" v-if="analysisStepsRefreshed">
+      <div  v-for="(step, stepIndex) in analysisStepsRefreshed" :key="step.key"
       :class="{'step-container': true, 'active' : currentStep && step.key == currentStep.key  ? true : false, 'complete': step.complete}">
 
         <div :class="{'step-label': true, 'first': stepIndex == 0}" >
@@ -389,8 +411,14 @@ $badge-inactive-color:  #d8d3d3
           :class="{'task': true, 'active' : currentTask && task.key == currentTask.key  ? true : false, 'complete': task.complete}">
             <div style="display:inline-block">
               <div class="task-label">
-                <v-badge  right
-                 :class="{'task-badge': true, 'empty': task.badge == null, 'active': currentStep && step.key == currentStep.key  ? true : false}">{{ task.badge }}</v-badge>
+                <v-badge right color="transparent" >
+
+                  <span v-if="task.badges" v-for="taskBadge, idx in task.badges" :key="taskBadge.label"
+                  :class="getTaskBadgeClass(taskBadge, currentStep && step.key == currentStep.key)" slot="badge">{{ taskBadge.count + ' ' + taskBadge.label }}</span>
+
+                  <span v-if="!task.badges" :class="{'task-badge': true, 'empty': true, 'active': false}" slot="badge"></span>
+                </v-badge>
+
                 <div class="task-text">
                   {{ getTaskName(step.key, task.key) }}
                 </div>
@@ -416,7 +444,7 @@ $badge-inactive-color:  #d8d3d3
           light></v-checkbox>
       </div>
 
-      <div class="button-panel"  style="text-align:center" >
+      <div class="button-panel" v-show="false" style="text-align:center" >
         <v-btn :class="{'nav-btn': true, 'disabled': disablePrev}"  small  @click="onPrevTask"><v-icon>arrow_back</v-icon></v-btn>
         <v-btn :class="{'nav-btn': true, 'disabled': disableNext}"  small  @click="onNextTask"><v-icon>arrow_forward</v-icon></v-btn>
       </div>
@@ -456,13 +484,12 @@ export default {
       currentTaskLeft: '0px',
       disableNext: false,
       disablePrev: false,
-      taskIsCheckbox: true
+      taskIsCheckbox: true,
+      badges: null,
+      analysisStepsRefreshed: []
     }
   },
   watch: {
-    analysisSteps(){
-      console.log("analysisSteps", this.analysisSteps)
-    },
     currentTask: function() {
       let self = this;
       self.$emit("on-task-changed")
@@ -482,9 +509,23 @@ export default {
         }
         self.$emit("on-task-completed", self.currentStep, self.currentTask);
       }
+    },
+    analysisSteps: function() {
+      this.analysisStepsRefreshed = this.analysisSteps;
     }
   },
   methods: {
+    refresh: function() {
+      let self = this;
+
+      self.$set(self, "analysisStepsRefreshed", [])
+      let theSteps = [];
+      self.analysisSteps.forEach(function(analysisStep) {
+        theSteps.push(analysisStep);
+      })
+      self.$set(self, "analysisStepsRefreshed", theSteps)
+
+    },
     onStepClick: function(step) {
       let self = this;
       self.setStepAndTask(step, step.tasks[0]);
@@ -526,7 +567,7 @@ export default {
 
           let offsetLeft = $('#workflow-steps')[0].offsetLeft;
 
-          let offset = taskIdx == 0 ? 32 : 32;
+          let offset = taskIdx == 0 ? 67 : 67;
           self.currentTaskLeft = $('.task.active')[0].offsetLeft - offsetLeft + offset + 'px';
 
           if (taskIdx == self.currentStep.tasks.length - 1 && stepIdx == self.analysisSteps.length - 1) {
@@ -615,6 +656,17 @@ export default {
     getTaskName: function(stepKey, taskKey) {
       var theTask = this.getWorkflowTask(stepKey, taskKey);
       return theTask ? theTask.name : "";
+    },
+    getTaskBadgeClass: function(taskBadge, active) {
+      let buf = "task-badge ";
+      buf += taskBadge.class ? taskBadge.class : "";
+      if (active) {
+        buf += " active";
+      }
+      if (taskBadge.count == null || taskBadge.count == 0 || taskBadge.count == '') {
+        buf += " hide";
+      }
+      return buf;
     }
 
 
@@ -623,6 +675,7 @@ export default {
   },
   mounted: function() {
     let self = this;
+    self.analysisStepsRefreshed = self.analysisSteps;
     self.currentStep = self.analysisSteps[0];
     self.currentTask = self.currentStep.tasks[0];
     self.currentTaskComplete = self.currentTask.complete;

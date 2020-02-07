@@ -5,161 +5,259 @@ export default class MosaicSession {
     this.url = null;
     this.apiVersion =  '/apiv1';
     this.client_application_id = null;
+    this.variantSetTxtCols = [
+      "chrom",
+      "start",
+      "end",
+      "ref",
+      "alt",
+      "allelicBalance",
+      "slivarFilter",
+      "gene",
+      "afgnomAD",
+      "sampleId"
+    ]
     this.user = null;
+
+    this.variantSetToFilterName = {
+      'compoundhet': 'compoundHet'
+    };
   }
 
-  promiseInit(sampleId, source, isPedigree, projectId ) {
+  promiseInit(sampleId, source, isPedigree, projectId, clientAppId ) {
     let self = this;
     self.api = source + self.apiVersion;
+    self.client_application_id = clientAppId;
 
     return new Promise((resolve, reject) => {
       let modelInfos = [];
+      let coverageHistos = [];
+      let allVarCounts = [];
 
-      self.promiseGetClientApplication()
-      .then(function() {
-        return self.promiseGetUser();
-
+      self.promiseGetCurrentUser()
+      .then(function(data) {
+        self.user = data;
+        console.log(self.user)
       })
-      .then(function(user) {
-        self.user = user;
-        self.promiseGetSampleInfo(projectId, sampleId, isPedigree).then(data => {
+      .catch(function(error) {
+        console.log(error)
+      })
+
+      self.promiseGetSampleInfo(projectId, sampleId, isPedigree).then(data => {
+
+        let promises = [];
 
 
-          let promises = [];
+        let pedigree    = isPedigree ? data.pedigree : {'proband': data.proband};
+        let rawPedigree = data.rawPedigree;
 
-          let pedigree    = data.pedigree;
-          let rawPedigree = data.rawPedigree;
+        // Let's get the proband info first
+        let probandSample = isPedigree ? pedigree.proband : data.proband;
+        self.promiseGetFileMapForSample(projectId, probandSample, 'proband').then(data => {
+          probandSample.files = data.fileMap;
+        })
+        .then( () => {
+          for (var rel in pedigree) {
+            if (rel != 'unparsed') {
+              let samples = [];
+              if (Array.isArray(pedigree[rel])) {
+                samples = pedigree[rel];
+              } else {
+                samples = [pedigree[rel]];
+              }
+              samples.forEach(s => {
+                let p =  self.promiseGetFileMapForSample(projectId, s, rel).then(data => {
+                  let theSample = data.sample;
+                  theSample.files = data.fileMap;
 
-          // Let's get the proband info first
-          let probandSample = pedigree.proband;
-          self.promiseGetFileMapForSample(projectId, probandSample, 'proband').then(data => {
-            probandSample.files = data.fileMap;
-          })
-          .then( () => {
-            for (var rel in pedigree) {
-              if (rel != 'unparsed') {
-                let samples = [];
-                if (Array.isArray(pedigree[rel])) {
-                  samples = pedigree[rel];
-                } else {
-                  samples = [pedigree[rel]];
-                }
-                samples.forEach(s => {
-                  let p =  self.promiseGetFileMapForSample(projectId, s, rel).then(data => {
-                    let theSample = data.sample;
-                    theSample.files = data.fileMap;
+                  let coverageHisto =  {id: sampleId, coverage: theSample.distributions.coverage_hist_no_outliers};
+                  let varCounts = {id: sampleId, counts : { SNP: theSample.metrics.var_snp_count, indel : theSample.metrics.var_indel_count, other: theSample.metrics.var_other_count}}
 
 
+                  // gene.iobio only supports siblings in same multi-sample vcf as proband.
+                  // bypass siblings in their own vcf.
+                  let bypass = false;
+                  // TODO:  Need to check if samples exist in proband vcf rather than checking file names
+                  // since mosaic generates different vcf url for sample physical file.
+                  //if (data.relationship == 'siblings' && theSample.files.vcf != probandSample.files.vcf) {
+                  //  bypass = true;
+                  //  console.log("Bypassing sibling " + theSample.id + ".  This sample must reside in the same vcf as the proband in order to be processed.")
+                  //}
 
-                    // gene.iobio only supports siblings in same multi-sample vcf as proband.
-                    // bypass siblings in their own vcf.
-                    let bypass = false;
-                    // TODO:  Need to check if samples exist in proband vcf rather than checking file names
-                    // since mosaic generates different vcf url for sample physical file.
-                    //if (data.relationship == 'siblings' && theSample.files.vcf != probandSample.files.vcf) {
-                    //  bypass = true;
-                    //  console.log("Bypassing sibling " + theSample.id + ".  This sample must reside in the same vcf as the proband in order to be processed.")
-                    //}
+                  if (!bypass) {
 
-                    if (!bypass) {
-
-                      var modelInfo = {
-                        'relationship':   data.relationship == 'siblings' ? 'sibling' : data.relationship,
-                        'affectedStatus': theSample.pedigree.affection_status == 2 ? 'affected' : 'unaffected',
-                        'name':           theSample.name,
-                        'sample':         theSample.files.vcf ? theSample.vcf_sample_name : theSample.name,
-                        'vcf':            theSample.files.vcf,
-                        'tbi':            theSample.files.tbi == null || theSample.files.tbi.indexOf(theSample.files.vcf) == 0 ? null : theSample.files.tbi,
-                        'txt':            theSample.files.txt
-                      }
-
-                      if (theSample.files.bam != null) {
-                        modelInfo.bam = theSample.files.bam;
-                        if (theSample.files.bai) {
-                          modelInfo.bai = theSample.files.bai;
-                        }
-
-                      } else if (theSample.files.cram != null) {
-                        modelInfo.bam = theSample.files.cram;
-                        if (theSample.files.crai) {
-                          modelInfo.bai = theSample.files.crai;
-                        }
-                      }
-
-                      modelInfos.push(modelInfo);
+                    var modelInfo = {
+                      'relationship':   data.relationship == 'siblings' ? 'sibling' : data.relationship,
+                      'affectedStatus': isPedigree ? theSample.pedigree.affection_status == 2 ? 'affected' : 'unaffected' : 'affected',
+                      'sex':            isPedigree ? theSample.pedigree.sex == 1 ? 'male' : (theSample.pedigree.sex == 2 ? 'female' : 'unknown') : 'unknown',
+                      'name':           theSample.name,
+                      'sample':         theSample.files.vcf ? theSample.vcf_sample_name : theSample.name,
+                      'vcf':            theSample.files.vcf,
+                      'tbi':            theSample.files.tbi == null || theSample.files.tbi.indexOf(theSample.files.vcf) == 0 ? null : theSample.files.tbi,
+                      'txt':            theSample.files.txt
                     }
 
-                  })
-                  promises.push(p);
+
+                    if (theSample.files.bam != null) {
+                      modelInfo.bam = theSample.files.bam;
+                      if (theSample.files.bai) {
+                        modelInfo.bai = theSample.files.bai;
+                      }
+
+                    } else if (theSample.files.cram != null) {
+                      modelInfo.bam = theSample.files.cram;
+                      if (theSample.files.crai) {
+                        modelInfo.bai = theSample.files.crai;
+                      }
+                    }
+
+                    modelInfos.push(modelInfo);
+                    coverageHistos.push(coverageHisto);
+                    allVarCounts.push(varCounts);
+                  }
+
                 })
-              }
-
-
+                promises.push(p);
+              })
             }
-            Promise.all(promises).then(response => {
-              // Don't want to expose db info here?
-              //console.log(pedigree);
 
-              resolve({'modelInfos': modelInfos, 'rawPedigree': rawPedigree, 'user': self.user});
+
+          }
+          Promise.all(promises).then(response => {
+            // Don't want to expose db info here?
+            //console.log(pedigree);
+
+            let buf = "";
+            modelInfos.forEach(function(modelInfo) {
+              if (modelInfo.sample == null || modelInfo.sample == "") {
+                buf += "The sample " + modelInfo.name + "  (" + modelInfo.relationship + ")   has an empty vcf_sample_name. Unable to properly filter variants for this sample.<br><br>";
+              }
             })
-            .catch(error => {
-              reject(error);
-            })
+            if (buf.length > 0) {
+              alertify.alert("Error", buf)
+            }
+
+            resolve({'modelInfos': modelInfos, 'rawPedigree': rawPedigree, 'coverageHistos': coverageHistos, 'allVarCounts': allVarCounts});
           })
-
-
-
-
+          .catch(error => {
+            reject(error);
+          })
         })
-      })
 
+
+
+
+      })
     })
+
 
   }
 
-  promiseGetClientApplication() {
+  hasVariantSets(modelInfos, rel='proband') {
+    let proband = modelInfos.filter(function(mi) {
+      return mi.relationship == rel;
+    })
+    if (proband && proband.length > 0) {
+      let fileInfos = proband[0].txt;
+      return fileInfos && fileInfos.length > 0
+    } else {
+      return false;
+    }
+  }
+
+  promiseParseVariantSets(modelInfos, rel='proband') {
+    let self = this;
+    return new Promise(function(resolve,reject) {
+      let proband = modelInfos.filter(function(mi) {
+        return mi.relationship == rel;
+      })
+      let variantSets = {};
+      if (proband && proband.length > 0) {
+        var promises = [];
+        let fileInfos = proband[0].txt;
+        fileInfos.forEach(function(fileInfo) {
+          let p = self.promiseParseVariantSetFile(fileInfo, proband[0])
+          .then(function(data) {
+            if (data) {
+              variantSets[data.nickname] = data.records;
+            }
+          })
+          promises.push(p);
+        })
+        Promise.all(promises)
+        .then(function() {
+          resolve(variantSets)
+        })
+      } else {
+        resolve(variantSets);
+      }
+
+    })
+  }
+
+  promiseParseVariantSetFile(fileInfo, modelInfo) {
     let self = this;
     return new Promise(function(resolve, reject) {
+      let theFileInfo = fileInfo
       $.ajax({
-        url: self.api + '/client-applications',
-        type: 'GET',
-        contentType: 'application/json',
-        headers: {
-          Authorization: localStorage.getItem('hub-iobio-tkn'),
-        },
+        url: fileInfo.url
       })
-      .done(clientApps => {
-        console.log(clientApps)
-        let matchingApp = clientApps.filter(function(clientApp) {
-          return clientApp.uid == 'clin';
-        })
-        if (matchingApp.length > 0) {
-          self.client_application_id = matchingApp[0].id;
-          resolve();
-        } else {
-          reject("Cannot find Mosaic client_application for clin")
-        }
-
-      })
-      .fail(error => {
-        console.log("Error getting applications ");
-        console.log(error);
-        reject(error);
-      })
-
-    })
-  }
-
-  promiseGetUser() {
-    let self = this;
-    return new Promise(function(resolve, reject) {
-      self.getUser()
       .done(data => {
-          resolve(data);
+        let variants = [];
+        if (data && data.length > 0) {
+          let records = data.split("\n");
+          records.map(function(record) {
+            let fields = record.split("\t");
+            if (fields.length >= self.variantSetTxtCols.length-1) {
+              let variant = {};
+              self.variantSetTxtCols.forEach(function(col, i) {
+                variant[col] = fields[i];
+              })
+              let keep = true
+              // If sampleId was included, us it to filter variants
+              if (fields.length == self.variantSetTxtCols.length) {
+                if (variant.sampleId  &&  modelInfo.sample && variant.sampleId != modelInfo.sample) {
+                  keep = false;
+                }
+              }
+              if (keep) {
+                if (variant.gene == "" || variant.gene == null || variant.gene.trim().length == 0) {
+                  console.log("promiseParseVariantSets: missing gene field.  bypassing record " + record);
+                } else {
+                  variant.isProxy = true;
+                  variant.variant_id = variant.gene + "^" + variant.start + "^" + variant.ref + "^" + variant.alt;
+                  if (variant.slivarFilter.indexOf("comphet") >= 0) {
+                    variant.inheritance = "compound het"
+                    variant.filtersPassed = "compoundHet"
+                  } else {
+                    variant.inheritance = variant.slivarFilter;
+                    variant.filtersPassed = variant.inheritance;
+                  }
+
+                  let matched = variants.filter(function(v) {
+                    return v.variant_id == variant.variant_id;
+                  })
+                  if (matched.length == 0) {
+                    variants.push(variant)
+                  }
+                }
+              } else {
+                console.log("bypassing variant rec for sample " + variant.sampleId)
+              }
+            } else {
+              console.log("promiseParseVariantSets: insufficient record fields.  bypassinging record " + record);
+            }
+          })
+        }
+        resolve({nickname: fileInfo.name, records: variants});
       })
       .fail(error => {
-        reject("Error getting user: " + error);
-      });
+        console.log("Unable to get file " + fileInfo.url)
+        //alertify.error("Missing file for URL " + fileInfo.url, 20)
+
+        resolve();
+      })
+
     })
   }
 
@@ -228,6 +326,7 @@ export default class MosaicSession {
     })
   }
 
+
   parsePedigree(raw_pedigree, sample_id) {
 
     let self = this;
@@ -249,6 +348,13 @@ export default class MosaicSession {
     // the proband by looking for a child with mother and father filled in and unknown affected status
     if (probandIndex == -1) {
       probandIndex = raw_pedigree.findIndex(d => ( d.pedigree.affection_status == 0 && d.pedigree.maternal_id && d.pedigree.paternal_id ) );
+    }
+
+    if (probandIndex == -1) {
+      // Assume proband if there is only one sample in the pedigree
+      if (raw_pedigree.length == 1) {
+        probandIndex = 0;
+      }
     }
 
 
@@ -302,7 +408,6 @@ export default class MosaicSession {
     });
   }
 
-
   getSample(project_id, sample_id) {
     let self = this;
     return $.ajax({
@@ -324,21 +429,29 @@ export default class MosaicSession {
       var currentSample = sample;
       self.promiseGetFilesForSample(project_id, currentSample.id)
       .then(files => {
-        files.forEach(file => {
+        files.filter(file => {
+          return file.type
+        })
+        .forEach(file => {
+
           var p = self.promiseGetSignedUrlForFile(project_id, currentSample.id, file)
           .then(signed => {
-            if (file.type == 'txt') {
-              var files = fileMap[file.type];
+            if (file.type == 'txt' || file.type == 'tsv') {
+              var files = fileMap.txt;
               if (files == null) {
                 files = [];
-                fileMap[file.type] = files;
+                fileMap.txt = files;
               }
               files.push({'url': signed.url, 'name': file.nickname});
 
             } else {
               fileMap[file.type] = signed.url
               if (file.type == 'vcf') {
-                sample.vcf_sample_name = file.vcf_sample_name;
+                if (file.vcf_sample_name == null || file.vcf_sample_name == "") {
+                  alertify.error("Missing vcf_sample_name for file " + file.name, 20)
+                } else {
+                  sample.vcf_sample_name = file.vcf_sample_name;
+                }
               }
             }
           })
@@ -436,18 +549,6 @@ export default class MosaicSession {
     });
   }
 
-  getUser() {
-    let self = this;
-    return $.ajax({
-        url: self.api + '/user',
-        type: 'GET',
-        contentType: 'application/json',
-        headers: {
-            'Authorization': localStorage.getItem('hub-iobio-tkn')
-        }
-    });
-  }
-
   getProject(projectId) {
     let self = this;
     return $.ajax({
@@ -532,10 +633,11 @@ export default class MosaicSession {
 
   addAnalysis(projectId, newAnalysisData) {
     let self = this;
+
     return $.ajax({
       url: self.api + '/projects/' + projectId + '/analyses/?client_application_id=' + this.client_application_id,
       type: 'POST',
-      data: JSON.stringify(newAnalysisData),
+      data: self.stringifyAnalysis(newAnalysisData),
       contentType: 'application/json',
       headers: {
         Authorization: localStorage.getItem('hub-iobio-tkn'),
@@ -545,10 +647,11 @@ export default class MosaicSession {
 
   updateAnalysisTitle(projectId, analysisId, newAnalysisData) {
     let self = this;
+
     return $.ajax({
       url: self.api + '/projects/' + projectId + '/analyses/' + analysisId,
       type: 'PUT',
-      data: JSON.stringify(newAnalysisData),
+      data: self.stringifyAnalysis(newAnalysisData),
       contentType: 'application/json',
       headers: {
         Authorization: localStorage.getItem('hub-iobio-tkn'),
@@ -559,11 +662,12 @@ export default class MosaicSession {
 
   updateAnalysis(projectId, analysisId, newAnalysisData) {
     let self = this;
+
     return $.ajax({
       url: self.api + '/projects/' + projectId + '/analyses/' + analysisId
             + '?client_application_id=' + this.client_application_id,
       type: 'PUT',
-      data: JSON.stringify(newAnalysisData),
+      data: self.stringifyAnalysis(newAnalysisData),
       contentType: 'application/json',
       headers: {
         Authorization: localStorage.getItem('hub-iobio-tkn'),
@@ -571,4 +675,48 @@ export default class MosaicSession {
     });
   }
 
+  promiseGetCurrentUser() {
+    let self = this;
+    return new Promise(function(resolve, reject) {
+      self.getCurrentUser()
+        .done(response => {
+          resolve(response)
+        })
+        .fail(error => {
+          reject("Error getting currentUser :" + error);
+        })
+    })
+  }
+
+  getCurrentUser() {
+    let self = this;
+
+    return $.ajax({
+      url: self.api + '/user',
+      type: 'GET',
+      contentType: 'application/json',
+      headers: {
+        Authorization: localStorage.getItem('hub-iobio-tkn'),
+      },
+    });
+
+  }
+
+  stringifyAnalysis(analysisData) {
+    var cache = [];
+    let analysisString = JSON.stringify(analysisData, function(key, value) {
+      if (typeof value === 'object' && value !== null) {
+          if (cache.indexOf(value) !== -1) {
+              // Circular reference found, discard key
+              return;
+          }
+          // Store value in our collection
+          cache.push(value);
+      }
+      return value;
+    });
+    cache = [];
+    return analysisString;
+  }
 }
+

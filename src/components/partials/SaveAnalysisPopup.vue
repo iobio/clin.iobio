@@ -3,8 +3,8 @@
 
 .save-analysis-dialog
   position: fixed
-  right: 150px
-  bottom: 0
+  right: 50px
+  top: 0
   z-index: 999
 
 
@@ -52,9 +52,9 @@
     <v-dialog  content-class="save-analysis-dialog" width="400" persistent v-model="showPopup" >
 
       <v-card v-if="analysis" class="save-analysis-content full-width">
-        <v-card-title style="justify-content:space-between">
+        <v-card-title style="justify-content: space-between;padding: 0px;">
           <span class="info-title"> {{ analysis.id ? 'Name and description of this analysis' : 'Add this analysis to Mosaic' }}</span>
-          <v-btn  @click="onClose" flat class="close-button">
+          <v-btn  @click="onClose" text class="close-button">
             <v-icon>close</v-icon>
           </v-btn>
         </v-card-title>
@@ -78,14 +78,13 @@
               </v-flex>
 
 
-              <v-flex class="text-xs-right mt-4" xs12>
-                <v-btn class="primary" @click="onSave">{{ analysis.id ? 'Apply' : 'Save' }}</v-btn>
+              <v-flex class="mt-4" style="display:flex;justify-content:flex-end" xs12>
+                <v-btn class="primary mr-2" @click="onSave">{{ analysis.id ? 'Apply' : 'Save' }}</v-btn>
                 <v-btn @click="onClose">Cancel</v-btn>
               </v-flex>
 
           </v-layout>
-        <v-card-text>
-        </v-card-text>
+
       </v-card>
     </v-dialog>
 

@@ -7,7 +7,32 @@ class Util {
       LOW:       'Benign'
     }
     this.globalApp = null;
-
+    this.aminoAcidMap= {A: 'Ala',
+                        R: 'Arg',
+                        N: 'Asn',
+                        D: 'Asp',
+                        C: 'Cys',
+                        E: 'Glu',
+                        Q: 'Gln',
+                        G: 'Gly',
+                        H: 'His',
+                        I: 'Ile',
+                        L: 'Leu',
+                        K: 'Lys',
+                        M: 'Met',
+                        F: 'Phe',
+                        P: 'Pro',
+                        S: 'Ser',
+                        T: 'Thr',
+                        W: 'Trp',
+                        Y: 'Tyr',
+                        V: 'Val',
+                        '*': 'Ter',
+                        B: 'Asx',
+                        Z: 'Glx',
+                        X: 'Xaa',
+                        J: 'Xle',
+                        '-': '-'};
 
   }
 
@@ -22,6 +47,32 @@ class Util {
       return url;
   }
 
+  formatExonTooltip(filterModel, relationship, coverageRow, feature,  lock) {
+    let self = this;
+
+      let html = '<div>'
+               + '<span id="exon-tooltip-title"' + (lock ? 'style="margin-top:8px">' : '>') + (feature.hasOwnProperty("exon_number") ? "Exon " + feature.exon_number : "") + '</span>'
+               + (lock ? '<a href="javascript:void(0)" id="exon-tooltip-close">X</a>' : '')
+               + '</div>';
+      html     += '<div style="clear:both">' + feature.feature_type + ' ' + self.addCommas(feature.start) + ' - '       + self.addCommas(feature.end) + '</div>';
+
+      if (feature.geneCoverage && feature.geneCoverage[relationship]) {
+          var covFields = filterModel.whichLowCoverage(feature.geneCoverage[relationship]);
+          html += "<div style='margin-top:4px'>" + "Coverage:"
+               +  coverageRow('min',    feature.geneCoverage[relationship].min, covFields)
+               +  coverageRow('median', feature.geneCoverage[relationship].median, covFields)
+               +  coverageRow('mean',   feature.geneCoverage[relationship].mean, covFields)
+               +  coverageRow('max',    feature.geneCoverage[relationship].max, covFields)
+               +  coverageRow('sd',     feature.geneCoverage[relationship].sd, covFields)
+
+      }
+      if (lock) {
+        html += '<div style="text-align:right;margin-top:8px">'
+        + '<a href="javascript:void(0)" id="exon-tooltip-thresholds" class="danger" style="float:left"  >Set cutoffs</a>'
+        + '</div>'
+      }
+      return html;
+  }
 
   formatDate(d) {
     var padMinutes = function(n) {
@@ -45,6 +96,24 @@ class Util {
   }
 
 
+
+  getCurrentDateTime() {
+    var dateObj = new Date();
+    return dateObj.getTime();
+  }
+
+  formatCurrentDateTime(time) {
+    var dateObject = new Date(time);
+    return dateObject.toString();
+  }
+
+  isObject(val) {
+    if (val === null) {
+      return false;
+    } else {
+      return ( (typeof val === 'function') || (typeof val === 'object') );
+    }
+  }
 
   visibleHeight($el) {
       var elH = $el.outerHeight(),
@@ -154,6 +223,21 @@ class Util {
     var nameTokens = transcriptId.split('.');
     return nameTokens.length > 0 ? nameTokens[0] : transcriptId;
   }
+
+  stripRefName(refName) {
+    var tokens = refName.split("chr");
+    var strippedName = refName;
+    if (tokens.length > 1) {
+      strippedName = tokens[1];
+    } else {
+      tokens = refName.split("ch");
+      if (tokens.length > 1) {
+        strippedName = tokens[1];
+      }
+    }
+    return strippedName;
+  }
+
 
   uniq(theArray) {
      return Array.from(new Set(theArray));
@@ -391,7 +475,11 @@ class Util {
       isIEedge = winNav.userAgent.indexOf("Edge") > -1,
       isIOSChrome = winNav.userAgent.match("CriOS");
 
-    if (isIOSChrome) {
+    var isChrome = /Chrome/.test(window.navigator.userAgent) && /Google Inc/.test(window.navigator.vendor);  
+
+    if(isChrome) {
+      return true;
+    } else if (isIOSChrome) {
       return true;
     } else if (
       isChromium !== null &&
@@ -439,7 +527,7 @@ class Util {
   }
 
   detectSafari() {
-    return (navigator.userAgent.indexOf('Safari') != -1 && navigator.userAgent.indexOf('Chrome') == -1);
+    return (navigator.userAgent.indexOf('Safari') != -1 && !this.isChrome());
   }
 
 
@@ -507,7 +595,7 @@ class Util {
               if (transcriptUrls.length > 0) {
                 transcriptUrls += ", ";
               }
-              var url = '<a href="javascript:void(0)" onclick="selectTranscript(\'' + transcriptId + '\')">' + transcriptId + '</a>';
+              var url = '<a href="javascript:void(0)" @click="selectTranscript(\'' + transcriptId + '\')">' + transcriptId + '</a>';
               transcriptUrls += url;
             }
             ncObject[effectKey] = {transcripts: Object.keys(allTranscripts), display: Object.keys(allTranscripts).join(","), url: transcriptUrls};
@@ -554,20 +642,27 @@ class Util {
     }
   }
 
-  formatHgvsC(variant, value) {
+  formatHgvsC(variant, value, stripTranscript=true) {
     let me = this;
     if (value == null || value == '' || Object.keys(value).length == 0) {
       return "";
     } else {
       var buf = "";
       for(var key in value) {
-        var tokens = key.split(":c.");
-        if (buf.length > 0) {
-          buf += " ";
-        }
-        if (tokens.length == 2) {
-          var basicNotation = "c." + tokens[1];
-          buf += basicNotation;
+        if (stripTranscript) {
+          var tokens = key.split(":c.");
+          if (buf.length > 0) {
+            buf += " ";
+          }
+          if (tokens.length == 2) {
+            var basicNotation = "c." + tokens[1];
+            buf += basicNotation;
+          }
+        } else {
+          if (buf.length > 0) {
+            buf += " ";
+          }
+          buf+= key;
         }
       }
       return buf;
@@ -625,32 +720,45 @@ class Util {
       refalt: "",
       exon: "",
       inheritance: "",
-      clinvarSig: "",
-      clinvarSigSummary: "",
+
+      clinvarClinSig: "",
+      clinvarTrait: "",
+      clinvarUid: "",
       clinvarUrl: "",
-      clinvarLink: "",
-      clinvarLinkKnownVariants: "",
-      phenotype: "",
-      phenotypeSimple: "",
+
+      clinvarSigSummary: "",
+      clinvarLinks: [],
+
+      clinvarUniqueClinSigs: {},
+      clinvarUniqueTraits: {},
+
       zygosity: "",
+      af1000G: "",
+      afgnomAD: "",
       vepImpact: "",
       vepHighestImpact: "",
       vepHighestImpactSimple: "",
       vepHighestImpactInfo: "",
       vepHighestImpactValue: "",
+      vepHighestImpactRecs: [],
       vepConsequence: "",
       HGVSc: "",
       HGVSp: "",
+      HGVScAbbrev: "",
       HGVSpAbbrev: "",
       HGVScLoading: false,
       HGVSpLoading: false,
+      revel: "",
       sift: "",
       polyphen: "",
       regulatory: "",
       regulatoryMotifLinks: "",
       rsId: "",
       dbSnpUrl: "",
-      dbSnpLink: ""
+      dbSnpLink: "",
+      filtersPassed: "",
+
+      notesFlattened: ""
     };
 
 
@@ -668,69 +776,21 @@ class Util {
 
     info.inheritance = translator.getInheritanceLabel(variant.inheritance);
 
-    for (var key in variant.clinVarClinicalSignificance) {
-      if (key != 'none' && key != 'undefined' ) {
-        if (!isEduMode || (key.indexOf("uncertain_significance") >= 0 || key.indexOf("pathogenic") >= 0)) {
-          if (info.clinvarSig.length > 0 ) {
-              info.clinvarSig += ", ";
-          }
-          info.clinvarSig += key.split("_").join(" ");
-        }
-      }
-    }
 
-    for (var key in variant.clinVarPhenotype) {
-      if (key != 'not_specified'  && key != 'undefined') {
-        if (info.phenotype.length > 0) {
-            info.phenotype += ", ";
-        }
-        info.phenotype += key.split("_").join(" ").split("\\x2c").join(", ");
-      }
-    }
+    me.formatClinvarDisplay(variant, info, translator, isEduMode);
 
-
-    if (info.clinvarSig != null && info.clinvarSig != "") {
-      if (variant.clinVarUid != null && variant.clinVarUid != '') {
-        info.clinvarUrl = 'http://www.ncbi.nlm.nih.gov/clinvar/variation/' + variant.clinVarUid;
-      } else if (variant.clinvarSubmissions != null && variant.clinvarSubmissions.length > 0) {
-        var clinsigUniq = {};
-        for (var idx = 0; idx < variant.clinvarSubmissions.length; idx++) {
-          var submission = variant.clinvarSubmissions[idx];
-          submission.clinsig.split(",").forEach(function(clinsig) {
-            clinsigUniq[clinsig] = "";
-          })
-          var accessions = submission.accession.split(",");
-          var clinsigs   = submission.clinsig.split(",");
-          for (var i = 0; i < accessions.length; i++) {
-            var accessionSingle = accessions[i];
-            var clinsigSingle   = clinsigs.length > i ? clinsigs[i] : "?";
-
-            info.clinvarUrl   = 'http://www.ncbi.nlm.nih.gov/clinvar/' + accessionSingle;
-            info.clinvarLink  +=  '<a class="tooltip-clinvar-link"' + '" href="' + info.clinvarUrl + '" style="float:left;padding-right:4px" target="_new"' + '>' + clinsigSingle.split("_").join(" ") + '</a>';
-
-            info.clinvarLinkKnownVariants += "<span style='clear:both' class='tooltip-clinsig-link" + clinsigSingle + "'>";
-            info.clinvarLinkKnownVariants += '<a class="tooltip-clinvar-link"' + '" href="' + info.clinvarUrl + '" style="padding-right:4px" target="_new"' + '>' + clinsigSingle.split("_").join(" ") + '</a>';
-
-          }
-
-        };
-        info.clinvarSigSummary = "";
-        for (var clinsig in clinsigUniq) {
-          var style = 'display:inline-block;'
-          if (info.clinvarSigSummary.length > 0) {
-            style += 'padding-left:5px';
-          }
-          info.clinvarSigSummary += "<span style='" + style +"' class='tooltip-clinsig-link" + clinsig + "'>";
-          info.clinvarSigSummary += "<span style='float:left'>" + clinsig.split("_").join(" ") + "</span>";
-          info.clinvarSigSummary += "</span>";
-        }
-      }
-    }
 
     if (variant.zygosity && variant.zygosity.toLowerCase() == 'het') {
       info.zygosity = "Heterozygous";
     } else if (variant.zygosity && variant.zygosity.toLowerCase() == 'hom') {
       info.zygosity = "Homozygous";
+    }
+
+    if (variant.af1000G) {
+      info.af1000G =  +variant.af1000G >= 0 ? me.globalApp.utility.round(+variant.af1000G * 100, 2) + "%" : "";
+    }
+    if (variant.afgnomAD) {
+      info.afgnomAD =  +variant.afgnomAD >= 0 ? me.globalApp.utility.round(+variant.afgnomAD * 100, 2) + "%" : "";
     }
 
 
@@ -745,36 +805,10 @@ class Util {
       }
     }
 
+
     // If the highest impact occurs in a non-canonical transcript, show the impact followed by
     // the consequence and corresponding transcripts
-    var vepHighestImpacts = me.globalApp.utility.getNonCanonicalHighestImpactsVep(variant, translator.impactMap);
-    for (var impactKey in vepHighestImpacts) {
-
-
-      var nonCanonicalEffects = vepHighestImpacts[impactKey];
-      if (info.vepHighestImpact.length > 0) {
-          info.vepHighestImpact += ", ";
-          info.vepHighestImpactSimple += ", ";
-          info.vepHighestImpactInfo += ", ";
-      }
-
-      info.vepHighestImpact       += impactKey.toLowerCase();
-      info.vepHighestImpactSimple += impactKey.toLowerCase();
-      info.vepHighestImpactInfo   += impactKey.toLowerCase();
-      info.vepHighestImpactValue   = impactKey.toUpperCase();
-
-      nonCanonicalEffects.forEach(function(nonCanonicalEffect) {
-        info.vepHighestImpact += "<span>  (";
-        for (var effectKey in nonCanonicalEffect) {
-          var transcriptString = nonCanonicalEffect[effectKey].url;
-          info.vepHighestImpact     += " " + effectKey.split("\&").join(" & ") + ' in ' + transcriptString;
-          info.vepHighestImpactInfo += " " + effectKey.split("\&").join(" & ") + " in " + nonCanonicalEffect[effectKey].display;
-
-        }
-        info.vepHighestImpact += ")</span> ";
-      })
-      info.vepHighestImpacSimple += " in non-canonical transcripts";
-    }
+    me.formatHighestImpactInfo(variant, info, translator);
 
 
     for (var key in variant.vepConsequence) {
@@ -805,10 +839,12 @@ class Util {
         }
       }
       info.HGVSpAbbrev = me.formatHgvsP(variant, variant.vepHGVSp);
+      info.HGVScAbbrev = me.formatHgvsC(variant, variant.vepHGVSc);
     } else {
       info.HGVScLoading = true;
       info.HGVSpLoading = true;
     }
+
 
     for (var key in variant.vepSIFT) {
       if (info.sift.length > 0) {
@@ -825,6 +861,12 @@ class Util {
       } else {
         info.polyphen += key.split("_").join(" ");
       }
+    }
+    for (var key in variant.vepREVEL) {
+      if (info.revel.length > 0) {
+          info.revel += ", ";
+      }
+      info.revel += key;
     }
 
     for (var key in variant.regulatory) {
@@ -867,7 +909,181 @@ class Util {
       info.dbSnpLink =  '<a href="' + info.dbSnpUrl + '" target="_dbsnp"' + '>' + info.rsId  + '</a>';
     }
 
+    info.filtersPassed = variant.filtersPassed && Array.isArray(variant.filtersPassed) ? variant.filtersPassed.join(",") : (variant.filtersPassed ? variant.filtersPassed : "");
+
+    if (variant.notes && variant.notes.length > 0) {
+      variant.notes.forEach(function(note) {
+        if (info.notesFlattened.length > 0) {
+          info.notesFlattened += " | ";
+        }
+        info.notesFlattened  +=  (note.author ? note.author : " ") + "\t"+ note.datetime + "\t" + note.note ;
+      })
+    }
+
+
     return info;
+  }
+
+
+  formatHighestImpactInfo(variant, info, translator) {
+    let me = this;
+    var vepHighestImpacts = me.globalApp.utility.getNonCanonicalHighestImpactsVep(variant, translator.impactMap);
+    info.vepHighestImpactRecs = [];
+    for (var impactKey in vepHighestImpacts) {
+
+      let impactRec = {impact: impactKey, effects: []};
+
+      var nonCanonicalEffects = vepHighestImpacts[impactKey];
+      if (info.vepHighestImpact == null) {
+        info.vepHighestImpact = {};
+        info.vepHighestImpactSimple = "";
+        info.vepHighestImpactInfo = "";
+      } else if (info.vepHighestImpact.length > 0) {
+          info.vepHighestImpact += ", ";
+          info.vepHighestImpactSimple += ", ";
+          info.vepHighestImpactInfo += ", ";
+      }
+
+      info.vepHighestImpact       += impactKey.toLowerCase();
+      info.vepHighestImpactSimple += impactKey.toLowerCase();
+      info.vepHighestImpactInfo   += impactKey.toLowerCase();
+      if (info.vepHighestImpactValue == null || info.vepHighestImpactValue.length == 0) {
+        info.vepHighestImpactValue  = impactKey.toUpperCase();
+      }
+
+      nonCanonicalEffects.forEach(function(nonCanonicalEffect) {
+        info.vepHighestImpact += "<span>  (";
+        let effectRec = {};
+        for (var effectKey in nonCanonicalEffect) {
+          effectRec = {key: effectKey, display: effectKey.split("_").join(" ").split("\&").join(" & ").split(" variant").join(""), transcripts: nonCanonicalEffect[effectKey].transcripts};
+
+          var transcriptString = nonCanonicalEffect[effectKey].url;
+          info.vepHighestImpact     += " " + effectKey.split("\&").join(" & ") + ' in ' + transcriptString;
+          info.vepHighestImpactInfo += " " + effectKey.split("\&").join(" & ") + " in " + nonCanonicalEffect[effectKey].display;
+
+          impactRec.effects.push(effectRec);
+        }
+        info.vepHighestImpact += ")</span> ";
+      })
+      info.vepHighestImpactSimple += " in non-canonical transcripts";
+
+      info.vepHighestImpactRecs.push(impactRec);
+
+    }
+
+  }
+
+  formatAminoAcidChange(aaChange) {
+    let buf = ""
+    let self = this;
+    let tokens = aaChange.split("/");
+    tokens.forEach(function(token) {
+      if (buf.length > 0) {
+        buf += " to "
+      }
+      Array.from(token).forEach(function(aa) {
+        buf += self.aminoAcidMap[aa];
+      })
+    })
+    return buf;
+  }
+
+  formatClinvarDisplay(variant, info, translator, isEduMode) {
+    let me = this;
+
+
+
+
+
+    /*
+    *  Clinvar submissions come from vcf
+    */
+    if (variant.clinvarSubmissions != null && variant.clinvarSubmissions.length > 0) {
+      var clinsigUniq = {};
+
+      for (var idx = 0; idx < variant.clinvarSubmissions.length; idx++) {
+        var submission = variant.clinvarSubmissions[idx];
+        submission.clinsig.split(",").forEach(function(clinsig) {
+          clinsigUniq[clinsig] = "";
+        })
+        var accessions = submission.accession.split(",");
+        var clinsigs   = submission.clinsig.split(",");
+        var phenotypes = submission.phenotype.split(",");
+        info.clinvarTrait = phenotypes;
+        for (var i = 0; i < accessions.length; i++) {
+          var accessionSingle = accessions[i];
+          var clinsigSingle   = clinsigs.length > i ? clinsigs[i] : "?";
+          var phenotype       = phenotypes.length > i ? phenotypes[i].split("_").join(" ").split("\\x2c") : null;
+
+          info.clinvarUrl   = 'http://www.ncbi.nlm.nih.gov/clinvar/' + accessionSingle;
+          var clinvarLabel =  me.globalApp.utility.capitalizeFirstLetter(clinsigSingle.split("_").join(" "))
+                              + ( phenotype  ? ': ' + me.globalApp.utility.capitalizeFirstLetter(phenotype) : '')
+
+          let clinvarLink =  '<a class="tooltip-clinvar-link"' + '" href="' + info.clinvarUrl + '" style="float:left;padding-right:4px" target="_new"' + '>'
+            clinvarLabel + '</a>';
+
+          info.clinvarLinks.push({'key': accessionSingle, 'link': clinvarLink, 'url': info.clinvarUrl,
+            'icon': 'clinvar',
+            'clinsig': me.globalApp.utility.capitalizeFirstLetter(clinsigSingle.split("_").join(" ")),
+            'phenotype': ( phenotype  ? ': ' + me.globalApp.utility.capitalizeFirstLetter(phenotype) : ''),
+            'significance': translator.clinvarMap[clinsigSingle].clazz});
+
+          info.clinvarUniqueClinSigs[clinsigSingle.split("_").join(" ")] = null;
+          info.clinvarUniqueTraits[phenotype] = null;
+        }
+
+      };
+      info.clinvarSigSummary = "";
+      for (var clinsig in clinsigUniq) {
+        var style = 'display:inline-block;'
+        if (info.clinvarSigSummary.length > 0) {
+          style += 'padding-left:5px';
+        }
+        info.clinvarSigSummary += "<span style='" + style +"' class='tooltip-clinsig-link" + clinsig + "'>";
+        info.clinvarSigSummary += "<span style='float:left'>" + clinsig.split("_").join(" ") + "</span>";
+        info.clinvarSigSummary += "</span>";
+      }
+    } else {
+
+      /*
+      * clinvar eutils will have clinvarClinicalSignificance and clinvarTrait and uid
+      */
+      for (var key in variant.clinvarClinSig) {
+        if (key != 'none' && key != 'undefined' ) {
+          if (!isEduMode || (key.indexOf("uncertain_significance") >= 0 || key.indexOf("pathogenic") >= 0)) {
+            if (info.clinvarClinSig.length > 0 ) {
+                info.clinvarClinSig += ", ";
+            }
+            let clinsig = key.split("_").join(" ");
+            info.clinvarClinSig += clinsig;
+            info.clinvarUniqueClinSigs[clinsig] = null;
+
+          }
+        }
+      }
+      for (var key in variant.clinvarTrait) {
+        if (key != 'not_specified'  && key != 'undefined') {
+          if (info.clinvarTrait.length > 0) {
+              info.clinvarTrait += ", ";
+          }
+          let phenotype = key.split("_").join(" ").split("\\x2c").join(", ");
+          info.clinvarUniqueTraits[phenotype] = null;
+          info.clinvarTrait += phenotype;
+        }
+      }
+      if (variant.clinvarUid != null && variant.clinvarUid != '') {
+        info.clinvarUid = variant.clinvarUid;
+        info.clinvarUrl = 'http://www.ncbi.nlm.nih.gov/clinvar/variation/' + variant.clinvarUid;
+        let clinvarLabel = me.globalApp.utility.capitalizeFirstLetter(info.clinvarClinSig) + ( info.clinvarTrait ? ' ' + me.globalApp.utility.capitalizeFirstLetter(info.clinvarTrait) : '')
+        let clinvarLink =  '<a class="tooltip-clinvar-link"' + '" href="' + info.clinvarUrl + '" style="float:left;padding-right:4px" target="_new"' + '>'
+            clinvarLabel + '</a>';
+        info.clinvarLinks.push({'key': info.clinvarUid, 'link': clinvarLink, 'url': info.clinvarUrl,
+         'clinsig': me.globalApp.utility.capitalizeFirstLetter(info.clinvarClinSig),
+         'phenotype': ( info.clinvarTrait ? ' ' + me.globalApp.utility.capitalizeFirstLetter(info.clinvarTrait) : ''),
+         'icon': 'clinvar', 'significance': variant.clinvar});
+      }
+
+    }
   }
 }
 export default Util
