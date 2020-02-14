@@ -159,6 +159,19 @@ export default {
       } else {
         return null;
       }
+    }, 
+    goToStepInProgress: function(){
+      let self = this; 
+      var stepInProgress = 0; 
+      for(var i=0; i<self.steps.length-1; i++){
+        if(self.steps[i].complete){
+          stepInProgress++; 
+        }
+        else if(!self.steps[i].complete){
+          break; 
+        }
+      }
+      self.onStepClicked(self.steps[stepInProgress])
     }
 
   },
@@ -166,6 +179,7 @@ export default {
     let self = this;
     this.refresh();
     this.$emit('on-step-changed',self.currentStepNumber)
+    this.goToStepInProgress(); 
 
     
   },

@@ -267,6 +267,12 @@ $horizontal-dashboard-height: 140px
 
       </v-snackbar>
 
+      <LoadingDialog
+        v-if="generatingReport"
+        :showIt="generatingReport"
+        text="Generating report..."
+      >
+      </LoadingDialog>
 
 
     </div>
@@ -291,6 +297,7 @@ import ReviewCase    from  '../viz/ReviewCase.vue'
 import Findings      from  '../viz/Findings.vue'
 import LoginMosaic   from  '../partials/LoginMosaic.vue'
 import AppIcon       from  '../partials/AppIcon.vue'
+import LoadingDialog from '../partials/LoadingDialog.vue'
 
 import AWSSession    from  '../../models/AWSSession.js'
 import MosaicSession from  '../../models/MosaicSession.js'
@@ -321,6 +328,7 @@ export default {
     Findings,
     AppIcon,
     SaveAnalysisPopup,
+    LoadingDialog,
     ...NewComponents
   },
   props: {
@@ -455,7 +463,7 @@ export default {
         'not-reviewed': 'Not reviewed'
       },
       reviewCaseBadges: null,
-
+      generatingReport: false,
     }
 
   },
@@ -1690,6 +1698,7 @@ export default {
     },
 
     generatePDF: function(){
+      this.generatingReport = true;
       let analysis_sample = JSON.stringify(this.analysis)
       let config = {
         headers: {
@@ -1699,6 +1708,7 @@ export default {
       }
       axios.post('https://backend.iobio.io/clinReport', analysis_sample, config)
         .then((res)=>{
+          this.generatingReport = false;
           const pdfBlob = new Blob([res.data], { type: 'application/pdf' })
           saveAs(pdfBlob, "analysis.pdf")
         })

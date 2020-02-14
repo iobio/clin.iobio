@@ -26,7 +26,7 @@ export default {
       if (this.analysis && this.analysis.id) {
         return "Analysis";
       } else{ 
-        return "Add analysis";
+        return "Add to Mosaic";
       }
     },
     iconName() {
