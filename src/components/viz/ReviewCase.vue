@@ -410,12 +410,12 @@ export default {
 
       if(averageCount < 1000000){
         this.isExome = true;
-        this.minCutoff = 50;
+        this.minCutoff = 40;
         this.isExomeText = "exome"
       }
       else if(averageCount >= 1000000){
         this.isExome = false;
-        this.minCutoff = 40;
+        this.minCutoff = 30;
         this.isExomeText = "genome"
       }
     },
