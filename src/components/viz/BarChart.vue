@@ -246,6 +246,8 @@
                     }
                 }
 
+            console.log("minHeight", minHeight);
+                console.log("minCutoff", this.minCutoff);
 
                 svg.append('line')
                     .attr("id", "minLine")
