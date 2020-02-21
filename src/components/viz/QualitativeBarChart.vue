@@ -126,22 +126,38 @@
             populateMaxCount(){
 
                 let indel = parseInt(this.data.indel);
+                let other = parseInt(this.data.other);
+                let snp = parseInt(this.data.SNP);
 
                 if(isNaN(indel)){
                     indel = 0;
                 }
-                this.maxCount = Math.max(parseInt(this.data.SNP), parseInt(this.data.other), indel);
+                if(isNaN(snp)){
+                    snp = 0;
+                }
+                if(isNaN(other)){
+                    other = 0;
+                }
+                this.maxCount = (snp, other, indel);
             },
 
             drawTotalVarCount() {
 
                 let indel = parseInt(this.data.indel);
+                let other = parseInt(this.data.other);
+                let snp = parseInt(this.data.SNP);
 
                 if(isNaN(indel)){
                     indel = 0;
                 }
+                if(isNaN(snp)){
+                    snp = 0;
+                }
+                if(isNaN(other)){
+                    other = 0;
+                }
 
-                this.totalVarCount = parseInt(this.data.SNP) + parseInt(this.data.other) + indel;
+                this.totalVarCount = snp + other + indel;
                 d3.select(this.$el).select('svg')
                     .append("text")
                     .attr('y', 10)
