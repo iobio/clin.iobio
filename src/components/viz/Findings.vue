@@ -110,6 +110,9 @@
       <hr style="border-top:transparent">
 
       <div class="sub-heading" style="margin-top:40px;margin-bottom:0px">Reviewed Variants</div>
+      <div v-if="!variantsInterpreted" class="case-summary">
+        Variants are not currently reviewed. Please review them in the 'Review Variants' step of the workflow
+      </div>
 
       <div class="findings-section" v-for="interpretation in variantsByInterpretation" :key="interpretation.key" >
 
@@ -178,7 +181,8 @@ export default {
   data() {
     return {
       clinicalNotes: null,
-      note: null
+      note: null, 
+      variantsInterpreted: false
     }
 
   },
@@ -254,6 +258,14 @@ export default {
           self.clinicalNotes.push(clinNote);
         })
       }
+    }, 
+    checkIfVariantsinterpreted: function(){
+      for(let variant of this.variantsByInterpretation){
+        if(variant.organizedVariants.length){
+          this.variantsInterpreted = true; 
+          break; 
+        }
+      }
     }
   },
   computed: {
@@ -267,6 +279,7 @@ export default {
     },
     variantsByInterpretation: function() {
       this.initClinicalNotes();
+      this.checkIfVariantsinterpreted(); 
     }
   },
 }
