@@ -81,14 +81,14 @@
 
       <v-spacer></v-spacer>
 
-      <!--
-      <div v-if="selectedVariant && !showAssessment && selectedVariantInterpretation != 'known-variants'" style="margin-left:20px;margin-right:0px">
-        <v-btn raised id="show-assessment-button" @click="onEnterComments">
+      
+      <div style="margin-left:20px;margin-right:0px; margin-top:10px">
+        <v-btn raised id="show-assessment-button" @click='gotoStep(2)'>
           <v-icon>gavel</v-icon>
           Review
         </v-btn>
       </div>
-    -->
+   
 
       <variant-notes-menu
        :variant="selectedVariant">
@@ -315,6 +315,7 @@ import MultialignSeqViz         from "../../viz/findings/MultialignSeqViz.vue"
 import BarChartD3               from '../../../d3/findings/BarChart.d3.js'
 import MultiAlignD3             from '../../../d3/findings/MultiAlign.d3.js'
 import MultiAlignModel          from "../../../models/findings/MultiAlignModel.js"
+import { bus }                  from '../../../main'
 
 
 export default {
@@ -875,6 +876,9 @@ export default {
           self.multialignInProgress = false;
         })        
       }
+    },
+    gotoStep: function(stepIndex){
+      bus.$emit('navigate-to-step',stepIndex); 
     }
   },
 
