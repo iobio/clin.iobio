@@ -6,15 +6,19 @@
     v-model="showMenu"
     >
 
-      <template v-slot:activator="{ on }">
-        <v-btn id="show-hgvs-button"
-         text
-         v-on="on"
-         v-tooltip.top-center="`HGVSc and HGVSp for variant`"
-        >
-          <v-icon>label</v-icon>
-          {{ label }}
-        </v-btn>
+      <template v-slot:activator="{ on: menu }">
+        <v-tooltip top dark>
+          <template v-slot:activator="{ on: tooltip }">
+            <v-btn id="show-hgvs-button"
+              text
+              v-on="{ ...tooltip, ...menu }"
+            >
+              <v-icon>label</v-icon>
+              {{ label }}
+            </v-btn>
+          </template>
+          <span style="font-size:11px">HGVSc and HGVSp for variant</span>
+        </v-tooltip>
       </template>
 
       <v-card>
@@ -103,4 +107,11 @@ export default {
       padding-right: 3px
 
 
+</style>
+
+
+<style lang="sass" scoped>
+  .v-tooltip__content
+    border-radius: 20px
+    background: rgba(106, 106, 106, 0.9) !important
 </style>
