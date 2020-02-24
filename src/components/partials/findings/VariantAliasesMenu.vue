@@ -2,28 +2,31 @@
   <span>
     <v-menu
     offset-y
-    :close-on-content-click="false"
     bottom
     v-model="showMenu"
     >
 
-      <v-btn id="show-hgvs-button"
-       flat
-       slot="activator"
-       v-tooltip.top-center="`HGVSc and HGVSp for variant`"
-      >
-        <v-icon>label</v-icon>
-        {{ label }}
-      </v-btn>
+      <template v-slot:activator="{ on }">
+        <v-btn id="show-hgvs-button"
+         text
+         v-on="on"
+         v-tooltip.top-center="`HGVSc and HGVSp for variant`"
+        >
+          <v-icon>label</v-icon>
+          {{ label }}
+        </v-btn>
+      </template>
 
-      <div class="variant-info" style="padding: 20px;" >
-        <div class="card-label">
-             HGVSc: {{ info.HGVSc }}
+      <v-card>
+        <div class="variant-info" style="padding: 20px;" >
+          <div class="card-label">
+               HGVSc: {{ info.HGVSc }}
+          </div>
+          <div class="card-label">
+               HGVSp: {{ info.HGVSp }}
+          </div>
         </div>
-        <div class="card-label">
-             HGVSp: {{ info.HGVSp }}
-        </div>
-      </div>
+      </v-card>
 
     </v-menu>
 
