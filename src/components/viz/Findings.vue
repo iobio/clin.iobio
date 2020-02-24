@@ -111,7 +111,7 @@
 
       <div class="sub-heading" style="margin-top:40px;margin-bottom:0px">Reviewed Variants</div>
       <div v-if="!variantsInterpreted" class="case-summary">
-        Variants are not currently reviewed. Please review them in the 'Review Variants' step of the workflow
+        Variants are not currently reviewed. Please review them in the <a @click="gotoStep(2)"><strong>Review Variants</strong></a> step of the workflow
       </div>
 
       <div class="findings-section" v-for="interpretation in variantsByInterpretation" :key="interpretation.key" >
@@ -163,6 +163,7 @@
 
 import AppIcon       from '../partials/AppIcon.vue';
 import VariantInspectCard   from '../viz/findings/VariantInspectCard.vue';
+import { bus }      from '../../main'
 
 export default {
   name: 'findings',
@@ -266,6 +267,9 @@ export default {
           break; 
         }
       }
+    }, 
+    gotoStep: function(stepIndex){
+      bus.$emit('navigate-to-step',stepIndex); 
     }
   },
   computed: {
