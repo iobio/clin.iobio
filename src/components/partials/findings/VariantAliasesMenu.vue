@@ -3,6 +3,7 @@
     <v-menu
     offset-y
     bottom
+    :close-on-content-click="false"
     v-model="showMenu"
     >
 
