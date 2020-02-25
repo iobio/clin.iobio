@@ -31,26 +31,23 @@
       </variant-links-menu>
 -->
 
-<!--
+<!-- 
       <span v-if="!info || (info.HGVSpLoading && info.HGVScLoading)"
         style="font-size:13px;margin-top:2px;min-width:80px;margin-left:0px;margin-right:0px"
         v-show="selectedVariantRelationship != 'known-variants'" class=" loader vcfloader" >
         <img src="../../../assets/images/wheel.gif">
         HGVS
       </span>
--->
+ -->
 
-<!--
+
       <variant-aliases-menu
       v-show="selectedVariant && (!info.HGVSpLoading || !info.HGVScLoading)"
       v-if="selectedVariant && selectedVariantRelationship != 'known-variants'"
       :label="`HGVS`"
-      :selectedGene="selectedGene"
-      :selectedVariant="selectedVariant"
-      :geneModel="cohortModel.geneModel"
       :info="info">
       </variant-aliases-menu>
--->
+
       <v-badge class="info" style="margin-top:2px;margin-right:10px" v-if="selectedVariant && selectedVariant.multiallelic && selectedVariant.multiallelic.length > 0">multiallelic</v-badge>
 
       <span v-if="info && info.rsId && info.rsId != ''" style="margin-top:2px" class="pr-1 mr-1">{{ info.rsId }}</span>
@@ -81,14 +78,14 @@
 
       <v-spacer></v-spacer>
 
-      <!--
-      <div v-if="selectedVariant && !showAssessment && selectedVariantInterpretation != 'known-variants'" style="margin-left:20px;margin-right:0px">
-        <v-btn raised id="show-assessment-button" @click="onEnterComments">
+      
+      <div style="margin-left:20px;margin-right:0px; margin-top:10px">
+        <v-btn raised id="show-assessment-button" @click='gotoStep(2)'>
           <v-icon>gavel</v-icon>
           Review
         </v-btn>
       </div>
-    -->
+   
 
       <variant-notes-menu
        :variant="selectedVariant">
@@ -315,6 +312,7 @@ import MultialignSeqViz         from "../../viz/findings/MultialignSeqViz.vue"
 import BarChartD3               from '../../../d3/findings/BarChart.d3.js'
 import MultiAlignD3             from '../../../d3/findings/MultiAlign.d3.js'
 import MultiAlignModel          from "../../../models/findings/MultiAlignModel.js"
+import { bus }                  from '../../../main'
 
 
 export default {
@@ -875,6 +873,9 @@ export default {
           self.multialignInProgress = false;
         })        
       }
+    },
+    gotoStep: function(stepIndex){
+      bus.$emit('navigate-to-step',stepIndex); 
     }
   },
 
@@ -1028,6 +1029,7 @@ export default {
 
   mounted: function() {
     this.loadData();
+    console.log("info", this.info)
   },
 
   created: function() {
