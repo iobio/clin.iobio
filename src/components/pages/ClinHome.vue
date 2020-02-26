@@ -373,7 +373,9 @@ export default {
       variantsByInterpretationTemplate: [
        { key: 'sig',         display: 'Significant Variants',  abbrev: 'Significant', organizedVariants: []},
        { key: 'unknown-sig', display: 'Variants of Unknown Significance', abbrev: 'Unknown Sig', organizedVariants: []}, 
-       { key: 'poor-qual', display: 'Poor Quality Variants', abbrev: 'Poor qual', organizedVariants: []}
+       { key: 'poor-qual', display: 'Poor Quality Variants', abbrev: 'Poor qual', organizedVariants: []},
+       { key: 'not-sig', display: 'Not Significant', abbrev: 'Not sig', organizedVariants: []},
+       { key: 'not-reviewed', display: 'Not Reviewed', abbrev: 'Not reviewed', organizedVariants: []}
       ],
 
       variantsByInterpretation: [],
@@ -1169,7 +1171,7 @@ export default {
               let badgeClasses = [];
               self.variantsByInterpretation.forEach(function(interpretation) {
                 interpretation.organizedVariants.forEach(function(orgVariants) {
-                  if (interpretation.key == 'sig' || interpretation.key == 'unknown-sig' || interpretation.key == "poor-qual") {
+                  if (interpretation.key == 'sig' || interpretation.key == 'unknown-sig' || interpretation.key == 'not-sig' || interpretation.key == "poor-qual") {
                     orgVariants.genes.forEach(function(geneInfo) {
                       geneInfo.variants.forEach(function(variant) {
 
@@ -1677,7 +1679,7 @@ export default {
         theVariants.forEach(function(variant) {
           let isReviewed = (variant.notes && variant.notes.length > 0)
                     || (variant.interpretation != null
-                    && (variant.interpretation == "sig" || variant.interpretation == "unknown-sig" || variant.interpretation == "poor-qual"));
+                    && (variant.interpretation == "sig" || variant.interpretation == "unknown-sig" || variant.interpretation == "not-sig" || variant.interpretation == "poor-qual" || (variant.interpretation == "not-reviewed" && variant.notes.length>0)));
 
           if (isReviewed && filterName && filterName == 'reviewed') {
 
