@@ -372,7 +372,8 @@ export default {
 
       variantsByInterpretationTemplate: [
        { key: 'sig',         display: 'Significant Variants',  abbrev: 'Significant', organizedVariants: []},
-       { key: 'unknown-sig', display: 'Variants of Unknown Significance', abbrev: 'Unknown Sig', organizedVariants: []}
+       { key: 'unknown-sig', display: 'Variants of Unknown Significance', abbrev: 'Unknown Sig', organizedVariants: []}, 
+       { key: 'poor-qual', display: 'Poor Quality Variants', abbrev: 'Poor qual', organizedVariants: []}
       ],
 
       variantsByInterpretation: [],
@@ -1048,6 +1049,9 @@ export default {
       } else if (messageObject.type == "save-analysis") {
           this.analysis.payload.filters  = messageObject.analysis.payload.filters;
           this.analysis.payload.variants = messageObject.analysis.payload.variants;
+          console.log("set as reviewed variant", this.analysis.payload.variants)
+          console.log("reviewd - check filters", this.analysis.payload.filters)
+
           this.organizeVariantsByInterpretation();
           this.setVariantTaskBadges();
           this.promiseAutosaveAnalysis({notify: true})
@@ -1165,7 +1169,7 @@ export default {
               let badgeClasses = [];
               self.variantsByInterpretation.forEach(function(interpretation) {
                 interpretation.organizedVariants.forEach(function(orgVariants) {
-                  if (interpretation.key == 'sig' || interpretation.key == 'unknown-sig') {
+                  if (interpretation.key == 'sig' || interpretation.key == 'unknown-sig' || interpretation.key == "poor-qual") {
                     orgVariants.genes.forEach(function(geneInfo) {
                       geneInfo.variants.forEach(function(variant) {
 
@@ -1673,7 +1677,7 @@ export default {
         theVariants.forEach(function(variant) {
           let isReviewed = (variant.notes && variant.notes.length > 0)
                     || (variant.interpretation != null
-                    && (variant.interpretation == "sig" || variant.interpretation == "unknown-sig"));
+                    && (variant.interpretation == "sig" || variant.interpretation == "unknown-sig" || variant.interpretation == "poor-qual"));
 
           if (isReviewed && filterName && filterName == 'reviewed') {
 

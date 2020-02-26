@@ -1029,7 +1029,6 @@ export default {
 
   mounted: function() {
     this.loadData();
-    console.log("info", this.info)
   },
 
   created: function() {
