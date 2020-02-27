@@ -79,7 +79,7 @@
       <v-spacer></v-spacer>
 
       
-      <div style="margin-left:20px;margin-right:0px; margin-top:10px">
+      <div style="margin-left:20px;margin-right:0px; margin-top:10px; margin-right:10px">
         <v-btn raised id="show-assessment-button" @click='gotoStep(2)'>
           <v-icon>gavel</v-icon>
           Review
@@ -1029,7 +1029,6 @@ export default {
 
   mounted: function() {
     this.loadData();
-    console.log("info", this.info)
   },
 
   created: function() {
