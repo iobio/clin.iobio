@@ -391,6 +391,18 @@ export default {
               .v-badge__badge
                 background-color: $wf-badge-orange-color !important
                 color: white
+                
+          &.poor-qual
+            .v-badge__wrapper
+              .v-badge__badge
+                background-color: $poor-qual-color !important
+                color: white      
+                
+          &.not-sig
+            .v-badge__wrapper
+              .v-badge__badge
+                background-color: $not-significant-color !important
+                color: white
 
 
 </style>

@@ -1051,9 +1051,6 @@ export default {
       } else if (messageObject.type == "save-analysis") {
           this.analysis.payload.filters  = messageObject.analysis.payload.filters;
           this.analysis.payload.variants = messageObject.analysis.payload.variants;
-          console.log("set as reviewed variant", this.analysis.payload.variants)
-          console.log("reviewd - check filters", this.analysis.payload.filters)
-
           this.organizeVariantsByInterpretation();
           this.setVariantTaskBadges();
           this.promiseAutosaveAnalysis({notify: true})
