@@ -37,7 +37,8 @@ export default class MosaicSession {
       self.promiseGetCurrentUser()
       .then(function(data) {
         self.user = data;
-        console.log(self.user)
+        console.log("promise Get current user", self.user);
+
       })
       .catch(function(error) {
         console.log(error)
@@ -137,7 +138,7 @@ export default class MosaicSession {
               alertify.alert("Error", buf)
             }
 
-            resolve({'modelInfos': modelInfos, 'rawPedigree': rawPedigree, 'coverageHistos': coverageHistos, 'allVarCounts': allVarCounts});
+            resolve({'modelInfos': modelInfos, 'rawPedigree': rawPedigree, 'coverageHistos': coverageHistos, 'allVarCounts': allVarCounts, 'user' : self.user});
           })
           .catch(error => {
             reject(error);
