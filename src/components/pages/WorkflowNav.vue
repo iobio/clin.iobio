@@ -53,6 +53,7 @@ import phenotypeIcon from '../partials/icons/phenotype-icon.vue'
 import caseIcon      from '../partials/icons/case-icon.vue'
 import findingsIcon  from '../partials/icons/findings-icon.vue'
 import variantsIcon  from '../partials/icons/variants-icon.vue'
+import { bus }       from '../../main'
 
 export default {
   name: 'workflow-new',
@@ -172,7 +173,7 @@ export default {
         }
       }
       self.onStepClicked(self.steps[stepInProgress])
-    }
+    }, 
 
   },
   mounted: function() {
@@ -180,7 +181,9 @@ export default {
     this.refresh();
     this.$emit('on-step-changed',self.currentStepNumber)
     this.goToStepInProgress(); 
-
+    bus.$on('navigate-to-step', (stepIndex)=>{
+      self.onStepClicked(self.steps[stepIndex]); 
+    })
     
   },
   watch: {
@@ -387,6 +390,18 @@ export default {
             .v-badge__wrapper
               .v-badge__badge
                 background-color: $wf-badge-orange-color !important
+                color: white
+                
+          &.poor-qual
+            .v-badge__wrapper
+              .v-badge__badge
+                background-color: $poor-qual-color !important
+                color: white      
+                
+          &.not-sig
+            .v-badge__wrapper
+              .v-badge__badge
+                background-color: $not-significant-color !important
                 color: white
 
 
