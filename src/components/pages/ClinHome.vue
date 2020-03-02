@@ -125,7 +125,8 @@ $horizontal-dashboard-height: 140px
 
 <template>
 <div id="application-content" :class="{'workflow-new': newWorkflow ? true : false}">
-  <navigation v-if="!showSplash && isAuthenticated  && workflow && analysis"
+  <landing-page v-if="!launchedFromMosaic && showLandingPage"></landing-page>
+  <navigation v-if="!showLandingPage && !showSplash && isAuthenticated  && workflow && analysis"
    :caseSummary="caseSummary"
    :analysis="analysis"
    :launchedFromMosaic="launchedFromMosaic"
@@ -133,7 +134,7 @@ $horizontal-dashboard-height: 140px
   </navigation>
 
 
-  <workflow v-if="!newWorkflow && iframesMounted && !showSplash && isAuthenticated && workflow && analysis"
+  <workflow v-if="!showLandingPage && !newWorkflow && iframesMounted && !showSplash && isAuthenticated && workflow && analysis"
    ref="workflowRef"
    :caseSummary="caseSummary"
    :analysisSteps="analysis.payload.steps"
@@ -144,7 +145,7 @@ $horizontal-dashboard-height: 140px
   </workflow>
 
 
-  <workflow-nav v-if="newWorkflow && iframesMounted && !showSplash && isAuthenticated && workflow && analysis"
+  <workflow-nav v-if="!showLandingPage && newWorkflow && iframesMounted && !showSplash && isAuthenticated && workflow && analysis"
    ref="workflowRefNew"
    :caseSummary="caseSummary"
    :analysisSteps="analysis.payload.steps"
@@ -298,6 +299,7 @@ import Findings      from  '../viz/Findings.vue'
 import LoginMosaic   from  '../partials/LoginMosaic.vue'
 import AppIcon       from  '../partials/AppIcon.vue'
 import LoadingDialog from '../partials/LoadingDialog.vue'
+import LandingPage   from '../pages/LandingPage.vue'
 
 import AWSSession    from  '../../models/AWSSession.js'
 import MosaicSession from  '../../models/MosaicSession.js'
@@ -329,6 +331,7 @@ export default {
     AppIcon,
     SaveAnalysisPopup,
     LoadingDialog,
+    LandingPage,
     ...NewComponents
   },
   props: {
@@ -349,9 +352,10 @@ export default {
     let self = this;
     return {
       newWorkflow: true,
-      showSplash: true,
+      showSplash: false,
       splashMessage: "Initializing clin.iobio",
-      showSplashProgress: true,
+      showSplashProgress: false,
+      showLandingPage: false, 
 
       iframesMounted: false,
 
@@ -481,6 +485,13 @@ export default {
     this.init();
     bus.$on("getAnalysisObject", ()=>{
       this.generatePDF()
+    })
+    bus.$on("initialize-clin", ()=>{
+      this.showLandingPage = false; 
+      this.showSplash = true; 
+      setTimeout(()=>{
+        this.onAuthenticated(); 
+      }, 2000)
     })
   },
 
@@ -623,7 +634,9 @@ export default {
         }
 
         if (localStorage.getItem('hub-iobio-tkn') && localStorage.getItem('hub-iobio-tkn').length > 0 && self.paramSampleId && self.paramSource) {
-
+          self.showLandingPage = false;
+          self.showSplash = true; 
+          self.showSplashProgress = true; 
           // Temporary workaround until router is fixed to pass paramSampleId, paramSource, etc
           self.params.sample_id             = self.paramSampleId
           self.params.analysis_id           = self.paramAnalysisId
@@ -675,10 +688,12 @@ export default {
             self.splashMessage = error;
           })
         } else {
+          console.log("I am not launched from mosaic")
+          self.showLandingPage = true; 
           self.modelInfos = self.demoModelInfos;
           self.user       = self.demoUser;
 
-          self.onAuthenticated()
+          // self.onAuthenticated()
 
           self.caseSummary = {}
           self.caseSummary.name = "Demo Platinum"
