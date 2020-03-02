@@ -100,18 +100,6 @@
         <div class="review-section">
 
           <div style="display:flex;flex-direction:row;justify-content:flex-start">
-            <!--<div  class="subsection"  >-->
-              <!--<span class="card-subheading">{{ caseSummary.name }} </span>-->
-              <!--<div style="display:flex">-->
-                <!--<div style="margin-left:15px">-->
-                  <!--<div  class="sample" v-for="modelInfo in modelInfos" :key="modelInfo.sample">-->
-                    <!--<span class="rel">{{ modelInfo.relationship }}</span>-->
-                    <!--<span class="name">{{ modelInfo.sample }}</span>-->
-                  <!--</div>-->
-                <!--</div>-->
-              <!--</div>-->
-            <!--</div>-->
-
               <div style="width:80%">
                 <span class="heading">Case Summary </span>
                 <div class="reviewCase">
@@ -136,7 +124,14 @@
 
     <div v-if="isSorted">
       <div style=" width: 100%; display: inline-flex; flex-direction: row; justify-content: space-around; padding-bottom: 10px">
-        <div class="heading" style="margin-right: 130px">Sample</div> <div class="heading" style="margin-right: 130px">Read Coverage</div><div class="heading">Variant Types</div>
+        <div class="heading" style="margin-right: 130px">Sample</div> <div class="heading" style="margin-right: 130px; display:flex;flex-direction:row;justify-content:flex-start">Read Coverage
+        <v-text-field
+              label="Expected Coverage"
+              outlined
+              dense
+              placeholder="30"
+              v-model.number="minCutoff"
+      ></v-text-field></div><div class="heading">Variant Types</div>
       </div>
       <div v-for="(d, i) in sampleIdsAndRelationships" >
         <div style=" width: 100%; display: inline-flex; flex-direction: row; justify-content: space-around;">
@@ -154,7 +149,7 @@
                 <v-icon class="good-coverage" v-on="on" top color="green"
                         @mouseover="onHover = true" @mouseleave="onHover = false" @click="">check_circle</v-icon>
               </template>
-              <span>Median coverage is above expected {{isExomeText}} coverage threshold of {{minCutoff}}X</span>
+              <span>Median coverage is above expected coverage threshold of {{minCutoff}}X</span>
 
             </v-tooltip>
               <div v-if="badCoverage" style=" display: inline-flex; width: 120px; line-height: 16px; font-size: 12px; padding-left: 5px;"></div>
@@ -164,7 +159,7 @@
                           top color="#B33A3A">mdi-alert-circle</v-icon>
 
 
-              <div v-if="badCoverage" style=" display: inline-flex; width: 120px; line-height: 14px; font-size: 13px; padding-left: 5px;">Median coverage is below expected {{isExomeText}} coverage threshold of {{minCutoff}}X</div>
+              <div v-if="badCoverage" style=" display: inline-flex; width: 120px; line-height: 14px; font-size: 13px; padding-left: 5px;">Median coverage is below expected coverage threshold of {{minCutoff}}X</div>
 
             </div>
 
@@ -227,20 +222,8 @@ export default {
       demoData: null,
       onHover: false,
       on: null,
-
-      exomeMedianCoverageData: {
-        min: 15,
-        q1: 30,
-        q2: 45,
-        q3: 60,
-        max: 75,
-      },
-
       badCoverage: false,
-
-      isExome: false,
-      isExomeText: null,
-      minCutoff: null,
+      minCutoff: 30,
       medianCoverages: null,
       reviewCaseBadges: null,
       badCoverageCount: null,
@@ -332,7 +315,6 @@ export default {
       this.assignProbandToEachSample();
       this.populateDomains();
       this.sortIndicesByRelationship();
-      this.checkIsExome();
       this.populateCoverageMedians();
       this.sortData();
       this.populateBadCoverageCount();
@@ -384,42 +366,6 @@ export default {
       let medianCoverage = this.findMedianFromCummulativeFrequencies(medianFreq, cumFreqs);
       return medianCoverage;
     },
-
-    checkIsExome(){
-      let totalVarCounts = 0;
-      for(let i = 0; i < this.varCountsArray.length; i++){
-        let counts = this.varCountsArray[i].counts;
-
-        let indel = parseInt(counts.indel);
-        let other = parseInt(counts.other);
-        let snp = parseInt(counts.SNP);
-
-        if(isNaN(indel)){
-          indel = 0;
-        }
-        if(isNaN(snp)){
-          snp = 0;
-        }
-        if(isNaN(other)){
-          other = 0;
-        }
-        totalVarCounts = totalVarCounts + (snp + indel + other);
-      }
-
-      let averageCount = totalVarCounts / this.varCountsArray.length;
-
-      if(averageCount < 1000000){
-        this.isExome = true;
-        this.minCutoff = 40;
-        this.isExomeText = "exome"
-      }
-      else if(averageCount >= 1000000){
-        this.isExome = false;
-        this.minCutoff = 30;
-        this.isExomeText = "genome"
-      }
-    },
-
 
     convertPropsToData(){
       this.pedigreeData = this.pedigree;
@@ -591,12 +537,6 @@ export default {
 
   },
   watch: {
-    coverageHistos: function(){
-    },
-    allVarCounts: function(){
-    },
-    pedigree: function(){
-    }
   },
 }
 </script>
