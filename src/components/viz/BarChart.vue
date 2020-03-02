@@ -210,8 +210,8 @@
 
                 if(this.onHover) {
 
-                    svg.select("#minLine").transition().style("stroke", "white").duration(750);
-                    svg.select("#minText").transition().style("fill", "white").duration(750);
+                    svg.select("#minLine").transition().style("stroke", "black").duration(750);
+                    svg.select("#minText").transition().style("fill", "black").duration(750);
 
                 }
 
@@ -246,6 +246,8 @@
                     }
                 }
 
+            console.log("minHeight", minHeight);
+                console.log("minCutoff", this.minCutoff);
 
                 svg.append('line')
                     .attr("id", "minLine")

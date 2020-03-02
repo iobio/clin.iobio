@@ -390,19 +390,27 @@ export default {
       for(let i = 0; i < this.varCountsArray.length; i++){
         let counts = this.varCountsArray[i].counts;
 
-        let indel = counts.indel;
+        let indel = parseInt(counts.indel);
+        let other = parseInt(counts.other);
+        let snp = parseInt(counts.SNP);
 
         if(isNaN(indel)){
           indel = 0;
         }
-        totalVarCounts = totalVarCounts + (counts.SNP + indel + counts.other);
+        if(isNaN(snp)){
+          snp = 0;
+        }
+        if(isNaN(other)){
+          other = 0;
+        }
+        totalVarCounts = totalVarCounts + (snp + indel + other);
       }
 
       let averageCount = totalVarCounts / this.varCountsArray.length;
 
       if(averageCount < 1000000){
         this.isExome = true;
-        this.minCutoff = 51;
+        this.minCutoff = 40;
         this.isExomeText = "exome"
       }
       else if(averageCount >= 1000000){
