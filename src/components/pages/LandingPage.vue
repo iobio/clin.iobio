@@ -25,7 +25,6 @@
     <v-content>
       <v-layout row wrap>
         <v-flex d-flex xs12>
-          <!-- <v-card> -->
             <v-responsive class="overview-jumbotron" :gradient="gradient">
               <v-container fluid fill-height>
                 <v-layout row wrap>
@@ -58,7 +57,6 @@
               </v-container>
 
             </v-responsive>
-          <!-- </v-card> -->
         </v-flex>
       </v-layout>
       
@@ -95,7 +93,6 @@
                 ref="carousel"
                 @slide="updateCarousel"
               >
-                <hooper-navigation slot="hooper-addons"></hooper-navigation>
                 <hooper-progress slot="hooper-addons"></hooper-progress>
                 <slide>
                   <v-container fluid>
@@ -297,5 +294,15 @@ export default {
 .i-hooper_subheading
   font-size: 20px !important
   font-weight: 200
+  
+.hooper-progress-inner
+  background-color: $app-button-color !important  
+  height: 7px
+  border-top-left-radius: 8px 
+  border-bottom-left-radius: 8px
+
+.hooper-progress
+  height: 7px !important
+  border-radius: 8px  
 </style>
 
