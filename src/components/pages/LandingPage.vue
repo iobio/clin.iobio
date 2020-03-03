@@ -61,21 +61,92 @@
           <!-- </v-card> -->
         </v-flex>
         
-        <hooper :vertical="true" style="height: 400px" :itemsToShow="1" :centerMode="true">
+        <hooper style="height: 400px; background:white" :itemsToShow="1" :centerMode="true" :transition="1150">
           <hooper-navigation slot="hooper-addons"></hooper-navigation>
           <hooper-progress slot="hooper-addons"></hooper-progress>
           <slide>
-            slide 1
+            <v-container fluid>
+              <v-layout row wrap>
+                <v-flex xs1></v-flex>
+                <v-flex xs6>
+                  <img style="width:700px;" src="./review_case.png" alt="review_case">
+                </v-flex>
+                <v-flex xs3 class="mt-12">
+                  <span class="i-hooper_text">Review case</span>
+                  <br><br>
+                  <span class="i-hooper_subheading">
+                    Review relatedness, case description, and
+                    data quality for your data
+                  </span>
+                </v-flex>
+                <v-flex xs2></v-flex>
+              </v-layout>
+            </v-container>
           </slide>
           <slide >
-            slide 2
+            <v-container fluid>
+              <v-layout row wrap>
+                <v-flex xs1></v-flex>
+                <v-flex xs6>
+                  <img style="width:700px;" src="./review_phenotypes.png" alt="review_phenotypes">
+                </v-flex>
+                <v-flex xs3 class="mt-12">
+                  <span class="i-hooper_text">Review phenotypes</span>
+                  <br><br>
+                  <span class="i-hooper_subheading">
+                    Review phenotypes from entered 
+                    clinical notes and generate a prioritized 
+                    gene list
+                  </span>
+                </v-flex>
+                <v-flex xs2></v-flex>
+
+              </v-layout>
+            </v-container>
+
           </slide>
           <slide>
-            slide 3
+            <v-container fluid>
+              <v-layout row wrap>
+                <v-flex xs1></v-flex>
+                <v-flex xs6>
+                  <img style="width:700px;" src="./review_variants.png" alt="review_variants">
+                </v-flex>
+                <v-flex xs3 class="mt-12">
+                  <span class="i-hooper_text">Review variants</span>
+                  <br><br>
+                  <span class="i-hooper_subheading">
+                    Review and mark variants as significant, 
+                    Variants of unknown significance and 
+                    Add notes
+                  </span>
+                </v-flex>
+                <v-flex xs2></v-flex>
+
+              </v-layout>
+            </v-container>
+
           </slide>
 
           <slide>
-            slide 4
+            <v-container fluid>
+              <v-layout row wrap>
+                <v-flex xs6>
+                  <img style="width:700px;" src="./findings.png" alt="Findings">
+                </v-flex>
+                <v-flex xs3 class="mt-12">
+                  <span class="i-hooper_text">Findings</span>
+                  <br><br>
+                  <span class="i-hooper_subheading">
+                    Review results from all stages of the 
+                    workflow and download report
+                  </span>
+                </v-flex>
+                <v-flex xs2></v-flex>
+
+              </v-layout>
+            </v-container>
+
           </slide>
         </hooper>
         
@@ -151,5 +222,14 @@ export default {
   
   .i-hero_subheading
     font-size: 20px
+    
+.i-hooper_text
+  font-size: 36px !important
+  font-family: poppins !important  
+  font-weight: 300
+  
+.i-hooper_subheading
+  font-size: 20px !important
+  font-weight: 200
 </style>
 
