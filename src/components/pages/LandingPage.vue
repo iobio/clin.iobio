@@ -60,6 +60,27 @@
             </v-responsive>
           <!-- </v-card> -->
         </v-flex>
+        
+        <hooper :vertical="true" style="height: 400px" :itemsToShow="1" :centerMode="true">
+          <hooper-navigation slot="hooper-addons"></hooper-navigation>
+          <hooper-progress slot="hooper-addons"></hooper-progress>
+          <slide>
+            slide 1
+          </slide>
+          <slide >
+            slide 2
+          </slide>
+          <slide>
+            slide 3
+          </slide>
+
+          <slide>
+            slide 4
+          </slide>
+        </hooper>
+        
+        
+
       </v-layout>
     </v-content>
 
@@ -73,10 +94,22 @@ import caseIcon      from '../partials/icons/case-icon.vue'
 import findingsIcon  from '../partials/icons/findings-icon.vue'
 import variantsIcon  from '../partials/icons/variants-icon.vue'
 import { bus }       from '../../main'
+import {
+  Hooper,
+  Slide,
+  Progress as HooperProgress,
+  Navigation as HooperNavigation
+  } from 'hooper';
+import 'hooper/dist/hooper.css';
+
 
 export default {
   name: 'landing-page',
   components: {
+    Hooper,
+    Slide,
+    HooperProgress,
+    HooperNavigation
   },
   props: {
   },
