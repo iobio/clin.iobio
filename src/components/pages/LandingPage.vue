@@ -6,7 +6,9 @@
       dense
     >
 
-      <v-toolbar-title>clin.iobio</v-toolbar-title>
+      <v-toolbar-title>
+        <strong>clin.iobio</strong>
+      </v-toolbar-title>
 
       <v-spacer></v-spacer>
 
@@ -25,22 +27,33 @@
         <v-flex d-flex xs12>
           <!-- <v-card> -->
             <v-responsive class="overview-jumbotron" :gradient="gradient">
-              <v-container fill-height>
+              <v-container fluid fill-height>
                 <v-layout row wrap>
                   <v-flex xs12 md12 sm12 lg1 xl1 ></v-flex>
                   <v-flex xs12 md12 sm12 lg5 xl5>
-                    <v-flex text-xs-center>
+                    <v-flex text-xs-center class="i-hero_text">
+                      <h1>
+                        Workflow and reporting for 
+                        variant analysis pipeline
+                      </h1>
+                      <br>
+                      <span class="i-hero_subheading">
+                        Clin.iobio lets you review case, 
+                        generate gene list from phenotypes, review variants 
+                        and generate report of your findings.   
+                      </span>
+                      <v-btn color="white" outlined x-large @click="getStarted" class="mt-8">
+                        <v-icon>explore</v-icon> 
+                        <span class="ml-2">Get started with demo data</span>
+                      </v-btn>
                     </v-flex>
                   </v-flex>
+                  <v-flex xs12 md12 sm12 lg1 xl1 ></v-flex>
                     <v-flex xs12 md12 sm12 lg5 xl5>
                       <v-flex text-xs-center>
-                          <img style="margin-top:72px; right: 0; width:610px;" src="./clinical_art.svg" alt="Clinical art">
+                          <img style="margin-top:72px; right: 0; width:630px;" src="./clinical_art.svg" alt="Clinical art">
                       </v-flex>
                     </v-flex>
-                    <v-flex xs12 md12 sm12 lg1 xl1 ></v-flex>
-                  <v-flex xs12>
-                    <v-btn color="primary" @click="getStarted">getStarted</v-btn>
-                  </v-flex>
                 </v-layout>
               </v-container>
 
@@ -94,7 +107,16 @@ export default {
 @import ../../assets/sass/variables
 
 .overview-jumbotron
-  height: 570px !important
+  height: 530px !important
   background: radial-gradient(#30638E, #2D4B64)
+  
+.i-hero_text
+  text-align: center  
+  margin-top: 95px
+  color: rgb(242, 242, 242)
+  // padding: 10px
+  
+  .i-hero_subheading
+    font-size: 20px
 </style>
 
