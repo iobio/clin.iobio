@@ -12,12 +12,23 @@
 
       <v-spacer></v-spacer>
 
-      <v-btn icon>
-        <v-icon>mdi-heart</v-icon>
+      <!-- <v-btn text>
+        Legend
+      </v-btn> -->
+      
+      <v-btn class="ml-2" outlined color="rgb(69, 69, 69)">
+        <v-icon>play_circle_outline</v-icon>
+        <span class="ml-1" @click.stop="videoDialog = true">Watch video</span>
       </v-btn>
+      
+      <a href="https://mosaic.chpc.utah.edu/" target="_blank">
+        <v-btn class="ml-2" outlined color="primary">
+          <span >Launch with Mosaic</span>
+        </v-btn>
+      </a>
 
-      <v-btn icon>
-        <v-icon>mdi-magnify</v-icon>
+
+      <v-btn text disabled>
       </v-btn>
 
     </v-app-bar>
@@ -191,9 +202,32 @@
       </v-layout>
       
       
-      <v-layout row wrap>
-        
-      </v-layout>
+      <v-dialog
+        v-model="videoDialog"
+        max-width="600"
+      >
+        <v-card>
+       
+          <v-card-title class="headline"></v-card-title>
+
+          <v-card-text v-if="videoDialog">
+            <iframe width="560" height="315" src="https://www.youtube.com/embed/g43CsDVfJIo" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+          </v-card-text>
+
+          <v-card-actions>
+            <v-spacer></v-spacer>
+
+            <v-btn
+              color="primary darken-1"
+              text
+              @click="videoDialog = false"
+            >
+              Close
+            </v-btn>
+
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
     </v-content>
 
   </div>
@@ -241,6 +275,7 @@ export default {
         { text: 'Review variants' },
         { text: 'Findings' },
       ],
+      videoDialog: false
     }
   },
   methods:  {
