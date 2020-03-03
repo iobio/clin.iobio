@@ -98,12 +98,13 @@
                   <v-container fluid>
                     <v-layout row wrap>
                       <v-flex xs6>
-                        <img style="width:700px;" src="./review_case.png" alt="review_case">
+                        <img class="i-hooper_img" src="./review_case.png" alt="review_case">
                       </v-flex>
                       <v-flex xs1></v-flex>
-                      <v-flex xs4 class="mt-12">
+                      <v-flex xs4 class="i-hooper_text_margin_top">
+                        <span class="step-heading-icon"><case-icon/></span>
                         <span class="i-hooper_text">Review case</span>
-                        <br><br>
+                        <br><br><br>
                         <span class="i-hooper_subheading">
                           Review relatedness, case description, and
                           data quality for your data
@@ -117,12 +118,13 @@
                   <v-container fluid>
                     <v-layout row wrap>
                       <v-flex xs6>
-                        <img style="width:700px;" src="./review_phenotypes.png" alt="review_phenotypes">
+                        <img class="i-hooper_img" src="./review_phenotypes.png" alt="review_phenotypes">
                       </v-flex>
                       <v-flex xs1></v-flex>
-                      <v-flex xs4 class="mt-12">
+                      <v-flex xs4 class="i-hooper_text_margin_top">
+                        <span class="step-heading-icon"><phenotype-icon/></span>
                         <span class="i-hooper_text">Review phenotypes</span>
-                        <br><br>
+                        <br><br><br>
                         <span class="i-hooper_subheading">
                           Review phenotypes from entered 
                           clinical notes and generate a prioritized 
@@ -139,12 +141,13 @@
                   <v-container fluid>
                     <v-layout row wrap>
                       <v-flex xs6>
-                        <img style="width:700px;" src="./review_variants.png" alt="review_variants">
+                        <img class="i-hooper_img" src="./review_variants.png" alt="review_variants">
                       </v-flex>
                       <v-flex xs1></v-flex>
-                      <v-flex xs4 class="mt-12">
+                      <v-flex xs4 class="i-hooper_text_margin_top">
+                        <span class="step-heading-icon"><variants-icon/></span>
                         <span class="i-hooper_text">Review variants</span>
-                        <br><br>
+                        <br><br><br>
                         <span class="i-hooper_subheading">
                           Review and mark variants as significant, 
                           Variants of unknown significance and 
@@ -162,12 +165,13 @@
                   <v-container fluid>
                     <v-layout row wrap>
                       <v-flex xs6>
-                        <img style="width:700px;" src="./findings.png" alt="Findings">
+                        <img class="i-hooper_img" src="./findings.png" alt="Findings">
                       </v-flex>
                       <v-flex xs1></v-flex>
-                      <v-flex xs4 class="mt-12">
+                      <v-flex xs4 class="i-hooper_text_margin_top">
+                        <span class="step-heading-icon"><findings-icon/></span>
                         <span class="i-hooper_text">Findings</span>
-                        <br><br>
+                        <br><br><br>
                         <span class="i-hooper_subheading">
                           Review results from all stages of the 
                           workflow and download report
@@ -217,7 +221,11 @@ export default {
     Hooper,
     Slide,
     HooperProgress,
-    HooperNavigation
+    HooperNavigation,
+    caseIcon,
+    phenotypeIcon,
+    variantsIcon,
+    findingsIcon
   },
   props: {
   },
@@ -290,6 +298,8 @@ export default {
   font-size: 36px !important
   font-family: poppins !important  
   font-weight: 300
+  position: absolute
+  margin-left: 55px
   
 .i-hooper_subheading
   font-size: 20px !important
@@ -304,5 +314,20 @@ export default {
 .hooper-progress
   height: 7px !important
   border-radius: 8px  
+  
+.step-heading-icon
+  margin-top: 10px 
+  
+  svg 
+    height: 48px
+    width: 48px
+    position: absolute
+    padding-top: 5px
+  
+.i-hooper_text_margin_top
+  margin-top: 80px !important  
+  
+.i-hooper_img
+  width: 720px  
 </style>
 
