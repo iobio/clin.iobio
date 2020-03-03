@@ -52,6 +52,7 @@
                         generate gene list from phenotypes, review variants 
                         and generate report of your findings.   
                       </span>
+                      <br>
                       <v-btn color="white" outlined x-large @click="getStarted" class="mt-8">
                         <v-icon>explore</v-icon> 
                         <span class="ml-2">Get started with demo data</span>
@@ -61,7 +62,7 @@
                   <v-flex xs12 md12 sm12 lg1 xl1 ></v-flex>
                     <v-flex xs12 md12 sm12 lg5 xl5>
                       <v-flex text-xs-center>
-                          <img style="margin-top:72px; right: 0; width:630px;" src="./clinical_art.svg" alt="Clinical art">
+                          <img class="hidden-md-and-down" style="margin-top:72px; right: 0; width:630px;" src="./clinical_art.svg" alt="Clinical art">
                       </v-flex>
                     </v-flex>
                 </v-layout>
@@ -71,13 +72,12 @@
         </v-flex>
       </v-layout>
       
-      
       <v-layout row wrap style="background:white">
         <v-container>
           <v-layout row wrap>
-            <v-flex xs2>
+            <v-flex xs12 sm12 md2 lg2 xl2>
               
-              <v-list rounded>
+              <v-list rounded class="hidden-sm-and-down">
                 <v-subheader>
                   <strong style="font-size:18px">Workflow steps</strong>
                 </v-subheader>
@@ -94,7 +94,7 @@
                 </v-list-item-group>
               </v-list>
             </v-flex>
-            <v-flex xs10>
+            <v-flex xs12 sm12 md10 lg10 xl10>
               <hooper 
                 :vertical="true" 
                 style="height: 400px; background:white" 
@@ -108,11 +108,11 @@
                 <slide>
                   <v-container fluid>
                     <v-layout row wrap>
-                      <v-flex xs6>
-                        <img class="i-hooper_img" src="./review_case.png" alt="review_case">
+                      <v-flex xs12 sm12 md6 lg6 xl6>
+                        <img class="i-hooper_img hidden-sm-and-down" src="./review_case.png" alt="review_case">
                       </v-flex>
-                      <v-flex xs1></v-flex>
-                      <v-flex xs4 class="i-hooper_text_margin_top">
+                      <v-flex xs12 sm12 md1 lg1 xl1></v-flex>
+                      <v-flex xs12 sm12 md5 lg4 xl4 class="i-hooper_text_margin_top">
                         <span class="step-heading-icon"><case-icon/></span>
                         <span class="i-hooper_text">Review case</span>
                         <br><br><br>
@@ -121,18 +121,18 @@
                           data quality for your data
                         </span>
                       </v-flex>
-                      <v-flex xs1></v-flex>
+                      <v-flex xs12 sm12 md12 lg1 xl1></v-flex>
                     </v-layout>
                   </v-container>
                 </slide>
                 <slide >
                   <v-container fluid>
                     <v-layout row wrap>
-                      <v-flex xs6>
-                        <img class="i-hooper_img" src="./review_phenotypes.png" alt="review_phenotypes">
+                      <v-flex xs12 sm12 md6 lg6 xl6>
+                        <img class="i-hooper_img hidden-sm-and-down" src="./review_phenotypes.png" alt="review_phenotypes">
                       </v-flex>
-                      <v-flex xs1></v-flex>
-                      <v-flex xs4 class="i-hooper_text_margin_top">
+                      <v-flex xs12 sm12 md1 lg1 xl1></v-flex>
+                      <v-flex xs12 sm12 md5 lg4 xl4 class="i-hooper_text_margin_top">
                         <span class="step-heading-icon"><phenotype-icon/></span>
                         <span class="i-hooper_text">Review phenotypes</span>
                         <br><br><br>
@@ -142,7 +142,7 @@
                           gene list
                         </span>
                       </v-flex>
-                      <v-flex xs1></v-flex>
+                      <v-flex xs12 sm12 md12 lg1 xl1></v-flex>
 
                     </v-layout>
                   </v-container>
@@ -151,11 +151,11 @@
                 <slide>
                   <v-container fluid>
                     <v-layout row wrap>
-                      <v-flex xs6>
-                        <img class="i-hooper_img" src="./review_variants.png" alt="review_variants">
+                      <v-flex xs12 sm12 md6 lg6 xl6>
+                        <img class="i-hooper_img hidden-sm-and-down" src="./review_variants.png" alt="review_variants">
                       </v-flex>
-                      <v-flex xs1></v-flex>
-                      <v-flex xs4 class="i-hooper_text_margin_top">
+                      <v-flex xs12 sm12 md1 lg1 xl1></v-flex>
+                      <v-flex xs12 sm12 md5 lg4 xl4 class="i-hooper_text_margin_top">
                         <span class="step-heading-icon"><variants-icon/></span>
                         <span class="i-hooper_text">Review variants</span>
                         <br><br><br>
@@ -165,7 +165,7 @@
                           Add notes
                         </span>
                       </v-flex>
-                      <v-flex x1></v-flex>
+                      <v-flex xs12 sm12 md12 lg1 xl1></v-flex>
 
                     </v-layout>
                   </v-container>
@@ -175,11 +175,11 @@
                 <slide>
                   <v-container fluid>
                     <v-layout row wrap>
-                      <v-flex xs6>
-                        <img class="i-hooper_img" src="./findings.png" alt="Findings">
+                      <v-flex xs12 sm12 md6 lg6 xl6>
+                        <img class="i-hooper_img hidden-sm-and-down" src="./findings.png" alt="Findings">
                       </v-flex>
-                      <v-flex xs1></v-flex>
-                      <v-flex xs4 class="i-hooper_text_margin_top">
+                      <v-flex xs12 sm12 md1 lg1 xl1></v-flex>
+                      <v-flex xs12 sm12 md5 lg4 xl4 class="i-hooper_text_margin_top">
                         <span class="step-heading-icon"><findings-icon/></span>
                         <span class="i-hooper_text">Findings</span>
                         <br><br><br>
@@ -188,7 +188,7 @@
                           workflow and download report
                         </span>
                       </v-flex>
-                      <v-flex xs1></v-flex>
+                      <v-flex xs12 sm12 md12 lg1 xl1></v-flex>
 
                     </v-layout>
                   </v-container>
@@ -329,12 +329,6 @@ export default {
   .i-hero_subheading
     font-size: 20px
     
-.i-hooper_text
-  font-size: 36px !important
-  font-family: poppins !important  
-  font-weight: 300
-  position: absolute
-  margin-left: 55px
   
 .i-hooper_subheading
   font-size: 20px !important
@@ -359,10 +353,63 @@ export default {
     position: absolute
     padding-top: 5px
   
-.i-hooper_text_margin_top
-  margin-top: 80px !important  
+.i-hooper_text
+  font-size: 36px !important
+  font-family: poppins !important  
+  font-weight: 300
+  position: absolute
+  margin-left: 55px  
   
-.i-hooper_img
-  width: 720px  
+@media (min-width: 960px)
+  .i-hooper_img
+    width: 480px  
+  
+  .i-hooper_text_margin_top
+    margin-top: 50px !important  
+    
+  .i-hooper_text
+    font-size: 26px !important
+    font-family: poppins !important  
+    font-weight: 300
+    position: absolute
+    margin-left: 55px  
+  
+    
+@media (min-width: 1050px)
+  .i-hooper_img
+    width: 520px  
+  
+  .i-hooper_text_margin_top
+    margin-top: 50px !important  
+      
+
+@media (min-width: 1264px)
+  .i-hooper_img
+    width: 620px      
+    
+  .i-hooper_text_margin_top
+    margin-top: 80px !important   
+  
+  .i-hooper_text
+    font-size: 36px !important
+    font-family: poppins !important  
+    font-weight: 300
+    position: absolute
+    margin-left: 55px  
+      
+       
+    
+@media (min-width: 1440px)
+  .i-hooper_img
+    width: 720px    
+    
+  .i-hooper_text_margin_top
+    margin-top: 80px !important  
+    
+  
+    
+// .i-hooper_img
+//   width: 720px  
+
 </style>
 
