@@ -67,43 +67,34 @@
         <v-container>
           <v-layout row wrap>
             <v-flex xs2>
-              <!-- Workflow steps 
-              <p>
-                Review case 
-                <br><br>
-              </p>  -->
+              
               <v-list rounded>
-                <v-subheader>Workflow steps</v-subheader>
+                <v-subheader>
+                  <strong style="font-size:18px">Workflow steps</strong>
+                </v-subheader>
                 <v-divider></v-divider>
-                <v-list-item-group color="primary">
-                  <v-list-item>
-                    <v-list-item-content>
-                      <v-list-item-title >Review case</v-list-item-title>
+                <v-list-item-group v-model="step_number" color="primary">
+                  <v-list-item
+                    v-for="(step, i) in workflow_steps"
+                    :key="i"
+                  >
+                    <v-list-item-content @click="changeSlide(i)">
+                      <v-list-item-title v-text="step.text"></v-list-item-title>
                     </v-list-item-content>
                   </v-list-item>
-                  <v-list-item>
-                    <v-list-item-content>
-                      <v-list-item-title >Review phenotypes</v-list-item-title>
-                    </v-list-item-content>
-                  </v-list-item>
-
-                  <v-list-item>
-                    <v-list-item-content>
-                      <v-list-item-title >Review variants</v-list-item-title>
-                    </v-list-item-content>
-                  </v-list-item>
-
-                  <v-list-item>
-                    <v-list-item-content>
-                      <v-list-item-title >Findings</v-list-item-title>
-                    </v-list-item-content>
-                  </v-list-item>
-
                 </v-list-item-group>
               </v-list>
             </v-flex>
             <v-flex xs10>
-              <hooper :vertical="true" style="height: 400px; background:white" :itemsToShow="1" :centerMode="true" :transition="1050">
+              <hooper 
+                :vertical="true" 
+                style="height: 400px; background:white" 
+                :itemsToShow="1" 
+                :centerMode="true" 
+                :transition="1050"
+                ref="carousel"
+                @slide="updateCarousel"
+              >
                 <hooper-navigation slot="hooper-addons"></hooper-navigation>
                 <hooper-progress slot="hooper-addons"></hooper-progress>
                 <slide>
@@ -113,7 +104,7 @@
                         <img style="width:700px;" src="./review_case.png" alt="review_case">
                       </v-flex>
                       <v-flex xs1></v-flex>
-                      <v-flex xs3 class="mt-12">
+                      <v-flex xs4 class="mt-12">
                         <span class="i-hooper_text">Review case</span>
                         <br><br>
                         <span class="i-hooper_subheading">
@@ -121,7 +112,7 @@
                           data quality for your data
                         </span>
                       </v-flex>
-                      <v-flex xs2></v-flex>
+                      <v-flex xs1></v-flex>
                     </v-layout>
                   </v-container>
                 </slide>
@@ -132,7 +123,7 @@
                         <img style="width:700px;" src="./review_phenotypes.png" alt="review_phenotypes">
                       </v-flex>
                       <v-flex xs1></v-flex>
-                      <v-flex xs3 class="mt-12">
+                      <v-flex xs4 class="mt-12">
                         <span class="i-hooper_text">Review phenotypes</span>
                         <br><br>
                         <span class="i-hooper_subheading">
@@ -141,7 +132,7 @@
                           gene list
                         </span>
                       </v-flex>
-                      <v-flex xs2></v-flex>
+                      <v-flex xs1></v-flex>
 
                     </v-layout>
                   </v-container>
@@ -154,7 +145,7 @@
                         <img style="width:700px;" src="./review_variants.png" alt="review_variants">
                       </v-flex>
                       <v-flex xs1></v-flex>
-                      <v-flex xs3 class="mt-12">
+                      <v-flex xs4 class="mt-12">
                         <span class="i-hooper_text">Review variants</span>
                         <br><br>
                         <span class="i-hooper_subheading">
@@ -163,7 +154,7 @@
                           Add notes
                         </span>
                       </v-flex>
-                      <v-flex xs2></v-flex>
+                      <v-flex x1></v-flex>
 
                     </v-layout>
                   </v-container>
@@ -177,7 +168,7 @@
                         <img style="width:700px;" src="./findings.png" alt="Findings">
                       </v-flex>
                       <v-flex xs1></v-flex>
-                      <v-flex xs3 class="mt-12">
+                      <v-flex xs4 class="mt-12">
                         <span class="i-hooper_text">Findings</span>
                         <br><br>
                         <span class="i-hooper_subheading">
@@ -185,7 +176,7 @@
                           workflow and download report
                         </span>
                       </v-flex>
-                      <v-flex xs2></v-flex>
+                      <v-flex xs1></v-flex>
 
                     </v-layout>
                   </v-container>
@@ -237,19 +228,45 @@ export default {
     let self = this;
     return {
       gradient: 'to top,  #0D47A1,#42A5F5',
+      carouselData: 0,
+      step_number: 0,
+      workflow_steps: [
+        { text: 'Review case' },
+        { text: 'Review phenotypes' },
+        { text: 'Review variants' },
+        { text: 'Findings' },
+      ],
     }
   },
   methods:  {
     getStarted(){
-      console.log("initialize-clin")
       bus.$emit("initialize-clin")
+    }, 
+    updateCarousel(payload) {
+      var currentSlide; 
+      typeof payload === "number" ? currentSlide = payload : currentSlide = payload.currentSlide;
+      console.log("currentSlide" ,currentSlide)
+      this.carouselData = currentSlide;
+      // this.step_number = currentSlide; 
+    },
+    changeSlide(step_number){
+      console.log("changeSlide:", step_number); 
+      this.carouselData = step_number;
     }
   },
   mounted: function() {
 
   },
   watch: {
-
+    carouselData () {
+      this.$refs.carousel.slideTo(this.carouselData);
+      setTimeout(()=>{
+        this.step_number = this.carouselData;
+      },50)
+      
+    },
+    step_number(){
+    }
   }
 }
 </script>

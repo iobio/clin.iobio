@@ -688,7 +688,6 @@ export default {
             self.splashMessage = error;
           })
         } else {
-          console.log("I am not launched from mosaic")
           self.showLandingPage = true; 
           self.modelInfos = self.demoModelInfos;
           self.user       = self.demoUser;
