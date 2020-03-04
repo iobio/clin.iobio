@@ -12,10 +12,6 @@
 
       <v-spacer></v-spacer>
 
-      <!-- <v-btn text>
-        Legend
-      </v-btn> -->
-      
       <v-btn class="ml-2" outlined color="rgb(69, 69, 69)">
         <v-icon>play_circle_outline</v-icon>
         <span class="ml-1" @click.stop="videoDialog = true">Watch video</span>
@@ -261,10 +257,10 @@ export default {
       carouselData: 0,
       step_number: 0,
       workflow_steps: [
-        { text: 'Review case' },
-        { text: 'Review phenotypes' },
-        { text: 'Review variants' },
-        { text: 'Findings' },
+        { text: 'Check case' },
+        { text: 'Select phenotypes' },
+        { text: 'Investigate variants' },
+        { text: 'Review findings' },
       ],
       videoDialog: false
     }
@@ -276,12 +272,9 @@ export default {
     updateCarousel(payload) {
       var currentSlide; 
       typeof payload === "number" ? currentSlide = payload : currentSlide = payload.currentSlide;
-      console.log("currentSlide" ,currentSlide)
       this.carouselData = currentSlide;
-      // this.step_number = currentSlide; 
     },
     changeSlide(step_number){
-      console.log("changeSlide:", step_number); 
       this.carouselData = step_number;
     }
   },
@@ -406,10 +399,5 @@ export default {
     right: 0
     margin-top: 72px
     
-  
-    
-// .i-hooper_img
-//   width: 720px  
-
 </style>
 
