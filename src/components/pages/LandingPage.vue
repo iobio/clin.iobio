@@ -62,7 +62,7 @@
                   <v-flex xs12 md12 sm12 lg1 xl1 ></v-flex>
                     <v-flex xs12 md12 sm12 lg5 xl5>
                       <v-flex text-xs-center>
-                          <img class="hidden-md-and-down" style="margin-top:72px; right: 0; width:630px;" src="./clinical_art.svg" alt="Clinical art">
+                          <img class="hidden-md-and-down clinical_art" src="./clinical_art.svg" alt="Clinical art">
                       </v-flex>
                     </v-flex>
                 </v-layout>
@@ -380,7 +380,12 @@ export default {
     width: 520px  
   
   .i-hooper_text_margin_top
-    margin-top: 50px !important  
+    margin-top: 50px !important
+      
+  .clinical_art
+    width: 570px
+    right: 0
+    margin-top: 72px       
       
 
 @media (min-width: 1264px)
@@ -397,7 +402,6 @@ export default {
     position: absolute
     margin-left: 55px  
       
-       
     
 @media (min-width: 1440px)
   .i-hooper_img
@@ -405,6 +409,11 @@ export default {
     
   .i-hooper_text_margin_top
     margin-top: 80px !important  
+    
+  .clinical_art
+    width: 615px
+    right: 0
+    margin-top: 72px
     
   
     
