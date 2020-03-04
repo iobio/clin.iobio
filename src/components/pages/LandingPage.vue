@@ -21,11 +21,11 @@
         <span class="ml-1" @click.stop="videoDialog = true">Watch video</span>
       </v-btn>
       
-      <a href="https://mosaic.chpc.utah.edu/" target="_blank">
+      <!-- <a href="https://mosaic.chpc.utah.edu/" target="_blank">
         <v-btn class="ml-2" outlined color="primary">
           <span >Launch with Mosaic</span>
         </v-btn>
-      </a>
+      </a> -->
 
 
       <v-btn text disabled>
@@ -43,19 +43,16 @@
                   <v-flex xs12 md12 sm12 lg5 xl5>
                     <v-flex text-xs-center class="i-hero_text">
                       <h1>
-                        Workflow and reporting for 
-                        variant analysis pipeline
+                        A comprehensive variant analysis workflow
                       </h1>
                       <br>
                       <span class="i-hero_subheading">
-                        Clin.iobio lets you review case, 
-                        generate gene list from phenotypes, review variants 
-                        and generate report of your findings.   
+                        clin.iobio allows you to review sequencing and case metrics, generate a prioritized list of genes most highly associated with the disease/phenotype, review and mark variants as significant, and generate a report of your findings.   
                       </span>
                       <br>
                       <v-btn color="white" outlined x-large @click="getStarted" class="mt-8">
                         <v-icon>explore</v-icon> 
-                        <span class="ml-2">Get started with demo data</span>
+                        <span class="ml-2">Try it with demo data</span>
                       </v-btn>
                     </v-flex>
                   </v-flex>
@@ -117,8 +114,7 @@
                         <span class="i-hooper_text">Review case</span>
                         <br><br><br>
                         <span class="i-hooper_subheading">
-                          Review relatedness, case description, and
-                          data quality for your data
+                          Review relatedness, disease/phenotype description, and data quality
                         </span>
                       </v-flex>
                       <v-flex xs12 sm12 md12 lg1 xl1></v-flex>
@@ -137,9 +133,7 @@
                         <span class="i-hooper_text">Review phenotypes</span>
                         <br><br><br>
                         <span class="i-hooper_subheading">
-                          Review phenotypes from entered 
-                          clinical notes and generate a prioritized 
-                          gene list
+                          Enter a clinical note and select suspected disorders and phenotypes to generate a prioritized gene list
                         </span>
                       </v-flex>
                       <v-flex xs12 sm12 md12 lg1 xl1></v-flex>
@@ -160,9 +154,7 @@
                         <span class="i-hooper_text">Review variants</span>
                         <br><br><br>
                         <span class="i-hooper_subheading">
-                          Review and mark variants as significant, 
-                          Variants of unknown significance and 
-                          Add notes
+                          Review variants and mark them as significant or uncertain. And add notes for collaborators!
                         </span>
                       </v-flex>
                       <v-flex xs12 sm12 md12 lg1 xl1></v-flex>
@@ -184,8 +176,7 @@
                         <span class="i-hooper_text">Findings</span>
                         <br><br><br>
                         <span class="i-hooper_subheading">
-                          Review results from all stages of the 
-                          workflow and download report
+                          Look over all aspects of the workflow and reviewed variants and generate a downloadable report
                         </span>
                       </v-flex>
                       <v-flex xs12 sm12 md12 lg1 xl1></v-flex>
@@ -331,7 +322,7 @@ export default {
     
   
 .i-hooper_subheading
-  font-size: 20px !important
+  font-size: 18px !important
   font-weight: 200
   
 .hooper-progress-inner
@@ -348,13 +339,13 @@ export default {
   margin-top: 10px 
   
   svg 
-    height: 48px
-    width: 48px
+    height: 44px
+    width: 44px
     position: absolute
     padding-top: 5px
   
 .i-hooper_text
-  font-size: 36px !important
+  font-size: 32px !important
   font-family: poppins !important  
   font-weight: 300
   position: absolute
@@ -368,7 +359,7 @@ export default {
     margin-top: 50px !important  
     
   .i-hooper_text
-    font-size: 26px !important
+    font-size: 24px !important
     font-family: poppins !important  
     font-weight: 300
     position: absolute
@@ -396,7 +387,7 @@ export default {
     margin-top: 80px !important   
   
   .i-hooper_text
-    font-size: 36px !important
+    font-size: 32px !important
     font-family: poppins !important  
     font-weight: 300
     position: absolute
