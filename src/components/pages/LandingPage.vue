@@ -17,13 +17,6 @@
         <span class="ml-1" @click.stop="videoDialog = true">Watch video</span>
       </v-btn>
       
-      <!-- <a href="https://mosaic.chpc.utah.edu/" target="_blank">
-        <v-btn class="ml-2" outlined color="primary">
-          <span >Launch with Mosaic</span>
-        </v-btn>
-      </a> -->
-
-
       <v-btn text disabled>
       </v-btn>
 
@@ -55,7 +48,7 @@
                   <v-flex xs12 md12 sm12 lg1 xl1 ></v-flex>
                     <v-flex xs12 md12 sm12 lg5 xl5>
                       <v-flex text-xs-center>
-                          <img class="hidden-md-and-down clinical_art" src="./clinical_art.svg" alt="Clinical art">
+                          <img class="hidden-md-and-down clinical_art" src="../../assets/images/landing_page/clinical_art.svg" alt="Clinical art">
                       </v-flex>
                     </v-flex>
                 </v-layout>
@@ -98,91 +91,16 @@
                 @slide="updateCarousel"
               >
                 <hooper-progress slot="hooper-addons"></hooper-progress>
-                <slide>
-                  <v-container fluid>
-                    <v-layout row wrap>
-                      <v-flex xs12 sm12 md6 lg6 xl6>
-                        <img class="i-hooper_img hidden-sm-and-down" src="./review_case.png" alt="review_case">
-                      </v-flex>
-                      <v-flex xs12 sm12 md1 lg1 xl1></v-flex>
-                      <v-flex xs12 sm12 md5 lg4 xl4 class="i-hooper_text_margin_top">
-                        <span class="step-heading-icon"><case-icon/></span>
-                        <span class="i-hooper_text">Review case</span>
-                        <br><br><br>
-                        <span class="i-hooper_subheading">
-                          Review relatedness, disease/phenotype description, and data quality
-                        </span>
-                      </v-flex>
-                      <v-flex xs12 sm12 md12 lg1 xl1></v-flex>
-                    </v-layout>
-                  </v-container>
-                </slide>
-                <slide >
-                  <v-container fluid>
-                    <v-layout row wrap>
-                      <v-flex xs12 sm12 md6 lg6 xl6>
-                        <img class="i-hooper_img hidden-sm-and-down" src="./review_phenotypes.png" alt="review_phenotypes">
-                      </v-flex>
-                      <v-flex xs12 sm12 md1 lg1 xl1></v-flex>
-                      <v-flex xs12 sm12 md5 lg4 xl4 class="i-hooper_text_margin_top">
-                        <span class="step-heading-icon"><phenotype-icon/></span>
-                        <span class="i-hooper_text">Review phenotypes</span>
-                        <br><br><br>
-                        <span class="i-hooper_subheading">
-                          Enter a clinical note and select suspected disorders and phenotypes to generate a prioritized gene list
-                        </span>
-                      </v-flex>
-                      <v-flex xs12 sm12 md12 lg1 xl1></v-flex>
-
-                    </v-layout>
-                  </v-container>
-
-                </slide>
-                <slide>
-                  <v-container fluid>
-                    <v-layout row wrap>
-                      <v-flex xs12 sm12 md6 lg6 xl6>
-                        <img class="i-hooper_img hidden-sm-and-down" src="./review_variants.png" alt="review_variants">
-                      </v-flex>
-                      <v-flex xs12 sm12 md1 lg1 xl1></v-flex>
-                      <v-flex xs12 sm12 md5 lg4 xl4 class="i-hooper_text_margin_top">
-                        <span class="step-heading-icon"><variants-icon/></span>
-                        <span class="i-hooper_text">Review variants</span>
-                        <br><br><br>
-                        <span class="i-hooper_subheading">
-                          Review variants and mark them as significant or uncertain. And add notes for collaborators!
-                        </span>
-                      </v-flex>
-                      <v-flex xs12 sm12 md12 lg1 xl1></v-flex>
-
-                    </v-layout>
-                  </v-container>
-
-                </slide>
-
-                <slide>
-                  <v-container fluid>
-                    <v-layout row wrap>
-                      <v-flex xs12 sm12 md6 lg6 xl6>
-                        <img class="i-hooper_img hidden-sm-and-down" src="./findings.png" alt="Findings">
-                      </v-flex>
-                      <v-flex xs12 sm12 md1 lg1 xl1></v-flex>
-                      <v-flex xs12 sm12 md5 lg4 xl4 class="i-hooper_text_margin_top">
-                        <span class="step-heading-icon"><findings-icon/></span>
-                        <span class="i-hooper_text">Findings</span>
-                        <br><br><br>
-                        <span class="i-hooper_subheading">
-                          Look over all aspects of the workflow and reviewed variants and generate a downloadable report
-                        </span>
-                      </v-flex>
-                      <v-flex xs12 sm12 md12 lg1 xl1></v-flex>
-
-                    </v-layout>
-                  </v-container>
-
+                <slide v-for="(slide, idx) in slides" :key="idx" :index="idx">
+                  <landing-page-slide
+                    :title="slide.title"
+                    :description="slide.description"
+                    :img_src="slide.img_src"
+                  > 
+                    <component :is="slide.icon"></component>
+                  </landing-page-slide>
                 </slide>
               </hooper>
-
             </v-flex>
           </v-layout>
         </v-container>
@@ -222,11 +140,13 @@
 
 <script>
 
-import phenotypeIcon from '../partials/icons/phenotype-icon.vue'
-import caseIcon      from '../partials/icons/case-icon.vue'
-import findingsIcon  from '../partials/icons/findings-icon.vue'
-import variantsIcon  from '../partials/icons/variants-icon.vue'
-import { bus }       from '../../main'
+import phenotypeIcon    from '../partials/icons/phenotype-icon.vue'
+import caseIcon         from '../partials/icons/case-icon.vue'
+import findingsIcon     from '../partials/icons/findings-icon.vue'
+import variantsIcon     from '../partials/icons/variants-icon.vue'
+import { bus }          from '../../main'
+import LandingPageSlide from '../partials/LandingPageSlide.vue'
+
 import {
   Hooper,
   Slide,
@@ -235,6 +155,10 @@ import {
   } from 'hooper';
 import 'hooper/dist/hooper.css';
 
+import review_case_img        from '../../assets/images/landing_page/review_case.png'
+import review_phenotypes_img  from '../../assets/images/landing_page/review_phenotypes.png'
+import review_variants_img    from '../../assets/images/landing_page/review_case.png'
+import findings_img           from '../../assets/images/landing_page/findings.png'
 
 export default {
   name: 'landing-page',
@@ -246,7 +170,8 @@ export default {
     caseIcon,
     phenotypeIcon,
     variantsIcon,
-    findingsIcon
+    findingsIcon,
+    LandingPageSlide
   },
   props: {
   },
@@ -262,7 +187,33 @@ export default {
         { text: 'Investigate variants' },
         { text: 'Review findings' },
       ],
-      videoDialog: false
+      videoDialog: false, 
+      slides: [
+        {
+          title: "Review case", 
+          img_src: review_case_img, 
+          description: "Review relatedness, disease/phenotype description, and data quality",
+          icon: caseIcon
+        }, 
+        {
+          title: "Review phenotypes", 
+          img_src: review_phenotypes_img, 
+          description: "Enter a clinical note and select suspected disorders and phenotypes to generate a prioritized gene list",
+          icon: phenotypeIcon
+        }, 
+        {
+          title: "Review variants", 
+          img_src: review_variants_img, 
+          description: "Review variants and mark them as significant or uncertain. And add notes for collaborators!",
+          icon: variantsIcon
+        }, 
+        {
+          title: "Findings", 
+          img_src: findings_img, 
+          description: "Look over all aspects of the workflow and reviewed variants and generate a downloadable report",
+          icon: findingsIcon
+        }, 
+      ], 
     }
   },
   methods:  {
@@ -311,7 +262,7 @@ export default {
   // padding: 10px
   
   .i-hero_subheading
-    font-size: 20px
+    font-size: 19px
     
   
 .i-hooper_subheading
@@ -367,7 +318,7 @@ export default {
     margin-top: 50px !important
       
   .clinical_art
-    width: 570px
+    width: 530px
     right: 0
     margin-top: 72px       
       
@@ -385,6 +336,11 @@ export default {
     font-weight: 300
     position: absolute
     margin-left: 55px  
+    
+  .clinical_art
+    width: 560px
+    right: 0
+    margin-top: 72px  
       
     
 @media (min-width: 1440px)
@@ -395,9 +351,20 @@ export default {
     margin-top: 80px !important  
     
   .clinical_art
-    width: 615px
+    width: 580px
     right: 0
     margin-top: 72px
     
+@media (min-width: 1550px)
+  .i-hooper_img
+    width: 720px    
+    
+  .i-hooper_text_margin_top
+    margin-top: 80px !important  
+    
+  .clinical_art
+    width: 605px
+    right: 0
+    margin-top: 72px    
 </style>
 
