@@ -22,6 +22,7 @@
     "debug": "^2.6.8",
     "express": "^4.15.3",
     "file-saver": "^2.0.2",
+    "hooper": "^0.3.4",
     "iobio-phenotype-extractor-vue": "^1.0.5",
     "is-number": "^7.0.0",
     "jquery": "^3.4.1",
