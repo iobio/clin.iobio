@@ -226,10 +226,6 @@
                     }
                 }
 
-                console.log("minHeight", minHeight);
-                console.log("minCutoff", this.minCutoff);
-                console.log("xScale", this.xScale);
-
                 svg.select('#minLine').remove();
                 svg.select('#minText').remove();
 

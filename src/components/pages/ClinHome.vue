@@ -372,7 +372,7 @@ export default {
 
       variantsByInterpretationTemplate: [
        { key: 'sig',         display: 'Significant Variants',  abbrev: 'Significant', organizedVariants: []},
-       { key: 'unknown-sig', display: 'Variants of Unknown Significance', abbrev: 'Unknown Sig', organizedVariants: []}, 
+       { key: 'unknown-sig', display: 'Variants of Unknown Significance', abbrev: 'Unknown Sig', organizedVariants: []},
        { key: 'poor-qual', display: 'Poor Quality Variants', abbrev: 'Poor qual', organizedVariants: []},
        { key: 'not-sig', display: 'Not Significant', abbrev: 'Not sig', organizedVariants: []},
        { key: 'not-reviewed', display: 'Not Reviewed', abbrev: 'Not reviewed', organizedVariants: []}
@@ -517,19 +517,9 @@ export default {
 
   watch: {
     reviewCaseBadges: function(){
-      let self = this;
-      self.analysis.payload.steps.forEach(function(step) {
-        step.tasks.forEach(function(task) {
-          if (task.key == 'review-patient') {
-            task.badges = self.reviewCaseBadges;
-          }
-        })
-      })
+      this.setVariantTaskBadges();
     },
 
-    workflow(){
-      // console.log("workflow data in clinhome", this.workflow)
-    },
     currentStep: function() {
       let self = this;
       if (self.isAuthenticated && self.workflow && self.analysis && self.currentStep) {
@@ -773,8 +763,6 @@ export default {
       })
       .then(function() {
 
-        console.log("ClinHome.onAuthenticated  analysis:", self.analysis)
-
         // Send message to set the data in the iobio apps
         for (var appName in self.apps) {
           let app = self.apps[appName];
@@ -943,8 +931,6 @@ export default {
 
     setData: function(appName, pauseMillisec=0) {
       let self = this;
-
-      console.log("ClinHome.setData")
 
       setTimeout( () => {
         var probandModelInfo = self.modelInfos.filter(function(modelInfo) {
@@ -1146,8 +1132,7 @@ export default {
         self.analysis.payload.steps.forEach(function(step) {
           step.tasks.forEach(function(task) {
             if (task.key == 'review-patient' ) {
-
-              //this is handled inside reviewCaseBadge watcher, can refactor if preffered
+              task.badges = self.reviewCaseBadges;
 
             } else if (task.key == 'coverage' ) {
               if (variantsCandidateGenes.length == 0) {

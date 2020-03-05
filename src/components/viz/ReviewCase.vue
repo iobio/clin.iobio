@@ -24,7 +24,8 @@
         fill: #75a2c1ba  !important
         stroke: #265073
 
-
+    .minCoverageInput
+      width: 50px !important
 
     .g-main
       .scores
@@ -105,11 +106,6 @@
                 <div class="reviewCase">
                 {{ caseSummary.description }}
                 </div>
-
-                <!--<br>-->
-                <!--<div class="heading">-->
-                  <!--Sample Quality-->
-                <!--</div>-->
               </div>
 
             <div v-if="false" class="subsection">
@@ -124,14 +120,19 @@
 
     <div v-if="isSorted">
       <div style=" width: 100%; display: inline-flex; flex-direction: row; justify-content: space-around; padding-bottom: 10px">
-        <div class="heading" style="margin-right: 130px">Sample</div> <div class="heading" style="margin-right: 130px; display:flex;flex-direction:row;justify-content:flex-start">Read Coverage
+        <div class="heading" style="margin-right: 90px">Sample</div> <div class="heading" style="margin-right: 90px; display:flex;flex-direction:row;justify-content:space-between">
+        <div style="margin-right: 20px">Read Coverage</div>
         <v-text-field
+                id="minCoverageInput"
               label="Expected Coverage"
               outlined
               dense
-              placeholder="30"
+              value="minCutoff"
               v-model.number="minCutoff"
-      ></v-text-field></div><div class="heading">Variant Types</div>
+                style="width: 150px"
+      ></v-text-field></div>
+
+        <div class="heading" style="margin-right: 50px">Variant Types</div>
       </div>
       <div v-for="(d, i) in sampleIdsAndRelationships" >
         <div style=" width: 100%; display: inline-flex; flex-direction: row; justify-content: space-around;">
@@ -297,7 +298,7 @@ export default {
     },
 
 
-    formatVarCountsArray(){3
+    formatVarCountsArray(){
       let tempVarCounts = this.varCountsArray;
 
       for(let i = 0; i < tempVarCounts.length; i++){
@@ -537,6 +538,10 @@ export default {
 
   },
   watch: {
+    minCutoff: function(){
+      this.populateBadCoverageCount();
+      this.populateReviewCaseBadges();
+    }
   },
 }
 </script>
