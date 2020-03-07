@@ -46,7 +46,6 @@ export default {
     }
   }, 
   mounted(){
-    console.log("icon", this.icon)
   }
 }
 </script>
