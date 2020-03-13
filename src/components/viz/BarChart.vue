@@ -165,30 +165,10 @@
             },
         },
         watch: {
-            // color() {
-            //     this.update();
-            // },
-            // data() {
-            //     this.update();
-            // },
-            // width() {
-            //     this.update();
-            // },
-            // xDomain() {
-            //     this.update();
-            // },
-            // yDomain() {
-            //     this.update();
-            // },
-            // xAxisLabel() {
-            //     this.update();
-            // },
-            // yAxisLabel() {
-            //     this.update();
-            // },
-            // medianCoverage() {
-            //     this.update();
-            // }
+
+            minCutoff(){
+                this.plotMin();
+            },
 
             onHover(){
               this.update();
@@ -246,8 +226,8 @@
                     }
                 }
 
-            console.log("minHeight", minHeight);
-                console.log("minCutoff", this.minCutoff);
+                svg.select('#minLine').remove();
+                svg.select('#minText').remove();
 
                 svg.append('line')
                     .attr("id", "minLine")
@@ -303,11 +283,7 @@
                     .attr('x', this.xScale(this.medianCoverage) + 2)
                     .attr('y', this.yScale(max))
                     .text(this.medianCoverage.toString() + 'X Median');
-
-
             },
-
-
 
             checkForData(func) {
                 if (!this.showChart) {

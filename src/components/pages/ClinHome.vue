@@ -125,7 +125,8 @@ $horizontal-dashboard-height: 140px
 
 <template>
 <div id="application-content" :class="{'workflow-new': newWorkflow ? true : false}">
-  <navigation v-if="!showSplash && isAuthenticated  && workflow && analysis"
+  <landing-page v-if="!launchedFromMosaic && showLandingPage"></landing-page>
+  <navigation v-if="!showLandingPage && !showSplash && isAuthenticated  && workflow && analysis"
    :caseSummary="caseSummary"
    :analysis="analysis"
    :launchedFromMosaic="launchedFromMosaic"
@@ -133,7 +134,7 @@ $horizontal-dashboard-height: 140px
   </navigation>
 
 
-  <workflow v-if="!newWorkflow && iframesMounted && !showSplash && isAuthenticated && workflow && analysis"
+  <workflow v-if="!showLandingPage && !newWorkflow && iframesMounted && !showSplash && isAuthenticated && workflow && analysis"
    ref="workflowRef"
    :caseSummary="caseSummary"
    :analysisSteps="analysis.payload.steps"
@@ -144,7 +145,7 @@ $horizontal-dashboard-height: 140px
   </workflow>
 
 
-  <workflow-nav v-if="newWorkflow && iframesMounted && !showSplash && isAuthenticated && workflow && analysis"
+  <workflow-nav v-if="!showLandingPage && newWorkflow && iframesMounted && !showSplash && isAuthenticated && workflow && analysis"
    ref="workflowRefNew"
    :caseSummary="caseSummary"
    :analysisSteps="analysis.payload.steps"
@@ -298,6 +299,7 @@ import Findings      from  '../viz/Findings.vue'
 import LoginMosaic   from  '../partials/LoginMosaic.vue'
 import AppIcon       from  '../partials/AppIcon.vue'
 import LoadingDialog from '../partials/LoadingDialog.vue'
+import LandingPage   from '../pages/LandingPage.vue'
 
 import AWSSession    from  '../../models/AWSSession.js'
 import MosaicSession from  '../../models/MosaicSession.js'
@@ -329,6 +331,7 @@ export default {
     AppIcon,
     SaveAnalysisPopup,
     LoadingDialog,
+    LandingPage,
     ...NewComponents
   },
   props: {
@@ -349,9 +352,10 @@ export default {
     let self = this;
     return {
       newWorkflow: true,
-      showSplash: true,
+      showSplash: false,
       splashMessage: "Initializing clin.iobio",
-      showSplashProgress: true,
+      showSplashProgress: false,
+      showLandingPage: false, 
 
       iframesMounted: false,
 
@@ -372,7 +376,7 @@ export default {
 
       variantsByInterpretationTemplate: [
        { key: 'sig',         display: 'Significant Variants',  abbrev: 'Significant', organizedVariants: []},
-       { key: 'unknown-sig', display: 'Variants of Unknown Significance', abbrev: 'Unknown Sig', organizedVariants: []}, 
+       { key: 'unknown-sig', display: 'Variants of Unknown Significance', abbrev: 'Unknown Sig', organizedVariants: []},
        { key: 'poor-qual', display: 'Poor Quality Variants', abbrev: 'Poor qual', organizedVariants: []},
        { key: 'not-sig', display: 'Not Significant', abbrev: 'Not sig', organizedVariants: []},
        { key: 'not-reviewed', display: 'Not Reviewed', abbrev: 'Not reviewed', organizedVariants: []}
@@ -482,6 +486,13 @@ export default {
     bus.$on("getAnalysisObject", ()=>{
       this.generatePDF()
     })
+    bus.$on("initialize-clin", ()=>{
+      this.showLandingPage = false; 
+      this.showSplash = true; 
+      setTimeout(()=>{
+        this.onAuthenticated(); 
+      }, 2000)
+    })
   },
 
   computed: {
@@ -517,19 +528,9 @@ export default {
 
   watch: {
     reviewCaseBadges: function(){
-      let self = this;
-      self.analysis.payload.steps.forEach(function(step) {
-        step.tasks.forEach(function(task) {
-          if (task.key == 'review-patient') {
-            task.badges = self.reviewCaseBadges;
-          }
-        })
-      })
+      this.setVariantTaskBadges();
     },
 
-    workflow(){
-      // console.log("workflow data in clinhome", this.workflow)
-    },
     currentStep: function() {
       let self = this;
       if (self.isAuthenticated && self.workflow && self.analysis && self.currentStep) {
@@ -623,7 +624,9 @@ export default {
         }
 
         if (localStorage.getItem('hub-iobio-tkn') && localStorage.getItem('hub-iobio-tkn').length > 0 && self.paramSampleId && self.paramSource) {
-
+          self.showLandingPage = false;
+          self.showSplash = true; 
+          self.showSplashProgress = true; 
           // Temporary workaround until router is fixed to pass paramSampleId, paramSource, etc
           self.params.sample_id             = self.paramSampleId
           self.params.analysis_id           = self.paramAnalysisId
@@ -675,10 +678,11 @@ export default {
             self.splashMessage = error;
           })
         } else {
+          self.showLandingPage = true; 
           self.modelInfos = self.demoModelInfos;
           self.user       = self.demoUser;
 
-          self.onAuthenticated()
+          // self.onAuthenticated()
 
           self.caseSummary = {}
           self.caseSummary.name = "Demo Platinum"
@@ -772,8 +776,6 @@ export default {
         }
       })
       .then(function() {
-
-        console.log("ClinHome.onAuthenticated  analysis:", self.analysis)
 
         // Send message to set the data in the iobio apps
         for (var appName in self.apps) {
@@ -943,8 +945,6 @@ export default {
 
     setData: function(appName, pauseMillisec=0) {
       let self = this;
-
-      console.log("ClinHome.setData")
 
       setTimeout( () => {
         var probandModelInfo = self.modelInfos.filter(function(modelInfo) {
@@ -1146,8 +1146,7 @@ export default {
         self.analysis.payload.steps.forEach(function(step) {
           step.tasks.forEach(function(task) {
             if (task.key == 'review-patient' ) {
-
-              //this is handled inside reviewCaseBadge watcher, can refactor if preffered
+              task.badges = self.reviewCaseBadges;
 
             } else if (task.key == 'coverage' ) {
               if (variantsCandidateGenes.length == 0) {
