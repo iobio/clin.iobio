@@ -1,27 +1,34 @@
 <template>
-
-  <div v-show="selectedVariant" id="variant-inspect" class="app-card full-width">
-
-
-
-    <div v-if="selectedGene" style="display:flex;align-items:flex-start;justify-content:flex-start;margin-bottom:10px">
-      
+  <div
+    v-show="selectedVariant"
+    id="variant-inspect"
+    class="app-card full-width"
+  >
+    <div
+      v-if="selectedGene"
+      style="display:flex;align-items:flex-start;justify-content:flex-start;margin-bottom:10px"
+    >
       <variant-interpretation-badge
-         :interpretation="selectedVariant.interpretation"
-         :interpretationMap="interpretationMap">
+        :interpretation="selectedVariant.interpretation"
+        :interpretationMap="interpretationMap"
+      >
       </variant-interpretation-badge>
 
-      <div  id="variant-heading" v-if="selectedVariant" style="margin-left:20px" class="text-xs-left">
+      <div
+        id="variant-heading"
+        v-if="selectedVariant"
+        style="margin-left:20px"
+        class="text-xs-left"
+      >
         <span class="pr-1" v-if="selectedVariantRelationship != 'proband'">
-          <span class="rel-header">{{ selectedVariantRelationship | showRelationship }}</span>
+          <span class="rel-header">{{
+            selectedVariantRelationship | showRelationship
+          }}</span>
         </span>
 
         Variant in {{ selectedGene.gene_name }}
-
-
-
       </div>
-<!--
+      <!--
       <variant-links-menu
       v-if="selectedGene && selectedVariant && info"
       :selectedGene="selectedGene"
@@ -31,7 +38,7 @@
       </variant-links-menu>
 -->
 
-<!-- 
+      <!-- 
       <span v-if="!info || (info.HGVSpLoading && info.HGVScLoading)"
         style="font-size:13px;margin-top:2px;min-width:80px;margin-left:0px;margin-right:0px"
         v-show="selectedVariantRelationship != 'known-variants'" class=" loader vcfloader" >
@@ -40,283 +47,385 @@
       </span>
  -->
 
-
       <variant-aliases-menu
-      v-show="selectedVariant && (!info.HGVSpLoading || !info.HGVScLoading)"
-      v-if="selectedVariant && selectedVariantRelationship != 'known-variants'"
-      :label="`HGVS`"
-      :info="info">
+        v-show="selectedVariant && (!info.HGVSpLoading || !info.HGVScLoading)"
+        v-if="
+          selectedVariant && selectedVariantRelationship != 'known-variants'
+        "
+        :label="`HGVS`"
+        :info="info"
+      >
       </variant-aliases-menu>
 
-      <v-badge class="info" style="margin-top:2px;margin-right:10px" v-if="selectedVariant && selectedVariant.multiallelic && selectedVariant.multiallelic.length > 0">multiallelic</v-badge>
+      <v-badge
+        class="info"
+        style="margin-top:2px;margin-right:10px"
+        v-if="
+          selectedVariant &&
+            selectedVariant.multiallelic &&
+            selectedVariant.multiallelic.length > 0
+        "
+        >multiallelic</v-badge
+      >
 
-      <span v-if="info && info.rsId && info.rsId != ''" style="margin-top:2px" class="pr-1 mr-1">{{ info.rsId }}</span>
+      <span
+        v-if="info && info.rsId && info.rsId != ''"
+        style="margin-top:2px"
+        class="pr-1 mr-1"
+        >{{ info.rsId }}</span
+      >
 
       <app-icon
-       style="min-width:35px;margin-top:1px;margin-right:5px;padding-top: 2px;margin-right:10px"
-       icon="zygosity" v-if="selectedVariant && selectedVariant.zygosityProband"
-       :type="selectedVariant.zygosityProband.toLowerCase() + '-large'"
-       height="14" width="35">
+        style="min-width:35px;margin-top:1px;margin-right:5px;padding-top: 2px;margin-right:10px"
+        icon="zygosity"
+        v-if="selectedVariant && selectedVariant.zygosityProband"
+        :type="selectedVariant.zygosityProband.toLowerCase() + '-large'"
+        height="14"
+        width="35"
+      >
       </app-icon>
 
-      <span v-if="selectedVariant" class="variant-header" style="margin-top:2px">
-
-        <span style="vertical-align:top">{{ selectedVariant.type ? selectedVariant.type.toUpperCase() : "" }}</span>
+      <span
+        v-if="selectedVariant"
+        class="variant-header"
+        style="margin-top:2px"
+      >
+        <span style="vertical-align:top">{{
+          selectedVariant.type ? selectedVariant.type.toUpperCase() : ""
+        }}</span>
         <span style="vertical-align:top" class="pl-1">{{ coord }}</span>
-        <span class="pl-1 refalt">{{ refAlt  }}</span>
-
-
+        <span class="pl-1 refalt">{{ refAlt }}</span>
       </span>
 
-
-
-      <span class="pl-3 variant-header aa-change" style="margin-top:2px">{{ aminoAcidChange }}</span>
-
-
-
-
+      <span class="pl-3 variant-header aa-change" style="margin-top:2px">{{
+        aminoAcidChange
+      }}</span>
 
       <v-spacer></v-spacer>
 
-      
-      <div style="margin-left:20px;margin-right:0px; margin-top:10px; margin-right:10px">
-        <v-btn raised id="show-assessment-button" @click='gotoStep(2)'>
+      <div
+        style="margin-left:20px;margin-right:0px; margin-top:10px; margin-right:10px"
+      >
+        <v-btn raised id="show-assessment-button" @click="gotoStep(2)">
           <v-icon>gavel</v-icon>
           Review
         </v-btn>
       </div>
-   
 
-      <variant-notes-menu
-       :variant="selectedVariant">
-      </variant-notes-menu>
-
-
+      <variant-notes-menu :variant="selectedVariant"> </variant-notes-menu>
     </div>
-
-
 
     <div class="variant-inspect-body">
-      <div class="variant-inspect-column" v-if="selectedVariant && selectedVariantRelationship != 'known-variants'">
-          <div class="variant-column-header">
-            Quality
-            <v-divider></v-divider>
-          </div>
-          <variant-inspect-quality-row
-            :info="getQualityInfo()"  >
-          </variant-inspect-quality-row>
-
-
-
+      <div
+        class="variant-inspect-column"
+        v-if="
+          selectedVariant && selectedVariantRelationship != 'known-variants'
+        "
+      >
+        <div class="variant-column-header">
+          Quality
+          <v-divider></v-divider>
+        </div>
+        <variant-inspect-quality-row :info="getQualityInfo()">
+        </variant-inspect-quality-row>
       </div>
-      <div class="variant-inspect-column " v-if="selectedVariant" >
-          <div class="variant-column-header">
-            Gene Associations
-            <v-divider></v-divider>
-          </div>
-          <div v-if="genePhenotypeRankings" v-for="geneHit in genePhenotypeRankings" :key="geneHit.key" class="variant-row" style="flex-flow:column">
-            <div v-for="geneRank in geneHit.geneRanks" :key="geneRank.rank">
-              <div>
-                <v-chip class="high">#{{ geneRank.rank }}</v-chip>
-                <span v-if="geneRank.source" class="pheno-source">{{ geneRank.source }}</span>
-                <span v-if="geneHit.searchTerm" class="pheno-search-term">{{ geneHit.searchTerm }}</span>
-              </div>
+      <div class="variant-inspect-column " v-if="selectedVariant">
+        <div class="variant-column-header">
+          Gene Associations
+          <v-divider></v-divider>
+        </div>
+        <div
+          v-if="genePhenotypeRankings"
+          v-for="geneHit in genePhenotypeRankings"
+          :key="geneHit.key"
+          class="variant-row"
+          style="flex-flow:column"
+        >
+          <div v-for="geneRank in geneHit.geneRanks" :key="geneRank.rank">
+            <div>
+              <v-chip class="high">#{{ geneRank.rank }}</v-chip>
+              <span v-if="geneRank.source" class="pheno-source">{{
+                geneRank.source
+              }}</span>
+              <span v-if="geneHit.searchTerm" class="pheno-search-term">{{
+                geneHit.searchTerm
+              }}</span>
             </div>
           </div>
-      </div>      
+        </div>
+      </div>
       <div class="variant-inspect-column" v-if="selectedVariant && info">
-          <div class="variant-column-header">
-            Pathogenicity
-            <v-divider></v-divider>
-          </div>
-          <variant-inspect-row  v-for="clinvar,clinvarIdx in info.clinvarLinks" :key="clinvarIdx"
-            :clazz="getClinvarClass(clinvar.significance)" :value="clinvar.clinsig" :label="`ClinVar`" :link="clinvar.url" >
-          </variant-inspect-row>
+        <div class="variant-column-header">
+          Pathogenicity
+          <v-divider></v-divider>
+        </div>
+        <variant-inspect-row
+          v-for="(clinvar, clinvarIdx) in info.clinvarLinks"
+          :key="clinvarIdx"
+          :clazz="getClinvarClass(clinvar.significance)"
+          :value="clinvar.clinsig"
+          :label="`ClinVar`"
+          :link="clinvar.url"
+        >
+        </variant-inspect-row>
 
-          <div v-if="info.clinvarTrait.length > 0" class="variant-row no-icon no-top-margin small-font">
-            <span>{{ info.clinvarTrait }} </span>
-          </div>
+        <div
+          v-if="info.clinvarTrait.length > 0"
+          class="variant-row no-icon no-top-margin small-font"
+        >
+          <span>{{ info.clinvarTrait }} </span>
+        </div>
 
-          <variant-inspect-row
-            :clazz="getImpactClass(info.vepImpact)" :value="info.vepConsequence"  :label="``"  >
-          </variant-inspect-row>
+        <variant-inspect-row
+          :clazz="getImpactClass(info.vepImpact)"
+          :value="info.vepConsequence"
+          :label="``"
+        >
+        </variant-inspect-row>
 
-          <variant-inspect-row
-             v-if="info.vepHighestImpactValue.length > 0 && info.vepImpact.toUpperCase() != info.vepHighestImpactValue.toUpperCase()"
-            :clazz="getImpactClass(info.vepHighestImpactValue)" :label=" `Most severe impact in non-canonical transcript`"  >
-          </variant-inspect-row>
+        <variant-inspect-row
+          v-if="
+            info.vepHighestImpactValue.length > 0 &&
+              info.vepImpact.toUpperCase() !=
+                info.vepHighestImpactValue.toUpperCase()
+          "
+          :clazz="getImpactClass(info.vepHighestImpactValue)"
+          :label="`Most severe impact in non-canonical transcript`"
+        >
+        </variant-inspect-row>
 
-          <div v-if="info.vepHighestImpactValue.length > 0 && info.vepImpact.toUpperCase() != info.vepHighestImpactValue.toUpperCase()" class="variant-row no-icon no-top-margin">
-
-                    <span v-for="(impactRec, idx) in info.vepHighestImpactRecs" :key="impactRec.impact">
-                      <div style="padding-top:5px" v-for="(effectRec, idx1) in impactRec.effects" :key="effectRec.key">
-                        {{ getNonCanonicalEffectDisplay(idx1, effectRec) }}
-                        <v-btn class="change-transcript-button" flat v-for="transcriptId in effectRec.transcripts"
-                         :key="transcriptId"
-                          {{ transcriptId }}
-                        </v-btn>
-                      </div>
-                    </span>
-            
-          </div>
-
-          <variant-inspect-row v-if="info.revel != '' && info.revel"
-            :clazz="getRevelClass(info)" :value="info.revel"   :label="`REVEL`" >
-          </variant-inspect-row>
-      </div>
-
-     
-      <div class="variant-inspect-column" v-if="selectedVariant && selectedVariantRelationship != 'known-variants'">
-          <div class="variant-column-header">
-            Frequency                     
-            <info-popup name="gnomAD"></info-popup>
-            <v-divider></v-divider>
-          </div>
-          <variant-inspect-row :clazz="afGnomAD.class" :value="afGnomAD.percent" :label="`Allele freq`" :link="afGnomAD.link" >
-          </variant-inspect-row>
-          <variant-inspect-row v-if="afGnomAD.percentPopMax" :clazz="afGnomAD.class" :value="afGnomAD.percentPopMax" :label="`Pop max allele freq`" >
-          </variant-inspect-row>
-          <div v-if="afGnomAD.totalCount > 0" class="variant-row no-icon">
-            <span>{{ afGnomAD.altCount }} alt of {{ afGnomAD.totalCount }} total</span>
-          </div>
-          <div v-if="afGnomAD.homCount > 0"  class="variant-row no-icon">
-            <span>{{ afGnomAD.homCount }} homozygotes</span>
-          </div>
-      </div>
-
-      <div class="variant-inspect-column" style="min-width:90px" v-if="selectedVariant && selectedVariantRelationship != 'known-variants' && selectedVariant.inheritance.length > 0">
-          <div class="variant-column-header">
-            Inheritance
-            <v-divider></v-divider>
-          </div>
-
-          <variant-inspect-inheritance-row :selectedVariant="selectedVariant" >
-          </variant-inspect-inheritance-row>
-
-          <div class="pedigree-chart">
-            <app-icon class="hide" icon="affected"></app-icon>
-            <pedigree-genotype-viz
-             ref="pedigreeGenotypeViz"
-             style="width:139px"
-             :margin="{left: 15, right: 14, top: 30, bottom: 4}"
-             :nodeWidth="30"
-             :nodePadding="40"
-             :nodeVerticalPadding="30"
-             :data="pedigreeGenotypeData">
-            </pedigree-genotype-viz>
-          </div>
-
-
-      </div>
-
-      <div class="variant-inspect-column last" v-if="selectedVariant" style="min-width:320px;max-width:320px">
-          <div class="variant-column-header" >
-            Conservation
-            <v-divider></v-divider>
-          </div>
-          <div id="conservation-track" style="display:flex;min-width:320px;max-width:320px">
-            <div style="display:flex;flex-direction: column;max-width:130px;min-width:130px;margin-right: 10px">
-
-              <variant-inspect-row
-                v-show="multiAlignModel && multiAlignModel.selectedScore && showConservation"
-                :clazz="getConservationClass(conservationExactScore)"
-                :value="getConservationScore(conservationExactScore)"   >
-              </variant-inspect-row>
-
-              <div class="conservation-score-label"
-                v-if="conservationScores && conservationScores.length > 0">
-                phyloP scores
-              </div>
-
-              <conservation-scores-viz class="conservation-scores-barchart exon"
-               :data=conservationScores
-               :options=conservationOptions
-               :exactScore=conservationExactScore
-               :targetScore=conservationTargetScore
-               :margin="{top: 10, right: 2, bottom: 15, left: 4}"
-               :width="130"
-               :height="60">
-              </conservation-scores-viz>
-
-              <gene-viz id="conservation-gene-viz" class="gene-viz"
-                v-if="showConservation"
-                v-show="filteredTranscript && filteredTranscript.features && filteredTranscript.features.length > 0"
-                :data="[filteredTranscript]"
-                :margin="conservationGeneVizMargin"
-                :height="16"
-                :trackHeight="geneVizTrackHeight"
-                :cdsHeight="geneVizCdsHeight"
-                :regionStart="coverageRegionStart"
-                :regionEnd="coverageRegionEnd"
-                :showXAxis="false"
-                :showBrush="false"
-                :featureClass="getExonClass"
-                >
-              </gene-viz>
-
-
+        <div
+          v-if="
+            info.vepHighestImpactValue.length > 0 &&
+              info.vepImpact.toUpperCase() !=
+                info.vepHighestImpactValue.toUpperCase()
+          "
+          class="variant-row no-icon no-top-margin"
+        >
+          <span
+            v-for="(impactRec, idx) in info.vepHighestImpactRecs"
+            :key="impactRec.impact"
+          >
+            <div
+              style="padding-top:5px"
+              v-for="(effectRec, idx1) in impactRec.effects"
+              :key="effectRec.key"
+            >
+              {{ getNonCanonicalEffectDisplay(idx1, effectRec) }}
+              <v-btn
+                class="change-transcript-button"
+                flat
+                v-for="transcriptId in effectRec.transcripts"
+                :key="transcriptId"
+              >
+                {{ transcriptId }}
+              </v-btn>
             </div>
-            <div style="min-width:190px" >
+          </span>
+        </div>
 
-          
-              <toggle-button
-                v-if="false && hasConservationAligns"
-                name1="Nuc"
-                name2="AA"
-                label="Sequence"
-                buttonWidth="90"
-               @click="onToggleConservationNucAA">
-              </toggle-button>
-            
+        <variant-inspect-row
+          v-if="info.revel != '' && info.revel"
+          :clazz="getRevelClass(info)"
+          :value="info.revel"
+          :label="`REVEL`"
+        >
+        </variant-inspect-row>
+      </div>
 
-              <span v-if="multialignInProgress" class="pt-4 loader multialign-loader" >
-                  <img src="../../../assets/images/wheel.gif">
-                  Loading sequence
-              </span>
+      <div
+        class="variant-inspect-column"
+        v-if="
+          selectedVariant && selectedVariantRelationship != 'known-variants'
+        "
+      >
+        <div class="variant-column-header">
+          Frequency
+          <info-popup name="gnomAD"></info-popup>
+          <v-divider></v-divider>
+        </div>
+        <variant-inspect-row
+          :clazz="afGnomAD.class"
+          :value="afGnomAD.percent"
+          :label="`Allele freq`"
+          :link="afGnomAD.link"
+        >
+        </variant-inspect-row>
+        <variant-inspect-row
+          v-if="afGnomAD.percentPopMax"
+          :clazz="afGnomAD.class"
+          :value="afGnomAD.percentPopMax"
+          :label="`Pop max allele freq`"
+        >
+        </variant-inspect-row>
+        <div v-if="afGnomAD.totalCount > 0" class="variant-row no-icon">
+          <span
+            >{{ afGnomAD.altCount }} alt of
+            {{ afGnomAD.totalCount }} total</span
+          >
+        </div>
+        <div v-if="afGnomAD.homCount > 0" class="variant-row no-icon">
+          <span>{{ afGnomAD.homCount }} homozygotes</span>
+        </div>
+      </div>
 
-              <multialign-seq-viz style="margin-top:10px;min-width:190px"
+      <div
+        class="variant-inspect-column"
+        style="min-width:90px"
+        v-if="
+          selectedVariant &&
+            selectedVariantRelationship != 'known-variants' &&
+            selectedVariant.inheritance.length > 0
+        "
+      >
+        <div class="variant-column-header">
+          Inheritance
+          <v-divider></v-divider>
+        </div>
+
+        <variant-inspect-inheritance-row :selectedVariant="selectedVariant">
+        </variant-inspect-inheritance-row>
+
+        <div class="pedigree-chart">
+          <app-icon class="hide" icon="affected"></app-icon>
+          <pedigree-genotype-viz
+            ref="pedigreeGenotypeViz"
+            style="width:139px"
+            :margin="{ left: 15, right: 14, top: 30, bottom: 4 }"
+            :nodeWidth="30"
+            :nodePadding="40"
+            :nodeVerticalPadding="30"
+            :data="pedigreeGenotypeData"
+          >
+          </pedigree-genotype-viz>
+        </div>
+      </div>
+
+      <div
+        class="variant-inspect-column last"
+        v-if="selectedVariant"
+        style="min-width:320px;max-width:320px"
+      >
+        <div class="variant-column-header">
+          Conservation
+          <v-divider></v-divider>
+        </div>
+        <div
+          id="conservation-track"
+          style="display:flex;min-width:320px;max-width:320px"
+        >
+          <div
+            style="display:flex;flex-direction: column;max-width:130px;min-width:130px;margin-right: 10px"
+          >
+            <variant-inspect-row
+              v-show="
+                multiAlignModel &&
+                  multiAlignModel.selectedScore &&
+                  showConservation
+              "
+              :clazz="getConservationClass(conservationExactScore)"
+              :value="getConservationScore(conservationExactScore)"
+            >
+            </variant-inspect-row>
+
+            <div
+              class="conservation-score-label"
+              v-if="conservationScores && conservationScores.length > 0"
+            >
+              phyloP scores
+            </div>
+
+            <conservation-scores-viz
+              class="conservation-scores-barchart exon"
+              :data="conservationScores"
+              :options="conservationOptions"
+              :exactScore="conservationExactScore"
+              :targetScore="conservationTargetScore"
+              :margin="{ top: 10, right: 2, bottom: 15, left: 4 }"
+              :width="130"
+              :height="60"
+            >
+            </conservation-scores-viz>
+
+            <gene-viz
+              id="conservation-gene-viz"
+              class="gene-viz"
+              v-if="showConservation"
+              v-show="
+                filteredTranscript &&
+                  filteredTranscript.features &&
+                  filteredTranscript.features.length > 0
+              "
+              :data="[filteredTranscript]"
+              :margin="conservationGeneVizMargin"
+              :height="16"
+              :trackHeight="geneVizTrackHeight"
+              :cdsHeight="geneVizCdsHeight"
+              :regionStart="coverageRegionStart"
+              :regionEnd="coverageRegionEnd"
+              :showXAxis="false"
+              :showBrush="false"
+              :featureClass="getExonClass"
+            >
+            </gene-viz>
+          </div>
+          <div style="min-width:190px">
+            <toggle-button
+              v-if="false && hasConservationAligns"
+              name1="Nuc"
+              name2="AA"
+              label="Sequence"
+              buttonWidth="90"
+              @click="onToggleConservationNucAA"
+            >
+            </toggle-button>
+
+            <span
+              v-if="multialignInProgress"
+              class="pt-4 loader multialign-loader"
+            >
+              <img src="../../../assets/images/wheel.gif" />
+              Loading sequence
+            </span>
+
+            <multialign-seq-viz
+              style="margin-top:10px;min-width:190px"
               :data="multialignSequences"
-              :margin="{top: 15, right: 0, bottom: 0, left: 70}"
-              :selectedBase="multialignSelectedBase">
-              </multialign-seq-viz>
-
-            </div>
+              :margin="{ top: 15, right: 0, bottom: 0, left: 70 }"
+              :selectedBase="multialignSelectedBase"
+            >
+            </multialign-seq-viz>
           </div>
+        </div>
       </div>
-
     </div>
-
   </div>
-
 </template>
 
 <script>
+import Vue from "vue";
+import AppIcon from "../../partials/AppIcon.vue";
+import VariantInspectRow from "../../partials/findings/VariantInspectRow.vue";
+import VariantInspectQualityRow from "../../partials/findings/VariantInspectQualityRow.vue";
+import VariantInspectInheritanceRow from "../../partials/findings/VariantInspectInheritanceRow.vue";
+import VariantLinksMenu from "../../partials/findings/VariantLinksMenu.vue";
+import VariantAliasesMenu from "../../partials/findings/VariantAliasesMenu.vue";
+import InfoPopup from "../../partials/findings/InfoPopup.vue";
+import ToggleButton from "../../partials/findings/ToggleButton.vue";
+import VariantNotesMenu from "../../partials/findings/VariantNotesMenu.vue";
+import VariantInterpretationBadge from "../../partials/findings/VariantInterpretationBadge.vue";
+import GeneViz from "../../viz/findings/GeneViz.vue";
+import PedigreeGenotypeViz from "../../viz/findings/PedigreeGenotypeViz.vue";
+import ConservationScoresViz from "../../viz/findings/ConservationScoresViz.vue";
+import MultialignSeqViz from "../../viz/findings/MultialignSeqViz.vue";
 
-import Vue                      from "vue"
-import AppIcon                  from "../../partials/AppIcon.vue"
-import VariantInspectRow        from "../../partials/findings/VariantInspectRow.vue"
-import VariantInspectQualityRow from "../../partials/findings/VariantInspectQualityRow.vue"
-import VariantInspectInheritanceRow from "../../partials/findings/VariantInspectInheritanceRow.vue"
-import VariantLinksMenu         from "../../partials/findings/VariantLinksMenu.vue"
-import VariantAliasesMenu       from "../../partials/findings/VariantAliasesMenu.vue"
-import InfoPopup                from "../../partials/findings/InfoPopup.vue"
-import ToggleButton             from '../../partials/findings/ToggleButton.vue'
-import VariantNotesMenu         from '../../partials/findings/VariantNotesMenu.vue'
-import VariantInterpretationBadge from '../../partials/findings/VariantInterpretationBadge.vue'
-import GeneViz                  from "../../viz/findings/GeneViz.vue"
-import PedigreeGenotypeViz      from "../../viz/findings/PedigreeGenotypeViz.vue"
-import ConservationScoresViz    from "../../viz/findings/ConservationScoresViz.vue"
-import MultialignSeqViz         from "../../viz/findings/MultialignSeqViz.vue"
-
-
-import BarChartD3               from '../../../d3/findings/BarChart.d3.js'
-import MultiAlignD3             from '../../../d3/findings/MultiAlign.d3.js'
-import MultiAlignModel          from "../../../models/findings/MultiAlignModel.js"
-import { bus }                  from '../../../main'
-
+import BarChartD3 from "../../../d3/findings/BarChart.d3.js";
+import MultiAlignD3 from "../../../d3/findings/MultiAlign.d3.js";
+import MultiAlignModel from "../../../models/findings/MultiAlignModel.js";
+import { bus } from "../../../main";
 
 export default {
-  name: 'variant-inspect-card',
+  name: "variant-inspect-card",
   components: {
     AppIcon,
     InfoPopup,
@@ -345,8 +454,7 @@ export default {
   },
   data() {
     return {
-      selectedVariantRelationship: 'proband',
-
+      selectedVariantRelationship: "proband",
 
       genePhenotypeRankings: null,
 
@@ -380,7 +488,7 @@ export default {
       hasConservationScores: false,
       hasConservationAligns: false,
 
-      conservationSeqType: 'nuc',
+      conservationSeqType: "nuc",
 
       conservationScores: null,
       conservationOptions: null,
@@ -392,38 +500,57 @@ export default {
       multialignInProgress: false,
 
       // For REVEL range, value must be >= min and < max
-      revelMap: [ 
-       {min: 0,   max: .5,   value: +1, badge: false, clazz: '',              symbolFunction: ''},
-       {min: .5,  max: .75,  value: +2, badge: false, clazz: 'revel_moderate', symbolFunction: ''},
-       {min: .75, max: 1,    value: +3, badge: false, clazz: 'revel_high',     symbolFunction: ''}
+      revelMap: [
+        {
+          min: 0,
+          max: 0.5,
+          value: +1,
+          badge: false,
+          clazz: "",
+          symbolFunction: ""
+        },
+        {
+          min: 0.5,
+          max: 0.75,
+          value: +2,
+          badge: false,
+          clazz: "revel_moderate",
+          symbolFunction: ""
+        },
+        {
+          min: 0.75,
+          max: 1,
+          value: +3,
+          badge: false,
+          clazz: "revel_high",
+          symbolFunction: ""
+        }
       ],
 
       // TODO - Need way to get coverage thresholds
       geneCoverageMin: 10
-
-
-
-    }
+    };
   },
 
-
   methods: {
-    refresh: function() {
-
-    },
-
+    refresh: function() {},
 
     formatPopAF: function(afObject) {
       let self = this;
       var popAF = "";
-      if (afObject['AF'] != ".") {
+      if (afObject["AF"] != ".") {
         for (var key in afObject) {
           if (key != "AF") {
             var label = key.split("_")[0];
             if (popAF.length > 0) {
               popAF += ", ";
             }
-            popAF += label + " " + (afObject[key] == "." ? "0%" : self.globalApp.utility.percentage(afObject[key]));
+            popAF +=
+              label +
+              " " +
+              (afObject[key] == "."
+                ? "0%"
+                : self.globalApp.utility.percentage(afObject[key]));
           }
         }
       }
@@ -434,148 +561,165 @@ export default {
       if (idx > 0) {
         buf += " | ";
       }
-      buf += impactRec.impact.toLowerCase() + ' impact ';
+      buf += impactRec.impact.toLowerCase() + " impact ";
       return buf;
     },
     getNonCanonicalEffectDisplay: function(idx, effectRec) {
       let buf = "";
-      buf += this.globalApp.utility.capitalizeFirstLetter(effectRec.display) + " in ";
+      buf +=
+        this.globalApp.utility.capitalizeFirstLetter(effectRec.display) +
+        " in ";
       return buf;
     },
     onShowPileup: function() {
-      this.$emit("show-pileup-for-variant",
-        this.selectedVariantRelationship ? this.selectedVariantRelationship : 'proband',
-        this.selectedVariant);
+      this.$emit(
+        "show-pileup-for-variant",
+        this.selectedVariantRelationship
+          ? this.selectedVariantRelationship
+          : "proband",
+        this.selectedVariant
+      );
     },
-
-
 
     formatCanonicalTranscript: function() {
       if (this.selectedTranscript) {
-        return this.globalApp.utility.stripTranscriptPrefix(this.selectedTranscript.transcript_id);
+        return this.globalApp.utility.stripTranscriptPrefix(
+          this.selectedTranscript.transcript_id
+        );
       } else {
         return "";
       }
     },
 
-
-
-
-
     getNonCanonicalImpact: function(vepHighestImpact) {
-      return this.globalApp.utility.capitalizeFirstLetter(vepHighestImpact.toLowerCase());
+      return this.globalApp.utility.capitalizeFirstLetter(
+        vepHighestImpact.toLowerCase()
+      );
     },
 
     getQualityInfo: function() {
-      let self  = this;
+      let self = this;
       if (self.selectedVariant == null) {
-        return {clazz: '', depthClazz: '', altRatioClazz: '', reason: ''};
+        return { clazz: "", depthClazz: "", altRatioClazz: "", reason: "" };
       }
 
-      var zyg       =  self.selectedVariant.zygosityProband.toLowerCase();
-      var altAndRef = +self.selectedVariant.refCountProband + +self.selectedVariant.altCountProband;
-      var altRatio  = (+self.selectedVariant.altCountProband / +self.selectedVariant.depthProband);
+      var zyg = self.selectedVariant.zygosityProband.toLowerCase();
+      var altAndRef =
+        +self.selectedVariant.refCountProband +
+        +self.selectedVariant.altCountProband;
+      var altRatio =
+        +self.selectedVariant.altCountProband /
+        +self.selectedVariant.depthProband;
 
-      var info = {clazz: '', depthClazz: '', altRatioClazz: '', reason: ''}
+      var info = { clazz: "", depthClazz: "", altRatioClazz: "", reason: "" };
 
       // TODO - Need way to get coverage thresholds
-      var depthThreshold = {'good':     self.geneCoverageMin,
-                            'moderate': self.geneCoverageMin - 5};
+      var depthThreshold = {
+        good: self.geneCoverageMin,
+        moderate: self.geneCoverageMin - 5
+      };
 
-      var altRatioThreshold = { 'good':     {'het': .1,   'hom': .6, 'homref': 0},
-                                'moderate': {'het': .05,  'hom': .4, 'homref': 0} };
+      var altRatioThreshold = {
+        good: { het: 0.1, hom: 0.6, homref: 0 },
+        moderate: { het: 0.05, hom: 0.4, homref: 0 }
+      };
 
-      var depthClazz = '';
-      var altRatioClazz = '';
+      var depthClazz = "";
+      var altRatioClazz = "";
 
       if (+self.selectedVariant.depthProband >= depthThreshold.good) {
-        info.depthClazz = 'good';
-      } else if (+self.selectedVariant.depthProband >= depthThreshold.moderate) {
-        info.depthClazz = 'moderate';
+        info.depthClazz = "good";
+      } else if (
+        +self.selectedVariant.depthProband >= depthThreshold.moderate
+      ) {
+        info.depthClazz = "moderate";
         info.reason += "Questionable sequence depth";
       } else {
-        info.depthClazz = 'poor';
+        info.depthClazz = "poor";
         info.reason += "Poor sequence depth";
       }
 
       if (altRatio >= altRatioThreshold.good[zyg]) {
-        info.altRatioClazz = 'good';
-      } else if (+self.selectedVariant.depthProband >= depthThreshold.moderate[zyg]) {
-        info.altRatioClazz = 'moderate';
+        info.altRatioClazz = "good";
+      } else if (
+        +self.selectedVariant.depthProband >= depthThreshold.moderate[zyg]
+      ) {
+        info.altRatioClazz = "moderate";
         if (info.reason.length > 0) {
           info.reason += ", ";
         }
         info.reason += "Questionable evidence of alternate allele";
       } else {
-        info.altRatioClazz = 'poor';
+        info.altRatioClazz = "poor";
         if (info.reason.length > 0) {
           info.reason += ", ";
         }
         info.reason += "Poor evidence of alternate allele";
       }
 
-      if (info.depthClazz == 'good' && info.altRatioClazz == 'good') {
-        info.clazz = 'good';
-        info.reason = 'Sufficient depth and allele counts'
-      } else if (info.depthClazz == 'poor' || info.altRatioClazz == 'poor') {
-        info.clazz = 'poor';
+      if (info.depthClazz == "good" && info.altRatioClazz == "good") {
+        info.clazz = "good";
+        info.reason = "Sufficient depth and allele counts";
+      } else if (info.depthClazz == "poor" || info.altRatioClazz == "poor") {
+        info.clazz = "poor";
       } else {
-        info.clazz = 'moderate';
+        info.clazz = "moderate";
       }
 
       return info;
     },
 
-
     getRevelClass: function(info) {
       let self = this;
       let clazz = null;
       self.revelMap.forEach(function(revelRange) {
-      if (info.revel >= revelRange.min && info.revel < revelRange.max) {
+        if (info.revel >= revelRange.min && info.revel < revelRange.max) {
           clazz = revelRange.clazz;
         }
-      })
+      });
 
       if (clazz) {
-        if (clazz == 'revel_high') {
-          return 'level-high';
-        } else if (clazz == 'revel_moderate') {
-          return 'level-medium';
+        if (clazz == "revel_high") {
+          return "level-high";
+        } else if (clazz == "revel_moderate") {
+          return "level-medium";
         } else {
-          return 'level-unremarkable';
+          return "level-unremarkable";
         }
       } else {
-        return 'level-unremarkable';
+        return "level-unremarkable";
       }
-
     },
     getAfClass: function(af) {
-      if (af <= .01) {
-        return 'level-high';
-      } else if (af <= .05) {
-        return 'level-medium';
+      if (af <= 0.01) {
+        return "level-high";
+      } else if (af <= 0.05) {
+        return "level-medium";
       } else {
-        return 'level-unremarkable';
+        return "level-unremarkable";
       }
     },
     getImpactClass: function(impact) {
-      if (impact && impact.toLowerCase() == 'high') {
-        return 'level-high'
-      } else if (impact && impact.toLowerCase() == 'moderate') {
-        return 'level-medium'
+      if (impact && impact.toLowerCase() == "high") {
+        return "level-high";
+      } else if (impact && impact.toLowerCase() == "moderate") {
+        return "level-medium";
       } else {
-        return 'level-unremarkable';
+        return "level-unremarkable";
       }
     },
     getClinvarClass: function(significance) {
-      if (significance == 'clinvar_path' || significance == 'clinvar_lpath') {
-        return 'level-high';
-      } else if(significance == 'clinvar_cd') {
-        return 'level-medium';
-      } else if (significance == 'clinvar_benign' || significance == 'clinvar_lbenign') {
-        return 'level-unremarkable';
+      if (significance == "clinvar_path" || significance == "clinvar_lpath") {
+        return "level-high";
+      } else if (significance == "clinvar_cd") {
+        return "level-medium";
+      } else if (
+        significance == "clinvar_benign" ||
+        significance == "clinvar_lbenign"
+      ) {
+        return "level-unremarkable";
       } else {
-        return '';
+        return "";
       }
     },
     getConservationScore: function(score) {
@@ -583,13 +727,13 @@ export default {
         return "";
       } else {
         if (score.y > 1.5) {
-          return 'Highly conserved ' + score.y;
+          return "Highly conserved " + score.y;
         } else if (score.y > 1) {
-          return 'Moderately conserved ' + score.y;
+          return "Moderately conserved " + score.y;
         } else if (score.y > 0) {
-          return 'Marginally conserved ' + score.y;
+          return "Marginally conserved " + score.y;
         } else {
-          return 'Not conserved ' + score.y;
+          return "Not conserved " + score.y;
         }
       }
     },
@@ -598,69 +742,72 @@ export default {
         return "";
       } else {
         if (score.y > 1.5) {
-          return 'level-high'
+          return "level-high";
         } else if (score.y > 1) {
-          return 'level-medium'
+          return "level-medium";
         } else if (score.y > 0) {
-          return 'level-low'
+          return "level-low";
         } else {
-          return 'level-unremarkable';
+          return "level-unremarkable";
         }
       }
     },
     loadData: function() {
       let self = this;
       if (self.selectedVariant) {
-
         self.initPedigreeGenotypes();
         self.initGenePhenotypeHits();
-        self.promiseInitCoverage()
-        .then(function() {
+        self.promiseInitCoverage().then(function() {
           self.showMultiAlignments();
-
-        })
+        });
       }
     },
 
     initPedigreeGenotypes() {
       let self = this;
       self.$set(self, "pedigreeGenotypeData", {});
-      let thePedigreeGenotypeData = {}
+      let thePedigreeGenotypeData = {};
       self.modelInfos.forEach(function(model) {
-        if (model.relationship != 'known-variants' && model.relationship != 'sfari-variants') {
+        if (
+          model.relationship != "known-variants" &&
+          model.relationship != "sfari-variants"
+        ) {
           let gtObject = {};
           gtObject.rel = model.relationship;
-          gtObject.sex = model.sex
+          gtObject.sex = model.sex;
           gtObject.affectedStatus = model.affectedStatus;
-          if (self.selectedVariant.variantInspect.genotypes && self.selectedVariant.variantInspect.genotypes[model.sample]) {
-            let gt = self.selectedVariant.variantInspect.genotypes[model.sample];
+          if (
+            self.selectedVariant.variantInspect.genotypes &&
+            self.selectedVariant.variantInspect.genotypes[model.sample]
+          ) {
+            let gt =
+              self.selectedVariant.variantInspect.genotypes[model.sample];
             gtObject.zygosity = gt.zygosity.toLowerCase();
 
             var altAndRef = +gt.refCount + +gt.altCount;
-            var altRatio  = (+gt.altCount / +gt.genotypeDepth);
+            var altRatio = +gt.altCount / +gt.genotypeDepth;
             var otherCount = 0;
             var otherRatio = 0;
             if (altAndRef < +gt.genotypeDepth) {
-              otherCount  = +gt.genotypeDepth - altAndRef;
-              otherRatio  = (otherCount / +gt.genotypeDepth);
+              otherCount = +gt.genotypeDepth - altAndRef;
+              otherRatio = otherCount / +gt.genotypeDepth;
             }
-            gtObject.altRatio   = altRatio;
-            gtObject.altCount   = gt.altCount;
+            gtObject.altRatio = altRatio;
+            gtObject.altCount = gt.altCount;
             gtObject.otherCount = otherCount;
             gtObject.otherRatio = otherRatio;
-            gtObject.refCount   = gt.refCount;
+            gtObject.refCount = gt.refCount;
             gtObject.totalCount = gt.genotypeDepth;
-
-
           } else {
-            gtObject.zygosity = "unknown"
+            gtObject.zygosity = "unknown";
           }
           gtObject.inheritance = self.selectedVariant.inheritance;
 
-          let gtKey = gtObject.rel == 'sibling' ? 'sibling-' + model.name : gtObject.rel;
+          let gtKey =
+            gtObject.rel == "sibling" ? "sibling-" + model.name : gtObject.rel;
           thePedigreeGenotypeData[gtKey] = gtObject;
         }
-      })
+      });
       self.$set(self, "pedigreeGenotypeData", thePedigreeGenotypeData);
       if (self.$refs.pedigreeGenotypeViz) {
         self.$refs.pedigreeGenotypeViz.update();
@@ -668,41 +815,42 @@ export default {
         setTimeout(function() {
           if (self.$refs.pedigreeGenotypeViz) {
             self.$refs.pedigreeGenotypeViz.update();
-          }   
-        },2000)
+          }
+        }, 2000);
       }
-
     },
 
     initGenePhenotypeHits: function() {
       let self = this;
-      self.genePhenotypeRankings= [];
+      self.genePhenotypeRankings = [];
       if (self.selectedGene && self.selectedVariant && self.genePhenotypeHits) {
         for (var searchTerm in self.genePhenotypeHits) {
           let searchTermLabel = searchTerm.split("_").join(" ");
-          var rankRecs        = self.genePhenotypeHits[searchTerm];
-          self.genePhenotypeRankings.push( {key: searchTerm, searchTerm: searchTermLabel, geneRanks: rankRecs } );
+          var rankRecs = self.genePhenotypeHits[searchTerm];
+          self.genePhenotypeRankings.push({
+            key: searchTerm,
+            searchTerm: searchTermLabel,
+            geneRanks: rankRecs
+          });
         }
       }
     },
     promiseInitCoverage: function() {
       let self = this;
       return new Promise(function(resolve, reject) {
-
         if (self.selectedVariant) {
-          self.exon                = self.getExon();
+          self.exon = self.getExon();
           self.coverageRegionStart = self.getCoverageRegionStart();
-          self.coverageRegionEnd   = self.getCoverageRegionEnd();
+          self.coverageRegionEnd = self.getCoverageRegionEnd();
           self.conservationSeqType = "nuc";
           resolve();
-
         } else {
           self.exon = null;
           self.coverageRegionStart = null;
           self.coverageRegionEnd = null;
           resolve();
         }
-      })
+      });
     },
     showCoverageAlleleBar: function() {
       let self = this;
@@ -710,27 +858,39 @@ export default {
       let theAltCount = null;
       // If samtools mpileup didn't return coverage for this position, use the variant's depth
       // field.
-      if (theDepth == null || theDepth == '') {
+      if (theDepth == null || theDepth == "") {
         theDepth = self.selectedVariant.genotypeDepth;
       }
-      if (self.selectedVariant.genotype && self.selectedVariant.genotype.altCount) {
+      if (
+        self.selectedVariant.genotype &&
+        self.selectedVariant.genotype.altCount
+      ) {
         theAltCount = self.selectedVariant.genotype.altCount;
       }
 
       if (self.$refs.depthVizRef) {
-        self.$refs.depthVizRef.showCurrentPoint({pos: self.selectedVariant.start, depth: theDepth, altCount: theAltCount});
+        self.$refs.depthVizRef.showCurrentPoint({
+          pos: self.selectedVariant.start,
+          depth: theDepth,
+          altCount: theAltCount
+        });
       }
-
     },
     getExonClass: function(exon, i) {
       if (exon && exon.danger) {
-        return exon.feature_type.toLowerCase() + (exon.danger.proband ? " danger" : "");
+        return (
+          exon.feature_type.toLowerCase() +
+          (exon.danger.proband ? " danger" : "")
+        );
       } else {
         return exon.feature_type.toLowerCase();
       }
     },
     getExonNumber: function() {
-      if (this.selectedVariant.hasOwnProperty("vepExon") && !$.isEmptyObject(this.selectedVariant.vepExon)) {
+      if (
+        this.selectedVariant.hasOwnProperty("vepExon") &&
+        !$.isEmptyObject(this.selectedVariant.vepExon)
+      ) {
         return Object.keys(this.selectedVariant.vepExon)[0];
       } else {
         return null;
@@ -742,20 +902,30 @@ export default {
       let exonNumber = self.getExonNumber();
       if (exonNumber != null) {
         if (self.selectedTranscript && self.selectedTranscript.features) {
-          var exons = self.selectedTranscript.features.filter(function(feature) {
-            if ( feature.transcript_type == 'protein_coding'
-                || feature.transcript_type == 'mRNA'
-                || feature.transcript_type == 'transcript'
-                || feature.transcript_type == 'primary_transcript') {
-              return feature.feature_type.toLowerCase() == 'utr' || feature.feature_type.toLowerCase() == 'cds';
+          var exons = self.selectedTranscript.features.filter(function(
+            feature
+          ) {
+            if (
+              feature.transcript_type == "protein_coding" ||
+              feature.transcript_type == "mRNA" ||
+              feature.transcript_type == "transcript" ||
+              feature.transcript_type == "primary_transcript"
+            ) {
+              return (
+                feature.feature_type.toLowerCase() == "utr" ||
+                feature.feature_type.toLowerCase() == "cds"
+              );
             } else {
-              return feature.feature_type.toLowerCase() == 'exon';
+              return feature.feature_type.toLowerCase() == "exon";
             }
-          })
+          });
 
           let theExon = exons.filter(function(feature) {
-            return +feature.start <= +self.selectedVariant.start && +feature.end >= +self.selectedVariant.start;
-          })
+            return (
+              +feature.start <= +self.selectedVariant.start &&
+              +feature.end >= +self.selectedVariant.start
+            );
+          });
 
           self.filteredTranscript = $.extend({}, self.selectedTranscript);
           self.filteredTranscript.features = theExon;
@@ -780,18 +950,18 @@ export default {
       let self = this;
 
       if (self.exon) {
-        let exonWidth = +self.exon.end  -  +self.exon.start;
-        return +self.exon.start - Math.round(exonWidth * .60);
-      } else  {
+        let exonWidth = +self.exon.end - +self.exon.start;
+        return +self.exon.start - Math.round(exonWidth * 0.6);
+      } else {
         return +self.selectedVariant.start - 1000;
       }
     },
     getCoverageRegionEnd: function() {
       let self = this;
       if (self.exon) {
-        let exonWidth = +self.exon.end  -  +self.exon.start;
-        return +self.exon.end + Math.round(exonWidth * .60);
-      } else  {
+        let exonWidth = +self.exon.end - +self.exon.start;
+        return +self.exon.end + Math.round(exonWidth * 0.6);
+      } else {
         return +self.selectedVariant.start + 1000;
       }
     },
@@ -810,86 +980,104 @@ export default {
       self.multialignInProgress = true;
 
       let promises = [];
-      let p1 = self.multiAlignModel.promiseGetConservationScores(self.coverageRegionStart,
-                                                  self.coverageRegionEnd,
-                                                  self.selectedGene,
-                                                  self.selectedVariant,
-                                                  self.genomeBuildHelper.getBuildAlias(self.genomeBuildHelper.ALIAS_UCSC))
-      .then(function(data) {
-        if (data) {
-          self.conservationExactScore  = data.selectedScore;
-          self.conservationTargetScore = data.targetScore;
-          self.conservationScores      = data.scores;
-          self.conservationOptions     = data.options;
-          self.hasConservationScores   = self.multiAlignModel.hasConservationScores(self.coverageRegionStart,
-                                                                                    self.coverageRegionEnd,
-                                                                                    self.selectedGene);
-          self.showConservation =  self.hasConservationScores || self.hasConservationAligns;
-        }
-      });
+      let p1 = self.multiAlignModel
+        .promiseGetConservationScores(
+          self.coverageRegionStart,
+          self.coverageRegionEnd,
+          self.selectedGene,
+          self.selectedVariant,
+          self.genomeBuildHelper.getBuildAlias(
+            self.genomeBuildHelper.ALIAS_UCSC
+          )
+        )
+        .then(function(data) {
+          if (data) {
+            self.conservationExactScore = data.selectedScore;
+            self.conservationTargetScore = data.targetScore;
+            self.conservationScores = data.scores;
+            self.conservationOptions = data.options;
+            self.hasConservationScores = self.multiAlignModel.hasConservationScores(
+              self.coverageRegionStart,
+              self.coverageRegionEnd,
+              self.selectedGene
+            );
+            self.showConservation =
+              self.hasConservationScores || self.hasConservationAligns;
+          }
+        });
       promises.push(p1);
 
-
-      let p2 = self.multiAlignModel.promiseGetMultiAlignments(self.selectedGene,
-                                                  self.selectedVariant,
-                                                  self.genomeBuildHelper.getBuildAlias(self.genomeBuildHelper.ALIAS_UCSC),
-                                                  self.conservationSeqType)
-      .then(function(data) {
-        if (data) {
-          self.multialignSelectedBase = data.selectedBase;
-          self.multialignSequences    = data.sequences;
-          self.hasConservationAligns  = data.sequences.length > 0;
+      let p2 = self.multiAlignModel
+        .promiseGetMultiAlignments(
+          self.selectedGene,
+          self.selectedVariant,
+          self.genomeBuildHelper.getBuildAlias(
+            self.genomeBuildHelper.ALIAS_UCSC
+          ),
+          self.conservationSeqType
+        )
+        .then(function(data) {
+          if (data) {
+            self.multialignSelectedBase = data.selectedBase;
+            self.multialignSequences = data.sequences;
+            self.hasConservationAligns = data.sequences.length > 0;
+            self.multialignInProgress = false;
+          }
+        })
+        .catch(function(error) {
           self.multialignInProgress = false;
-        }
-      })
-      .catch(function(error) {
-        self.multialignInProgress = false;
-      })
-      promises.push(p2)
+        });
+      promises.push(p2);
 
-      Promise.all(promises)
-      .then(function() {
-        self.showConservation =  self.hasConservationScores || self.hasConservationAligns;
-      })
-
+      Promise.all(promises).then(function() {
+        self.showConservation =
+          self.hasConservationScores || self.hasConservationAligns;
+      });
     },
     onToggleConservationNucAA: function(seqType) {
       let self = this;
       if (self.selectedVariant) {
         self.multialignInProgress = true;
         self.conservationSeqType = seqType.toLowerCase();
-        self.multiAlignModel.promiseGetMultiAlignments(self.selectedGene,
-                                                    self.selectedVariant,
-                                                    self.genomeBuildHelper.getBuildAlias(self.genomeBuildHelper.ALIAS_UCSC),
-                                                    self.conservationSeqType)
-        .then(function(data) {
-          if (data) {
-            self.multialignInProgress   = false;
-            self.multialignSequences    = data.sequences;
-            self.multialignSelectedBase = data.selectedBase;
-          }
-        })
-        .catch(function(data) {
-          self.multialignInProgress = false;
-        })        
+        self.multiAlignModel
+          .promiseGetMultiAlignments(
+            self.selectedGene,
+            self.selectedVariant,
+            self.genomeBuildHelper.getBuildAlias(
+              self.genomeBuildHelper.ALIAS_UCSC
+            ),
+            self.conservationSeqType
+          )
+          .then(function(data) {
+            if (data) {
+              self.multialignInProgress = false;
+              self.multialignSequences = data.sequences;
+              self.multialignSelectedBase = data.selectedBase;
+            }
+          })
+          .catch(function(data) {
+            self.multialignInProgress = false;
+          });
       }
     },
-    gotoStep: function(stepIndex){
-      bus.$emit('navigate-to-step',stepIndex); 
+    gotoStep: function(stepIndex) {
+      bus.$emit("navigate-to-step", stepIndex);
     }
   },
 
-
   computed: {
-    
     hgvsLabel: function() {
-      if (this.selectedVariant && this.selectedVariant.extraAnnot && this.info.HGVSpAbbrev && this.info.HGVSpAbbrev.length > 0) {
+      if (
+        this.selectedVariant &&
+        this.selectedVariant.extraAnnot &&
+        this.info.HGVSpAbbrev &&
+        this.info.HGVSpAbbrev.length > 0
+      ) {
         return this.info.HGVSpAbbrev;
       } else {
-        return 'HGVS';
+        return "HGVS";
       }
     },
-
 
     coord: function() {
       let self = this;
@@ -903,19 +1091,27 @@ export default {
     refAlt: function() {
       let self = this;
       var refAlt = "";
-      if (self.selectedGene && self.selectedGene.strand && self.selectedVariant) {
+      if (
+        self.selectedGene &&
+        self.selectedGene.strand &&
+        self.selectedVariant
+      ) {
         if (self.isEduMode) {
           if (self.selectedGene.strand == "-") {
-            refAlt = self.globalApp.utility.switchGenotype(self.selectedVariant.eduGenotype)
+            refAlt = self.globalApp.utility.switchGenotype(
+              self.selectedVariant.eduGenotype
+            );
           } else {
             refAlt = self.selectedVariant.eduGenotype;
           }
         } else {
-          refAlt =   self.selectedVariant.ref + "->" + self.selectedVariant.alt;
-          if (self.selectedVariant.ref == '' && self.selectedVariant.alt == '') {
-            refAlt = '(' + variant.len + ' bp)';
+          refAlt = self.selectedVariant.ref + "->" + self.selectedVariant.alt;
+          if (
+            self.selectedVariant.ref == "" &&
+            self.selectedVariant.alt == ""
+          ) {
+            refAlt = "(" + variant.len + " bp)";
           }
-
         }
       }
       return refAlt;
@@ -923,12 +1119,24 @@ export default {
     aminoAcidChange: function() {
       let aaChange = "";
       let self = this;
-      if (self.selectedVariant && Object.keys(self.selectedVariant.variantInspect.vepAminoAcids).join("").length > 0) {
+      if (
+        self.selectedVariant &&
+        Object.keys(self.selectedVariant.variantInspect.vepAminoAcids).join("")
+          .length > 0
+      ) {
         for (let aa in self.selectedVariant.variantInspect.vepAminoAcids) {
-          aaChange += self.globalApp.utility.formatAminoAcidChange(aa)
+          aaChange += self.globalApp.utility.formatAminoAcidChange(aa);
         }
-        if (Object.keys(self.selectedVariant.variantInspect.vepProteinPosition).join("").length > 0) {
-          aaChange += " at " + Object.keys(self.selectedVariant.variantInspect.vepProteinPosition).join(" ");
+        if (
+          Object.keys(
+            self.selectedVariant.variantInspect.vepProteinPosition
+          ).join("").length > 0
+        ) {
+          aaChange +=
+            " at " +
+            Object.keys(
+              self.selectedVariant.variantInspect.vepProteinPosition
+            ).join(" ");
         }
       }
       if (aaChange.length > 0) {
@@ -939,58 +1147,90 @@ export default {
     },
     afGnomAD: function() {
       if (this.selectedVariant) {
-        if (this.globalApp.gnomADExtraAll || (this.globalApp.gnomADExtra && this.selectedVariant.variantInspect && selectedVariant.variantInspect.extraAnnot)) {
-          if (this.selectedVariant.variantInspect.gnomAD == null || this.selectedVariant.variantInspect.gnomAD.af == null) {
-            return {percent: "?", link: null, class: ""};
-          } else if (this.selectedVariant.variantInspect.gnomAD.af  == '.') {
-            return {percent: "0%", link: null, class: "level-high"};
-          } else  {
+        if (
+          this.globalApp.gnomADExtraAll ||
+          (this.globalApp.gnomADExtra &&
+            this.selectedVariant.variantInspect &&
+            selectedVariant.variantInspect.extraAnnot)
+        ) {
+          if (
+            this.selectedVariant.variantInspect.gnomAD == null ||
+            this.selectedVariant.variantInspect.gnomAD.af == null
+          ) {
+            return { percent: "?", link: null, class: "" };
+          } else if (this.selectedVariant.variantInspect.gnomAD.af == ".") {
+            return { percent: "0%", link: null, class: "level-high" };
+          } else {
             var gnomAD = {};
-            gnomAD.link =  "http://gnomad.broadinstitute.org/variant/"
-              + this.selectedVariant.chrom + "-"
-              + this.selectedVariant.start + "-"
-              + this.selectedVariant.ref + "-"
-              + this.selectedVariant.alt;
+            gnomAD.link =
+              "http://gnomad.broadinstitute.org/variant/" +
+              this.selectedVariant.chrom +
+              "-" +
+              this.selectedVariant.start +
+              "-" +
+              this.selectedVariant.ref +
+              "-" +
+              this.selectedVariant.alt;
 
-            if (this.genomeBuildHelper.getCurrentBuildName() == 'GRCh38') {
-              gnomAD.link += "?dataset=gnomad_r3"
-            };
+            if (this.genomeBuildHelper.getCurrentBuildName() == "GRCh38") {
+              gnomAD.link += "?dataset=gnomad_r3";
+            }
 
-            gnomAD.percent       = this.globalApp.utility.percentage(this.selectedVariant.variantInspect.gnomAD.af);
-            gnomAD.class         = this.getAfClass(this.selectedVariant.variantInspect.gnomAD.af);
-            gnomAD.percentPopMax = this.selectedVariant.variantInspect.gnomAD.afPopMax != '.' ? this.globalApp.utility.percentage(this.selectedVariant.variantInspect.gnomAD.afPopMax) : '0%';
-            gnomAD.altCount      = this.selectedVariant.variantInspect.gnomAD.altCount;
-            gnomAD.totalCount    = this.selectedVariant.variantInspect.gnomAD.totalCount;
-            gnomAD.homCount      = this.selectedVariant.variantInspect.gnomAD.homCount;
+            gnomAD.percent = this.globalApp.utility.percentage(
+              this.selectedVariant.variantInspect.gnomAD.af
+            );
+            gnomAD.class = this.getAfClass(
+              this.selectedVariant.variantInspect.gnomAD.af
+            );
+            gnomAD.percentPopMax =
+              this.selectedVariant.variantInspect.gnomAD.afPopMax != "."
+                ? this.globalApp.utility.percentage(
+                    this.selectedVariant.variantInspect.gnomAD.afPopMax
+                  )
+                : "0%";
+            gnomAD.altCount = this.selectedVariant.variantInspect.gnomAD.altCount;
+            gnomAD.totalCount = this.selectedVariant.variantInspect.gnomAD.totalCount;
+            gnomAD.homCount = this.selectedVariant.variantInspect.gnomAD.homCount;
             return gnomAD;
-
           }
         } else {
-          if (this.selectedVariant.variantInspect.vepAf == null || this.selectedVariant.variantInspect.vepAf.gnomAD.AF == null) {
-            return {percent: "?", link: null, class: ""};
-          } else if (this.selectedVariant.variantInspect.vepAf.gnomAD.AF == ".") {
-            return {percent: "0%", link: null, class: "level-high"};
-          } else  {
+          if (
+            this.selectedVariant.variantInspect.vepAf == null ||
+            this.selectedVariant.variantInspect.vepAf.gnomAD.AF == null
+          ) {
+            return { percent: "?", link: null, class: "" };
+          } else if (
+            this.selectedVariant.variantInspect.vepAf.gnomAD.AF == "."
+          ) {
+            return { percent: "0%", link: null, class: "level-high" };
+          } else {
             var gnomAD = {};
-            gnomAD.link =  "http://gnomad.broadinstitute.org/variant/"
-              + this.selectedVariant.chrom + "-"
-              + this.selectedVariant.start + "-"
-              + this.selectedVariant.ref + "-"
-              + this.selectedVariant.alt;
+            gnomAD.link =
+              "http://gnomad.broadinstitute.org/variant/" +
+              this.selectedVariant.chrom +
+              "-" +
+              this.selectedVariant.start +
+              "-" +
+              this.selectedVariant.ref +
+              "-" +
+              this.selectedVariant.alt;
 
-            if (this.genomeBuildHelper.getCurrentBuildName() == 'GRCh38') {
-              gnomAD.link += "?dataset=gnomad_r3"
-            };              
+            if (this.genomeBuildHelper.getCurrentBuildName() == "GRCh38") {
+              gnomAD.link += "?dataset=gnomad_r3";
+            }
 
-            gnomAD.percent       = this.globalApp.utility.percentage(this.selectedVariant.variantInspect.vepAf.gnomAD.AF);
-            gnomAD.class         = this.getAfClass(this.selectedVariant.variantInspect.vepAf.gnomAD.AF);
+            gnomAD.percent = this.globalApp.utility.percentage(
+              this.selectedVariant.variantInspect.vepAf.gnomAD.AF
+            );
+            gnomAD.class = this.getAfClass(
+              this.selectedVariant.variantInspect.vepAf.gnomAD.AF
+            );
             gnomAD.percentPopMax = 0;
-            gnomAD.altCount      = 0;
-            gnomAD.totalCount    = 0;
-            gnomAD.homCount      = 0;
+            gnomAD.altCount = 0;
+            gnomAD.totalCount = 0;
+            gnomAD.homCount = 0;
             return gnomAD;
           }
-
         }
       }
     }
@@ -1000,45 +1240,34 @@ export default {
     selectedVariant: function() {
       this.$nextTick(function() {
         this.loadData();
-      })
-    },
-
-
+      });
+    }
   },
 
   filters: {
-
     showRelationship: function(buf) {
       if (buf == null) {
         return "";
-      } else if (buf == 'known-variants') {
-        return 'ClinVar';
+      } else if (buf == "known-variants") {
+        return "ClinVar";
       } else {
         // Capitalize first letter
         return buf.charAt(0).toUpperCase() + buf.slice(1);
       }
-    },
-
-
-
+    }
   },
 
-  updated: function() {
-
-  },
+  updated: function() {},
 
   mounted: function() {
     this.loadData();
   },
 
-  created: function() {
-  }
-
-
-}
+  created: function() {}
+};
 </script>
 
-<style lang="sass" >
+<style lang="sass">
 @import ../../../assets/sass/variables
 
 
@@ -1054,17 +1283,17 @@ export default {
     font-size: 12px
 
 
-  .refalt 
+  .refalt
     max-width: 200px
     white-space: normal
     display: inline-block
     word-break: break-all
-    
+
   .aa-change
     max-width: 200px
     white-space: normal
     display: inline-block
-    word-break: break-all    
+    word-break: break-all
 
   #show-assessment-button
     padding: 0px
@@ -1251,42 +1480,42 @@ export default {
 
 
 
-  .pedigree-chart 
-    circle 
+  .pedigree-chart
+    circle
       fill: none
       stroke: black
       stroke-width: 1px
 
-    rect 
+    rect
       stroke: black
       stroke-width: 1px
       fill: none
 
-    .half-circle  
+    .half-circle
       path
         fill: none
         stroke: black
         stroke-width: 1px
 
-    .half-diamond 
-      path 
+    .half-diamond
+      path
         fill: none
         stroke: black
         stroke-width: 1px
 
-    rect.het 
+    rect.het
       stroke: none !important
 
     .het, .hom
       fill: #c5c5c5 !important
       stroke: black
 
-    .half-circle  
-      path.het 
+    .half-circle
+      path.het
         fill: #c5c5c5 !important
         stroke: black
-    .half-diamond 
-      path.het 
+    .half-diamond
+      path.het
         fill: #c5c5c5 !important
         stroke: black
 
@@ -1294,11 +1523,11 @@ export default {
     .het.critical.proband, .hom.critical.proband
       fill: #c5c5c5 !important
 
-    .half-diamond 
-      path.het.critical.proband 
+    .half-diamond
+      path.het.critical.proband
         fill: #c5c5c5 !important
 
-    line 
+    line
       stroke: black !important
 
 
@@ -1306,8 +1535,8 @@ export default {
       stroke: $current-color !important
       stroke-width: 3px !important
 
-    .allele-count-bar 
-      rect.alt-count 
+    .allele-count-bar
+      rect.alt-count
         fill: $current-color
         opacity: .65
 
@@ -1316,12 +1545,4 @@ export default {
         text-anchor: middle
 </style>
 
-<style lang="css">
-
-
-</style>
-
-
-
-
-
+<style lang="css"></style>

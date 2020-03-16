@@ -1,39 +1,40 @@
 class Util {
   constructor() {
     this.impactEduMode = {
-      HIGH:      'Harmful',
-      MODERATE:  'Probably harmful',
-      MODIFIER:  'Probably benign',
-      LOW:       'Benign'
-    }
+      HIGH: "Harmful",
+      MODERATE: "Probably harmful",
+      MODIFIER: "Probably benign",
+      LOW: "Benign"
+    };
     this.globalApp = null;
-    this.aminoAcidMap= {A: 'Ala',
-                        R: 'Arg',
-                        N: 'Asn',
-                        D: 'Asp',
-                        C: 'Cys',
-                        E: 'Glu',
-                        Q: 'Gln',
-                        G: 'Gly',
-                        H: 'His',
-                        I: 'Ile',
-                        L: 'Leu',
-                        K: 'Lys',
-                        M: 'Met',
-                        F: 'Phe',
-                        P: 'Pro',
-                        S: 'Ser',
-                        T: 'Thr',
-                        W: 'Trp',
-                        Y: 'Tyr',
-                        V: 'Val',
-                        '*': 'Ter',
-                        B: 'Asx',
-                        Z: 'Glx',
-                        X: 'Xaa',
-                        J: 'Xle',
-                        '-': '-'};
-
+    this.aminoAcidMap = {
+      A: "Ala",
+      R: "Arg",
+      N: "Asn",
+      D: "Asp",
+      C: "Cys",
+      E: "Glu",
+      Q: "Gln",
+      G: "Gly",
+      H: "His",
+      I: "Ile",
+      L: "Leu",
+      K: "Lys",
+      M: "Met",
+      F: "Phe",
+      P: "Pro",
+      S: "Ser",
+      T: "Thr",
+      W: "Trp",
+      Y: "Tyr",
+      V: "Val",
+      "*": "Ter",
+      B: "Asx",
+      Z: "Glx",
+      X: "Xaa",
+      J: "Xle",
+      "-": "-"
+    };
   }
 
   formatRegion() {
@@ -41,61 +42,101 @@ class Util {
   }
 
   decodeUrl(url) {
-    if (url && (url.slice(0,14) == 'https%3A%2F%2F' || url.slice(0,13) == 'http%3A%2F%2F'))
-      return decodeURIComponent(url)
-    else
-      return url;
+    if (
+      url &&
+      (url.slice(0, 14) == "https%3A%2F%2F" ||
+        url.slice(0, 13) == "http%3A%2F%2F")
+    )
+      return decodeURIComponent(url);
+    else return url;
   }
 
-  formatExonTooltip(filterModel, relationship, coverageRow, feature,  lock) {
+  formatExonTooltip(filterModel, relationship, coverageRow, feature, lock) {
     let self = this;
 
-      let html = '<div>'
-               + '<span id="exon-tooltip-title"' + (lock ? 'style="margin-top:8px">' : '>') + (feature.hasOwnProperty("exon_number") ? "Exon " + feature.exon_number : "") + '</span>'
-               + (lock ? '<a href="javascript:void(0)" id="exon-tooltip-close">X</a>' : '')
-               + '</div>';
-      html     += '<div style="clear:both">' + feature.feature_type + ' ' + self.addCommas(feature.start) + ' - '       + self.addCommas(feature.end) + '</div>';
+    let html =
+      "<div>" +
+      '<span id="exon-tooltip-title"' +
+      (lock ? 'style="margin-top:8px">' : ">") +
+      (feature.hasOwnProperty("exon_number")
+        ? "Exon " + feature.exon_number
+        : "") +
+      "</span>" +
+      (lock
+        ? '<a href="javascript:void(0)" id="exon-tooltip-close">X</a>'
+        : "") +
+      "</div>";
+    html +=
+      '<div style="clear:both">' +
+      feature.feature_type +
+      " " +
+      self.addCommas(feature.start) +
+      " - " +
+      self.addCommas(feature.end) +
+      "</div>";
 
-      if (feature.geneCoverage && feature.geneCoverage[relationship]) {
-          var covFields = filterModel.whichLowCoverage(feature.geneCoverage[relationship]);
-          html += "<div style='margin-top:4px'>" + "Coverage:"
-               +  coverageRow('min',    feature.geneCoverage[relationship].min, covFields)
-               +  coverageRow('median', feature.geneCoverage[relationship].median, covFields)
-               +  coverageRow('mean',   feature.geneCoverage[relationship].mean, covFields)
-               +  coverageRow('max',    feature.geneCoverage[relationship].max, covFields)
-               +  coverageRow('sd',     feature.geneCoverage[relationship].sd, covFields)
-
-      }
-      if (lock) {
-        html += '<div style="text-align:right;margin-top:8px">'
-        + '<a href="javascript:void(0)" id="exon-tooltip-thresholds" class="danger" style="float:left"  >Set cutoffs</a>'
-        + '</div>'
-      }
-      return html;
+    if (feature.geneCoverage && feature.geneCoverage[relationship]) {
+      var covFields = filterModel.whichLowCoverage(
+        feature.geneCoverage[relationship]
+      );
+      html +=
+        "<div style='margin-top:4px'>" +
+        "Coverage:" +
+        coverageRow("min", feature.geneCoverage[relationship].min, covFields) +
+        coverageRow(
+          "median",
+          feature.geneCoverage[relationship].median,
+          covFields
+        ) +
+        coverageRow(
+          "mean",
+          feature.geneCoverage[relationship].mean,
+          covFields
+        ) +
+        coverageRow("max", feature.geneCoverage[relationship].max, covFields) +
+        coverageRow("sd", feature.geneCoverage[relationship].sd, covFields);
+    }
+    if (lock) {
+      html +=
+        '<div style="text-align:right;margin-top:8px">' +
+        '<a href="javascript:void(0)" id="exon-tooltip-thresholds" class="danger" style="float:left"  >Set cutoffs</a>' +
+        "</div>";
+    }
+    return html;
   }
 
   formatDate(d) {
     var padMinutes = function(n) {
-        return String("00" + n).slice(-2);
-    }
+      return String("00" + n).slice(-2);
+    };
     var formatHours = function(h) {
       if (+h > 12) {
         return +h - 12;
       } else {
         return h;
       }
-    }
+    };
     var getAmPm = function(h) {
       if (+h > 12) {
-        return 'pm';
+        return "pm";
       } else {
-        return 'am';
+        return "am";
       }
-    }
-    return d.getMonth() + "-" + d.getDay() + "-" + d.getFullYear() + " " + formatHours(d.getHours()) + ":" + padMinutes(d.getMinutes()) + " " + getAmPm(d.getHours());
+    };
+    return (
+      d.getMonth() +
+      "-" +
+      d.getDay() +
+      "-" +
+      d.getFullYear() +
+      " " +
+      formatHours(d.getHours()) +
+      ":" +
+      padMinutes(d.getMinutes()) +
+      " " +
+      getAmPm(d.getHours())
+    );
   }
-
-
 
   getCurrentDateTime() {
     var dateObj = new Date();
@@ -111,41 +152,48 @@ class Util {
     if (val === null) {
       return false;
     } else {
-      return ( (typeof val === 'function') || (typeof val === 'object') );
+      return typeof val === "function" || typeof val === "object";
     }
   }
 
   visibleHeight($el) {
-      var elH = $el.outerHeight(),
-          H = $(window).height(),
-          r = $el[0].getBoundingClientRect(), t=r.top, b=r.bottom;
-      return Math.max(0, t>0? Math.min(elH, H-t) : (b<H?b:H));
+    var elH = $el.outerHeight(),
+      H = $(window).height(),
+      r = $el[0].getBoundingClientRect(),
+      t = r.top,
+      b = r.bottom;
+    return Math.max(0, t > 0 ? Math.min(elH, H - t) : b < H ? b : H);
   }
 
   goToHome() {
-    var homeUrl = window.location.protocol + "\/\/" + window.location.hostname + window.location.pathname;
+    var homeUrl =
+      window.location.protocol +
+      "//" +
+      window.location.hostname +
+      window.location.pathname;
     window.location.assign(homeUrl);
   }
 
   changeSiteStylesheet(cssHref) {
+    var oldlink = $("#site-stylesheet")[0];
 
-      var oldlink = $("#site-stylesheet")[0];
+    var newlink = document.createElement("link");
+    newlink.setAttribute("rel", "stylesheet");
+    newlink.setAttribute("id", "site-stylesheet");
+    newlink.setAttribute("type", "text/css");
+    newlink.setAttribute("href", cssHref);
 
-      var newlink = document.createElement("link");
-      newlink.setAttribute("rel",  "stylesheet");
-      newlink.setAttribute("id",   "site-stylesheet");
-      newlink.setAttribute("type", "text/css");
-      newlink.setAttribute("href", cssHref);
-
-      document.getElementsByTagName("head").item(0).replaceChild(newlink, oldlink);
+    document
+      .getElementsByTagName("head")
+      .item(0)
+      .replaceChild(newlink, oldlink);
   }
 
   createDownloadLink(anchorSelector, str, fileName) {
-
-    if(window.navigator.msSaveOrOpenBlob) {
+    if (window.navigator.msSaveOrOpenBlob) {
       var fileData = [str];
       blobObject = new Blob(fileData);
-      $(anchorSelector).click(function(){
+      $(anchorSelector).click(function() {
         window.navigator.msSaveOrOpenBlob(blobObject, fileName);
       });
     } else {
@@ -155,16 +203,12 @@ class Util {
     }
   }
 
-
-
-
   switchGenotype(gt) {
     if (gt != null && gt.length == 3) {
-      return gt[2] +  gt[0];
+      return gt[2] + gt[0];
     } else {
       return gt;
     }
-
   }
 
   endsWith(str, suffix) {
@@ -172,43 +216,43 @@ class Util {
   }
 
   showStackTrace(e) {
-    var stack = e.stack.replace(/^[^\(]+?[\n$]/gm, '')
-        .replace(/^\s+at\s+/gm, '')
-        .replace(/^Object.<anonymous>\s*\(/gm, '{anonymous}()@')
-        .split('\n');
+    var stack = e.stack
+      .replace(/^[^\(]+?[\n$]/gm, "")
+      .replace(/^\s+at\s+/gm, "")
+      .replace(/^Object.<anonymous>\s*\(/gm, "{anonymous}()@")
+      .split("\n");
     console.log(stack);
   }
 
   getHumanRefNames(refName) {
-      if (refName.indexOf("chr") == 0) {
-        return "chr1 chr2 chr3 chr4 chr5 chr6 chr7 chr8 chr9 chr10 chr11 chr12 chr13 chr14 chr15 chr16 chr17 chr18 chr20 chr21 chr22 chrX chrY";
-      } else {
-        return "1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 X Y";
-      }
+    if (refName.indexOf("chr") == 0) {
+      return "chr1 chr2 chr3 chr4 chr5 chr6 chr7 chr8 chr9 chr10 chr11 chr12 chr13 chr14 chr15 chr16 chr17 chr18 chr20 chr21 chr22 chrX chrY";
+    } else {
+      return "1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 X Y";
+    }
   }
 
   formatCurrentDateTime(delim) {
-    var theDelim = delim ? delim : '-';
-    var theTimeDelim = delim ? delim : ':';
+    var theDelim = delim ? delim : "-";
+    var theTimeDelim = delim ? delim : ":";
     var today = new Date();
     var dd = today.getDate();
-    var mm = today.getMonth()+1; //January is 0!
+    var mm = today.getMonth() + 1; //January is 0!
 
     var yyyy = today.getFullYear();
-    if(dd<10){
-        dd='0'+dd
+    if (dd < 10) {
+      dd = "0" + dd;
     }
-    if(mm<10){
-        mm='0'+mm
+    if (mm < 10) {
+      mm = "0" + mm;
     }
-
 
     var hours = today.getHours();
     var minutes = today.getMinutes();
-    var ampm = hours >= 12 ? 'pm' : 'am';
+    var ampm = hours >= 12 ? "pm" : "am";
     hours = hours % 12;
     hours = hours ? hours : 12; // the hour '0' should be '12'
-    minutes = minutes < 10 ? '0'+minutes : minutes;
+    minutes = minutes < 10 ? "0" + minutes : minutes;
     var theTime = hours + theTimeDelim + minutes + ampm;
 
     var today = mm + theDelim + dd + theDelim + yyyy + theDelim + theTime;
@@ -217,10 +261,10 @@ class Util {
 
   stripTranscriptPrefix(transcriptId) {
     if (transcriptId == null) {
-      console.log("null transcript id")
+      console.log("null transcript id");
       return "";
     }
-    var nameTokens = transcriptId.split('.');
+    var nameTokens = transcriptId.split(".");
     return nameTokens.length > 0 ? nameTokens[0] : transcriptId;
   }
 
@@ -238,18 +282,16 @@ class Util {
     return strippedName;
   }
 
-
   uniq(theArray) {
-     return Array.from(new Set(theArray));
+    return Array.from(new Set(theArray));
   }
 
-
   /*
-  *
-  *  Stream the app snapshot (html) to the emailServer which
-  *  will email a description of the problem along with an html file attachment
-  *  that is the snapshop of vcfiobio.
-  */
+   *
+   *  Stream the app snapshot (html) to the emailServer which
+   *  will email a description of the problem along with an html file attachment
+   *  that is the snapshop of vcfiobio.
+   */
   sendFeedbackEmail(name, email, note, htmlAttachment) {
     let self = this;
     var client = BinaryClient(this.globalApp.emailServer);
@@ -258,32 +300,40 @@ class Util {
     var appURL = "";
     if (this.globalApp.feedbackShowURL) {
       appURL = location.href;
-      if (appURL.indexOf("#feedback-modal") > -1){
-          appURL = appURL.substr(0, appURL.indexOf("#feedback-modal"));
+      if (appURL.indexOf("#feedback-modal") > -1) {
+        appURL = appURL.substr(0, appURL.indexOf("#feedback-modal"));
       }
     }
 
     // Format the body of the email
-    var htmlBody = '<span style="padding-right: 4px">Reported by:</span>' + name  + "<br><br>";
-    htmlBody    += '<span style="padding-right: 4px">Email:</span>' + email  + "<br><br>";
+    var htmlBody =
+      '<span style="padding-right: 4px">Reported by:</span>' +
+      name +
+      "<br><br>";
+    htmlBody +=
+      '<span style="padding-right: 4px">Email:</span>' + email + "<br><br>";
     if (this.globalApp.feedbackShowURL) {
-      htmlBody +=  '<span style="padding-right: 51px">gene.iobio URL:</span>' + appURL + "<br><br>";
+      htmlBody +=
+        '<span style="padding-right: 51px">gene.iobio URL:</span>' +
+        appURL +
+        "<br><br>";
     }
-    htmlBody += note + '<br><br>';
+    htmlBody += note + "<br><br>";
 
     var emailObject = {
-        'from':     email,
-        'to':       self.globalApp.feedbackEmails,
-        'subject':  'Feedback on gene.iobio',
-        'body':     htmlBody
-     };
-     if (this.globalApp.feedbackAttachScreenCapture && htmlAttachment) {
-      emailObject.filename = 'gene.iobio.screencapture.' + util.formatCurrentDateTime('.') + '.html';
-     } else {
-      emailObject.filename = '';
-     }
+      from: email,
+      to: self.globalApp.feedbackEmails,
+      subject: "Feedback on gene.iobio",
+      body: htmlBody
+    };
+    if (this.globalApp.feedbackAttachScreenCapture && htmlAttachment) {
+      emailObject.filename =
+        "gene.iobio.screencapture." + util.formatCurrentDateTime(".") + ".html";
+    } else {
+      emailObject.filename = "";
+    }
 
-    client.on('open', function(stream){
+    client.on("open", function(stream) {
       var stream = client.createStream(emailObject);
       if (self.globalApp.feedbackAttachScreenCapture && htmlAttachment) {
         stream.write(htmlAttachment);
@@ -292,46 +342,44 @@ class Util {
     });
   }
 
-
   sendFeedbackReceivedEmail(emailTo) {
     let self = this;
     var client = BinaryClient(self.globalApp.emailServer);
 
     // Format the body of the email
-    var htmlBody = 'Thank you for your feedback on gene.iobio.  We will review your email as soon as possible.';
-    htmlBody     += '<br><br>';
-      htmlBody     += 'Best regards,<br>';
-      htmlBody     += 'The IOBIO team';
+    var htmlBody =
+      "Thank you for your feedback on gene.iobio.  We will review your email as soon as possible.";
+    htmlBody += "<br><br>";
+    htmlBody += "Best regards,<br>";
+    htmlBody += "The IOBIO team";
 
     var emailObject = {
-        'from':     self.globalApp.feedbackEmails,
-        'to':       emailTo,
-        'subject':  'gene.iobio feedback received',
-        'body':     htmlBody
-     };
+      from: self.globalApp.feedbackEmails,
+      to: emailTo,
+      subject: "gene.iobio feedback received",
+      body: htmlBody
+    };
 
-    client.on('open', function(stream){
+    client.on("open", function(stream) {
       var stream = client.createStream(emailObject);
       stream.end();
     });
   }
 
-
-
   capitalizeFirstLetter(string) {
-      return string.charAt(0).toUpperCase() + string.slice(1);
+    return string.charAt(0).toUpperCase() + string.slice(1);
   }
 
-  percentage(a, showSign=true) {
+  percentage(a, showSign = true) {
     let me = this;
     var pct = a * 100;
     var places = 0;
-    if (pct < .001) {
+    if (pct < 0.001) {
       places = 4;
-    } else if (pct < .01) {
+    } else if (pct < 0.01) {
       places = 3;
-    } else if (pct < .1) {
-      places = 2
+    } else if (pct < 0.1) {
+      places = 2;
     } else if (pct < 1) {
       places = 1;
     } else {
@@ -341,15 +389,17 @@ class Util {
   }
 
   round(value, places) {
-    return +(Math.round(value + "e+" + places)  + "e-" + places);
+    return +(Math.round(value + "e+" + places) + "e-" + places);
   }
 
   splitArray(a, n) {
-    var len = a.length,out = [], i = 0;
+    var len = a.length,
+      out = [],
+      i = 0;
     while (i < len) {
-        var size = Math.ceil((len - i) / n--);
-        out.push(a.slice(i, i + size));
-        i += size;
+      var size = Math.ceil((len - i) / n--);
+      out.push(a.slice(i, i + size));
+      i += size;
     }
     return out;
   }
@@ -358,9 +408,9 @@ class Util {
     var rsId = null;
     if (variant.vepVariationIds) {
       for (var key in variant.vepVariationIds) {
-        if (key != 0 && key != '') {
+        if (key != 0 && key != "") {
           var tokens = key.split("&");
-          tokens.forEach( function(id) {
+          tokens.forEach(function(id) {
             if (id.indexOf("rs") == 0) {
               rsId = id;
             }
@@ -373,13 +423,13 @@ class Util {
 
   getUrlParameter(sParam) {
     var sPageURL = window.location.search.substring(1);
-    var sURLVariables = sPageURL.split('&');
+    var sURLVariables = sPageURL.split("&");
     var hits = {};
 
     var matchExact = function(r, str) {
       var match = str.match(r);
       return match != null && str.indexOf(match[0]) == 0;
-    }
+    };
 
     var getMatch = function(string, regex, index) {
       index || (index = 1); // default to the first capturing group
@@ -390,82 +440,73 @@ class Util {
       } else {
         return null;
       }
-    }
-
+    };
 
     for (var i = 0; i < sURLVariables.length; i++) {
-        var sParameterName = sURLVariables[i].split('=');
-        if (typeof sParam == 'string' || sParam instanceof String) {
-          if (sParameterName[0] == sParam)
-          {
-              return sParameterName[1];
-          }
+      var sParameterName = sURLVariables[i].split("=");
+      if (typeof sParam == "string" || sParam instanceof String) {
+        if (sParameterName[0] == sParam) {
+          return sParameterName[1];
+        }
       } else {
-        var match = getMatch(sParameterName[0], sParam)
-        if ( match) {
+        var match = getMatch(sParameterName[0], sParam);
+        if (match) {
           hits[sParameterName[0]] = sParameterName[1];
         }
       }
     }
 
-    if (Object.keys(hits).length == 0)
-      return undefined;
-    else
-      return hits;
+    if (Object.keys(hits).length == 0) return undefined;
+    else return hits;
   }
 
-
   addCommas(nStr) {
-    nStr += '';
-    let x = nStr.split('.');
+    nStr += "";
+    let x = nStr.split(".");
     let x1 = x[0];
-    let x2 = x.length > 1 ? '.' + x[1] : '';
+    let x2 = x.length > 1 ? "." + x[1] : "";
     var rgx = /(\d+)(\d{3})/;
     while (rgx.test(x1)) {
-      x1 = x1.replace(rgx, '$1' + ',' + '$2');
+      x1 = x1.replace(rgx, "$1" + "," + "$2");
     }
     return x1 + x2;
   }
 
-
   updateUrl(paramName, value) {
     var params = {};
     // turn params into hash
-    window.location.search.split('&').forEach(function(param){
-      if (param != '') {
-        param = param.split('?').length == 1 ? param : param.split('?')[1];
-        var fields = param.split('=');
+    window.location.search.split("&").forEach(function(param) {
+      if (param != "") {
+        param = param.split("?").length == 1 ? param : param.split("?")[1];
+        var fields = param.split("=");
         params[fields[0]] = fields[1];
       }
     });
     params[paramName] = value;
     var search = [];
     Object.keys(params).forEach(function(key) {
-      search.push(key + '=' + params[key]);
-    })
-      window.history.replaceState(null,null,'?'+search.join('&'));
+      search.push(key + "=" + params[key]);
+    });
+    window.history.replaceState(null, null, "?" + search.join("&"));
   }
 
   removeUrl(paramName) {
     var params = {};
     // turn params into hash, but leave out the specified parameter
-    window.location.search.split('&').forEach(function(param){
+    window.location.search.split("&").forEach(function(param) {
       if (param.indexOf(paramName) == 0) {
-
-      } else if (param != '') {
-        param = param.split('?').length == 1 ? param : param.split('?')[1];
-        var fields = param.split('=');
+      } else if (param != "") {
+        param = param.split("?").length == 1 ? param : param.split("?")[1];
+        var fields = param.split("=");
         params[fields[0]] = fields[1];
       }
     });
     var search = [];
     Object.keys(params).forEach(function(key) {
-      search.push(key + '=' + params[key]);
-    })
-    window.history.replaceState(null,null,'?'+search.join('&'));
-
+      search.push(key + "=" + params[key]);
+    });
+    window.history.replaceState(null, null, "?" + search.join("&"));
   }
-
 
   isChrome() {
     var isChromium = window.chrome,
@@ -475,9 +516,11 @@ class Util {
       isIEedge = winNav.userAgent.indexOf("Edge") > -1,
       isIOSChrome = winNav.userAgent.match("CriOS");
 
-    var isChrome = /Chrome/.test(window.navigator.userAgent) && /Google Inc/.test(window.navigator.vendor);  
+    var isChrome =
+      /Chrome/.test(window.navigator.userAgent) &&
+      /Google Inc/.test(window.navigator.vendor);
 
-    if(isChrome) {
+    if (isChrome) {
       return true;
     } else if (isIOSChrome) {
       return true;
@@ -494,81 +537,77 @@ class Util {
     }
   }
 
-
-
   /**
    * detect IE
    * returns version of IE or false, if browser is not Internet Explorer
    */
   detectIE() {
-      var ua = window.navigator.userAgent;
+    var ua = window.navigator.userAgent;
 
-      var msie = ua.indexOf('MSIE ');
-      if (msie > 0) {
-          // IE 10 or older => return version number
-          return parseInt(ua.substring(msie + 5, ua.indexOf('.', msie)), 10);
-      }
+    var msie = ua.indexOf("MSIE ");
+    if (msie > 0) {
+      // IE 10 or older => return version number
+      return parseInt(ua.substring(msie + 5, ua.indexOf(".", msie)), 10);
+    }
 
-      var trident = ua.indexOf('Trident/');
-      if (trident > 0) {
-          // IE 11 => return version number
-          var rv = ua.indexOf('rv:');
-          return parseInt(ua.substring(rv + 3, ua.indexOf('.', rv)), 10);
-      }
+    var trident = ua.indexOf("Trident/");
+    if (trident > 0) {
+      // IE 11 => return version number
+      var rv = ua.indexOf("rv:");
+      return parseInt(ua.substring(rv + 3, ua.indexOf(".", rv)), 10);
+    }
 
-      var edge = ua.indexOf('Edge/');
-      if (edge > 0) {
-         // IE 12 => return version number
-         return parseInt(ua.substring(edge + 5, ua.indexOf('.', edge)), 10);
-      }
+    var edge = ua.indexOf("Edge/");
+    if (edge > 0) {
+      // IE 12 => return version number
+      return parseInt(ua.substring(edge + 5, ua.indexOf(".", edge)), 10);
+    }
 
-      // other browser
-      return false;
+    // other browser
+    return false;
   }
 
   detectSafari() {
-    return (navigator.userAgent.indexOf('Safari') != -1 && !this.isChrome());
+    return navigator.userAgent.indexOf("Safari") != -1 && !this.isChrome();
   }
-
-
 
   // Function from David Walsh: http://davidwalsh.name/css-animation-callback
   whichTransitionEvent() {
     var t,
-        el = document.createElement("fakeelement");
+      el = document.createElement("fakeelement");
 
     var transitions = {
-      "transition"      : "transitionend",
-      "OTransition"     : "oTransitionEnd",
-      "MozTransition"   : "transitionend",
-      "WebkitTransition": "webkitTransitionEnd"
-    }
+      transition: "transitionend",
+      OTransition: "oTransitionEnd",
+      MozTransition: "transitionend",
+      WebkitTransition: "webkitTransitionEnd"
+    };
 
-    for (t in transitions){
-      if (el.style[t] !== undefined){
+    for (t in transitions) {
+      if (el.style[t] !== undefined) {
         return transitions[t];
       }
     }
   }
 
-/*
-  *  Evaluate the highest impacts for a variant across all transcripts.
-  *  Cull the impact if it already annotated for the canonical transcript
-  *  or the impact is less severe than the one for the canonical
-  *  transcripts.  Returns an object that looks like this:
-  *  {HIGH: {frameshift:
-  *            {
-  *       transcripts: [ENST000245.1,ENSTxxxx],
-  *       display: 'ENST000241.1,ENSTxxxx'
-  *     }
-  *     stop_gain:
-  *       {
-  *       transcripts: [ENST000245.1,ENSTxxxx],
-  *       display: 'ENST000241.1,ENSTxxxx'
-  *     }
-  *     }
-  * }
-  */
+  /*
+   *  Evaluate the highest impacts for a variant across all transcripts.
+   *  Cull the impact if it already annotated for the canonical transcript
+   *  or the impact is less severe than the one for the canonical
+   *  transcripts.  Returns an object that looks like this:
+   *  {HIGH: {frameshift:
+   *            {
+   *       transcripts: [ENST000245.1,ENSTxxxx],
+   *       display: 'ENST000241.1,ENSTxxxx'
+   *     }
+   *     stop_gain:
+   *       {
+   *       transcripts: [ENST000245.1,ENSTxxxx],
+   *       display: 'ENST000241.1,ENSTxxxx'
+   *     }
+   *     }
+   * }
+   */
   getNonCanonicalHighestImpactsVep(variant, impactMap) {
     let self = this;
     var vepHighestImpacts = {};
@@ -591,17 +630,25 @@ class Util {
           if (Object.keys(allTranscripts).length > 0) {
             var ncObject = {};
             var transcriptUrls = "";
-            for(var transcriptId in allTranscripts) {
+            for (var transcriptId in allTranscripts) {
               if (transcriptUrls.length > 0) {
                 transcriptUrls += ", ";
               }
-              var url = '<a href="javascript:void(0)" @click="selectTranscript(\'' + transcriptId + '\')">' + transcriptId + '</a>';
+              var url =
+                '<a href="javascript:void(0)" @click="selectTranscript(\'' +
+                transcriptId +
+                "')\">" +
+                transcriptId +
+                "</a>";
               transcriptUrls += url;
             }
-            ncObject[effectKey] = {transcripts: Object.keys(allTranscripts), display: Object.keys(allTranscripts).join(","), url: transcriptUrls};
+            ncObject[effectKey] = {
+              transcripts: Object.keys(allTranscripts),
+              display: Object.keys(allTranscripts).join(","),
+              url: transcriptUrls
+            };
             nonCanonicalEffects.push(ncObject);
           }
-
         }
 
         if (nonCanonicalEffects.length > 0) {
@@ -612,14 +659,13 @@ class Util {
     return vepHighestImpacts;
   }
 
-
   formatHgvsP(variant, value) {
     let me = this;
-    if (value == null || value == '' || Object.keys(value).length == 0) {
+    if (value == null || value == "" || Object.keys(value).length == 0) {
       return "";
     } else {
       var buf = "";
-      for(var key in value) {
+      for (var key in value) {
         var tokens = key.split(":p.");
         if (buf.length > 0) {
           buf += " ";
@@ -627,10 +673,13 @@ class Util {
         if (tokens.length == 2) {
           var basicNotation = "p." + tokens[1];
           buf += basicNotation;
-        } else if (tokens.length == 1 && me.endsWith(tokens[0],"(p.=)")) {
+        } else if (tokens.length == 1 && me.endsWith(tokens[0], "(p.=)")) {
           // If synoymous variants, show p.(=) in cell
-          if (variant.vepConsequence && Object.keys(variant.vepConsequence).length > 0) {
-            for( consequence in variant.vepConsequence) {
+          if (
+            variant.vepConsequence &&
+            Object.keys(variant.vepConsequence).length > 0
+          ) {
+            for (consequence in variant.vepConsequence) {
               if (consequence == "synonymous_variant") {
                 buf += "p.(=)";
               }
@@ -642,13 +691,13 @@ class Util {
     }
   }
 
-  formatHgvsC(variant, value, stripTranscript=true) {
+  formatHgvsC(variant, value, stripTranscript = true) {
     let me = this;
-    if (value == null || value == '' || Object.keys(value).length == 0) {
+    if (value == null || value == "" || Object.keys(value).length == 0) {
       return "";
     } else {
       var buf = "";
-      for(var key in value) {
+      for (var key in value) {
         if (stripTranscript) {
           var tokens = key.split(":c.");
           if (buf.length > 0) {
@@ -662,50 +711,50 @@ class Util {
           if (buf.length > 0) {
             buf += " ";
           }
-          buf+= key;
+          buf += key;
         }
       }
       return buf;
     }
-
   }
 
   getTooltipCoordinates(node, tooltip, containerWidth, topMargin) {
     var coord = {};
-    var tooltipWidth  = d3.round(tooltip.node().offsetWidth);
+    var tooltipWidth = d3.round(tooltip.node().offsetWidth);
     var tooltipHeight = d3.round(tooltip.node().offsetHeight);
 
-    var matrix    = node.getScreenCTM()
-                        .translate(+node.getAttribute("cx"), +node.getAttribute("cy"));
+    var matrix = node
+      .getScreenCTM()
+      .translate(+node.getAttribute("cx"), +node.getAttribute("cy"));
     var boundRect = node.getBoundingClientRect();
-    coord.x       = d3.round(boundRect.left + (boundRect.width/2));
-    coord.y       = window.pageYOffset + matrix.f + topMargin;
-    coord.width   = boundRect.width;
-    coord.height  = boundRect.height;
+    coord.x = d3.round(boundRect.left + boundRect.width / 2);
+    coord.y = window.pageYOffset + matrix.f + topMargin;
+    coord.width = boundRect.width;
+    coord.height = boundRect.height;
 
     // Position tooltip in the middle of the node
-    coord.x = coord.x - (tooltipWidth/2);
+    coord.x = coord.x - tooltipWidth / 2;
     // Position tooltip above the node
     coord.y = coord.y - tooltipHeight;
 
     // If the tooltip will be cropped to the right, adjust its position
     // so that it is immediately to the left of the node
-    if  ((coord.x + (tooltipWidth/2) + 150) > containerWidth) {
-      coord.x -= tooltipWidth/2;
+    if (coord.x + tooltipWidth / 2 + 150 > containerWidth) {
+      coord.x -= tooltipWidth / 2;
       coord.x -= 6;
       tooltip.classed("black-arrow-left", false);
       tooltip.classed("black-arrow-right", true);
-    } else if (coord.x < tooltipWidth/2) {
+    } else if (coord.x < tooltipWidth / 2) {
       // If the tooltip will be cropped to the left, adjust its position
       // so that it is immediately to the right of the node
-      coord.x += tooltipWidth/2;
+      coord.x += tooltipWidth / 2;
       coord.x += 6;
       tooltip.classed("black-arrow-left", true);
       tooltip.classed("black-arrow-down-right", false);
     } else {
       // No cropping of tooltip on either side, just default to show tooltip
       // immediately to the left of the node
-      coord.x += tooltipWidth/2;
+      coord.x += tooltipWidth / 2;
       coord.x += 6;
       tooltip.classed("black-arrow-left", true);
       tooltip.classed("black-arrow-right", false);
@@ -761,42 +810,46 @@ class Util {
       notesFlattened: ""
     };
 
-
     info.coord = variant.chrom + ":" + variant.start;
     info.refalt = variant.ref + "->" + variant.alt;
-    if (variant.ref == '' && variant.alt == '') {
-      info.refalt = '(' + variant.len + ' bp)';
+    if (variant.ref == "" && variant.alt == "") {
+      info.refalt = "(" + variant.len + " bp)";
     }
 
-
-    if (variant.hasOwnProperty("vepExon") && !$.isEmptyObject(variant.vepExon)) {
+    if (
+      variant.hasOwnProperty("vepExon") &&
+      !$.isEmptyObject(variant.vepExon)
+    ) {
       info.exon += "Exon ";
       info.exon += Object.keys(variant.vepExon).join(",");
     }
 
     info.inheritance = translator.getInheritanceLabel(variant.inheritance);
 
-
     me.formatClinvarDisplay(variant, info, translator, isEduMode);
 
-
-    if (variant.zygosity && variant.zygosity.toLowerCase() == 'het') {
+    if (variant.zygosity && variant.zygosity.toLowerCase() == "het") {
       info.zygosity = "Heterozygous";
-    } else if (variant.zygosity && variant.zygosity.toLowerCase() == 'hom') {
+    } else if (variant.zygosity && variant.zygosity.toLowerCase() == "hom") {
       info.zygosity = "Homozygous";
     }
 
     if (variant.af1000G) {
-      info.af1000G =  +variant.af1000G >= 0 ? me.globalApp.utility.round(+variant.af1000G * 100, 2) + "%" : "";
+      info.af1000G =
+        +variant.af1000G >= 0
+          ? me.globalApp.utility.round(+variant.af1000G * 100, 2) + "%"
+          : "";
     }
     if (variant.afgnomAD) {
-      info.afgnomAD =  +variant.afgnomAD >= 0 ? me.globalApp.utility.round(+variant.afgnomAD * 100, 2) + "%" : "";
+      info.afgnomAD =
+        +variant.afgnomAD >= 0
+          ? me.globalApp.utility.round(+variant.afgnomAD * 100, 2) + "%"
+          : "";
     }
-
 
     for (var key in variant.vepImpact) {
       if (info.vepImpact.length > 0) {
-          info.vepImpact += ", ";
+        info.vepImpact += ", ";
       }
       if (isEduMode) {
         info.vepImpact = me.impactEduMode[key];
@@ -805,27 +858,31 @@ class Util {
       }
     }
 
-
     // If the highest impact occurs in a non-canonical transcript, show the impact followed by
     // the consequence and corresponding transcripts
     me.formatHighestImpactInfo(variant, info, translator);
 
-
     for (var key in variant.vepConsequence) {
       if (info.vepConsequence.length > 0) {
-          info.vepConsequence += ", ";
+        info.vepConsequence += ", ";
       }
       if (isEduMode) {
-        info.vepConsequence = key.split("_").join(" ").toLowerCase();
+        info.vepConsequence = key
+          .split("_")
+          .join(" ")
+          .toLowerCase();
       } else {
-        info.vepConsequence += key.split("_").join(" ").toLowerCase();
+        info.vepConsequence += key
+          .split("_")
+          .join(" ")
+          .toLowerCase();
       }
     }
-    if (variant.fbCalled == 'Y' || variant.extraAnnot) {
+    if (variant.fbCalled == "Y" || variant.extraAnnot) {
       for (var key in variant.vepHGVSc) {
         if (key.length > 0) {
           if (info.HGVSc.length > 0) {
-              info.HGVSc += ", ";
+            info.HGVSc += ", ";
           }
           info.HGVSc += key;
         }
@@ -833,7 +890,7 @@ class Util {
       for (var key in variant.vepHGVSp) {
         if (key.length > 0) {
           if (info.HGVSp.length > 0) {
-              info.HGVSp += ", ";
+            info.HGVSp += ", ";
           }
           info.HGVSp += key;
         }
@@ -845,16 +902,15 @@ class Util {
       info.HGVSpLoading = true;
     }
 
-
     for (var key in variant.vepSIFT) {
       if (info.sift.length > 0) {
-          info.sift += ", ";
+        info.sift += ", ";
       }
       info.sift += key.split("_").join(" ");
     }
     for (var key in variant.vepPolyPhen) {
       if (info.polyphen.length > 0) {
-          info.polyphen += ", ";
+        info.polyphen += ", ";
       }
       if (isEduMode) {
         info.polyphen = key.split("_").join(" ");
@@ -864,7 +920,7 @@ class Util {
     }
     for (var key in variant.vepREVEL) {
       if (info.revel.length > 0) {
-          info.revel += ", ";
+        info.revel += ", ";
       }
       info.revel += key;
     }
@@ -875,20 +931,18 @@ class Util {
         continue;
       }
       if (info.regulatory.length > 0) {
-          info.regulatory += ", ";
+        info.regulatory += ", ";
       }
       var value = variant.regulatory[key];
       info.regulatory += value;
     }
 
-
     if (variant.vepRegs) {
       for (var i = 0; i < variant.vepRegs.length; i++) {
         var vr = variant.vepRegs[i];
-        if (vr.motifName != null && vr.motifName != '') {
-
+        if (vr.motifName != null && vr.motifName != "") {
           if (info.regulatoryMotifLinks.length > 0) {
-              info.regulatoryMotifLinks += ", ";
+            info.regulatoryMotifLinks += ", ";
           }
 
           var tokens = vr.motifName.split(":");
@@ -897,41 +951,62 @@ class Util {
             baseMotifName = tokens[1];
           }
 
-          var regUrl = "http://jaspar.genereg.net/cgi-bin/jaspar_db.pl?ID=" + baseMotifName + "&rm=present&collection=CORE"
-          info.regulatoryMotifLinks += '<a href="' + regUrl + '" target="_motif">' + vr.motifName + '</a>';
+          var regUrl =
+            "http://jaspar.genereg.net/cgi-bin/jaspar_db.pl?ID=" +
+            baseMotifName +
+            "&rm=present&collection=CORE";
+          info.regulatoryMotifLinks +=
+            '<a href="' + regUrl + '" target="_motif">' + vr.motifName + "</a>";
         }
       }
     }
 
     info.rsId = me.globalApp.utility.getRsId(variant);
-    if (info.rsId && info.rsId != '') {
-      info.dbSnpUrl   = "http://www.ncbi.nlm.nih.gov/projects/SNP/snp_ref.cgi?rs=" + info.rsId ;
-      info.dbSnpLink =  '<a href="' + info.dbSnpUrl + '" target="_dbsnp"' + '>' + info.rsId  + '</a>';
+    if (info.rsId && info.rsId != "") {
+      info.dbSnpUrl =
+        "http://www.ncbi.nlm.nih.gov/projects/SNP/snp_ref.cgi?rs=" + info.rsId;
+      info.dbSnpLink =
+        '<a href="' +
+        info.dbSnpUrl +
+        '" target="_dbsnp"' +
+        ">" +
+        info.rsId +
+        "</a>";
     }
 
-    info.filtersPassed = variant.filtersPassed && Array.isArray(variant.filtersPassed) ? variant.filtersPassed.join(",") : (variant.filtersPassed ? variant.filtersPassed : "");
+    info.filtersPassed =
+      variant.filtersPassed && Array.isArray(variant.filtersPassed)
+        ? variant.filtersPassed.join(",")
+        : variant.filtersPassed
+        ? variant.filtersPassed
+        : "";
 
     if (variant.notes && variant.notes.length > 0) {
       variant.notes.forEach(function(note) {
         if (info.notesFlattened.length > 0) {
           info.notesFlattened += " | ";
         }
-        info.notesFlattened  +=  (note.author ? note.author : " ") + "\t"+ note.datetime + "\t" + note.note ;
-      })
+        info.notesFlattened +=
+          (note.author ? note.author : " ") +
+          "\t" +
+          note.datetime +
+          "\t" +
+          note.note;
+      });
     }
-
 
     return info;
   }
 
-
   formatHighestImpactInfo(variant, info, translator) {
     let me = this;
-    var vepHighestImpacts = me.globalApp.utility.getNonCanonicalHighestImpactsVep(variant, translator.impactMap);
+    var vepHighestImpacts = me.globalApp.utility.getNonCanonicalHighestImpactsVep(
+      variant,
+      translator.impactMap
+    );
     info.vepHighestImpactRecs = [];
     for (var impactKey in vepHighestImpacts) {
-
-      let impactRec = {impact: impactKey, effects: []};
+      let impactRec = { impact: impactKey, effects: [] };
 
       var nonCanonicalEffects = vepHighestImpacts[impactKey];
       if (info.vepHighestImpact == null) {
@@ -939,153 +1014,224 @@ class Util {
         info.vepHighestImpactSimple = "";
         info.vepHighestImpactInfo = "";
       } else if (info.vepHighestImpact.length > 0) {
-          info.vepHighestImpact += ", ";
-          info.vepHighestImpactSimple += ", ";
-          info.vepHighestImpactInfo += ", ";
+        info.vepHighestImpact += ", ";
+        info.vepHighestImpactSimple += ", ";
+        info.vepHighestImpactInfo += ", ";
       }
 
-      info.vepHighestImpact       += impactKey.toLowerCase();
+      info.vepHighestImpact += impactKey.toLowerCase();
       info.vepHighestImpactSimple += impactKey.toLowerCase();
-      info.vepHighestImpactInfo   += impactKey.toLowerCase();
-      if (info.vepHighestImpactValue == null || info.vepHighestImpactValue.length == 0) {
-        info.vepHighestImpactValue  = impactKey.toUpperCase();
+      info.vepHighestImpactInfo += impactKey.toLowerCase();
+      if (
+        info.vepHighestImpactValue == null ||
+        info.vepHighestImpactValue.length == 0
+      ) {
+        info.vepHighestImpactValue = impactKey.toUpperCase();
       }
 
       nonCanonicalEffects.forEach(function(nonCanonicalEffect) {
         info.vepHighestImpact += "<span>  (";
         let effectRec = {};
         for (var effectKey in nonCanonicalEffect) {
-          effectRec = {key: effectKey, display: effectKey.split("_").join(" ").split("\&").join(" & ").split(" variant").join(""), transcripts: nonCanonicalEffect[effectKey].transcripts};
+          effectRec = {
+            key: effectKey,
+            display: effectKey
+              .split("_")
+              .join(" ")
+              .split("&")
+              .join(" & ")
+              .split(" variant")
+              .join(""),
+            transcripts: nonCanonicalEffect[effectKey].transcripts
+          };
 
           var transcriptString = nonCanonicalEffect[effectKey].url;
-          info.vepHighestImpact     += " " + effectKey.split("\&").join(" & ") + ' in ' + transcriptString;
-          info.vepHighestImpactInfo += " " + effectKey.split("\&").join(" & ") + " in " + nonCanonicalEffect[effectKey].display;
+          info.vepHighestImpact +=
+            " " + effectKey.split("&").join(" & ") + " in " + transcriptString;
+          info.vepHighestImpactInfo +=
+            " " +
+            effectKey.split("&").join(" & ") +
+            " in " +
+            nonCanonicalEffect[effectKey].display;
 
           impactRec.effects.push(effectRec);
         }
         info.vepHighestImpact += ")</span> ";
-      })
+      });
       info.vepHighestImpactSimple += " in non-canonical transcripts";
 
       info.vepHighestImpactRecs.push(impactRec);
-
     }
-
   }
 
   formatAminoAcidChange(aaChange) {
-    let buf = ""
+    let buf = "";
     let self = this;
     let tokens = aaChange.split("/");
     tokens.forEach(function(token) {
       if (buf.length > 0) {
-        buf += " to "
+        buf += " to ";
       }
       Array.from(token).forEach(function(aa) {
         buf += self.aminoAcidMap[aa];
-      })
-    })
+      });
+    });
     return buf;
   }
 
   formatClinvarDisplay(variant, info, translator, isEduMode) {
     let me = this;
 
-
-
-
-
     /*
-    *  Clinvar submissions come from vcf
-    */
-    if (variant.clinvarSubmissions != null && variant.clinvarSubmissions.length > 0) {
+     *  Clinvar submissions come from vcf
+     */
+    if (
+      variant.clinvarSubmissions != null &&
+      variant.clinvarSubmissions.length > 0
+    ) {
       var clinsigUniq = {};
 
       for (var idx = 0; idx < variant.clinvarSubmissions.length; idx++) {
         var submission = variant.clinvarSubmissions[idx];
         submission.clinsig.split(",").forEach(function(clinsig) {
           clinsigUniq[clinsig] = "";
-        })
+        });
         var accessions = submission.accession.split(",");
-        var clinsigs   = submission.clinsig.split(",");
+        var clinsigs = submission.clinsig.split(",");
         var phenotypes = submission.phenotype.split(",");
         info.clinvarTrait = phenotypes;
         for (var i = 0; i < accessions.length; i++) {
           var accessionSingle = accessions[i];
-          var clinsigSingle   = clinsigs.length > i ? clinsigs[i] : "?";
-          var phenotype       = phenotypes.length > i ? phenotypes[i].split("_").join(" ").split("\\x2c") : null;
+          var clinsigSingle = clinsigs.length > i ? clinsigs[i] : "?";
+          var phenotype =
+            phenotypes.length > i
+              ? phenotypes[i]
+                  .split("_")
+                  .join(" ")
+                  .split("\\x2c")
+              : null;
 
-          info.clinvarUrl   = 'http://www.ncbi.nlm.nih.gov/clinvar/' + accessionSingle;
-          var clinvarLabel =  me.globalApp.utility.capitalizeFirstLetter(clinsigSingle.split("_").join(" "))
-                              + ( phenotype  ? ': ' + me.globalApp.utility.capitalizeFirstLetter(phenotype) : '')
+          info.clinvarUrl =
+            "http://www.ncbi.nlm.nih.gov/clinvar/" + accessionSingle;
+          var clinvarLabel =
+            me.globalApp.utility.capitalizeFirstLetter(
+              clinsigSingle.split("_").join(" ")
+            ) +
+            (phenotype
+              ? ": " + me.globalApp.utility.capitalizeFirstLetter(phenotype)
+              : "");
 
-          let clinvarLink =  '<a class="tooltip-clinvar-link"' + '" href="' + info.clinvarUrl + '" style="float:left;padding-right:4px" target="_new"' + '>'
-            clinvarLabel + '</a>';
+          let clinvarLink =
+            '<a class="tooltip-clinvar-link"' +
+            '" href="' +
+            info.clinvarUrl +
+            '" style="float:left;padding-right:4px" target="_new"' +
+            ">";
+          clinvarLabel + "</a>";
 
-          info.clinvarLinks.push({'key': accessionSingle, 'link': clinvarLink, 'url': info.clinvarUrl,
-            'icon': 'clinvar',
-            'clinsig': me.globalApp.utility.capitalizeFirstLetter(clinsigSingle.split("_").join(" ")),
-            'phenotype': ( phenotype  ? ': ' + me.globalApp.utility.capitalizeFirstLetter(phenotype) : ''),
-            'significance': translator.clinvarMap[clinsigSingle].clazz});
+          info.clinvarLinks.push({
+            key: accessionSingle,
+            link: clinvarLink,
+            url: info.clinvarUrl,
+            icon: "clinvar",
+            clinsig: me.globalApp.utility.capitalizeFirstLetter(
+              clinsigSingle.split("_").join(" ")
+            ),
+            phenotype: phenotype
+              ? ": " + me.globalApp.utility.capitalizeFirstLetter(phenotype)
+              : "",
+            significance: translator.clinvarMap[clinsigSingle].clazz
+          });
 
           info.clinvarUniqueClinSigs[clinsigSingle.split("_").join(" ")] = null;
           info.clinvarUniqueTraits[phenotype] = null;
         }
-
-      };
+      }
       info.clinvarSigSummary = "";
       for (var clinsig in clinsigUniq) {
-        var style = 'display:inline-block;'
+        var style = "display:inline-block;";
         if (info.clinvarSigSummary.length > 0) {
-          style += 'padding-left:5px';
+          style += "padding-left:5px";
         }
-        info.clinvarSigSummary += "<span style='" + style +"' class='tooltip-clinsig-link" + clinsig + "'>";
-        info.clinvarSigSummary += "<span style='float:left'>" + clinsig.split("_").join(" ") + "</span>";
+        info.clinvarSigSummary +=
+          "<span style='" +
+          style +
+          "' class='tooltip-clinsig-link" +
+          clinsig +
+          "'>";
+        info.clinvarSigSummary +=
+          "<span style='float:left'>" +
+          clinsig.split("_").join(" ") +
+          "</span>";
         info.clinvarSigSummary += "</span>";
       }
     } else {
-
       /*
-      * clinvar eutils will have clinvarClinicalSignificance and clinvarTrait and uid
-      */
+       * clinvar eutils will have clinvarClinicalSignificance and clinvarTrait and uid
+       */
       for (var key in variant.clinvarClinSig) {
-        if (key != 'none' && key != 'undefined' ) {
-          if (!isEduMode || (key.indexOf("uncertain_significance") >= 0 || key.indexOf("pathogenic") >= 0)) {
-            if (info.clinvarClinSig.length > 0 ) {
-                info.clinvarClinSig += ", ";
+        if (key != "none" && key != "undefined") {
+          if (
+            !isEduMode ||
+            key.indexOf("uncertain_significance") >= 0 ||
+            key.indexOf("pathogenic") >= 0
+          ) {
+            if (info.clinvarClinSig.length > 0) {
+              info.clinvarClinSig += ", ";
             }
             let clinsig = key.split("_").join(" ");
             info.clinvarClinSig += clinsig;
             info.clinvarUniqueClinSigs[clinsig] = null;
-
           }
         }
       }
       for (var key in variant.clinvarTrait) {
-        if (key != 'not_specified'  && key != 'undefined') {
+        if (key != "not_specified" && key != "undefined") {
           if (info.clinvarTrait.length > 0) {
-              info.clinvarTrait += ", ";
+            info.clinvarTrait += ", ";
           }
-          let phenotype = key.split("_").join(" ").split("\\x2c").join(", ");
+          let phenotype = key
+            .split("_")
+            .join(" ")
+            .split("\\x2c")
+            .join(", ");
           info.clinvarUniqueTraits[phenotype] = null;
           info.clinvarTrait += phenotype;
         }
       }
-      if (variant.clinvarUid != null && variant.clinvarUid != '') {
+      if (variant.clinvarUid != null && variant.clinvarUid != "") {
         info.clinvarUid = variant.clinvarUid;
-        info.clinvarUrl = 'http://www.ncbi.nlm.nih.gov/clinvar/variation/' + variant.clinvarUid;
-        let clinvarLabel = me.globalApp.utility.capitalizeFirstLetter(info.clinvarClinSig) + ( info.clinvarTrait ? ' ' + me.globalApp.utility.capitalizeFirstLetter(info.clinvarTrait) : '')
-        let clinvarLink =  '<a class="tooltip-clinvar-link"' + '" href="' + info.clinvarUrl + '" style="float:left;padding-right:4px" target="_new"' + '>'
-            clinvarLabel + '</a>';
-        info.clinvarLinks.push({'key': info.clinvarUid, 'link': clinvarLink, 'url': info.clinvarUrl,
-         'clinsig': me.globalApp.utility.capitalizeFirstLetter(info.clinvarClinSig),
-         'phenotype': ( info.clinvarTrait ? ' ' + me.globalApp.utility.capitalizeFirstLetter(info.clinvarTrait) : ''),
-         'icon': 'clinvar', 'significance': variant.clinvar});
+        info.clinvarUrl =
+          "http://www.ncbi.nlm.nih.gov/clinvar/variation/" + variant.clinvarUid;
+        let clinvarLabel =
+          me.globalApp.utility.capitalizeFirstLetter(info.clinvarClinSig) +
+          (info.clinvarTrait
+            ? " " +
+              me.globalApp.utility.capitalizeFirstLetter(info.clinvarTrait)
+            : "");
+        let clinvarLink =
+          '<a class="tooltip-clinvar-link"' +
+          '" href="' +
+          info.clinvarUrl +
+          '" style="float:left;padding-right:4px" target="_new"' +
+          ">";
+        clinvarLabel + "</a>";
+        info.clinvarLinks.push({
+          key: info.clinvarUid,
+          link: clinvarLink,
+          url: info.clinvarUrl,
+          clinsig: me.globalApp.utility.capitalizeFirstLetter(
+            info.clinvarClinSig
+          ),
+          phenotype: info.clinvarTrait
+            ? " " +
+              me.globalApp.utility.capitalizeFirstLetter(info.clinvarTrait)
+            : "",
+          icon: "clinvar",
+          significance: variant.clinvar
+        });
       }
-
     }
   }
 }
-export default Util
-
-
+export default Util;

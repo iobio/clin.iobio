@@ -19,20 +19,18 @@ html {
   max-width: calc(100% - 10px);
 }
 
-
 .btn {
   text-transform: none;
 }
 
-
 .application.theme--light {
   background: #fafafa;
-  color:  rgb(113,113,113);
-  fill:  rgb(113,113,113);
+  color: rgb(113, 113, 113);
+  fill: rgb(113, 113, 113);
 }
 
 .v-content__wrap {
-  background-color: #e5e4e4 !important
+  background-color: #e5e4e4 !important;
 }
 
 .application.theme--light a {
@@ -42,13 +40,18 @@ html {
 
 .theme--light .card,
 .application .theme--light.card {
-  color:  rgb(113,113,113);
-  fill:  rgb(113,113,113);
+  color: rgb(113, 113, 113);
+  fill: rgb(113, 113, 113);
 }
 
-.theme--light .input-group.input-group--dirty .input-group__selections__comma:not(.input-group__selections__comma--active), .application .theme--light.input-group.input-group--dirty .input-group__selections__comma:not(.input-group__selections__comma--active) {
-  color:  rgb(113,113,113);
-  fill:  rgb(113,113,113);
+.theme--light
+  .input-group.input-group--dirty
+  .input-group__selections__comma:not(.input-group__selections__comma--active),
+.application
+  .theme--light.input-group.input-group--dirty
+  .input-group__selections__comma:not(.input-group__selections__comma--active) {
+  color: rgb(113, 113, 113);
+  fill: rgb(113, 113, 113);
 }
 
 .input-group--text-field.input-group--prepend-icon .input-group__prepend-icon {
@@ -56,11 +59,12 @@ html {
   justify-content: flex-end;
 }
 
-.theme--light .list, .application .theme--light.list {
-  color: rgb(113, 113, 113)
+.theme--light .list,
+.application .theme--light.list {
+  color: rgb(113, 113, 113);
 }
 .menu__content .list__tile__title a {
-  color: rgb(113, 113, 113)
+  color: rgb(113, 113, 113);
 }
 
 .theme--light .btn:not(.btn--icon):not(.btn--flat),
@@ -77,25 +81,27 @@ html {
 }
 
 .card__title--primary {
-    padding-top: 4px;
+  padding-top: 4px;
 }
 .card__title {
-    padding-top: 0px;
-    padding-right: 0px;
-    padding-bottom: 0px;
-    padding-left: 0px;
+  padding-top: 0px;
+  padding-right: 0px;
+  padding-bottom: 0px;
+  padding-left: 0px;
 }
 
 .list__tile {
-    font-size: 14px;
- }
+  font-size: 14px;
+}
 .input-group label {
   font-size: 14px;
 }
-.radio + .radio, .checkbox + .checkbox {
+.radio + .radio,
+.checkbox + .checkbox {
   margin-top: 10px;
 }
-.radio label, .checkbox label {
+.radio label,
+.checkbox label {
   padding-left: 0px;
   line-height: 20px;
 }
@@ -103,7 +109,7 @@ html {
 .input-group.input-group--slider label {
   font-size: 14px;
   font-weight: normal;
-  color: rgb(113,113,113);
+  color: rgb(113, 113, 113);
 }
 
 .tooltip {
@@ -150,9 +156,8 @@ html {
 
 .dropdown.open .dropdown-menu {
   max-height: 400px !important;
-  overflow-y: scroll !important
+  overflow-y: scroll !important;
 }
-
 
 .overlay--active {
   pointer-events: auto;
@@ -172,12 +177,10 @@ html {
   z-index: none;
 }
 
-
 .menu__content ul hr {
   margin-top: 5px;
   margin-bottom: 5px;
 }
-
 
 .alertify .ajs-footer .ajs-buttons.ajs-auxiliary .ajs-button,
 .alertify .ajs-footer .ajs-buttons.ajs-primary .ajs-button {
@@ -204,6 +207,3 @@ html {
 .dialog__content.dialog__content__active {
   height: initial !important;
 }
-
-
-

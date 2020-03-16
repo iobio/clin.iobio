@@ -1,62 +1,88 @@
 <template>
-
-    <v-card  class="workflow-card-new">
-      <div >
-        <div  class="step-flow-container">
-           <div :class="{'step-flow': true, 'current': step.current}" v-for="step in steps" :key="step.number">
-             <div class="glyph" >
-                <v-icon v-if="!step.current && step.complete" @click="onStepClicked(step)">
-                  check_circle
-                </v-icon>
-                <v-icon v-if="!step.current && !step.complete" @click="onStepClicked(step)">
-                  panorama_fish_eye
-                </v-icon>
-                <v-checkbox v-if="step.current" v-model="currentStepComplete" hide-details></v-checkbox>
-             </div>
-             <div  :class="{'line': true, 'complete': step.complete}" v-if="step.number != 4"></div>
-            </div>
+  <v-card class="workflow-card-new">
+    <div>
+      <div class="step-flow-container">
+        <div
+          :class="{ 'step-flow': true, current: step.current }"
+          v-for="step in steps"
+          :key="step.number"
+        >
+          <div class="glyph">
+            <v-icon
+              v-if="!step.current && step.complete"
+              @click="onStepClicked(step)"
+            >
+              check_circle
+            </v-icon>
+            <v-icon
+              v-if="!step.current && !step.complete"
+              @click="onStepClicked(step)"
+            >
+              panorama_fish_eye
+            </v-icon>
+            <v-checkbox
+              v-if="step.current"
+              v-model="currentStepComplete"
+              hide-details
+            ></v-checkbox>
+          </div>
+          <div
+            :class="{ line: true, complete: step.complete }"
+            v-if="step.number != 4"
+          ></div>
         </div>
-            <div class="step-container" >
-                 <div  v-for="step in steps" :key="step.number" :class="{'step': true, 'current': step.current}" @click="onStepClicked(step)">
-
-                        <div  style="display:flex;flex-flow:column;align-items:center;justify-content:center">
-                          <div class="step-label">{{ step.name }}</div>
-                          <div class="step-icon" v-tooltip.right="step.description">
-                            <case-icon v-if="step.number == 1" ></case-icon>
-                            <phenotype-icon v-if="step.number == 2" ></phenotype-icon>
-                            <variants-icon v-if="step.number == 3" ></variants-icon>
-                            <findings-icon v-if="step.number == 4" ></findings-icon>
-                          </div>
-                          </div>
-
-                    <div class="badges">
-                      <div v-for="badge in step.badges" :key="badge.label">
-                       <v-icon dark id="failed-icon"  v-if="false && badge.class && badge.class == 'failed'">error</v-icon>
-                        <v-badge
-                          v-if="badge.count && badge.count != ''"
-                          :content="badge.count" :class="badge.class ? badge.class : ''">
-                          {{ badge.label}}
-                        </v-badge>
-                      </div>
-                    </div>
-                 </div>
-            </div>
       </div>
-       
-    </v-card>
+      <div class="step-container">
+        <div
+          v-for="step in steps"
+          :key="step.number"
+          :class="{ step: true, current: step.current }"
+          @click="onStepClicked(step)"
+        >
+          <div
+            style="display:flex;flex-flow:column;align-items:center;justify-content:center"
+          >
+            <div class="step-label">{{ step.name }}</div>
+            <div class="step-icon" v-tooltip.right="step.description">
+              <case-icon v-if="step.number == 1"></case-icon>
+              <phenotype-icon v-if="step.number == 2"></phenotype-icon>
+              <variants-icon v-if="step.number == 3"></variants-icon>
+              <findings-icon v-if="step.number == 4"></findings-icon>
+            </div>
+          </div>
 
+          <div class="badges">
+            <div v-for="badge in step.badges" :key="badge.label">
+              <v-icon
+                dark
+                id="failed-icon"
+                v-if="false && badge.class && badge.class == 'failed'"
+                >error</v-icon
+              >
+              <v-badge
+                v-if="badge.count && badge.count != ''"
+                :content="badge.count"
+                :class="badge.class ? badge.class : ''"
+              >
+                {{ badge.label }}
+              </v-badge>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </v-card>
 </template>
 
 <script>
-
-import phenotypeIcon from '../partials/icons/phenotype-icon.vue'
-import caseIcon      from '../partials/icons/case-icon.vue'
-import findingsIcon  from '../partials/icons/findings-icon.vue'
-import variantsIcon  from '../partials/icons/variants-icon.vue'
-import { bus }       from '../../main'
+import phenotypeIcon from "../partials/icons/phenotype-icon.vue";
+import caseIcon from "../partials/icons/case-icon.vue";
+import findingsIcon from "../partials/icons/findings-icon.vue";
+import variantsIcon from "../partials/icons/variants-icon.vue";
+import { bus } from "../../main";
 
 export default {
-  name: 'workflow-new',
+  name: "workflow-new",
   components: {
     caseIcon,
     phenotypeIcon,
@@ -68,21 +94,21 @@ export default {
     analysisSteps: null,
     workflow: null
   },
-  data () {
+  data() {
     let self = this;
     return {
       steps: [],
       currentStepNumber: 1,
       currentStepComplete: null
-    }
+    };
   },
-  methods:  {
+  methods: {
     refresh: function() {
-        let self = this;
-        self.steps = []
-        let theSteps = [];
+      let self = this;
+      self.steps = [];
+      let theSteps = [];
 
-        /*
+      /*
         let lastCompleteStep = null;
         let lastCompleteTask = null;
         self.analysisSteps.forEach(function(step) {
@@ -105,28 +131,28 @@ export default {
         } 
         */
 
-
-        self.analysisSteps.forEach(function(step) {
-            let workflowStep = self.getWorkflowStep(step.key)
-            step.tasks.forEach(function(task) {
-              if (step.number == self.currentStepNumber) {
-                self.currentStepComplete = task.complete
-              }
-              let workflowTask = self.getWorkflowTask(workflowStep, task.key)
-              theSteps.push(
-                   {key:          task.key,
-                    stepKey:      step.key,
-                    number:       step.number, 
-                    name:         workflowStep.title, 
-                    complete:     task.complete, 
-                    current:      self.currentStepNumber == step.number, 
-                    description:  workflowTask.name, 
-                    badges:       task.badges, 
-                    workflowStep: workflowStep, 
-                    workflowTask: workflowTask})
-            })
-        })
-        self.steps = theSteps;
+      self.analysisSteps.forEach(function(step) {
+        let workflowStep = self.getWorkflowStep(step.key);
+        step.tasks.forEach(function(task) {
+          if (step.number == self.currentStepNumber) {
+            self.currentStepComplete = task.complete;
+          }
+          let workflowTask = self.getWorkflowTask(workflowStep, task.key);
+          theSteps.push({
+            key: task.key,
+            stepKey: step.key,
+            number: step.number,
+            name: workflowStep.title,
+            complete: task.complete,
+            current: self.currentStepNumber == step.number,
+            description: workflowTask.name,
+            badges: task.badges,
+            workflowStep: workflowStep,
+            workflowTask: workflowTask
+          });
+        });
+      });
+      self.steps = theSteps;
     },
     onStepClicked: function(theStep) {
       let self = this;
@@ -134,18 +160,17 @@ export default {
       self.currentStepComplete = theStep.complete;
       theStep.current = true;
       self.steps.forEach(function(step) {
-        step.current = (step.number == theStep.number ? true : false)
-      })
-      self.$emit('on-step-changed', theStep.number)
-      self.$emit('on-task-changed', theStep.number, theStep)
-      
+        step.current = step.number == theStep.number ? true : false;
+      });
+      self.$emit("on-step-changed", theStep.number);
+      self.$emit("on-task-changed", theStep.number, theStep);
     },
     getWorkflowStep: function(stepKey) {
       let self = this;
       if (self.workflow) {
         var theSteps = self.workflow.steps.filter(function(step) {
           return step.key == stepKey;
-        })
+        });
         return theSteps.length > 0 ? theSteps[0] : null;
       } else {
         return null;
@@ -155,36 +180,33 @@ export default {
       if (workflowStep) {
         var theTasks = workflowStep.tasks.filter(function(task) {
           return task.key == taskKey;
-        })
+        });
         return theTasks.length > 0 ? theTasks[0] : null;
       } else {
         return null;
       }
-    }, 
-    goToStepInProgress: function(){
-      let self = this; 
-      var stepInProgress = 0; 
-      for(var i=0; i<self.steps.length-1; i++){
-        if(self.steps[i].complete){
-          stepInProgress++; 
-        }
-        else if(!self.steps[i].complete){
-          break; 
+    },
+    goToStepInProgress: function() {
+      let self = this;
+      var stepInProgress = 0;
+      for (var i = 0; i < self.steps.length - 1; i++) {
+        if (self.steps[i].complete) {
+          stepInProgress++;
+        } else if (!self.steps[i].complete) {
+          break;
         }
       }
-      self.onStepClicked(self.steps[stepInProgress])
-    }, 
-
+      self.onStepClicked(self.steps[stepInProgress]);
+    }
   },
   mounted: function() {
     let self = this;
     this.refresh();
-    this.$emit('on-step-changed',self.currentStepNumber)
-    this.goToStepInProgress(); 
-    bus.$on('navigate-to-step', (stepIndex)=>{
-      self.onStepClicked(self.steps[stepIndex]); 
-    })
-    
+    this.$emit("on-step-changed", self.currentStepNumber);
+    this.goToStepInProgress();
+    bus.$on("navigate-to-step", stepIndex => {
+      self.onStepClicked(self.steps[stepIndex]);
+    });
   },
   watch: {
     currentStepComplete: function() {
@@ -192,28 +214,29 @@ export default {
       self.steps.forEach(function(step) {
         if (step.number == self.currentStepNumber) {
           step.complete = self.currentStepComplete;
-          self.$emit('on-task-completed', 
-                      {key: step.stepKey, complete: step.complete}, step)
+          self.$emit(
+            "on-task-completed",
+            { key: step.stepKey, complete: step.complete },
+            step
+          );
         }
-      })
-    },
-
+      });
+    }
   }
-}
+};
 </script>
-
 
 <style lang="sass">
 
 @import ../../assets/sass/variables
 
 .workflow-new
-  .theme--dark.v-toolbar.v-sheet 
+  .theme--dark.v-toolbar.v-sheet
     background-color: $wf-nav-color-top !important
 
 .v-application
-  #application-content.workflow-new 
-    .accent--text 
+  #application-content.workflow-new
+    .accent--text
       color: white !important
       caret-color: white !important
     #report-button
@@ -234,7 +257,7 @@ export default {
           color: white !important
           font-size: 17px !important
           padding-right: 2px
-      
+
 
       .v-progress-linear__background.primary
         background-color: white !important
@@ -243,7 +266,7 @@ export default {
       .v-progress-linear__determinate.primary
         background-color: white !important
         border-color: white !important
-        opacity: .8 !important  
+        opacity: .8 !important
 
 .workflow-card-new
   font-family: 'Raleway' !important
@@ -253,12 +276,12 @@ export default {
   flex-flow: row !important
   justify-content: center
 
-  
+
   background-color: $wf-nav-color !important
   color: white !important
 
   i.material-icons
-    color: white 
+    color: white
 
 
   .step-flow-container
@@ -294,7 +317,7 @@ export default {
         height: 25px
         cursor: pointer !important
 
-        
+
         i.material-icons
           font-size: 28px !important
 
@@ -311,9 +334,9 @@ export default {
       &.current
         .glyph
           i.material-icons
-            color: $wf-current  
+            color: $wf-current
 
-      
+
   .step-container
     display: flex
     flex-flow: row
@@ -322,7 +345,7 @@ export default {
       width: 300px
       display: flex
       flex-flow: column
-      
+
       .step-icon
         padding-top: 0px
         cursor: pointer !important
@@ -335,12 +358,12 @@ export default {
         cursor: pointer !important
 
       &.current
-        color: $wf-current 
+        color: $wf-current
         background-color: #ffffff24
         border-radius: 10px
         padding-top: 2px
         svg
-          fill: $wf-current 
+          fill: $wf-current
         .step-label
           font-weight: 600
 
@@ -355,7 +378,7 @@ export default {
           font-size: 20px !important
           color: $wf-badge-red-color !important
 
-        .v-badge 
+        .v-badge
           margin-right: 25px
           margin-bottom: 10px
           color: $wf-badge-text-color !important
@@ -391,19 +414,16 @@ export default {
               .v-badge__badge
                 background-color: $wf-badge-orange-color !important
                 color: white
-                
+
           &.poor-qual
             .v-badge__wrapper
               .v-badge__badge
                 background-color: $poor-qual-color !important
-                color: white      
-                
+                color: white
+
           &.not-sig
             .v-badge__wrapper
               .v-badge__badge
                 background-color: $not-significant-color !important
                 color: white
-
-
 </style>
-

@@ -3,7 +3,14 @@
     <v-icon v-if="clazz != 'level-unremarkable'" :class="clazz">
       check_circle
     </v-icon>
-    <app-icon v-if="clazz == 'level-unremarkable'" :class="clazz" width="18" height="18" style="padding-right: 4px" icon="not-significant">
+    <app-icon
+      v-if="clazz == 'level-unremarkable'"
+      :class="clazz"
+      width="18"
+      height="18"
+      style="padding-right: 4px"
+      icon="not-significant"
+    >
     </app-icon>
 
     <span class="variant-text">
@@ -15,13 +22,11 @@
   </div>
 </template>
 
-
 <script>
-
-import AppIcon                  from "../../partials/AppIcon.vue"
+import AppIcon from "../../partials/AppIcon.vue";
 
 export default {
-  name: 'variant-inspect-row',
+  name: "variant-inspect-row",
   components: {
     AppIcon
   },
@@ -32,24 +37,18 @@ export default {
     link: null
   },
   data() {
-    return {
-    }
+    return {};
   },
 
-
   methods: {
-
     capitalize: function(buf) {
       if (buf) {
         return this.globalApp.utility.capitalizeFirstLetter(buf);
       } else {
         return "";
       }
-    },
-
-
+    }
   },
-
 
   computed: {
     target: function() {
@@ -59,35 +58,21 @@ export default {
         return "_target";
       }
     }
-
   },
 
-  watch: {
+  watch: {},
 
-  },
+  filters: {},
 
-  filters: {
+  updated: function() {},
 
+  mounted: function() {},
 
-
-
-  },
-
-  updated: function() {
-
-  },
-
-  mounted: function() {
-  },
-
-  created: function() {
-  }
-
-
-}
+  created: function() {}
+};
 </script>
 
-<style lang="sass" >
+<style lang="sass">
 @import ../../../assets/sass/variables
 #variant-inspect
   .variant-inspect-body
@@ -161,7 +146,7 @@ export default {
           .chip__content, .v-chip__content
             background-color:  $danger-color
             color: white
-        
+
 
 
       .pheno-source
@@ -170,8 +155,4 @@ export default {
         font-size: 12px
         font-style: italic
         vertical-align: top
-
-
-
 </style>
-

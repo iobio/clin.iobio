@@ -1,122 +1,116 @@
 <template>
-    <div class="conservation-scores-viz exon">
-
-    </div>
+  <div class="conservation-scores-viz exon"></div>
 </template>
 
 <script>
-import * as d3 from 'd3';
-import BarchartD3 from '../../../d3/findings/BarChart.d3.js'
+import * as d3 from "d3";
+import BarchartD3 from "../../../d3/findings/BarChart.d3.js";
 
 export default {
-    name: 'conservation-scores-viz',
-    props: {
-      data: {
-        type: Array,
-        default: function() {
-          return [[]];
-        }
-      },
-      options: {
-        type: Object,
-        default: function() {
-          return {}
-        }
-      },
-      targetScore: {
-        type: Object,
-        default: function() {
-          return {}
-        }
-      },
-      exactScore: {
-        type: Object,
-        default: function() {
-          return {}
-        }
-      },
-      width: {
-        type: Number,
-        default: 130
-      },
-      height: {
-        type: Number,
-        default: 70
-      },
-      margin: {
-        type: Object,
-        default: function() {
-          return {top: 2, right: 2, bottom: 5, left: 4}
-        }
-      },
-      xValue: {
-        type: Function,
-        default: function(d) {
-          return d.x;
-        }
-      },
-      yValue: {
-        type: Function,
-        default: function(d) {
-          return d.y;
-        }
+  name: "conservation-scores-viz",
+  props: {
+    data: {
+      type: Array,
+      default: function() {
+        return [[]];
       }
     },
-    data() {
-      return {
-        chart: {}
+    options: {
+      type: Object,
+      default: function() {
+        return {};
       }
     },
-    created: function() {
-    },
-    mounted: function() {
-      this.draw();
-    },
-    methods: {
-      draw: function() {
-        var self = this;
-
-        this.chart =  BarchartD3()
-        this.chart.xValue(this.xValue)
-                  .yValue(this.yValue)
-                  .width(this.width)
-                  .height(this.height)
-                  .margin(this.margin);
-
-
-
-
-        this.setChart();
-      },
-      update: function() {
-        var self = this;
-        var container = d3.select(self.$el);
-
-        self.chart(container, self.data, self.exactScore, self.options);
-
-        setTimeout(function() {
-          self.setMarker();
-        },1000)
-      },
-      setChart: function() {
-        this.$emit('update-chart', this.chart);
-      },
-      setMarker: function() {
-        if (this.targetScore && this.exactScore) {
-          this.chart.setMarker()(this.targetScore, this.exactScore);
-        } else {
-          this.chart.clearMarker()();
-        }
+    targetScore: {
+      type: Object,
+      default: function() {
+        return {};
       }
     },
-    watch: {
-      data: function() {
-        this.update();
+    exactScore: {
+      type: Object,
+      default: function() {
+        return {};
+      }
+    },
+    width: {
+      type: Number,
+      default: 130
+    },
+    height: {
+      type: Number,
+      default: 70
+    },
+    margin: {
+      type: Object,
+      default: function() {
+        return { top: 2, right: 2, bottom: 5, left: 4 };
+      }
+    },
+    xValue: {
+      type: Function,
+      default: function(d) {
+        return d.x;
+      }
+    },
+    yValue: {
+      type: Function,
+      default: function(d) {
+        return d.y;
       }
     }
-}
-</script>
+  },
+  data() {
+    return {
+      chart: {}
+    };
+  },
+  created: function() {},
+  mounted: function() {
+    this.draw();
+  },
+  methods: {
+    draw: function() {
+      var self = this;
 
+      this.chart = BarchartD3();
+      this.chart
+        .xValue(this.xValue)
+        .yValue(this.yValue)
+        .width(this.width)
+        .height(this.height)
+        .margin(this.margin);
+
+      this.setChart();
+    },
+    update: function() {
+      var self = this;
+      var container = d3.select(self.$el);
+
+      self.chart(container, self.data, self.exactScore, self.options);
+
+      setTimeout(function() {
+        self.setMarker();
+      }, 1000);
+    },
+    setChart: function() {
+      this.$emit("update-chart", this.chart);
+    },
+    setMarker: function() {
+      if (this.targetScore && this.exactScore) {
+        this.chart.setMarker()(this.targetScore, this.exactScore);
+      } else {
+        this.chart.clearMarker()();
+      }
+    }
+  },
+  watch: {
+    data: function() {
+      this.update();
+    }
+  }
+};
+</script>
 
 <style lang="sass">
 @import ../../../assets/sass/variables
@@ -138,7 +132,7 @@ export default {
       font-family: 'Raleway'
       font-size: 11px
       fill: $text-color
-    line,  path 
+    line,  path
       fill: none
       stroke: lightgrey
       shape-rendering: crispEdges
@@ -155,7 +149,4 @@ export default {
   .bar.negative
     fill: rgba(20, 20, 20, 0.38)
     stroke: rgba(36, 36, 36, 0.3)
-
-
-
 </style>

@@ -1,7 +1,13 @@
 <template>
   <div class="variant-quality-row">
     <v-icon :class="info.clazz">
-      {{ info.clazz == 'good' ? 'check_circle' : ( info.clazz == 'poor' ? 'warning' : 'warning') }}
+      {{
+        info.clazz == "good"
+          ? "check_circle"
+          : info.clazz == "poor"
+          ? "warning"
+          : "warning"
+      }}
     </v-icon>
 
     <span class="variant-text">
@@ -10,58 +16,34 @@
   </div>
 </template>
 
-
 <script>
-
 export default {
-  name: 'variant-inspect-quality-row',
-  components: {
-  },
+  name: "variant-inspect-quality-row",
+  components: {},
   props: {
-    info: null,
+    info: null
   },
   data() {
-    return {
-    }
+    return {};
   },
 
+  methods: {},
 
-  methods: {
+  computed: {},
 
+  watch: {},
 
-  },
+  filters: {},
 
+  updated: function() {},
 
-  computed: {
+  mounted: function() {},
 
-  },
-
-  watch: {
-
-  },
-
-  filters: {
-
-
-
-
-  },
-
-  updated: function() {
-
-  },
-
-  mounted: function() {
-  },
-
-  created: function() {
-  }
-
-
-}
+  created: function() {}
+};
 </script>
 
-<style lang="sass" >
+<style lang="sass">
 @import ../../../assets/sass/variables
 #variant-inspect
   .variant-inspect-body
@@ -110,11 +92,4 @@ export default {
         margin-right: 0px
         color: $link-color
         margin-bottom: 2px
-
-
-
-
-
-
 </style>
-

@@ -1,66 +1,59 @@
 <template>
-
   <div id="toggle-button-container">
-    <span id="toggle-button-label" >{{ label }}</span>
-    <div id="toggle-button" :style="toggleButtonStyle" ></div>
+    <span id="toggle-button-label">{{ label }}</span>
+    <div id="toggle-button" :style="toggleButtonStyle"></div>
   </div>
-
 </template>
 
 <script>
-
 export default {
-    name: 'toggle-button',
-    props: {
-      label: null,
-      name1: null,
-      name2: null,
-      buttonWidth: null
-    },
-    data() {
-      return {
-        toggleButton: null
-      }
-    },
-    watch: {
-    },
-    created() {
-    },
-    mounted() {
-      this.init();
-    },
-    computed: {
-      toggleButtonStyle: function() {
-        let self = this;
-        if (self.buttonWidth) {
-          return {'width': self.buttonWidth + "px"};
-        } else {
-          return "{}";
-        }
-      }
-    },
-    methods: {
-      init: function() {
-        let self = this;
-
-        self.toggleButton = new ButtonStrip({
-          id: 'the-toggle-button'
-        });
-        self.toggleButton.addButton(self.name1, true, 'click', function(){
-          self.$emit("click", self.name1)
-        });
-        self.toggleButton.addButton(self.name2, false, 'click', function(){
-          self.$emit("click", self.name2)
-        });
-        self.toggleButton.append('#toggle-button');
-
+  name: "toggle-button",
+  props: {
+    label: null,
+    name1: null,
+    name2: null,
+    buttonWidth: null
+  },
+  data() {
+    return {
+      toggleButton: null
+    };
+  },
+  watch: {},
+  created() {},
+  mounted() {
+    this.init();
+  },
+  computed: {
+    toggleButtonStyle: function() {
+      let self = this;
+      if (self.buttonWidth) {
+        return { width: self.buttonWidth + "px" };
+      } else {
+        return "{}";
       }
     }
-}
+  },
+  methods: {
+    init: function() {
+      let self = this;
 
+      self.toggleButton = new ButtonStrip({
+        id: "the-toggle-button"
+      });
+      self.toggleButton.addButton(self.name1, true, "click", function() {
+        self.$emit("click", self.name1);
+      });
+      self.toggleButton.addButton(self.name2, false, "click", function() {
+        self.$emit("click", self.name2);
+      });
+      self.toggleButton.append("#toggle-button");
+    }
+  }
+};
 </script>
 
-<style lang="sass" >
+<style lang="sass">
 @import ../../../assets/sass/variables
 
 #toggle-button-container
@@ -111,11 +104,4 @@ export default {
   .active-strip-button .strip-button-text
     color: white
     font-weight: 500
-
-
-
-
 </style>
-
-
-

@@ -1,7 +1,7 @@
 .tooltip {
   display: block !important;
   z-index: 10000;
-  font-family: 'Raleway', 'Open Sans', 'Quattrocento Sans', 'sans serif';
+  font-family: "Raleway", "Open Sans", "Quattrocento Sans", "sans serif";
   font-size: 14px;
   font-weight: 500;
 }
@@ -89,21 +89,21 @@
   color: black;
   padding: 24px;
   border-radius: 5px;
-  box-shadow: 0 5px 30px rgba(black, .1);
+  box-shadow: 0 5px 30px rgba(black, 0.1);
 }
 
 .tooltip.popover .popover-arrow {
   border-color: black;
 }
 
-.tooltip[aria-hidden='true'] {
+.tooltip[aria-hidden="true"] {
   visibility: hidden;
   opacity: 0;
-  transition: opacity .15s, visibility .15s;
+  transition: opacity 0.15s, visibility 0.15s;
 }
 
-.tooltip[aria-hidden='false'] {
+.tooltip[aria-hidden="false"] {
   visibility: visible;
   opacity: 1;
-  transition: opacity .15s;
+  transition: opacity 0.15s;
 }

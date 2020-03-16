@@ -1,69 +1,66 @@
 <template>
-
-    <v-dialog  width="500"  v-model="showPopup"  >
-      <template v-slot:activator="{ on }">
-        <v-btn class="info-button"  text  v-on="on">
-          <v-icon>help</v-icon>
+  <v-dialog width="500" v-model="showPopup">
+    <template v-slot:activator="{ on }">
+      <v-btn class="info-button" text v-on="on">
+        <v-icon>help</v-icon>
+      </v-btn>
+    </template>
+    <v-card class="info-card full-width">
+      <v-card-title style="justify-content:space-between">
+        <span class="info-title">{{ info[name].title }}</span>
+        <v-btn @click="onClose" text class="close-button">
+          <v-icon>close</v-icon>
         </v-btn>
-      </template>
-      <v-card class="info-card full-width">
-        <v-card-title style="justify-content:space-between">
-          <span class="info-title">{{ info[name].title }}</span>
-          <v-btn  @click="onClose" text class="close-button">
-            <v-icon>close</v-icon>
-          </v-btn>
-        </v-card-title>
-        <v-card-text class="info-description" v-html="info[name].description">
-        </v-card-text>
-        <div class="info-publication"  v-if="info[name].publication">
-          <a :href="info[name].publicationUrl" target="_info">{{ info[name].publication }}</a>
-        </div>
-      </v-card>
-    </v-dialog>
-
+      </v-card-title>
+      <v-card-text class="info-description" v-html="info[name].description">
+      </v-card-text>
+      <div class="info-publication" v-if="info[name].publication">
+        <a :href="info[name].publicationUrl" target="_info">{{
+          info[name].publication
+        }}</a>
+      </div>
+    </v-card>
+  </v-dialog>
 </template>
 
 <script>
-
 export default {
-    name: 'info-popup',
-    props: {
-      name: String
-    },
-    data() {
-      return {
-        showPopup: false,
-        info: {
-            'revel': {
-                title: 'REVEL Score',
-                description: 'Revel scores only apply to missense variants.<br><br>The score is a predicted pathogenicity score from 0 to 1 where 0 is benign and 1 is pathogenic.<br><br>Revel scores are open to interpretation, but as a starting point, we have categorized a score > .5 as ‘moderate’ and a score > .75 as ‘high’.',
-                publication: 'REVEL: An Ensemble Method for Predicting the Pathogenicity of Rare Missense Variants',
-                publicationUrl: 'https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5065685/'
-
-            },
-            'gnomAD': {
-                title: 'Allele Frequency from gnomAD',
-                description: 'The variant allele frequency is obtained from gnomAD genomes only. (In an upcoming release, gene.iobio will obtain allele frequencies from gnomAD Exomes as well.)',
-                publication: 'gnomAD site',
-                publicationUrl: 'https://gnomad.broadinstitute.org/'
-
-            }
+  name: "info-popup",
+  props: {
+    name: String
+  },
+  data() {
+    return {
+      showPopup: false,
+      info: {
+        revel: {
+          title: "REVEL Score",
+          description:
+            "Revel scores only apply to missense variants.<br><br>The score is a predicted pathogenicity score from 0 to 1 where 0 is benign and 1 is pathogenic.<br><br>Revel scores are open to interpretation, but as a starting point, we have categorized a score > .5 as ‘moderate’ and a score > .75 as ‘high’.",
+          publication:
+            "REVEL: An Ensemble Method for Predicting the Pathogenicity of Rare Missense Variants",
+          publicationUrl:
+            "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5065685/"
+        },
+        gnomAD: {
+          title: "Allele Frequency from gnomAD",
+          description:
+            "The variant allele frequency is obtained from gnomAD genomes only. (In an upcoming release, gene.iobio will obtain allele frequencies from gnomAD Exomes as well.)",
+          publication: "gnomAD site",
+          publicationUrl: "https://gnomad.broadinstitute.org/"
         }
-
       }
-    },
-    methods: {
-
-      onClose: function() {
-        this.showPopup = false;
-      }
+    };
+  },
+  methods: {
+    onClose: function() {
+      this.showPopup = false;
     }
-}
-
+  }
+};
 </script>
 
-
-<style lang="sass" >
+<style lang="sass">
 @import ../../../assets/sass/variables
 
 .info-button

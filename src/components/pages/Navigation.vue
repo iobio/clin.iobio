@@ -88,44 +88,35 @@ header.theme--dark.v-sheet
       margin-left: 5px
       padding-bottom: 6px
       min-width: 130px
-
-
-
-
-
 </style>
 
 <template>
   <div>
-    <v-toolbar fixed   height="45"   dark  >
-
-
-      <v-toolbar-title v-text="title">
-      </v-toolbar-title>
-
-
-
+    <v-toolbar fixed height="45" dark>
+      <v-toolbar-title v-text="title"> </v-toolbar-title>
 
       <v-menu
-      offset-y
-      :close-on-content-click="false"
-      :nudge-width="350"
-      v-model="showCaseMenu"
+        offset-y
+        :close-on-content-click="false"
+        :nudge-width="350"
+        v-model="showCaseMenu"
       >
-      <template v-slot:activator="{ on }">
-        <v-btn text v-on="on" v-if="caseSummary && caseSummary.name">
-          {{ caseSummary.name }}
-        </v-btn>
-      </template>
+        <template v-slot:activator="{ on }">
+          <v-btn text v-on="on" v-if="caseSummary && caseSummary.name">
+            {{ caseSummary.name }}
+          </v-btn>
+        </template>
 
-        <v-card>
-        </v-card>
+        <v-card> </v-card>
       </v-menu>
 
-
-
       <span id="workflow-progress">
-        <v-progress-linear class="primary--text" :value="percentComplete" style="margin-bottom:0px;width:120px;margin-top:4px" height="8" >
+        <v-progress-linear
+          class="primary--text"
+          :value="percentComplete"
+          style="margin-bottom:0px;width:120px;margin-top:4px"
+          height="8"
+        >
         </v-progress-linear>
         <span class="percent-label">{{ percentComplete }}% complete</span>
       </span>
@@ -133,11 +124,11 @@ header.theme--dark.v-sheet
       <v-spacer></v-spacer>
 
       <v-menu
-      v-if="false"
-      offset-y
-      :close-on-content-click="false"
-      :nudge-width="350"
-      v-model="showNotesMenu"
+        v-if="false"
+        offset-y
+        :close-on-content-click="false"
+        :nudge-width="350"
+        v-model="showNotesMenu"
       >
         <!-- <v-btn  text slot="activator">
           Notes
@@ -148,15 +139,15 @@ header.theme--dark.v-sheet
           </v-btn>
         </template>
 
-        <v-card>
-        </v-card>
+        <v-card> </v-card>
       </v-menu>
 
       <v-menu
-      offset-y v-if="false"
-      :close-on-content-click="false"
-      :nudge-width="350"
-      v-model="showInstructionsMenu"
+        offset-y
+        v-if="false"
+        :close-on-content-click="false"
+        :nudge-width="350"
+        v-model="showInstructionsMenu"
       >
         <!-- <v-btn  text slot="activator">
           Instructions
@@ -167,8 +158,7 @@ header.theme--dark.v-sheet
           </v-btn>
         </template>
 
-        <v-card>
-        </v-card>
+        <v-card> </v-card>
       </v-menu>
 
       <v-btn light tile id="report-button" @click="createAnalysisPDF">
@@ -177,27 +167,21 @@ header.theme--dark.v-sheet
       </v-btn>
 
       <save-button
-      v-if="launchedFromMosaic"
+        v-if="launchedFromMosaic"
         :showing-save-modal="true"
         :analysis="analysis"
         @save-modal:set-visibility="toggleSaveModal"
       />
-
-
     </v-toolbar>
-
-
-
   </div>
 </template>
 
 <script>
-
-import { bus }     from '../../main';
-import SaveButton  from '../partials/SaveButton.vue'
+import { bus } from "../../main";
+import SaveButton from "../partials/SaveButton.vue";
 
 export default {
-  name: 'navigation',
+  name: "navigation",
   components: {
     SaveButton
   },
@@ -206,10 +190,10 @@ export default {
     analysis: null,
     launchedFromMosaic: null
   },
-  data () {
+  data() {
     let self = this;
     return {
-      title: 'clin.iobio',
+      title: "clin.iobio",
       clipped: false,
       showCaseMenu: false,
       showPhenotypesMenu: false,
@@ -217,29 +201,24 @@ export default {
       showVariantsMenu: false,
       showNotesMenu: false,
       showInstructionsMenu: false
-    }
+    };
   },
-  watch: {
-  },
+  watch: {},
   methods: {
     round(value, places) {
-      return +(Math.round(value + "e+" + places)  + "e-" + places);
+      return +(Math.round(value + "e+" + places) + "e-" + places);
     },
-    createAnalysisPDF(){
+    createAnalysisPDF() {
       bus.$emit("getAnalysisObject");
     },
 
     toggleSaveModal(bool) {
-      this.$emit("show-save-analysis", bool)
-    },
-
+      this.$emit("show-save-analysis", bool);
+    }
   },
-  created: function() {
-  },
-  mounted: function() {
-
-  },
-  computed:  {
+  created: function() {},
+  mounted: function() {},
+  computed: {
     percentComplete: function() {
       let self = this;
       let taskCount = 0;
@@ -250,11 +229,10 @@ export default {
           if (task.complete) {
             completeTaskCount++;
           }
-        })
-      })
+        });
+      });
       return self.round(completeTaskCount / taskCount, 2) * 100;
     }
   }
-}
-
+};
 </script>

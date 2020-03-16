@@ -1,90 +1,78 @@
 <template>
-    <div class="pedigree-genotype-chart">
-
-    </div>
+  <div class="pedigree-genotype-chart"></div>
 </template>
 
 <script>
-
-
-import * as d3 from 'd3'
-import PedigreeGenotypeChartD3 from '../../../d3/findings/PedigreeGenotypeChart.d3.js'
+import * as d3 from "d3";
+import PedigreeGenotypeChartD3 from "../../../d3/findings/PedigreeGenotypeChart.d3.js";
 
 export default {
-
-    name: 'pedigree-genotype-viz',
-    props: {
-      data: {},
-      margin:{
-        type: Object,
-        default: function() {
-          return {top: 10, bottom: 10, left: 10, right: 10};
-        }
-      },
-      options: {
-        type: Object,
-        default: function() {
-          return {};
-        }
-      },
-      nodeWidth: {
-        type: Number,
-        default: 58
-      },
-      nodePadding: {
-        type: Number,
-        default: 58
-      },
-      nodeVerticalPadding: {
-        type: Number,
-        default: 50
+  name: "pedigree-genotype-viz",
+  props: {
+    data: {},
+    margin: {
+      type: Object,
+      default: function() {
+        return { top: 10, bottom: 10, left: 10, right: 10 };
       }
     },
-    data() {
-      return {
-        chart: {}
+    options: {
+      type: Object,
+      default: function() {
+        return {};
       }
     },
-    created: function() {
+    nodeWidth: {
+      type: Number,
+      default: 58
     },
-    mounted: function() {
-      this.draw();
+    nodePadding: {
+      type: Number,
+      default: 58
     },
-    methods: {
-      draw: function() {
-        var self = this;
-
-        this.chart =  PedigreeGenotypeChartD3()
-          .margin(self.margin)
-          .nodeWidth(self.nodeWidth)
-          .nodePadding(self.nodePadding)
-          .nodeVerticalPadding(self.nodeVerticalPadding)
-
-          this.setChart();
-      },
-      update: function() {
-        var self = this;
-        if (self.data) {
-          var selection = d3.select(self.$el);
-          self.chart(selection, self.data, self.options);
-        }
-      },
-      setChart: function() {
-        this.$emit('updateChart', this.chart);
-      },
-
-    },
-    watch: {
-      data: function() {
-        this.update();
-      }
-
+    nodeVerticalPadding: {
+      type: Number,
+      default: 50
     }
+  },
+  data() {
+    return {
+      chart: {}
+    };
+  },
+  created: function() {},
+  mounted: function() {
+    this.draw();
+  },
+  methods: {
+    draw: function() {
+      var self = this;
 
-}
+      this.chart = PedigreeGenotypeChartD3()
+        .margin(self.margin)
+        .nodeWidth(self.nodeWidth)
+        .nodePadding(self.nodePadding)
+        .nodeVerticalPadding(self.nodeVerticalPadding);
+
+      this.setChart();
+    },
+    update: function() {
+      var self = this;
+      if (self.data) {
+        var selection = d3.select(self.$el);
+        self.chart(selection, self.data, self.options);
+      }
+    },
+    setChart: function() {
+      this.$emit("updateChart", this.chart);
+    }
+  },
+  watch: {
+    data: function() {
+      this.update();
+    }
+  }
+};
 </script>
 
-<style lang="sass">
-</style>
-
-
+<style lang="sass"></style>

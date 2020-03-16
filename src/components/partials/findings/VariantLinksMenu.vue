@@ -1,90 +1,72 @@
 <template>
   <span>
-    <v-menu
-    offset-y
-    :close-on-content-click="false"
-    bottom
-    v-model="showMenu"
-    >
-
-      <v-btn id="show-variant-links-button"
-       flat
-       slot="activator"
-       v-tooltip.top-center="`External links to variant info (e.g. VarSome, UCSC Browser, etc.`"
+    <v-menu offset-y :close-on-content-click="false" bottom v-model="showMenu">
+      <v-btn
+        id="show-variant-links-button"
+        flat
+        slot="activator"
+        v-tooltip.top-center="
+          `External links to variant info (e.g. VarSome, UCSC Browser, etc.`
+        "
       >
         <v-icon>open_in_new</v-icon> External links
       </v-btn>
 
-      <hr style="margin-top:0px;margin-bottom:0px">
+      <hr style="margin-top:0px;margin-bottom:0px" />
 
       <v-list class="variant-links">
-
-          <v-list-tile
-           v-for="link in links"
-           :key="link.name">
-
-            <v-list-tile-title>
-              <v-icon style="font-size:14px;margin-right:3px">open_in_new</v-icon>
-              <a
-                :href="link.url"
-                :target="`_` + link.name"
-                class="variant-link"
-                >
-                  {{ link.display }} 
-                  <span class="rsid" v-if="info.rsId && link.display == 'dbSNP'">{{ info.rsId }}</span>
-              </a>
-            </v-list-tile-title>
-
-          </v-list-tile>
-
+        <v-list-tile v-for="link in links" :key="link.name">
+          <v-list-tile-title>
+            <v-icon style="font-size:14px;margin-right:3px">open_in_new</v-icon>
+            <a :href="link.url" :target="`_` + link.name" class="variant-link">
+              {{ link.display }}
+              <span class="rsid" v-if="info.rsId && link.display == 'dbSNP'">{{
+                info.rsId
+              }}</span>
+            </a>
+          </v-list-tile-title>
+        </v-list-tile>
       </v-list>
-
     </v-menu>
-
   </span>
 </template>
 
 <script>
-
-
-
 export default {
-  name: 'variant-links-menu',
-  components: {
-  },
+  name: "variant-links-menu",
+  components: {},
   props: {
     geneModel: null,
     selectedGene: null,
     selectedVariant: null,
     info: null
   },
-  data () {
+  data() {
     return {
       showMenu: null,
       links: null
-    }
+    };
   },
-  watch: {
-  },
+  watch: {},
   methods: {
     onClickLink: function(link) {
       window.open(link.url, "_" + link.display);
     },
     initLinks: function() {
       if (this.selectedGene && this.selectedVariant && this.geneModel) {
-        this.links = this.geneModel.getVariantLinks(this.selectedGene.gene_name, this.selectedVariant);
+        this.links = this.geneModel.getVariantLinks(
+          this.selectedGene.gene_name,
+          this.selectedVariant
+        );
       }
     }
   },
-  created: function() {
-  },
+  created: function() {},
   mounted: function() {
     this.initLinks();
   },
-  updated: function() {
-  },
-  computed: {
-  },
+  updated: function() {},
+  computed: {},
   watch: {
     showMenu: function() {
       this.initLinks();
@@ -93,7 +75,7 @@ export default {
       this.initLinks();
     }
   }
-}
+};
 </script>
 
 <style lang="sass">
@@ -131,8 +113,4 @@ export default {
 .variant-link
   .rsid
     color: $text-color
-
-
-
-
 </style>

@@ -10,53 +10,53 @@
 </template>
 
 <script>
-import dTree from '../../utils/dtree.js';
-import { makeMultiDTreeData } from '../../utils/pedigreePreprocess.js';
-const pedigreeColors = {affected: "#ccc", selected: "rgb(53, 134, 192)"};
+import dTree from "../../utils/dtree.js";
+import { makeMultiDTreeData } from "../../utils/pedigreePreprocess.js";
+const pedigreeColors = { affected: "#ccc", selected: "rgb(53, 134, 192)" };
 
 export default {
-  name: 'PedigreeGraph',
+  name: "PedigreeGraph",
   props: {
     data: {
       type: Array,
-      default: () => [],
+      default: () => []
     },
     enableProbandSelect: {
       type: Boolean,
-      default: false,
+      default: false
     },
     height: {
       type: Number,
-      default: 300,
+      default: 300
     },
     highlighted: {
       type: [String, Number],
-      default: null,
+      default: null
     },
     linkNodes: {
       type: Boolean,
-      default: true,
+      default: true
     },
     path: {
       type: String,
-      default: '',
+      default: ""
     },
     strokeWidth: {
       type: Number,
-      default: 2,
+      default: 2
     },
     // eslint-disable-next-line
     id: {
-      validator: (val) => val === null || typeof val === 'string' || typeof val === 'number',
-      required: true,
+      validator: val =>
+        val === null || typeof val === "string" || typeof val === "number",
+      required: true
     },
     width: {
       type: Number,
-      default: 300,
+      default: 300
     },
 
     pedigree: null
-
   },
   watch: {
     id() {
@@ -71,17 +71,14 @@ export default {
     },
     highlighted() {
       this.applyHighlight();
-    },
+    }
   },
   mounted() {
     this.init();
     // this.highlightProband();
-      },
+  },
   methods: {
-
-
     init() {
-
       const self = this;
       const pedigraph = self.$refs.pedigreeGraph;
       const pedigree = this.data;
@@ -100,7 +97,7 @@ export default {
         debug: true,
         height: self.height,
         width: self.width,
-        strokeWidth: this.strokeWidth,
+        strokeWidth: this.strokeWidth
         // callbacks: {
         //   nodeHover(name, extra) {
         //     self.$emit('update:highlighted', extra.id);
@@ -125,33 +122,35 @@ export default {
     applyHighlight() {
       // find the element with the appropriate id
       const self = this;
-      d3.select(this.$el).selectAll('rect')
-              .attr('fill', (d) => {
-                if (!d.data.extra) {
-                  return 'white';
-                }
-                if (Number(d.data.extra.id) === (self.highlighted)) {
-                  return pedigreeColors.highlighted;
-                }
-                if (d.data.extra.affected) {
-                  return pedigreeColors.affected;
-                }
-                return 'white';
-              });
-      d3.select(this.$el).selectAll('circle')
-              .attr('fill', (d) => {
-                if (!d.data.extra) {
-                  return 'white';
-                }
-                if (Number(d.data.extra.id) === Number(self.highlighted)) {
-                  return pedigreeColors.highlighted;
-                }
-                if (d.data.extra.affected) {
-                  return pedigreeColors.affected;
-                }
-                return 'white';
-              });
-    },
-  },
+      d3.select(this.$el)
+        .selectAll("rect")
+        .attr("fill", d => {
+          if (!d.data.extra) {
+            return "white";
+          }
+          if (Number(d.data.extra.id) === self.highlighted) {
+            return pedigreeColors.highlighted;
+          }
+          if (d.data.extra.affected) {
+            return pedigreeColors.affected;
+          }
+          return "white";
+        });
+      d3.select(this.$el)
+        .selectAll("circle")
+        .attr("fill", d => {
+          if (!d.data.extra) {
+            return "white";
+          }
+          if (Number(d.data.extra.id) === Number(self.highlighted)) {
+            return pedigreeColors.highlighted;
+          }
+          if (d.data.extra.affected) {
+            return pedigreeColors.affected;
+          }
+          return "white";
+        });
+    }
+  }
 };
 </script>

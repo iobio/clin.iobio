@@ -7,21 +7,17 @@
 </template>
 
 <script>
-import ClinHome from './components/pages/ClinHome.vue';
+import ClinHome from "./components/pages/ClinHome.vue";
 
 export default {
-  name: 'App',
+  name: "App",
 
   components: {
-    ClinHome,
+    ClinHome
   },
 
-  data: () => ({
+  data: () => ({}),
 
-  }),
-
-  methods: {
-
-  },
+  methods: {}
 };
 </script>

@@ -1,24 +1,42 @@
 <template>
   <div class="variant-row">
-    <v-icon v-if="selectedVariant.inheritance.indexOf('n/a') == -1" class="level-high">
+    <v-icon
+      v-if="selectedVariant.inheritance.indexOf('n/a') == -1"
+      class="level-high"
+    >
       check_circle
     </v-icon>
-    <app-icon v-if="selectedVariant.inheritance.indexOf('n/a') >= 0" class="level-unremarkable" width="18" height="18" style="padding-right: 4px" icon="not-significant">
+    <app-icon
+      v-if="selectedVariant.inheritance.indexOf('n/a') >= 0"
+      class="level-unremarkable"
+      width="18"
+      height="18"
+      style="padding-right: 4px"
+      icon="not-significant"
+    >
     </app-icon>
 
-    <app-icon v-if="selectedVariant.inheritance.indexOf('n/a') == -1" :icon="selectedVariant.inheritance" style="margin-right:4px" width="16" height="16"></app-icon>
-    
-    <span style="width:100px;line-height:14px">{{ selectedVariant.inheritance == 'denovo' ? 'de novo' : selectedVariant.inheritance }}</span>
+    <app-icon
+      v-if="selectedVariant.inheritance.indexOf('n/a') == -1"
+      :icon="selectedVariant.inheritance"
+      style="margin-right:4px"
+      width="16"
+      height="16"
+    ></app-icon>
+
+    <span style="width:100px;line-height:14px">{{
+      selectedVariant.inheritance == "denovo"
+        ? "de novo"
+        : selectedVariant.inheritance
+    }}</span>
   </div>
 </template>
 
-
 <script>
-
-import AppIcon                  from "../../partials/AppIcon.vue"
+import AppIcon from "../../partials/AppIcon.vue";
 
 export default {
-  name: 'variant-inspect-inheritance-row',
+  name: "variant-inspect-inheritance-row",
   components: {
     AppIcon
   },
@@ -26,56 +44,34 @@ export default {
     selectedVariant: null
   },
   data() {
-    return {
-    }
+    return {};
   },
 
-
   methods: {
-
     capitalize: function(buf) {
       if (buf) {
         return this.globalApp.utility.capitalizeFirstLetter(buf);
       } else {
         return "";
       }
-    },
-
-
+    }
   },
 
+  computed: {},
 
-  computed: {
-    
+  watch: {},
 
-  },
+  filters: {},
 
-  watch: {
+  updated: function() {},
 
-  },
+  mounted: function() {},
 
-  filters: {
-
-
-
-
-  },
-
-  updated: function() {
-
-  },
-
-  mounted: function() {
-  },
-
-  created: function() {
-  }
-
-
-}
+  created: function() {}
+};
 </script>
 
-<style lang="sass" >
+<style lang="sass">
 @import ../../../assets/sass/variables
 #variant-inspect
   .variant-inspect-body
@@ -153,8 +149,4 @@ export default {
         font-size: 12px
         font-style: italic
         vertical-align: top
-
-
-
 </style>
-

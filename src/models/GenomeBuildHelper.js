@@ -1,60 +1,56 @@
 export class GenomeBuildHelper {
-
   constructor(globalApp) {
     this.globalApp = globalApp;
     this.currentSpecies = null;
     this.currentBuild = null;
     this.speciesList = [];
     this.speciesNameToSpecies = {}; // map species name to the species object
-    this.speciesToBuilds = {};      // map species to its genome builds
-    this.buildNameToBuild = {};     //
+    this.speciesToBuilds = {}; // map species to its genome builds
+    this.buildNameToBuild = {}; //
 
     this.DEFAULT_SPECIES = "Human";
-    this.DEFAULT_BUILD   = "GRCh37";
+    this.DEFAULT_BUILD = "GRCh37";
 
-    this.ALIAS_UCSC                            = "UCSC";
-    this.ALIAS_REFSEQ_ASSEMBLY_ACCESSION_RANGE = "REFSEQ ASSEMBLY ACCESSION RANGE";
+    this.ALIAS_UCSC = "UCSC";
+    this.ALIAS_REFSEQ_ASSEMBLY_ACCESSION_RANGE =
+      "REFSEQ ASSEMBLY ACCESSION RANGE";
 
     this.RESOURCE_CLINVAR_VCF_OFFLINE = "CLINVAR VCF OFFLINE";
-    this.RESOURCE_CLINVAR_POSITION    = "CLINVAR EUTILS BASE POSITION";
-    this.RESOURCE_ENSEMBL_URL         = "ENSEMBL URL";
+    this.RESOURCE_CLINVAR_POSITION = "CLINVAR EUTILS BASE POSITION";
+    this.RESOURCE_ENSEMBL_URL = "ENSEMBL URL";
 
-    this.genomeBuildServer            = this.globalApp.HTTP_SERVICES + "genomebuild/";
-
+    this.genomeBuildServer = this.globalApp.HTTP_SERVICES + "genomebuild/";
   }
 
   promiseInit(options) {
     var me = this;
-    if (options && options.hasOwnProperty('DEFAULT_SPECIES')) {
+    if (options && options.hasOwnProperty("DEFAULT_SPECIES")) {
       me.DEFAULT_SPECIES = options.DEFAULT_SPECIES;
     }
-    if (options && options.hasOwnProperty('DEFAULT_BUILD')) {
+    if (options && options.hasOwnProperty("DEFAULT_BUILD")) {
       me.DEFAULT_BUILD = options.DEFAULT_BUILD;
     }
     return new Promise(function(resolve, reject) {
-
       $.ajax({
-            url: me.genomeBuildServer,
-            jsonp: "callback",
-            type: "GET",
-            dataType: "jsonp",
-            error: function( xhr, status, errorThrown ) {
-
-                console.log( "Error: " + errorThrown );
-                console.log( "Status: " + status );
-                console.log( xhr );
-                reject("An error occurred when loading genomebuild data: " + errorThrown);
+        url: me.genomeBuildServer,
+        jsonp: "callback",
+        type: "GET",
+        dataType: "jsonp",
+        error: function(xhr, status, errorThrown) {
+          console.log("Error: " + errorThrown);
+          console.log("Status: " + status);
+          console.log(xhr);
+          reject(
+            "An error occurred when loading genomebuild data: " + errorThrown
+          );
         },
-            success: function(allSpecies) {
+        success: function(allSpecies) {
+          me.init(allSpecies);
 
-              me.init(allSpecies);
-
-              resolve();
-            }
-        });
-
+          resolve();
+        }
+      });
     });
-
   }
 
   init(allSpecies) {
@@ -64,10 +60,9 @@ export class GenomeBuildHelper {
       me.speciesNameToSpecies[species.name] = species;
 
       // Collect all species into a list to use for dropdown
-      me.speciesList.push({name: species.name, value: species.name});
+      me.speciesList.push({ name: species.name, value: species.name });
 
       species.genomeBuilds.forEach(function(genomeBuild) {
-
         // Map the build name to its build object
         me.buildNameToBuild[genomeBuild.name] = genomeBuild;
 
@@ -78,8 +73,7 @@ export class GenomeBuildHelper {
           me.speciesToBuilds[species.name] = builds;
         }
         builds.push(genomeBuild);
-
-      })
+      });
     });
 
     // Default the species and build
@@ -98,7 +92,6 @@ export class GenomeBuildHelper {
   setCurrentBuild(buildName) {
     this.currentBuild = this.buildNameToBuild[buildName];
   }
-
 
   getCurrentSpecies() {
     return this.currentSpecies ? this.currentSpecies : null;
@@ -125,7 +118,7 @@ export class GenomeBuildHelper {
       this.currentBuild.references.forEach(function(theReference) {
         if (!fastaPath) {
           if (theReference.name == ref || theReference.alias == ref) {
-            if (ref.indexOf('chr') == 0) {
+            if (ref.indexOf("chr") == 0) {
               fastaPath = theReference.fastaPathUCSC;
             } else {
               fastaPath = theReference.fastaPathEnsembl;
@@ -138,7 +131,7 @@ export class GenomeBuildHelper {
   }
 
   getReferenceLength(ref) {
-    var theRef =  this.getReference(ref);
+    var theRef = this.getReference(ref);
     return theRef ? theRef.length : null;
   }
 
@@ -180,7 +173,6 @@ export class GenomeBuildHelper {
     return theResource;
   }
 
-
   /*
     Returns an array of all of the genome builds that could be determined
     from bam and vcf headers.  In the correct case, only one (or zero)
@@ -199,46 +191,45 @@ export class GenomeBuildHelper {
     for (relationship in bamHeaderMap) {
       var header = bamHeaderMap[relationship];
       var buildInfo = me.getBuildFromBamHeader(header);
-      me.parseBuildInfo(buildInfo, relationship, 'bam', theBuilds);
+      me.parseBuildInfo(buildInfo, relationship, "bam", theBuilds);
     }
     for (relationship in vcfHeaderMap) {
       var header = vcfHeaderMap[relationship];
       var buildInfo = me.getBuildFromVcfHeader(header);
-      me.parseBuildInfo(buildInfo, relationship, 'vcf', theBuilds);
+      me.parseBuildInfo(buildInfo, relationship, "vcf", theBuilds);
     }
 
     return theBuilds;
   }
 
-
   getBuildFromBamHeader(header) {
     var me = this;
-    var buildInfo = {species: null, build: null, references: {}};
+    var buildInfo = { species: null, build: null, references: {} };
 
     if (header) {
       var lines = header.split("\n");
-      for ( var i=0; i<lines.length > 0; i++) {
-         var fields = lines[i].split("\t");
-         if (fields[0] == "@SQ") {
-            var fieldMap = {};
-            fields.forEach(function(field) {
-              var values = field.split(':');
-              fieldMap[ values[0] ] = values[1]
-            })
-            var refName   = fieldMap["SN"];
-            var refLength = 1+parseInt(fieldMap["LN"]);
-            var species   = fieldMap["SP"];
-            var assembly  = fieldMap["AS"]
-            if (refName && refLength) {
+      for (var i = 0; i < lines.length > 0; i++) {
+        var fields = lines[i].split("\t");
+        if (fields[0] == "@SQ") {
+          var fieldMap = {};
+          fields.forEach(function(field) {
+            var values = field.split(":");
+            fieldMap[values[0]] = values[1];
+          });
+          var refName = fieldMap["SN"];
+          var refLength = 1 + parseInt(fieldMap["LN"]);
+          var species = fieldMap["SP"];
+          var assembly = fieldMap["AS"];
+          if (refName && refLength) {
             buildInfo.references[refName] = refLength;
-            }
-            if (!buildInfo.species && species ) {
-              buildInfo.species = species;
-            }
-            if (!buildInfo.build && assembly) {
-              buildInfo.build = assembly;
-            }
-         }
+          }
+          if (!buildInfo.species && species) {
+            buildInfo.species = species;
+          }
+          if (!buildInfo.build && assembly) {
+            buildInfo.build = assembly;
+          }
+        }
       }
     }
 
@@ -246,9 +237,9 @@ export class GenomeBuildHelper {
   }
 
   getBuildFromVcfHeader(header) {
-      var me = this;
+    var me = this;
 
-    var buildInfo = {species: null, build: null, references: {}};
+    var buildInfo = { species: null, build: null, references: {} };
     if (header) {
       header.split("\n").forEach(function(headerRec) {
         if (headerRec.indexOf("##contig=<") == 0) {
@@ -266,8 +257,8 @@ export class GenomeBuildHelper {
             }
             if (!buildInfo.build && field.indexOf("assembly=") == 0) {
               var buildString = field.split("assembly=")[1];
-              if (buildString.indexOf("\"") == 0) {
-                buildInfo.build = buildString.split("\"")[1];
+              if (buildString.indexOf('"') == 0) {
+                buildInfo.build = buildString.split('"')[1];
               } else if (buildString.indexOf("'") == 0) {
                 buildInfo.build = buildString.split("'")[1];
               } else {
@@ -276,15 +267,15 @@ export class GenomeBuildHelper {
             }
             if (!buildInfo.species && field.indexOf("species=") == 0) {
               var speciesString = field.split("species=")[1];
-              if (speciesString.indexOf("\"") == 0) {
-                buildInfo.species = speciesString.split("\"")[1];
+              if (speciesString.indexOf('"') == 0) {
+                buildInfo.species = speciesString.split('"')[1];
               } else if (speciesString.indexOf("'") == 0) {
                 buildInfo.species = speciesString.split("'")[1];
               } else {
                 buildInfo.species = speciesString;
               }
             }
-          })
+          });
           if (refName && refLength) {
             buildInfo.references[refName] = refLength;
           }
@@ -294,11 +285,16 @@ export class GenomeBuildHelper {
     return buildInfo;
   }
 
-
   parseBuildInfo(buildInfo, relationship, type, theBuilds) {
     var me = this;
 
-    if (buildInfo == null || (buildInfo.species == null && buildInfo.build == null && (buildInfo.references == null || Object.keys(buildInfo.references).length == 0))) {
+    if (
+      buildInfo == null ||
+      (buildInfo.species == null &&
+        buildInfo.build == null &&
+        (buildInfo.references == null ||
+          Object.keys(buildInfo.references).length == 0))
+    ) {
       // We don't have any information in the file to find the species and build
     } else {
       // We have build info from the file.  Now try to match it to a known species and build
@@ -307,29 +303,35 @@ export class GenomeBuildHelper {
         if (theBuilds.length == 0) {
           // TODO:  Need to indicate which data files (proband-bam, mother-bam, father-vcf, etc)
           // that have this build
-          theBuilds.push( {species: speciesBuild.species, build: speciesBuild.build, from: [{type: type, relationship: relationship}]});
+          theBuilds.push({
+            species: speciesBuild.species,
+            build: speciesBuild.build,
+            from: [{ type: type, relationship: relationship }]
+          });
         } else {
           var foundAggregate = null;
           theBuilds.forEach(function(aggregateSpeciesBuild) {
-            if (aggregateSpeciesBuild.species == speciesBuild.species && aggregateSpeciesBuild.build == speciesBuild.build) {
+            if (
+              aggregateSpeciesBuild.species == speciesBuild.species &&
+              aggregateSpeciesBuild.build == speciesBuild.build
+            ) {
               foundAggregate = aggregateSpeciesBuild;
             }
           });
           if (foundAggregate) {
             from = foundAggregate.from;
-            from.push({type: type, relationship: relationship});
-
+            from.push({ type: type, relationship: relationship });
           } else {
-            theBuilds.push( {species: speciesBuild.species, build: speciesBuild.build, from: [{type: type, relationship: relationship}]});
+            theBuilds.push({
+              species: speciesBuild.species,
+              build: speciesBuild.build,
+              from: [{ type: type, relationship: relationship }]
+            });
           }
-
         }
       }
-
     }
-
   }
-
 
   /*
     Given the species and build names in the file header, try to find the corresponding
@@ -348,7 +350,11 @@ export class GenomeBuildHelper {
         for (speciesName in me.speciesNameToSpecies) {
           if (!matchedSpecies) {
             var species = me.speciesNameToSpecies[speciesName];
-            if (species.name == buildInfo.species || species.binomialName == buildInfo.species || species.latin_name ==  buildInfo.species ) {
+            if (
+              species.name == buildInfo.species ||
+              species.binomialName == buildInfo.species ||
+              species.latin_name == buildInfo.species
+            ) {
               matchedSpecies = species;
             }
           }
@@ -372,32 +378,39 @@ export class GenomeBuildHelper {
                 build.aliases.forEach(function(gbAlias) {
                   if (gbAlias.alias == buildInfo.build) {
                     matchedBuild = build;
-                  } else if (gbAlias.type == me.ALIAS_REFSEQ_ASSEMBLY_ACCESSION_RANGE && buildInfo.build.indexOf(".") > 0) {
+                  } else if (
+                    gbAlias.type == me.ALIAS_REFSEQ_ASSEMBLY_ACCESSION_RANGE &&
+                    buildInfo.build.indexOf(".") > 0
+                  ) {
                     // See if we have an assembly in the range.
                     // example of alias is GCF_000001405.[13-25]
-                    var assemblyRoot    =  buildInfo.build.split(".")[0];
+                    var assemblyRoot = buildInfo.build.split(".")[0];
                     var assemblyVersion = +buildInfo.build.split(".")[1];
 
-                    var aliasRoot       = gbAlias.alias.split(".")[0];
+                    var aliasRoot = gbAlias.alias.split(".")[0];
                     if (assemblyRoot == aliasRoot) {
-                      var aliasRange  = gbAlias.alias.split(".")[1];
+                      var aliasRange = gbAlias.alias.split(".")[1];
                       // Get rid of []
-                      aliasRange = aliasRange.substring(1, aliasRange.length - 1);
+                      aliasRange = aliasRange.substring(
+                        1,
+                        aliasRange.length - 1
+                      );
                       // Get the numbers between the -
-                      var rangeLow  = +aliasRange.split("-")[0];
+                      var rangeLow = +aliasRange.split("-")[0];
                       var rangeHigh = +aliasRange.split("-")[1];
 
-                      if (assemblyVersion >= rangeLow && assemblyVersion <= rangeHigh) {
+                      if (
+                        assemblyVersion >= rangeLow &&
+                        assemblyVersion <= rangeHigh
+                      ) {
                         matchedBuild = build;
                       }
-
                     }
                   }
-                })
+                });
               }
             }
-          })
-
+          });
         } else {
           // If a build wasn't specified, try to match to a genome build based on reference lengths
           matchedSpecies.genomeBuilds.forEach(function(build) {
@@ -426,20 +439,19 @@ export class GenomeBuildHelper {
               });
               if (build.references.length == matchedCount) {
                 matchedBuild = build;
-              } else if (matchedCount > 0 && notMatchedCount == 0 && (matchedCount + notFoundCount == build.references.length)) {
+              } else if (
+                matchedCount > 0 &&
+                notMatchedCount == 0 &&
+                matchedCount + notFoundCount == build.references.length
+              ) {
                 matchedBuild = build;
               }
-
             }
-
-          })
-
+          });
         }
       }
     }
-    return {species: matchedSpecies, build: matchedBuild};
-
-
+    return { species: matchedSpecies, build: matchedBuild };
   }
 
   formatIncompatibleBuildsMessage(buildsInData) {
@@ -447,7 +459,12 @@ export class GenomeBuildHelper {
     if (buildsInData && buildsInData.length > 1) {
       message = "Incompatible builds in files.";
       buildsInData.forEach(function(buildInfo) {
-        message += "<br>Build " + buildInfo.species.name + " " + buildInfo.build.name + " specified in ";
+        message +=
+          "<br>Build " +
+          buildInfo.species.name +
+          " " +
+          buildInfo.build.name +
+          " specified in ";
         var fromCount = 0;
         buildInfo.from.forEach(function(fileInfo) {
           if (fromCount > 0) {
@@ -458,14 +475,9 @@ export class GenomeBuildHelper {
         });
         message += ".";
       });
-
     }
     return message;
   }
-
-
 }
 
-
-export default GenomeBuildHelper
-
+export default GenomeBuildHelper;

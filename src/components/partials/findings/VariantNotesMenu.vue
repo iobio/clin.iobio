@@ -1,16 +1,21 @@
 <template>
-
-
   <v-menu
     offset-y
     :close-on-content-click="false"
     v-model="showMenu"
     :min-width="420"
     :max-width="420"
-    bottom>
+    bottom
+  >
     <template v-slot:activator="{ on }">
-      <v-btn 
-      :class="{'findings-show-notes-button': true, 'v-btn--disabled': variant.notes == null || variant.notes.length == 0}" text v-on="on">
+      <v-btn
+        :class="{
+          'findings-show-notes-button': true,
+          'v-btn--disabled': variant.notes == null || variant.notes.length == 0
+        }"
+        text
+        v-on="on"
+      >
         <v-icon style="padding-right:2px">notes</v-icon>
         Notes
         <v-icon style="padding-left:10px">expand_more</v-icon>
@@ -18,95 +23,78 @@
     </template>
 
     <div class="individual-notes-container">
-      <div class="individual-note" v-for="(note, noteIndex) in notesReverseOrder">
-
+      <div
+        class="individual-note"
+        v-for="(note, noteIndex) in notesReverseOrder"
+      >
         <div class="note-header">
-
-
           <div v-if="note.datetime" class="note-datetime">
             {{ note.datetime }}
           </div>
 
-
           <div v-if="note.author" class="note-author">
             {{ note.author }}
           </div>
-
-
         </div>
         <div class="note-body">
           {{ note.note }}
         </div>
 
-        <hr/>
-
+        <hr />
       </div>
     </div>
-
-
-
-
-
-
   </v-menu>
 </template>
 
 <script>
-
-
 export default {
-  name: 'variant-notes-menu',
-  components: {
-  },
+  name: "variant-notes-menu",
+  components: {},
   props: {
     variant: null
   },
-  data () {
+  data() {
     return {
       notes: null,
       notesReverseOrder: null,
       showMenu: false
-    }
+    };
   },
-  watch: {
-  },
-  computed: {
-  },
+  watch: {},
+  computed: {},
   methods: {
     sortNotes: function() {
       let self = this;
       if (this.notes) {
-        this.notesReverseOrder =  this.notes.sort(function(noteA, noteB) {
-          return noteA.datetime.localeCompare(noteB.datetime);
-        }).reverse();
+        this.notesReverseOrder = this.notes
+          .sort(function(noteA, noteB) {
+            return noteA.datetime.localeCompare(noteB.datetime);
+          })
+          .reverse();
       } else {
         this.notesReverseOrder = [];
       }
-
     },
     init: function() {
       let self = this;
       if (self.variant) {
-        self.$set(self, "notesReverseOrder",  []);
+        self.$set(self, "notesReverseOrder", []);
         self.notes = self.variant.notes;
 
         self.$nextTick(function() {
           self.sortNotes();
-        })
-
+        });
       } else {
         self.notes = [];
         self.notesReverseOrder = [];
       }
     }
   },
-  created: function() {
-  },
+  created: function() {},
   mounted: function() {
     this.init();
   },
-  updated: function() {
-  },
+  updated: function() {},
   watch: {
     variantNotes: function() {
       this.init();
@@ -115,7 +103,7 @@ export default {
       this.init();
     }
   }
-}
+};
 </script>
 
 <style lang="sass">
@@ -182,8 +170,4 @@ export default {
   &.v-btn--disabled
     .v-btn__content
       color: #bdbebd
-
-
 </style>
-
-
