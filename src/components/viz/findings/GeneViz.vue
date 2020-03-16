@@ -30,6 +30,7 @@ export default {
       default: 20,
       type: Number
     },
+
     margin: {
       type: Object,
       default: function() {
