@@ -1,5 +1,5 @@
 <template>
-  <div id="gene-viz"></div>
+    <div id="gene-viz"></div>
 </template>
 
 <script>
