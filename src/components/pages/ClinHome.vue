@@ -1165,79 +1165,20 @@ export default {
               let badgeLabels = [];
               let badgeCounts = [];
               let badgeClasses = [];
-              let count_badge = [];
-              let label_badge = []; 
-              let class_badge = []; 
               self.variantsByInterpretation.forEach(function(interpretation) {
-                console.log("interpretation variantCount", interpretation.variantCount)
                 if(interpretation.key == 'sig' || interpretation.key == 'unknown-sig' || interpretation.key == "poor-qual"){
-                  // count_badge = interpretation.variantCount; 
                   if(interpretation.variantCount > 0){
-                    label_badge.push(interpretation.display); 
-                    count_badge.push(interpretation.variantCount); 
-                    class_badge.push(interpretation.key); 
+                    badgeLabels.push(interpretation.display); 
+                    badgeCounts.push(interpretation.variantCount); 
+                    badgeClasses.push(interpretation.key); 
                   }
-                  
                 }
-                interpretation.organizedVariants.forEach(function(orgVariants) {
-                  if (interpretation.key == 'sig' || interpretation.key == 'unknown-sig' || interpretation.key == 'not-sig' || interpretation.key == "poor-qual") {
-                    orgVariants.genes.forEach(function(geneInfo) {
-                      geneInfo.variants.forEach(function(variant) {
-
-                        let theFilter = "";
-                        if (variant.filtersPassed == 'denovo') {
-                          theFilter = 'De novo'
-                        } else if (variant.filtersPassed == 'compoundHet') {
-                          theFilter = 'Compound het'
-                        } else if ( variant.filtersPassed == 'pathogenic') {
-                          theFilter = 'Clinvar path. ';
-                          if (variant.inheritance.indexOf("none") == -1) {
-                            theFilter = variant.inheritance == 'denovo' ? 'De novo' : self.globalApp.utility.capitalizeFirstLetter(variant.inheritance);
-                          } else {
-                            theFilter = "";
-                          }
-                        } else {
-                          theFilter = self.globalApp.utility.capitalizeFirstLetter(variant.filtersPassed);
-                        }
-
-                        let label = "";
-                        if (interpretation.key == 'sig') {
-                          label = theFilter
-                          + " in " + geneInfo.gene.gene_name
-                        } else {
-                          label = geneInfo.gene.gene_name
-                        }
-                        let idx = badgeLabels.indexOf(label);
-                        if (idx == -1 || badgeLabels.length == 0) {
-                          badgeLabels.push(label);
-                          badgeCounts.push(1);
-                          badgeClasses.push([interpretation.key])
-                        } else {
-                          badgeCounts[idx]++;
-                          let theBadgeClass = badgeClasses[idx];
-                          if (theBadgeClass.indexOf(interpretation.key) == -1) {
-                            theBadgeClass.push(interpretation.key)
-                          }
-                        }
-                      })
-                    })
-                  }
-                })
               })
-              console.log("badgeLabels", badgeLabels)
-              console.log("label_badge", label_badge)
-              for (var i=0; i<label_badge.length; i++){
-                task.badges.push({
-                  count: count_badge[i], 
-                  label: label_badge[i], 
-                  class: class_badge[i]
+              for (var i=0; i<badgeLabels.length; i++){
+                task.badges.push({count: badgeCounts[i], label: badgeLabels[i], 
+                                  class: badgeClasses[i]
                 })
               }
-              // for (var i=0; i < badgeLabels.length; i++) {
-              //   task.badges.push({count: badgeCounts[i], label: badgeLabels[i],
-              //                     class: badgeClasses[i].join(" ")});
-              // }
-              console.log("task.badges", task.badges)
             }
           })
         })
@@ -1623,8 +1564,6 @@ export default {
         interpretation.genes             = self.getUniqueGenes(interpretation.organizedVariants);
         self.variantsByInterpretation.push(interpretation)
       })
-      console.log("self.variantsByInterpretationTemplate", self.variantsByInterpretationTemplate)
-      console.log("self.variantsByInterpretation", self.variantsByInterpretation)
     },
     organizeVariantsByFilter: function(interpretation) {
       let self = this;

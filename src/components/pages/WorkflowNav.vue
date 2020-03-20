@@ -373,7 +373,7 @@ export default {
               color: white
               font-weight: 600
               font-size: 12px
-              left: calc(100% - 1px) !important
+              left: calc(100% + 1px) !important
               bottom: calc(100% - 10px) !important
 
           &.no-count
