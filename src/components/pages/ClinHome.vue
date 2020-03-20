@@ -375,9 +375,9 @@ export default {
 
 
       variantsByInterpretationTemplate: [
-       { key: 'sig',         display: 'Significant Variants',  abbrev: 'Significant', organizedVariants: []},
-       { key: 'unknown-sig', display: 'Variants of Unknown Significance', abbrev: 'Unknown Sig', organizedVariants: []},
-       { key: 'poor-qual', display: 'Poor Quality Variants', abbrev: 'Poor qual', organizedVariants: []},
+       { key: 'sig',         display: 'significant',  abbrev: 'Significant', organizedVariants: []},
+       { key: 'unknown-sig', display: 'unknown significance ', abbrev: 'Unknown Sig', organizedVariants: []},
+       { key: 'poor-qual', display: 'poor quality', abbrev: 'Poor qual', organizedVariants: []},
        { key: 'not-sig', display: 'Not Significant', abbrev: 'Not sig', organizedVariants: []},
        { key: 'not-reviewed', display: 'Not Reviewed', abbrev: 'Not reviewed', organizedVariants: []}
       ],
@@ -1165,7 +1165,20 @@ export default {
               let badgeLabels = [];
               let badgeCounts = [];
               let badgeClasses = [];
+              let count_badge = [];
+              let label_badge = []; 
+              let class_badge = []; 
               self.variantsByInterpretation.forEach(function(interpretation) {
+                console.log("interpretation variantCount", interpretation.variantCount)
+                if(interpretation.key == 'sig' || interpretation.key == 'unknown-sig' || interpretation.key == "poor-qual"){
+                  // count_badge = interpretation.variantCount; 
+                  if(interpretation.variantCount > 0){
+                    label_badge.push(interpretation.display); 
+                    count_badge.push(interpretation.variantCount); 
+                    class_badge.push(interpretation.key); 
+                  }
+                  
+                }
                 interpretation.organizedVariants.forEach(function(orgVariants) {
                   if (interpretation.key == 'sig' || interpretation.key == 'unknown-sig' || interpretation.key == 'not-sig' || interpretation.key == "poor-qual") {
                     orgVariants.genes.forEach(function(geneInfo) {
@@ -1211,11 +1224,20 @@ export default {
                   }
                 })
               })
-
-              for (var i=0; i < badgeLabels.length; i++) {
-                task.badges.push({count: badgeCounts[i], label: badgeLabels[i],
-                                  class: badgeClasses[i].join(" ")});
+              console.log("badgeLabels", badgeLabels)
+              console.log("label_badge", label_badge)
+              for (var i=0; i<label_badge.length; i++){
+                task.badges.push({
+                  count: count_badge[i], 
+                  label: label_badge[i], 
+                  class: class_badge[i]
+                })
               }
+              // for (var i=0; i < badgeLabels.length; i++) {
+              //   task.badges.push({count: badgeCounts[i], label: badgeLabels[i],
+              //                     class: badgeClasses[i].join(" ")});
+              // }
+              console.log("task.badges", task.badges)
             }
           })
         })
@@ -1601,6 +1623,8 @@ export default {
         interpretation.genes             = self.getUniqueGenes(interpretation.organizedVariants);
         self.variantsByInterpretation.push(interpretation)
       })
+      console.log("self.variantsByInterpretationTemplate", self.variantsByInterpretationTemplate)
+      console.log("self.variantsByInterpretation", self.variantsByInterpretation)
     },
     organizeVariantsByFilter: function(interpretation) {
       let self = this;
