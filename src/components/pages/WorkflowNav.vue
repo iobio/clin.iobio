@@ -35,7 +35,7 @@
                         <v-badge
                           v-if="badge.count && badge.count != ''"
                           :content="badge.count" :class="badge.class ? badge.class : ''">
-                          {{ badge.label}}
+                          {{ badge.label | to-firstCharacterUppercase}}
                         </v-badge>
                       </div>
                     </div>
@@ -280,11 +280,11 @@ export default {
         align-self: top
         border-bottom: thin solid white
         width: 300px
-        margin-top: 2px
+        margin-top: 5px
 
         &.complete
           border-bottom: 4px solid white
-          margin-top: 5px
+          margin-top: 6.5px
 
 
 
