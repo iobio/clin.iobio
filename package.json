@@ -8,7 +8,8 @@
     "test:e2e": "vue-cli-service test:e2e",
     "test:unit": "vue-cli-service test:unit",
     "deploy": "sh deploy.sh",
-    "deployprod": "sh deploy.sh prod"
+    "deployprod": "sh deploy.sh prod",
+    "deploystage": "sh deploy.sh stage"
   },
   "dependencies": {
     "amazon-cognito-identity-js": "^2.0.3",
@@ -23,7 +24,7 @@
     "express": "^4.15.3",
     "file-saver": "^2.0.2",
     "hooper": "^0.3.4",
-    "iobio-phenotype-extractor-vue": "^1.0.5",
+    "iobio-phenotype-extractor-vue": "^1.0.10",
     "is-number": "^7.0.0",
     "jquery": "^3.4.1",
     "material-design-icons-iconfont": "^5.0.1",

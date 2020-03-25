@@ -35,7 +35,7 @@
                         <v-badge
                           v-if="badge.count && badge.count != ''"
                           :content="badge.count" :class="badge.class ? badge.class : ''">
-                          {{ badge.label}}
+                          {{ badge.label | to-firstCharacterUppercase}}
                         </v-badge>
                       </div>
                     </div>
@@ -279,12 +279,12 @@ export default {
         height: 10px
         align-self: top
         border-bottom: thin solid white
-        width: 270px
-        margin-top: 2px
+        width: 300px
+        margin-top: 5px
 
         &.complete
           border-bottom: 4px solid white
-          margin-top: 5px
+          margin-top: 6.5px
 
 
 
@@ -293,6 +293,7 @@ export default {
         width:  25px
         height: 25px
         cursor: pointer !important
+        margin-left: -3px
 
         
         i.material-icons
@@ -302,7 +303,6 @@ export default {
           width: 28px
           margin-top: 0px
           margin-right: 0px
-          margin-left: 3px
 
           .mdi-checkbox-blank-outline, .mdi-checkbox-marked
             font-size: 28px
@@ -312,7 +312,13 @@ export default {
         .glyph
           i.material-icons
             color: $wf-current  
-
+            
+        .v-input--selection-controls__ripple
+          left: -8px !important
+          width: 30px !important
+          height: 30px !important
+          top: calc(50% - 23px) !important
+            
       
   .step-container
     display: flex
@@ -367,7 +373,8 @@ export default {
               color: white
               font-weight: 600
               font-size: 12px
-              left: calc(100% - 1px) !important
+              left: calc(100% + 1px) !important
+              bottom: calc(100% - 10px) !important
 
           &.no-count
             .v-badge__wrapper
@@ -403,7 +410,6 @@ export default {
               .v-badge__badge
                 background-color: $not-significant-color !important
                 color: white
-
 
 </style>
 

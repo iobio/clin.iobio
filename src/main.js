@@ -27,6 +27,13 @@ import 'material-design-icons-iconfont/dist/material-design-icons.css'
 
 import 'iobio-phenotype-extractor-vue/dist/iobio.css'
 
+// define gobal filters 
+Vue.filter('to-firstCharacterUppercase', function(value){
+  if (!value) return '';
+  value = value.toString();
+  return value.charAt(0).toUpperCase() + value.slice(1);
+});
+
 // define a globals mixin object
 Vue.mixin({
   data: function() {
