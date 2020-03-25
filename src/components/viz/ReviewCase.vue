@@ -142,13 +142,13 @@
             </div>
 
           <div style="display: inline-flex;">
-            <BarChart :data="coverageDataArray[i]" :width="400" :height="150" :x-domain="xDomain" :y-domain="yDomain" :median-coverage="medianCoverages[i]" :minCutoff="minCutoff" :onHover="onHover"></BarChart>
+            <BarChart :data="coverageDataArray[i]" :width="400" :height="150" :x-domain="xDomain" :y-domain="yDomain" :median-coverage="medianCoverages[i]" :minCutoff="minCutoff"></BarChart>
 
             <div style="padding-top: 20px" v-show="goodCoverage(i)">
             <v-tooltip top class="valign">
               <template v-slot:activator="{ on }">
                 <v-icon class="good-coverage" v-on="on" top color="green"
-                        @mouseover="onHover = true" @mouseleave="onHover = false" @click="">check_circle</v-icon>
+                         @click="">check_circle</v-icon>
               </template>
               <span>Median coverage is above expected coverage threshold of {{minCutoff}}X</span>
 
@@ -156,7 +156,7 @@
               <div v-if="badCoverage" style=" display: inline-flex; width: 120px; line-height: 16px; font-size: 12px; padding-left: 5px;"></div>
             </div>
             <div style="padding-top: 20px" v-show="!goodCoverage(i)">
-                  <v-icon v-on="on"     @mouseover="onHover = true; " @mouseleave="onHover = false" @click=""
+                  <v-icon v-on="on"     @click=""
                           top color="#B33A3A">mdi-alert-circle</v-icon>
 
 
@@ -221,7 +221,6 @@ export default {
       varCountsArray: null,
       isSorted: false,
       demoData: null,
-      onHover: false,
       on: null,
       badCoverage: false,
       minCutoff: 30,
