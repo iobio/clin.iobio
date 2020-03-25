@@ -103,24 +103,22 @@ header.theme--dark.v-sheet
       <v-toolbar-title v-text="title">
       </v-toolbar-title>
 
-
-
-
-      <v-menu
-      offset-y
-      :close-on-content-click="false"
-      :nudge-width="350"
-      v-model="showCaseMenu"
+      <v-popover
+              v-model="showCaseMenu"
       >
-      <template v-slot:activator="{ on }">
-        <v-btn text v-on="on" v-if="caseSummary && caseSummary.name">
-          {{ caseSummary.name }}
-        </v-btn>
-      </template>
+        <button v-if="caseSummary && caseSummary.name"
+                offset-y
+                :nudge-width="350"
+        style="margin-bottom: 6px">          {{ caseSummary.name }}</button>
 
-        <v-card>
-        </v-card>
-      </v-menu>
+        <template slot="popover">
+          <div style="color:white; background:grey">
+            {{caseSummary.description}}
+          </div>
+
+          <a v-close-popover>Close</a>
+        </template>
+      </v-popover>
 
 
 
