@@ -1646,7 +1646,7 @@ export default {
         theVariants.forEach(function(variant) {
           let isReviewed = (variant.notes && variant.notes.length > 0)
                     || (variant.interpretation != null
-                    && (variant.interpretation == "sig" || variant.interpretation == "unknown-sig" || variant.interpretation == "not-sig" || variant.interpretation == "poor-qual" || (variant.interpretation == "not-reviewed" && variant.notes.length>0)));
+                    && (variant.interpretation == "sig" || variant.interpretation == "unknown-sig" || (variant.interpretation == "not-sig" && variant.notes.length>0) || variant.interpretation == "poor-qual" || (variant.interpretation == "not-reviewed" && variant.notes.length>0)));
 
           if (isReviewed && filterName && filterName == 'reviewed') {
 
