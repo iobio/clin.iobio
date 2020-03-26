@@ -280,7 +280,9 @@ export default {
     },
 
     formatPedDict(d){
-      this.sampleUuid = d.id;
+      if(!this.sampleUuid) {
+        this.sampleUuid = d.id;
+      }
       let pedDict ={
         id: d.id,
         pedigree: {
