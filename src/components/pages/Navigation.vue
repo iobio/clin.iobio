@@ -106,15 +106,15 @@ header.theme--dark.v-sheet
 
       <v-popover
               v-model="showCaseMenu"
-
       >
         <button v-if="caseSummary && caseSummary.name"
                 offset-y
         style="margin-bottom: 6px">          {{ caseSummary.name }}</button>
 
         <template slot="popover"
+
         >
-          <div style="color:black; background:white; width: 245px; text-align: left; margin-right: 5px">
+          <div style="color:black; background:white; width: 245px; text-align: left; margin-right: 5px; font-family: Poppins, sans-serif; font-weight: normal; font-size: 15px">
             {{caseSummary.description}}
 
           </div>
@@ -126,8 +126,8 @@ header.theme--dark.v-sheet
           <div style="height: 20px"></div>
 
 
-          <div style="color:black; background:white; display: inline-flex; width:240px" >
-           <div style="font-weight: bold; display: inline-flex; padding-right: 5px" > Average Coverage: </div>
+          <div style="color:black; background:white; display: inline-flex; width:240px; font-family: Poppins, sans-serif; font-weight: normal; font-size: 15px" >
+           <div style="font-weight: 500; display: inline-flex; padding-right: 5px; font-size: 15px" > Average Coverage: </div>
             {{averageCoverage}}
           </div>
 
@@ -244,12 +244,6 @@ export default {
     }
   },
   watch: {
-    pedigree: function(){
-      console.log("this.pedigree in watcher", this.pedigree);
-    },
-    averageCoverage: function(){
-      console.log("this.averageCoverage in watcher", this.averageCoverage);
-    }
   },
   methods: {
     round(value, places) {
@@ -260,17 +254,16 @@ export default {
       if(!this.launchedFromMosaic){
         this.useDemoData();
       }
+      else{
+        this.pedigreeData = this.pedigree;
+      }
 
       this.pedigreeDataArray = [];
-
-      console.log("this.pedigree in formatPedData", this.pedigreeData);
 
       for(const k in this.pedigreeData){
         const pedDict = this.formatPedDict(this.pedigreeData[k]);
         this.pedigreeDataArray.push(pedDict);
       }
-
-      console.log("this.pedigreeDataArray", this.pedigreeDataArray);
 
     },
     createAnalysisPDF(){
@@ -306,7 +299,6 @@ export default {
   },
   mounted: function() {
     this.formatPedData();
-    console.log("averageCoverage on mount", this.averageCoverage);
   },
   computed:  {
     percentComplete: function() {

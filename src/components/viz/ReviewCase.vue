@@ -328,11 +328,10 @@ export default {
         let data = this.coverageDataArray[i];
         let medianCoverage = this.calculateMedianCoverage(data);
         this.medianCoverages.push(medianCoverage);
-        console.log("medianCoverage", medianCoverage);
         this.averageCoverage += parseInt(medianCoverage);
       }
       this.averageCoverage = this.averageCoverage / this.coverageDataArray.length;
-      this.$emit('updateCoverage', this.averageCoverage);
+      this.$emit('updateCoverage', this.averageCoverage.toFixed(2));
 
     },
 
