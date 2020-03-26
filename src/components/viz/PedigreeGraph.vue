@@ -4,7 +4,7 @@
     class="pedigree-graph"
     id="pedGraph"
     ref="pedigreeGraph"
-    style="margin: auto"
+    style="margin: auto;"
     :style="{ width: width }"
   />
 </template>

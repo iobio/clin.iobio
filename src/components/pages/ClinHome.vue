@@ -131,6 +131,7 @@ $horizontal-dashboard-height: 140px
    :analysis="analysis"
    :launchedFromMosaic="launchedFromMosaic"
    :pedigree="rawPedigree"
+   :averageCoverage="averageCoverage"
    @show-save-analysis="toggleSaveModal(true)">
   </navigation>
 
@@ -189,7 +190,8 @@ $horizontal-dashboard-height: 140px
         :allVarCounts="allVarCounts"
         :coverageHistos="coverageHistos"
         :launchedFromMosaic="launchedFromMosaic"
-        @update="updateReviewCaseBadges">
+        @update="updateReviewCaseBadges"
+        @updateCoverage="updateAverageCoverage">
         </review-case>
       </v-card>
 
@@ -373,6 +375,7 @@ export default {
       importedVariants: variantData,
 
       variantSetCounts: {},
+      averageCoverage: null,
 
 
       variantsByInterpretationTemplate: [
@@ -1776,6 +1779,11 @@ export default {
     updateReviewCaseBadges(badges){
       this.reviewCaseBadges = badges;
     },
+
+    updateAverageCoverage(cov){
+      console.log("cov in update clinHome", cov);
+      this.averageCoverage = cov;
+    }
 
   }
 }

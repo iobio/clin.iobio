@@ -257,8 +257,8 @@ export default class TreeBuilder {
         bbox.x -= strokeWidth;
         bbox.width += strokeWidth * 2;
 
-        // this.base_svg.attr('viewBox', `${bbox.x} ${bbox.y} ${bbox.width} ${bbox.height}`);
 
+        // this.base_svg.attr('viewBox', `${bbox.x} ${bbox.y} ${bbox.width} ${bbox.height}`);
         this.base_svg.attr('viewBox', `-66 44 132 122`);
 
     }

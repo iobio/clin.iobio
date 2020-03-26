@@ -129,6 +129,10 @@ header.theme--dark.v-sheet
 
           <PedigreeGraph :data="pedigreeDataArray" :id="sampleUuid" :width="100" :height="75" :pedigree="pedigree"></PedigreeGraph>
 
+          <div style="color:black; background:white">
+            Average Coverage: {{averageCoverage}}
+          </div>
+
           <a v-close-popover>Close</a>
         </template>
       </v-popover>
@@ -219,6 +223,7 @@ export default {
     analysis: null,
     launchedFromMosaic: null,
     pedigree: null,
+    averageCoverage: null,
   },
   data () {
     let self = this;
@@ -240,6 +245,9 @@ export default {
   watch: {
     pedigree: function(){
       console.log("this.pedigree in watcher", this.pedigree);
+    },
+    averageCoverage: function(){
+      console.log("this.averageCoverage in watcher", this.averageCoverage);
     }
   },
   methods: {
@@ -297,6 +305,7 @@ export default {
   },
   mounted: function() {
     this.formatPedData();
+    console.log("averageCoverage on mount", this.averageCoverage);
   },
   computed:  {
     percentComplete: function() {

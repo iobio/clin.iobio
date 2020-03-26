@@ -227,6 +227,7 @@ export default {
       medianCoverages: null,
       reviewCaseBadges: null,
       badCoverageCount: null,
+      averageCoverage: null,
 
     }
 
@@ -255,7 +256,6 @@ export default {
           this.badCoverage = true;
           this.badCoverageCount += 1;
           }
-
         }
     },
 
@@ -323,11 +323,17 @@ export default {
 
     populateCoverageMedians(){
       this.medianCoverages = [];
+      this.averageCoverage = 0;
       for(let i = 0; i < this.coverageDataArray.length; i++){
         let data = this.coverageDataArray[i];
         let medianCoverage = this.calculateMedianCoverage(data);
         this.medianCoverages.push(medianCoverage);
+        console.log("medianCoverage", medianCoverage);
+        this.averageCoverage += parseInt(medianCoverage);
       }
+      this.averageCoverage = this.averageCoverage / this.coverageDataArray.length;
+      this.$emit('updateCoverage', this.averageCoverage);
+
     },
 
     calculateMedian(values) {
