@@ -1781,7 +1781,6 @@ export default {
     },
 
     updateAverageCoverage(cov){
-      console.log("cov in update clinHome", cov);
       this.averageCoverage = cov;
     }
 

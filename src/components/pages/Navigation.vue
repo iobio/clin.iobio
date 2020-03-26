@@ -121,7 +121,7 @@ header.theme--dark.v-sheet
 
           <div style="height: 20px"></div>
 
-          <PedigreeGraph :data="pedigreeDataArray" :id="sampleUuid" :width="100" :height="75" :pedigree="pedigree"></PedigreeGraph>
+          <PedigreeGraph :data="pedigreeDataArray" :id="sampleUuid" :width="100" :height="75" :pedigree="pedigree" :isDropdown="true"></PedigreeGraph>
 
           <div style="height: 20px"></div>
 

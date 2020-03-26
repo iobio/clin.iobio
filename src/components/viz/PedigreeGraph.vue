@@ -25,6 +25,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    isDropdown:{
+      type: Boolean,
+      default: false
+    },
     height: {
       type: Number,
       default: 300,
@@ -95,12 +99,13 @@ export default {
       }
       const dTreeData = makeMultiDTreeData(pedigree, Number(self.id));
       // init dTree
-      dTree.init(dTreeData, {
+      dTree.init(dTreeData, this.isDropdown, {
         target: pedigraph,
         debug: true,
         height: self.height,
         width: self.width,
         strokeWidth: this.strokeWidth,
+        isDropdown: this.isDropdown
         // callbacks: {
         //   nodeHover(name, extra) {
         //     self.$emit('update:highlighted', extra.id);

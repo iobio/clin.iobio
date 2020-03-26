@@ -25,7 +25,7 @@ import * as d3 from 'd3';
 const pedigreeColors = {affected: "#ccc", selected: "rgb(53, 134, 192)"};
 
 export default class TreeBuilder {
-    constructor(root, siblings, opts) {
+    constructor(root, siblings, opts, isDropdown) {
         TreeBuilder.DEBUG_LEVEL = opts.debug ? 1 : 0;
 
         this.root = root;
@@ -33,6 +33,7 @@ export default class TreeBuilder {
         this.opts = opts;
         this.strokeWidth = opts.strokeWidth;
         this.lineWidth = opts.lineWidth;
+        this.isDropdown = isDropdown;
 
         // flatten nodes
         this.allNodes = this._flatten(this.root);
@@ -257,9 +258,18 @@ export default class TreeBuilder {
         bbox.x -= strokeWidth;
         bbox.width += strokeWidth * 2;
 
+        if(this.isDropdown) {
 
-        // this.base_svg.attr('viewBox', `${bbox.x} ${bbox.y} ${bbox.width} ${bbox.height}`);
-        this.base_svg.attr('viewBox', `-66 44 132 122`);
+            if(this.allNodes < 5) {
+                this.base_svg.attr('viewBox', `-66 44 132 122`);
+            }
+            else{
+                this.base_svg.attr('viewBox', `-106 44 212 122`);
+            }
+        }
+        else{
+            this.base_svg.attr('viewBox', `${bbox.x} ${bbox.y} ${bbox.width} ${bbox.height}`);
+        }
 
     }
 

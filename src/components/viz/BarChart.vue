@@ -183,6 +183,7 @@
 
                 let minHeight = 0;
                 let minWidth = this.xDomain[0];
+                let maxWidth = this.xDomain[1];
 
 
                 for(let i = 0; i < this.data.length; i++){
@@ -195,7 +196,7 @@
                 svg.select('#minLine').remove();
                 svg.select('#minText').remove();
 
-                if(this.minCutoff >= minWidth) {
+                if(this.minCutoff >= minWidth && this.minCutoff <= maxWidth) {
                     svg.append('line')
                         .attr("id", "minLine")
                         .attr("stroke-dasharray", "5 2")
