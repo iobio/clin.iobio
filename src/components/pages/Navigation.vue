@@ -8,13 +8,6 @@
     padding: 0px
     height: 30px !important
 
-
-.customDropdown
-  color: darkgray
-  background: white
-  position: absolute
-
-
 header.theme--dark.v-sheet
   padding-top: 5px
   background-color: $nav-color !important
@@ -113,27 +106,35 @@ header.theme--dark.v-sheet
 
       <v-popover
               v-model="showCaseMenu"
-              popover-class="customDropdown"
+
       >
         <button v-if="caseSummary && caseSummary.name"
                 offset-y
-                :nudge-width="550"
         style="margin-bottom: 6px">          {{ caseSummary.name }}</button>
 
-        <template slot="popover">
-          <div style="color:black; background:white">
+        <template slot="popover"
+        >
+          <div style="color:black; background:white; width: 245px; text-align: left; margin-right: 5px">
             {{caseSummary.description}}
 
           </div>
 
+          <div style="height: 20px"></div>
 
           <PedigreeGraph :data="pedigreeDataArray" :id="sampleUuid" :width="100" :height="75" :pedigree="pedigree"></PedigreeGraph>
 
-          <div style="color:black; background:white">
-            Average Coverage: {{averageCoverage}}
+          <div style="height: 20px"></div>
+
+
+          <div style="color:black; background:white; display: inline-flex; width:240px" >
+           <div style="font-weight: bold; display: inline-flex; padding-right: 5px" > Average Coverage: </div>
+            {{averageCoverage}}
           </div>
 
-          <a v-close-popover>Close</a>
+          <div style="height: 20px"></div>
+
+
+          <a v-close-popover style="margin-left: 75px">Close</a>
         </template>
       </v-popover>
 
