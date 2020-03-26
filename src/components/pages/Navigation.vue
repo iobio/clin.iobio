@@ -121,7 +121,7 @@ header.theme--dark.v-sheet
 
           <div style="height: 20px"></div>
 
-          <PedigreeGraph :data="pedigreeDataArray" :id="sampleUuid" :width="100" :height="75" :pedigree="pedigree" :isDropdown="true"></PedigreeGraph>
+          <PedigreeGraph :data="pedigreeDataArray" :id="0" :width="100" :height="75" :pedigree="pedigree" :isDropdown="true"></PedigreeGraph>
 
           <div style="height: 20px"></div>
 
@@ -225,6 +225,7 @@ export default {
     launchedFromMosaic: null,
     pedigree: null,
     averageCoverage: null,
+
   },
   data () {
     let self = this;
@@ -239,7 +240,6 @@ export default {
       showVariantsMenu: false,
       showNotesMenu: false,
       showInstructionsMenu: false,
-      sampleUuid: null,
 
     }
   },
@@ -280,9 +280,6 @@ export default {
     },
 
     formatPedDict(d){
-      if(!this.sampleUuid) {
-        this.sampleUuid = d.id;
-      }
       let pedDict ={
         id: d.id,
         pedigree: {

@@ -1169,14 +1169,14 @@ export default {
               let badgeLabels = [];
               let badgeCounts = [];
               let badgeClasses = [];
-              
+
               //Add the count of variant which is not reviewed (but has comments) to unknown-sig
               if(self.variantsByInterpretation.length && self.variantsByInterpretation[2].key ==  'not-reviewed' && self.variantsByInterpretation[1].key == 'unknown-sig'){
                 if(self.variantsByInterpretation[2].variantCount > 0){
-                  self.variantsByInterpretation[1].variantCount += self.variantsByInterpretation[2].variantCount; 
+                  self.variantsByInterpretation[1].variantCount += self.variantsByInterpretation[2].variantCount;
                 }
               }
-              
+
               self.variantsByInterpretation.forEach(function(interpretation) {
                 if(interpretation.key == 'sig' || interpretation.key == 'unknown-sig' || interpretation.key == "poor-qual"){
                   if(interpretation.variantCount > 0){
