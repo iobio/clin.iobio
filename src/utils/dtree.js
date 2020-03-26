@@ -22,7 +22,7 @@ const dTree = {
 
     VERSION: '/* @echo DTREE_VERSION */',
 
-    init(data, options = {}) {
+    init(data, isDropdown, options = {}) {
         const opts = _.defaultsDeep(options || {}, {
             target: '#graph',
             debug: false,
@@ -62,7 +62,7 @@ const dTree = {
         });
 
         var data = this._preprocess(data, opts);
-        const treeBuilder = new TreeBuilder(data.root, data.siblings, opts);
+        const treeBuilder = new TreeBuilder(data.root, data.siblings, opts, isDropdown);
         treeBuilder.create();
     },
 
