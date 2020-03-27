@@ -1,5 +1,5 @@
 <template>
-
+  
   <div
   id="badge-interpretation"
   :class="{
@@ -13,8 +13,9 @@
     <v-icon class="interpretation unknown-sig" v-if="interpretation == 'unknown-sig'">help</v-icon>
     <v-icon class="interpretation not-sig" v-if="interpretation == 'not-sig'">thumb_down</v-icon>
     <v-icon class="interpretation poor-qual" v-if="interpretation == 'poor-qual'">trending_down</v-icon>
-    <v-icon class="interpretation not-reviewed" v-if="interpretation == 'not-reviewed'">visibility_off</v-icon>
-    <span  class="interpretation-label"> {{ intepretationDisplay }} </span>
+    <v-icon class="interpretation unknown-sig" v-if="interpretation == 'not-reviewed'">help</v-icon>
+    <span v-if="intepretationDisplay === 'Not reviewed'" class="interpretation-label"> Unknown significance </span>
+    <span v-else class="interpretation-label"> {{ intepretationDisplay }} </span>
 
   </div>
 
@@ -97,7 +98,7 @@ i.material-icons.interpretation
 
   &.not-reviewed
     i.material-icons
-      color: $not-reviewed-color !important
+      color: $unknown-significance-color !important
 
   &.sig
     i.material-icons

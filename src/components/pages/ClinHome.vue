@@ -375,11 +375,11 @@ export default {
 
 
       variantsByInterpretationTemplate: [
-       { key: 'sig',         display: 'Significant Variants',  abbrev: 'Significant', organizedVariants: []},
-       { key: 'unknown-sig', display: 'Variants of Unknown Significance', abbrev: 'Unknown Sig', organizedVariants: []},
-       { key: 'poor-qual', display: 'Poor Quality Variants', abbrev: 'Poor qual', organizedVariants: []},
+       { key: 'sig',         display: 'significant',  abbrev: 'Significant', organizedVariants: []},
+       { key: 'unknown-sig', display: 'unknown significance ', abbrev: 'Unknown Sig', organizedVariants: []},
+       { key: 'not-reviewed', display: 'Not Reviewed', abbrev: 'Not reviewed', organizedVariants: []},
+       { key: 'poor-qual', display: 'poor quality', abbrev: 'Poor qual', organizedVariants: []},
        { key: 'not-sig', display: 'Not Significant', abbrev: 'Not sig', organizedVariants: []},
-       { key: 'not-reviewed', display: 'Not Reviewed', abbrev: 'Not reviewed', organizedVariants: []}
       ],
 
       variantsByInterpretation: [],
@@ -464,10 +464,10 @@ export default {
       interpretationMap: {
         'sig': 'Significant',
         'unknown-sig': 'Unknown significance',
+        'not-reviewed': 'Not reviewed',
         'not-sig': 'Not significant',
         'poor-qual': 'Poor quality',
         'reviewed': 'Reviewed',
-        'not-reviewed': 'Not reviewed'
       },
       reviewCaseBadges: null,
       generatingReport: false,
@@ -1165,56 +1165,27 @@ export default {
               let badgeLabels = [];
               let badgeCounts = [];
               let badgeClasses = [];
+              
+              //Add the count of variant which is not reviewed (but has comments) to unknown-sig
+              if(self.variantsByInterpretation.length && self.variantsByInterpretation[2].key ==  'not-reviewed' && self.variantsByInterpretation[1].key == 'unknown-sig'){
+                if(self.variantsByInterpretation[2].variantCount > 0){
+                  self.variantsByInterpretation[1].variantCount += self.variantsByInterpretation[2].variantCount; 
+                }
+              }
+              
               self.variantsByInterpretation.forEach(function(interpretation) {
-                interpretation.organizedVariants.forEach(function(orgVariants) {
-                  if (interpretation.key == 'sig' || interpretation.key == 'unknown-sig' || interpretation.key == 'not-sig' || interpretation.key == "poor-qual") {
-                    orgVariants.genes.forEach(function(geneInfo) {
-                      geneInfo.variants.forEach(function(variant) {
-
-                        let theFilter = "";
-                        if (variant.filtersPassed == 'denovo') {
-                          theFilter = 'De novo'
-                        } else if (variant.filtersPassed == 'compoundHet') {
-                          theFilter = 'Compound het'
-                        } else if ( variant.filtersPassed == 'pathogenic') {
-                          theFilter = 'Clinvar path. ';
-                          if (variant.inheritance.indexOf("none") == -1) {
-                            theFilter = variant.inheritance == 'denovo' ? 'De novo' : self.globalApp.utility.capitalizeFirstLetter(variant.inheritance);
-                          } else {
-                            theFilter = "";
-                          }
-                        } else {
-                          theFilter = self.globalApp.utility.capitalizeFirstLetter(variant.filtersPassed);
-                        }
-
-                        let label = "";
-                        if (interpretation.key == 'sig') {
-                          label = theFilter
-                          + " in " + geneInfo.gene.gene_name
-                        } else {
-                          label = geneInfo.gene.gene_name
-                        }
-                        let idx = badgeLabels.indexOf(label);
-                        if (idx == -1 || badgeLabels.length == 0) {
-                          badgeLabels.push(label);
-                          badgeCounts.push(1);
-                          badgeClasses.push([interpretation.key])
-                        } else {
-                          badgeCounts[idx]++;
-                          let theBadgeClass = badgeClasses[idx];
-                          if (theBadgeClass.indexOf(interpretation.key) == -1) {
-                            theBadgeClass.push(interpretation.key)
-                          }
-                        }
-                      })
-                    })
+                if(interpretation.key == 'sig' || interpretation.key == 'unknown-sig' || interpretation.key == "poor-qual"){
+                  if(interpretation.variantCount > 0){
+                    badgeLabels.push(interpretation.display); 
+                    badgeCounts.push(interpretation.variantCount); 
+                    badgeClasses.push(interpretation.key); 
                   }
-                })
+                }
               })
-
-              for (var i=0; i < badgeLabels.length; i++) {
-                task.badges.push({count: badgeCounts[i], label: badgeLabels[i],
-                                  class: badgeClasses[i].join(" ")});
+              for (var i=0; i<badgeLabels.length; i++){
+                task.badges.push({count: badgeCounts[i], label: badgeLabels[i], 
+                                  class: badgeClasses[i]
+                })
               }
             }
           })
@@ -1675,7 +1646,7 @@ export default {
         theVariants.forEach(function(variant) {
           let isReviewed = (variant.notes && variant.notes.length > 0)
                     || (variant.interpretation != null
-                    && (variant.interpretation == "sig" || variant.interpretation == "unknown-sig" || variant.interpretation == "not-sig" || variant.interpretation == "poor-qual" || (variant.interpretation == "not-reviewed" && variant.notes.length>0)));
+                    && (variant.interpretation == "sig" || variant.interpretation == "unknown-sig" || (variant.interpretation == "not-sig" && variant.notes.length>0) || variant.interpretation == "poor-qual" || (variant.interpretation == "not-reviewed" && variant.notes.length>0)));
 
           if (isReviewed && filterName && filterName == 'reviewed') {
 
