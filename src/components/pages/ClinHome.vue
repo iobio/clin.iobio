@@ -130,8 +130,6 @@ $horizontal-dashboard-height: 140px
    :caseSummary="caseSummary"
    :analysis="analysis"
    :launchedFromMosaic="launchedFromMosaic"
-   :pedigree="rawPedigree"
-   :averageCoverage="averageCoverage"
    @show-save-analysis="toggleSaveModal(true)">
   </navigation>
 

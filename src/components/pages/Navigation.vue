@@ -118,19 +118,6 @@ header.theme--dark.v-sheet
             {{caseSummary.description}}
 
           </div>
-
-          <div style="height: 20px"></div>
-
-          <PedigreeGraph :data="pedigreeDataArray" :id="0" :width="100" :height="75" :pedigree="pedigree" :isDropdown="true"></PedigreeGraph>
-
-          <div style="height: 20px"></div>
-
-
-          <div style="color:black; background:white; display: inline-flex; width:240px; font-family: Poppins, sans-serif; font-weight: normal; font-size: 15px" >
-           <div style="font-weight: 500; display: inline-flex; padding-right: 5px; font-size: 15px" > Average Coverage: </div>
-            {{averageCoverage}}
-          </div>
-
           <div style="height: 20px"></div>
 
 
@@ -223,16 +210,12 @@ export default {
     caseSummary: null,
     analysis: null,
     launchedFromMosaic: null,
-    pedigree: null,
-    averageCoverage: null,
 
   },
   data () {
     let self = this;
     return {
       title: 'clin.iobio',
-      pedigreeData: null,
-      pedigreeDataArray: null,
       clipped: false,
       showCaseMenu: false,
       showPhenotypesMenu: false,
@@ -249,23 +232,6 @@ export default {
     round(value, places) {
       return +(Math.round(value + "e+" + places)  + "e-" + places);
     },
-    formatPedData(){
-
-      if(!this.launchedFromMosaic){
-        this.useDemoData();
-      }
-      else{
-        this.pedigreeData = this.pedigree;
-      }
-
-      this.pedigreeDataArray = [];
-
-      for(const k in this.pedigreeData){
-        const pedDict = this.formatPedDict(this.pedigreeData[k]);
-        this.pedigreeDataArray.push(pedDict);
-      }
-
-    },
     createAnalysisPDF(){
       bus.$emit("getAnalysisObject");
     },
@@ -279,25 +245,11 @@ export default {
 
     },
 
-    formatPedDict(d){
-      let pedDict ={
-        id: d.id,
-        pedigree: {
-          affection_status: d.affection_status,
-          maternal_id: d.maternal_id,
-          paternal_id: d.paternal_id,
-          sample_id: d.sample_id,
-          sex: d.sex
-        }
-      };
-      return pedDict;
-    },
 
   },
   created: function() {
   },
   mounted: function() {
-    this.formatPedData();
   },
   computed:  {
     percentComplete: function() {
