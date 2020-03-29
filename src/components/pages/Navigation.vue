@@ -48,7 +48,6 @@ header.theme--dark.v-sheet
       text-transform: none
       font-size: 13px !important
 
-
     .v-toolbar__items
       width: 60%
 
@@ -107,22 +106,18 @@ header.theme--dark.v-sheet
       <v-popover
               v-model="showCaseMenu"
       >
-        <button v-if="caseSummary && caseSummary.name"
-                offset-y
-        style="margin-bottom: 6px">          {{ caseSummary.name }}</button>
+        <v-btn v-if="caseSummary && caseSummary.name" text>{{ caseSummary.name }}</v-btn>
 
         <template slot="popover"
 
         >
-          <div style="color:black; background:white; width: 245px; text-align: left; margin-right: 5px; font-family: Poppins, sans-serif; font-weight: normal; font-size: 15px">
+          <div style="color:#6a6a6a; background:white; width: 230px; text-align: left; margin-right: 5px; font-family: Poppins, sans-serif; font-weight: normal; font-size: 14px; padding-right:15px">
             {{caseSummary.description}}
 
           </div>
           <div style="height: 20px"></div>
 
-
-          <a v-close-popover style="margin-left: 75px">Close</a>
-        </template>
+          <v-btn text light small color="primary" style="color:rgb(69, 104, 142); margin-left: 50px" v-close-popover >Close</v-btn>        </template>
       </v-popover>
 
 
