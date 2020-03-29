@@ -188,7 +188,8 @@ $horizontal-dashboard-height: 140px
         :allVarCounts="allVarCounts"
         :coverageHistos="coverageHistos"
         :launchedFromMosaic="launchedFromMosaic"
-        @update="updateReviewCaseBadges">
+        @update="updateReviewCaseBadges"
+        @updateCoverage="updateAverageCoverage">
         </review-case>
       </v-card>
 
@@ -355,7 +356,7 @@ export default {
       showSplash: false,
       splashMessage: "Initializing clin.iobio",
       showSplashProgress: false,
-      showLandingPage: false, 
+      showLandingPage: false,
 
       iframesMounted: false,
 
@@ -372,6 +373,7 @@ export default {
       importedVariants: variantData,
 
       variantSetCounts: {},
+      averageCoverage: null,
 
 
       variantsByInterpretationTemplate: [
@@ -487,10 +489,10 @@ export default {
       this.generatePDF()
     })
     bus.$on("initialize-clin", ()=>{
-      this.showLandingPage = false; 
-      this.showSplash = true; 
+      this.showLandingPage = false;
+      this.showSplash = true;
       setTimeout(()=>{
-        this.onAuthenticated(); 
+        this.onAuthenticated();
       }, 2000)
     })
   },
@@ -625,8 +627,8 @@ export default {
 
         if (localStorage.getItem('hub-iobio-tkn') && localStorage.getItem('hub-iobio-tkn').length > 0 && self.paramSampleId && self.paramSource) {
           self.showLandingPage = false;
-          self.showSplash = true; 
-          self.showSplashProgress = true; 
+          self.showSplash = true;
+          self.showSplashProgress = true;
           // Temporary workaround until router is fixed to pass paramSampleId, paramSource, etc
           self.params.sample_id             = self.paramSampleId
           self.params.analysis_id           = self.paramAnalysisId
@@ -678,7 +680,7 @@ export default {
             self.splashMessage = error;
           })
         } else {
-          self.showLandingPage = true; 
+          self.showLandingPage = true;
           self.modelInfos = self.demoModelInfos;
           self.user       = self.demoUser;
 
@@ -1165,25 +1167,25 @@ export default {
               let badgeLabels = [];
               let badgeCounts = [];
               let badgeClasses = [];
-              
+
               //Add the count of variant which is not reviewed (but has comments) to unknown-sig
               if(self.variantsByInterpretation.length && self.variantsByInterpretation[2].key ==  'not-reviewed' && self.variantsByInterpretation[1].key == 'unknown-sig'){
                 if(self.variantsByInterpretation[2].variantCount > 0){
-                  self.variantsByInterpretation[1].variantCount += self.variantsByInterpretation[2].variantCount; 
+                  self.variantsByInterpretation[1].variantCount += self.variantsByInterpretation[2].variantCount;
                 }
               }
-              
+
               self.variantsByInterpretation.forEach(function(interpretation) {
                 if(interpretation.key == 'sig' || interpretation.key == 'unknown-sig' || interpretation.key == "poor-qual"){
                   if(interpretation.variantCount > 0){
-                    badgeLabels.push(interpretation.display); 
-                    badgeCounts.push(interpretation.variantCount); 
-                    badgeClasses.push(interpretation.key); 
+                    badgeLabels.push(interpretation.display);
+                    badgeCounts.push(interpretation.variantCount);
+                    badgeClasses.push(interpretation.key);
                   }
                 }
               })
               for (var i=0; i<badgeLabels.length; i++){
-                task.badges.push({count: badgeCounts[i], label: badgeLabels[i], 
+                task.badges.push({count: badgeCounts[i], label: badgeLabels[i],
                                   class: badgeClasses[i]
                 })
               }
@@ -1783,6 +1785,10 @@ export default {
     updateReviewCaseBadges(badges){
       this.reviewCaseBadges = badges;
     },
+
+    updateAverageCoverage(cov){
+      this.averageCoverage = cov;
+    }
 
   }
 }
