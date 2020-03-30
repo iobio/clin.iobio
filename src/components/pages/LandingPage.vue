@@ -36,7 +36,7 @@
                       </h1>
                       <br>
                       <span class="i-hero_subheading">
-                        clin.iobio allows you to review sequencing and case metrics, generate a prioritized list of genes most highly associated with the disease/phenotype, review and mark variants as significant, and generate a report of your findings.   
+                        clin.iobio makes it easy to review sequencing and case metrics, generate a prioritized list of genes associated with the disease/phenotype, review candidate variants, and generate a report of your findings                      
                       </span>
                       <br>
                       <v-btn color="white" outlined x-large @click="getStarted" class="mt-8">
@@ -182,35 +182,35 @@ export default {
       carouselData: 0,
       step_number: 0,
       workflow_steps: [
-        { text: 'Check case' },
+        { text: 'Review case' },
         { text: 'Select phenotypes' },
-        { text: 'Investigate variants' },
-        { text: 'Review findings' },
+        { text: 'Review variants' },
+        { text: 'Report findings' },
       ],
       videoDialog: false, 
       slides: [
         {
           title: "Review case", 
           img_src: review_case_img, 
-          description: "Review relatedness, disease/phenotype description, and data quality",
+          description: "Review relatedness, disease/phenotype description, and data quality.",
           icon: caseIcon
         }, 
         {
-          title: "Review phenotypes", 
+          title: "Select phenotypes", 
           img_src: review_phenotypes_img, 
-          description: "Enter a clinical note and select suspected disorders and phenotypes to generate a prioritized gene list",
+          description: "Enter a clinical note and select suspected disorders and phenotypes to generate a prioritized gene list.",
           icon: phenotypeIcon
         }, 
         {
           title: "Review variants", 
           img_src: review_variants_img, 
-          description: "Review variants and mark them as significant or uncertain. And add notes for collaborators!",
+          description: "Review and attach significance to candidate variants. Promote collaboration by adding notes for colleagues.",
           icon: variantsIcon
         }, 
         {
-          title: "Findings", 
+          title: "Report findings", 
           img_src: findings_img, 
-          description: "Look over all aspects of the workflow and reviewed variants and generate a downloadable report",
+          description: "Look over all aspects of the workflow and reviewed variants and generate a downloadable report.",
           icon: findingsIcon
         }, 
       ], 

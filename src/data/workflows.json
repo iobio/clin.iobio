@@ -30,7 +30,7 @@
               "name": "Generate phenotypes and prioritized gene list"
             }
           ],
-          "title": "Review Phenotypes"
+          "title": "Select phenotypes"
         },
         {
           "app": "genefull",
@@ -60,7 +60,7 @@
               "tooltip": "tooltip"
             }
           ],
-          "title": "Findings"
+          "title": "Report findings"
         }
       ],
       "summary": "Review findings. ",
