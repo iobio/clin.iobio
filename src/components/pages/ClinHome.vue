@@ -386,10 +386,10 @@ export default {
 
       showFindings: false,
 
-      iobioSource: 'nv-prod.iobio.io',
+      iobioSource: 'backend.iobio.io',
 
       iobioSourceMap: {
-        'https://staging.frameshift.io': 'nv-prod.iobio.io',
+        'https://staging.frameshift.io': 'backend.iobio.io',
         'https://mosaic.chpc.utah.edu':  'mosaic.chpc.utah.edu',
         'https://mosaic-dev.genetics.utah.edu': 'mosaic.chpc.utah.edu',
         'https://mosaic-stage.chpc.utah.edu': 'mosaic.chpc.utah.edu'
