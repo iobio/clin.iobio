@@ -1790,7 +1790,7 @@ export default {
     },
     gene_to_delete(gene){
       this.geneToDelete = gene; 
-    }
+    },
 
     updateAverageCoverage(cov){
       this.averageCoverage = cov;
