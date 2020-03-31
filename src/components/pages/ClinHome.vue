@@ -211,7 +211,8 @@ $horizontal-dashboard-height: 140px
             :AddedGenes="AddedGenes"
             @vennData="vennData($event)"
             :demoTextNote="analysis.payload.demoTextNote"
-            @VennDiagramData="VennDiagramData($event)">
+            @VennDiagramData="VennDiagramData($event)"
+            :geneToDelete="geneToDelete">
           </PhenotypeExtractor>
         </keep-alive>
 
@@ -221,7 +222,8 @@ $horizontal-dashboard-height: 140px
             :summaryGeneList="analysis.payload.genesReport"
             @importedGenes="importedGenes($event)"
             @UpdateListOnDelete="UpdateListOnDelete($event)"
-            :venn_diag_data="venn_diag_data">
+            :venn_diag_data="venn_diag_data"
+            @gene_to_delete=gene_to_delete($event)>
           </GeneList>
         </keep-alive>
 
@@ -461,6 +463,7 @@ export default {
       allVarCounts: null,
       coverageHistos: null,
       venn_diag_data: {},
+      geneToDelete: '', 
 
 
       interpretationMap: {
@@ -1785,6 +1788,9 @@ export default {
     updateReviewCaseBadges(badges){
       this.reviewCaseBadges = badges;
     },
+    gene_to_delete(gene){
+      this.geneToDelete = gene; 
+    }
 
     updateAverageCoverage(cov){
       this.averageCoverage = cov;
