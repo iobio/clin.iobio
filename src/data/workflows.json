@@ -16,7 +16,7 @@
               "name": "Review relatedness, case description, data quality"
             }
           ],
-          "title": "Review Case"
+          "title": "Review case"
         },
         {
           "app": "genepanel",
@@ -30,7 +30,7 @@
               "name": "Generate phenotypes and prioritized gene list"
             }
           ],
-          "title": "Review Phenotypes"
+          "title": "Select phenotypes"
         },
         {
           "app": "genefull",
@@ -45,7 +45,7 @@
               "tooltip": "After the variants in all genes in the genome/exome are analyzed on the server, the left side panel will show all variants that pass the preset filters.  Click on each variant in the list to examine the variant's annotations.  Upon reviewing the variant, designate the 'interpretation' from the dropdown and provide any additional notes."
             }
           ],
-          "title": "Review Variants"
+          "title": "Review variants"
         },
         {
           "app": "review-findings",
@@ -60,7 +60,7 @@
               "tooltip": "tooltip"
             }
           ],
-          "title": "Findings"
+          "title": "Report findings"
         }
       ],
       "summary": "Review findings. ",
