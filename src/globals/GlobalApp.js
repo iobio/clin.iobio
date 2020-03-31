@@ -12,9 +12,6 @@ class GlobalApp {
 
     this.version               = "3.3 gru";
 
-    this.DEV_IOBIO             = "nv-dev-new.iobio.io/";
-    this.STAGE_IOBIO           = "nv-green.iobio.io/";
-    this.GREEN_IOBIO           = "nv-green.iobio.io/";  // Must always stay at green to accommodate VEP service
     this.PROD_IOBIO            = "backend.iobio.io/";
 
     this.IOBIO_SOURCE          = this.PROD_IOBIO;
