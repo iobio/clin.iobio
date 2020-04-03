@@ -389,16 +389,9 @@ export default {
       variantsByInterpretation: [],
 
       showFindings: false,
-
+      
       iobioSource: 'backend.iobio.io',
-
-      iobioSourceMap: {
-        'https://staging.frameshift.io': 'backend.iobio.io',
-        'https://mosaic.chpc.utah.edu':  'mosaic.chpc.utah.edu',
-        'https://mosaic-dev.genetics.utah.edu': 'mosaic.chpc.utah.edu',
-        'https://mosaic-stage.chpc.utah.edu': 'mosaic.chpc.utah.edu'
-      },
-
+      
       appUrls: {
         'localhost': {
           'gene':      'http://localhost:4026/?launchedFromClin=true&frame_source=' + window.document.URL,
@@ -647,12 +640,6 @@ export default {
             self.params.iobio_source = null;
           }
 
-
-
-          if (self.iobioSourceMap[self.params.source]) {
-            self.iobioSource = self.iobioSourceMap[self.params.source];
-          }
-
           self.launchedFromMosaic = true;
           self.mosaicSession = new MosaicSession();
           // For now, just hardcode is_pedgree = true
@@ -683,6 +670,7 @@ export default {
             self.splashMessage = error;
           })
         } else {
+          self.params.source = ""; 
           self.showLandingPage = true;
           self.modelInfos = self.demoModelInfos;
           self.user       = self.demoUser;
@@ -970,7 +958,7 @@ export default {
             sender:                'clin.iobio',
             receiver:               appName,
             'user':                 self.user,
-            'iobioSource':          self.iobioSource,
+            'iobioSource':          self.params.source,
             'isFrameVisible':       app.step == self.currentStep,
             'modelInfo':            probandModelInfo[0],
             'modelInfos':           self.modelInfos,
