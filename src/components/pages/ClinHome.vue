@@ -390,8 +390,6 @@ export default {
 
       showFindings: false,
       
-      iobioSource: 'backend.iobio.io',
-      
       appUrls: {
         'localhost': {
           'gene':      'http://localhost:4026/?launchedFromClin=true&frame_source=' + window.document.URL,
