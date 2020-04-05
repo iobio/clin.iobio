@@ -163,17 +163,6 @@ export default class MosaicSession {
   }
 
   hasVariantSets(modelInfos, rel='proband') {
-    /*
-    let proband = modelInfos.filter(function(mi) {
-      return mi.relationship == rel;
-    })
-    if (proband && proband.length > 0) {
-      let fileInfos = proband[0].txt;
-      return fileInfos && fileInfos.length > 0
-    } else {
-      return false;
-    }
-    */
     return false;
   }
 
