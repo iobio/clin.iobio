@@ -32,6 +32,8 @@ const routes = [
         paramTokenType:             route.query.token_type,
         paramToken:                 route.query.access_token,
         paramSource:                route.query.source,
+        paramGeneSetId:             route.query.gene_set_id,
+        paramGene:                  route.query.gene,
 
         paramIobioSource:           route.query.iobio_source,
         paramGeneBatchSize:         route.query.gene_batch_size,
