@@ -22,9 +22,11 @@ export default class MosaicSession {
     this.variantSetToFilterName = {
       'compoundhet': 'compoundHet'
     };
+
+    this.geneSet = null;
   }
 
-  promiseInit(sampleId, source, isPedigree, projectId, clientAppId ) {
+  promiseInit(sampleId, source, isPedigree, projectId, clientAppId, geneSetId ) {
     let self = this;
     self.api = source + self.apiVersion;
     self.client_application_id = clientAppId;
@@ -37,133 +39,131 @@ export default class MosaicSession {
       self.promiseGetCurrentUser()
       .then(function(data) {
         self.user = data;
-        console.log("promise Get current user", self.user);
-
+        if (geneSetId) {
+          return self.promiseGetGeneSet(projectId, geneSetId)
+        } else {
+          return Promise.resolve(null);
+        }
       })
-      .catch(function(error) {
-        console.log(error)
-      })
+      .then(function(data) {
 
-      self.promiseGetSampleInfo(projectId, sampleId, isPedigree).then(data => {
+        self.geneSet = data;
 
-        let promises = [];
+        self.promiseGetSampleInfo(projectId, sampleId, isPedigree)
+        .then(data => {
 
-
-        let pedigree    = isPedigree ? data.pedigree : {'proband': data.proband};
-        let rawPedigree = data.rawPedigree;
-
-        // Let's get the proband info first
-        let probandSample = isPedigree ? pedigree.proband : data.proband;
-        self.promiseGetFileMapForSample(projectId, probandSample, 'proband').then(data => {
-          probandSample.files = data.fileMap;
-        })
-        .then( () => {
-          for (var rel in pedigree) {
-            if (rel != 'unparsed') {
-              let samples = [];
-              if (Array.isArray(pedigree[rel])) {
-                samples = pedigree[rel];
-              } else {
-                samples = [pedigree[rel]];
-              }
-              samples.forEach(s => {
-                let p =  self.promiseGetFileMapForSample(projectId, s, rel).then(data => {
-                  let theSample = data.sample;
-                  theSample.files = data.fileMap;
-
-                  let coverageHisto =  {id: sampleId, coverage: theSample.distributions.coverage_hist_no_outliers};
-                  let varCounts = {id: sampleId, counts : { SNP: theSample.metrics.var_snp_count, indel : theSample.metrics.var_indel_count, other: theSample.metrics.var_other_count}}
+          let promises = [];
 
 
-                  // gene.iobio only supports siblings in same multi-sample vcf as proband.
-                  // bypass siblings in their own vcf.
-                  let bypass = false;
-                  // TODO:  Need to check if samples exist in proband vcf rather than checking file names
-                  // since mosaic generates different vcf url for sample physical file.
-                  //if (data.relationship == 'siblings' && theSample.files.vcf != probandSample.files.vcf) {
-                  //  bypass = true;
-                  //  console.log("Bypassing sibling " + theSample.id + ".  This sample must reside in the same vcf as the proband in order to be processed.")
-                  //}
+          let pedigree    = isPedigree ? data.pedigree : {'proband': data.proband};
+          let rawPedigree = data.rawPedigree;
+   
+          // Let's get the proband info first
+          let probandSample = isPedigree ? pedigree.proband : data.proband;
+          self.promiseGetFileMapForSample(projectId, probandSample, 'proband').then(data => {
+            probandSample.files = data.fileMap;
+          })
+          .then( () => {
+            for (var rel in pedigree) {
+              if (rel != 'unparsed') {
+                let samples = [];
+                if (Array.isArray(pedigree[rel])) {
+                  samples = pedigree[rel];
+                } else {
+                  samples = [pedigree[rel]];
+                }
+                samples.forEach(s => {
+                  let p =  self.promiseGetFileMapForSample(projectId, s, rel).then(data => {
+                    let theSample = data.sample;
+                    theSample.files = data.fileMap;
 
-                  if (!bypass) {
-
-                    var modelInfo = {
-                      'relationship':   data.relationship == 'siblings' ? 'sibling' : data.relationship,
-                      'affectedStatus': isPedigree ? theSample.pedigree.affection_status == 2 ? 'affected' : 'unaffected' : 'affected',
-                      'sex':            isPedigree ? theSample.pedigree.sex == 1 ? 'male' : (theSample.pedigree.sex == 2 ? 'female' : 'unknown') : 'unknown',
-                      'name':           theSample.name,
-                      'sample':         theSample.files.vcf ? theSample.vcf_sample_name : theSample.name,
-                      'vcf':            theSample.files.vcf,
-                      'tbi':            theSample.files.tbi == null || theSample.files.tbi.indexOf(theSample.files.vcf) == 0 ? null : theSample.files.tbi,
-                      'txt':            theSample.files.txt
-                    }
+                    let coverageHisto =  {id: sampleId, coverage: theSample.distributions.coverage_hist_no_outliers};
+                    let varCounts = {id: sampleId, counts : { SNP: theSample.metrics.var_snp_count, indel : theSample.metrics.var_indel_count, other: theSample.metrics.var_other_count}}
 
 
-                    if (theSample.files.bam != null) {
-                      modelInfo.bam = theSample.files.bam;
-                      if (theSample.files.bai) {
-                        modelInfo.bai = theSample.files.bai;
+                    // gene.iobio only supports siblings in same multi-sample vcf as proband.
+                    // bypass siblings in their own vcf.
+                    let bypass = false;
+                    // TODO:  Need to check if samples exist in proband vcf rather than checking file names
+                    // since mosaic generates different vcf url for sample physical file.
+                    //if (data.relationship == 'siblings' && theSample.files.vcf != probandSample.files.vcf) {
+                    //  bypass = true;
+                    //  console.log("Bypassing sibling " + theSample.id + ".  This sample must reside in the same vcf as the proband in order to be processed.")
+                    //}
+
+                    if (!bypass) {
+
+                      var modelInfo = {
+                        'relationship':   data.relationship == 'siblings' ? 'sibling' : data.relationship,
+                        'affectedStatus': isPedigree ? theSample.pedigree.affection_status == 2 ? 'affected' : 'unaffected' : 'affected',
+                        'sex':            isPedigree ? theSample.pedigree.sex == 1 ? 'male' : (theSample.pedigree.sex == 2 ? 'female' : 'unknown') : 'unknown',
+                        'name':           theSample.name,
+                        'sample':         theSample.files.vcf ? theSample.vcf_sample_name : theSample.name,
+                        'vcf':            theSample.files.vcf,
+                        'tbi':            theSample.files.tbi == null || theSample.files.tbi.indexOf(theSample.files.vcf) == 0 ? null : theSample.files.tbi,
+                        'txt':            theSample.files.txt
                       }
 
-                    } else if (theSample.files.cram != null) {
-                      modelInfo.bam = theSample.files.cram;
-                      if (theSample.files.crai) {
-                        modelInfo.bai = theSample.files.crai;
+
+                      if (theSample.files.bam != null) {
+                        modelInfo.bam = theSample.files.bam;
+                        if (theSample.files.bai) {
+                          modelInfo.bai = theSample.files.bai;
+                        }
+
+                      } else if (theSample.files.cram != null) {
+                        modelInfo.bam = theSample.files.cram;
+                        if (theSample.files.crai) {
+                          modelInfo.bai = theSample.files.crai;
+                        }
                       }
+
+                      modelInfos.push(modelInfo);
+                      coverageHistos.push(coverageHisto);
+                      allVarCounts.push(varCounts);
                     }
 
-                    modelInfos.push(modelInfo);
-                    coverageHistos.push(coverageHisto);
-                    allVarCounts.push(varCounts);
-                  }
-
+                  })
+                  promises.push(p);
                 })
-                promises.push(p);
-              })
-            }
-
-
-          }
-          Promise.all(promises).then(response => {
-            // Don't want to expose db info here?
-            //console.log(pedigree);
-
-            let buf = "";
-            modelInfos.forEach(function(modelInfo) {
-              if (modelInfo.sample == null || modelInfo.sample == "") {
-                buf += "The sample " + modelInfo.name + "  (" + modelInfo.relationship + ")   has an empty vcf_sample_name. Unable to properly filter variants for this sample.<br><br>";
               }
-            })
-            if (buf.length > 0) {
-              alertify.alert("Error", buf)
-            }
 
-            resolve({'modelInfos': modelInfos, 'rawPedigree': rawPedigree, 'coverageHistos': coverageHistos, 'allVarCounts': allVarCounts, 'user' : self.user});
-          })
-          .catch(error => {
-            reject(error);
+
+            }
+            Promise.all(promises).then(response => {
+              // Don't want to expose db info here?
+              //console.log(pedigree);
+
+              let buf = "";
+              modelInfos.forEach(function(modelInfo) {
+                if (modelInfo.sample == null || modelInfo.sample == "") {
+                  buf += "The sample " + modelInfo.name + "  (" + modelInfo.relationship + ")   has an empty vcf_sample_name. Unable to properly filter variants for this sample.<br><br>";
+                }
+              })
+              if (buf.length > 0) {
+                alertify.alert("Error", buf)
+              }
+
+              resolve({'modelInfos': modelInfos, 'rawPedigree': rawPedigree, 'coverageHistos': coverageHistos, 'allVarCounts': allVarCounts, 'user' : self.user, 'geneSet': self.geneSet });
+            })
+            .catch(error => {
+              reject(error);
+            })
+
           })
         })
-
-
-
-
+              
       })
-    })
+      .catch(error => {
+        reject(error);
+      })
 
+    })
 
   }
 
   hasVariantSets(modelInfos, rel='proband') {
-    let proband = modelInfos.filter(function(mi) {
-      return mi.relationship == rel;
-    })
-    if (proband && proband.length > 0) {
-      let fileInfos = proband[0].txt;
-      return fileInfos && fileInfos.length > 0
-    } else {
-      return false;
-    }
+    return false;
   }
 
   promiseParseVariantSets(modelInfos, rel='proband') {
@@ -275,6 +275,7 @@ export default class MosaicSession {
       });
     });
   }
+
 
   promiseGetSampleInfo(project_id, sample_id, isPedigree) {
     let self = this;
@@ -562,6 +563,20 @@ export default class MosaicSession {
     });
   }
 
+  promiseGetGeneSet(projectId, geneSetId) {
+    let self = this;
+    return new Promise(function(resolve, reject) {
+      self.getGeneSet(projectId, geneSetId)
+      .done(response => {
+        resolve(response)
+      })
+      .fail(error => {
+        reject("Error getting gene set " + geneSetId + ": " + error);
+      })
+    })
+
+  }
+
   promiseGetAnalysis(projectId, analysisId) {
     let self = this;
     return new Promise(function(resolve, reject) {
@@ -703,6 +718,19 @@ export default class MosaicSession {
 
   }
 
+  getGeneSet(projectId, geneSetId) {
+    let self = this;
+
+    return $.ajax({
+      url: self.api + '/projects/' + projectId + '/genes/sets/' + geneSetId,
+      type: 'GET',
+      contentType: 'application/json',
+      headers: {
+        Authorization: localStorage.getItem('hub-iobio-tkn'),
+      },
+    });
+  }
+
   stringifyAnalysis(analysisData) {
     var cache = [];
     let analysisString = JSON.stringify(analysisData, function(key, value) {
@@ -719,5 +747,8 @@ export default class MosaicSession {
     cache = [];
     return analysisString;
   }
+
+
+
 }
 

@@ -349,7 +349,9 @@ export default {
     paramIobioSource:    null,
     paramGeneBatchSize:  null,
     paramClientApplicationId: null,
-    paramBuild: null
+    paramBuild: null,
+    paramGeneSetId:       null,
+    paramGene:            null
   },
   data() {
     let self = this;
@@ -389,16 +391,7 @@ export default {
       variantsByInterpretation: [],
 
       showFindings: false,
-
-      iobioSource: 'nv-prod.iobio.io',
-
-      iobioSourceMap: {
-        'https://staging.frameshift.io': 'nv-prod.iobio.io',
-        'https://mosaic.chpc.utah.edu':  'mosaic.chpc.utah.edu',
-        'https://mosaic-dev.genetics.utah.edu': 'mosaic.chpc.utah.edu',
-        'https://mosaic-stage.chpc.utah.edu': 'mosaic.chpc.utah.edu'
-      },
-
+      
       appUrls: {
         'localhost': {
           'gene':      'http://localhost:4026/?launchedFromClin=true&frame_source=' + window.document.URL,
@@ -418,9 +411,6 @@ export default {
       },
 
       apps: {
-        //'bam':       {url: null, isLoaded: false, step: 0, iframeSelector: '#bam-iframe iframe'},
-        // 'genepanel': {url: null, isLoaded: false, isMounted: true,  step: 2,  iframeSelector: '#gene-panel-iframe iframe'},
-        'gene':      {url: null, isLoaded: false, isMounted: true,  step: -1, iframeSelector: '#gene-iframe iframe'},
         'genefull':  {url: null, isLoaded: false, isMounted: false, step: 3,  iframeSelector: '#gene-iframe iframe'}
       },
 
@@ -430,6 +420,7 @@ export default {
       workflow: null,
       analysis: null,
       caseSummary: null,
+      geneSet: null,
 
 
       demoModelInfos:  [
@@ -639,6 +630,8 @@ export default {
           self.params.source                = self.paramSource
           self.params.iobio_source          = self.paramIobioSource
           self.params.client_application_id = self.paramClientApplicationId
+          self.params.gene_set_id           = self.paramGeneSetId
+          self.params.gene                  = self.paramGene
 
           if (self.params.analysis_id == 'undefined') {
             self.params.analysis_id = null;
@@ -647,20 +640,15 @@ export default {
             self.params.iobio_source = null;
           }
 
-
-
-          if (self.iobioSourceMap[self.params.source]) {
-            self.iobioSource = self.iobioSourceMap[self.params.source];
-          }
-
           self.launchedFromMosaic = true;
           self.mosaicSession = new MosaicSession();
           // For now, just hardcode is_pedgree = true
           self.mosaicSession.promiseInit(self.params.sample_id, self.params.source,
-            true, self.params.project_id, self.params.client_application_id)
+            true, self.params.project_id, self.params.client_application_id, self.params.gene_set_id)
           .then(data => {
             self.modelInfos = data.modelInfos;
             self.user       = data.user;
+            self.geneSet    = data.geneSet;
 
             self.coverageHistos = data.coverageHistos;
             self.rawPedigree = data.rawPedigree;
@@ -683,6 +671,7 @@ export default {
             self.splashMessage = error;
           })
         } else {
+          self.params.source = ""; 
           self.showLandingPage = true;
           self.modelInfos = self.demoModelInfos;
           self.user       = self.demoUser;
@@ -970,7 +959,7 @@ export default {
             sender:                'clin.iobio',
             receiver:               appName,
             'user':                 self.user,
-            'iobioSource':          self.iobioSource,
+            'iobioSource':          self.params.source,
             'isFrameVisible':       app.step == self.currentStep,
             'modelInfo':            probandModelInfo[0],
             'modelInfos':           self.modelInfos,
@@ -1349,6 +1338,18 @@ export default {
             // Workaround until Adit can handle null VennDiagram in his component
             //
             self.initForPhenotypist(newAnalysis);
+
+            // If a gene set was specified, initialize the genes accordingly
+            if (self.geneSet && self.geneSet.genes) {
+              self.geneSet.genes.forEach(function(geneName) {
+                newAnalysis.payload.genes.push(geneName);
+              })
+            } else if (self.params.gene) {
+              // Otherwise, if a gene set wasn't specified but a gene was, 
+              // initialize the genes to this single gene
+              newAnalysis.payload.genes.push(self.param.gene);
+            }
+
 
 
             newAnalysis.payload.variants = [];
