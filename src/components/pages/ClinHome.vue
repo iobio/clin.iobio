@@ -1795,7 +1795,12 @@ export default {
 
     updateAverageCoverage(cov){
       this.averageCoverage = cov;
+    }, 
+    
+    testFunctionToBreakBuild1(){
+      console.log("this is a successful build but it should break the build when the branch is merged. However Travis CI should catch it");
     }
+
 
   }
 }
