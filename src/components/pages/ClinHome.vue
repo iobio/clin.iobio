@@ -351,7 +351,7 @@ export default {
     paramClientApplicationId: null,
     paramBuild: null,
     paramGeneSetId:       null,
-    paramGene:            null
+    paramGenes:           null
   },
   data() {
     let self = this;
@@ -631,7 +631,7 @@ export default {
           self.params.iobio_source          = self.paramIobioSource
           self.params.client_application_id = self.paramClientApplicationId
           self.params.gene_set_id           = self.paramGeneSetId
-          self.params.gene                  = self.paramGene
+          self.params.genes                 = self.paramGenes
 
           if (self.params.analysis_id == 'undefined') {
             self.params.analysis_id = null;
@@ -1344,10 +1344,12 @@ export default {
               self.geneSet.genes.forEach(function(geneName) {
                 newAnalysis.payload.genes.push(geneName);
               })
-            } else if (self.params.gene) {
+            } else if (self.params.genes) {
               // Otherwise, if a gene set wasn't specified but a gene was, 
               // initialize the genes to this single gene
-              newAnalysis.payload.genes.push(self.param.gene);
+              self.params.genes.split(",").forEach(function(geneName) {
+                newAnalysis.payload.genes.push(geneName);              
+              })
             }
 
 
