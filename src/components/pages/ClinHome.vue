@@ -296,15 +296,13 @@ $horizontal-dashboard-height: 140px
 <script>
 import Navigation    from  '../pages/Navigation.vue'
 import Workflow      from  '../pages/Workflow.vue'
-import WorkflowNav      from  '../pages/WorkflowNav.vue'
+import WorkflowNav   from  '../pages/WorkflowNav.vue'
 import ReviewCase    from  '../viz/ReviewCase.vue'
 import Findings      from  '../viz/Findings.vue'
-import LoginMosaic   from  '../partials/LoginMosaic.vue'
 import AppIcon       from  '../partials/AppIcon.vue'
 import LoadingDialog from '../partials/LoadingDialog.vue'
 import LandingPage   from '../pages/LandingPage.vue'
 
-import AWSSession    from  '../../models/AWSSession.js'
 import MosaicSession from  '../../models/MosaicSession.js'
 import GenomeBuildHelper from '../../models/GenomeBuildHelper.js'
 
@@ -328,7 +326,6 @@ export default {
     Navigation,
     Workflow,
     WorkflowNav,
-    LoginMosaic,
     ReviewCase,
     Findings,
     AppIcon,
