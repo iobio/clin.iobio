@@ -17,8 +17,19 @@
         <span class="ml-1" @click.stop="videoDialog = true">Watch video</span>
       </v-btn>
       
-      <v-btn text disabled>
+      <v-btn icon title="Terms of Service">
+        <v-icon>description</v-icon>
       </v-btn>
+      
+      <MoreMenu />
+      
+      <!-- <v-btn text disabled>
+      </v-btn> -->
+
+      
+      
+      <!-- <v-btn text disabled>
+      </v-btn> -->
 
     </v-app-bar>
     
@@ -146,6 +157,7 @@ import findingsIcon     from '../partials/icons/findings-icon.vue'
 import variantsIcon     from '../partials/icons/variants-icon.vue'
 import { bus }          from '../../main'
 import LandingPageSlide from '../partials/LandingPageSlide.vue'
+import MoreMenu         from '../partials/MoreMenu.vue'
 
 import {
   Hooper,
@@ -171,7 +183,8 @@ export default {
     phenotypeIcon,
     variantsIcon,
     findingsIcon,
-    LandingPageSlide
+    LandingPageSlide,
+    MoreMenu
   },
   props: {
   },
