@@ -180,6 +180,8 @@ header.theme--dark.v-sheet
         :analysis="analysis"
         @save-modal:set-visibility="toggleSaveModal"
       />
+      
+      <MoreMenu landingPage="false" />
 
 
     </v-toolbar>
@@ -194,12 +196,14 @@ header.theme--dark.v-sheet
 import { bus }     from '../../main';
 import SaveButton  from '../partials/SaveButton.vue'
 import PedigreeGraph from '../viz/PedigreeGraph'
+import MoreMenu    from '../partials/MoreMenu.vue'
 
 export default {
   name: 'navigation',
   components: {
     SaveButton,
-    PedigreeGraph
+    PedigreeGraph,
+    MoreMenu
   },
   props: {
     caseSummary: null,

@@ -6,6 +6,7 @@
   font-size: 20px !important
   font-weight: 400 !important
 
+  
 </style>
 
 <template>
@@ -14,9 +15,10 @@
     <v-menu offset-y>
       <template v-slot:activator="{ on }">
         <v-btn
-          color="rgb(69, 69, 69)"
+          :color="more_menu_icon_color"
           dark
-          icon
+          :icon="showIconButton"
+          :text="showTextButton"
           v-on="on"
         >
           <v-icon medium>mdi-dots-vertical</v-icon>
@@ -73,10 +75,7 @@ export default {
     NavBarDialog
   },
   props: {
-    showIt: {
-      type: Boolean
-    },
-    text: {
+    landingPage: {
       type: String
     }
   },
@@ -101,7 +100,10 @@ export default {
           <br>
           Users from commercial organisations may register a commercial accounts with Frameshift.  To create a commercial account, contact Frameshift at  <a href="mailto:admin@frameshift.io" target="_top">admin@frameshift.io</a> for a consultation.
           `
-      }
+      }, 
+      more_menu_icon_color: "rgb(69, 69, 69)", 
+      showIconButton: true, 
+      showTextButton: false
     }
   }, 
   methods: {
@@ -126,6 +128,31 @@ export default {
       this.showTermsOfService = false; 
       this.showDisclaimer = false; 
     })
+    this.landingPage=="true" ? this.more_menu_icon_color = "rgb(69, 69, 69)" : this.more_menu_icon_color = "white"
+    if(this.landingPage=="true"){
+      this.more_menu_icon_color = "rgb(69, 69, 69)"; 
+      this.showIconButton = true; 
+      this.showTextButton = false; 
+    }
+    else {
+      this.more_menu_icon_color = "white";
+      this.showIconButton = false; 
+      this.showTextButton = true; 
+    }
+  }, 
+  watch: {
+    landingPage(){
+      if(this.landingPage=="true"){
+        this.more_menu_icon_color = "rgb(69, 69, 69)";
+        this.showIconButton = true; 
+        this.showTextButton = false; 
+      }
+      else {
+        this.more_menu_icon_color = "white";
+        this.showIconButton = false; 
+        this.showTextButton = true; 
+      }    
+    }
   }
 }
 </script>

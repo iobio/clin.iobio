@@ -38,7 +38,7 @@ export default {
     }, 
     headline: {
       type: String
-    }
+    }, 
   },
   watch: {
     showDialog(){
@@ -51,6 +51,9 @@ export default {
     return {
       showDialog: true, 
     }
+  }, 
+  mounted(){
+    
   }
 }
 </script>
