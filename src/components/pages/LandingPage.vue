@@ -12,13 +12,16 @@
 
       <v-spacer></v-spacer>
 
-      <v-btn class="ml-2" outlined color="rgb(69, 69, 69)">
+      <v-btn class="ml-2 mr-2" outlined color="rgb(69, 69, 69)">
         <v-icon>play_circle_outline</v-icon>
         <span class="ml-1" @click.stop="videoDialog = true">Watch video</span>
       </v-btn>
       
-      <v-btn text disabled>
+      <v-btn @click="onShowTermsOfService" color="rgb(69, 69, 69)" class="ml-4" icon title="Terms of Service">
+        <v-icon>description</v-icon>
       </v-btn>
+      
+      <MoreMenu class="ml-4" landingPage="true" />
 
     </v-app-bar>
     
@@ -133,6 +136,13 @@
           </v-card-actions>
         </v-card>
       </v-dialog>
+      
+      <NavBarDialog
+        v-if="showTermsOfService"
+        :headline="terms.headline"
+        :content="terms.content"
+        id="TermsDialogLandingPage">
+      </NavBarDialog>
     </v-content>
 
   </div>
@@ -146,6 +156,8 @@ import findingsIcon     from '../partials/icons/findings-icon.vue'
 import variantsIcon     from '../partials/icons/variants-icon.vue'
 import { bus }          from '../../main'
 import LandingPageSlide from '../partials/LandingPageSlide.vue'
+import MoreMenu         from '../partials/MoreMenu.vue'
+import NavBarDialog     from '../partials/NavBarDialog.vue'
 
 import {
   Hooper,
@@ -171,7 +183,9 @@ export default {
     phenotypeIcon,
     variantsIcon,
     findingsIcon,
-    LandingPageSlide
+    LandingPageSlide,
+    MoreMenu,
+    NavBarDialog
   },
   props: {
   },
@@ -214,6 +228,17 @@ export default {
           icon: findingsIcon
         }, 
       ], 
+      showTermsOfService: false,
+      terms: {
+        headline: "Terms of service", 
+        content: `<strong>Academic Use </strong>
+          <br> Gene.iobio is freely available for all Academic use.
+          <br><br>
+          <strong>Commercial Use </strong>
+          <br>
+          Users from commercial organisations may register a commercial accounts with Frameshift.  To create a commercial account, contact Frameshift at  <a href="mailto:admin@frameshift.io" target="_top">admin@frameshift.io</a> for a consultation.
+          `
+      }, 
     }
   },
   methods:  {
@@ -227,10 +252,15 @@ export default {
     },
     changeSlide(step_number){
       this.carouselData = step_number;
-    }
+    },
+    onShowTermsOfService: function(){
+      this.showTermsOfService = true;
+    },
   },
   mounted: function() {
-
+    bus.$on("close_dialog", ()=>{
+      this.showTermsOfService = false; 
+    })
   },
   watch: {
     carouselData () {
