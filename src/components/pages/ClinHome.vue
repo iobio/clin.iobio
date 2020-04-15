@@ -393,17 +393,14 @@ export default {
         'localhost': {
           'gene':      'http://localhost:4026/?launchedFromClin=true&frame_source=' + window.document.URL,
           'genefull':  'http://localhost:4026/?launchedFromClin=true&frame_source=' + window.document.URL,
-          //'bam':       'http://localhost:4027'
         },
         'tony.iobio.io': {
           'gene':      'http://tony.iobio.io:4026/?launchedFromClin=true&frame_source=' + window.document.URL,
           'genefull':  'http://tony.iobio.io:4026/?launchedFromClin=true&frame_source=' + window.document.URL,
-          //'bam':       'http://tony.iobio.io:4027'
         },
-        'dev': {
-            'gene':      'https://stage.gene.iobio.io/?launchedFromClin=true&frame_source=' + window.document.URL,
-            'genefull':  'https://stage.gene.iobio.io/?launchedFromClin=true&frame_source=' + window.document.URL,
-            //'bam':       'https://newbam.iobio.io'
+        'prod': {
+            'gene':      'https://gene.iobio.io/?launchedFromClin=true&frame_source=' + window.document.URL,
+            'genefull':  'https://gene.iobio.io/?launchedFromClin=true&frame_source=' + window.document.URL,
         },
       },
 
@@ -591,10 +588,8 @@ export default {
       } else if (window.document.URL.indexOf("tony.iobio.io") > 0) {
         appTarget = "tony.iobio.io";
       } else {
-        appTarget = "dev";
+        appTarget = "prod";
       }
-      //self.apps.bam.url       = self.appUrls[appTarget].bam;
-      // self.apps.genepanel.url     = self.appUrls[appTarget].genepanel;
       self.apps.genefull.url      = self.appUrls[appTarget].genefull;
       window.addEventListener("message", self.receiveAppMessage, false);
 
