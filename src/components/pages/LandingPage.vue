@@ -232,11 +232,11 @@ export default {
       terms: {
         headline: "Terms of service", 
         content: `<strong>Academic Use </strong>
-          <br> Gene.iobio is freely available for all Academic use.
+          <br> clin.iobio is free for academic use.
           <br><br>
           <strong>Commercial Use </strong>
           <br>
-          Users from commercial organisations may register a commercial accounts with Frameshift.  To create a commercial account, contact Frameshift at  <a href="mailto:admin@frameshift.io" target="_top">admin@frameshift.io</a> for a consultation.
+          Commercial use of clin.iobio is licensed through Frameshift Genomics. Please contact Frameshift at  <a href="mailto:admin@frameshift.io" target="_top">admin@frameshift.io</a> to discuss any commercial use of this tool.
           `
       }, 
     }
