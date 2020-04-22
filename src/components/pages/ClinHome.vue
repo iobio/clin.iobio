@@ -399,8 +399,8 @@ export default {
           'genefull':  'http://tony.iobio.io:4026/?launchedFromClin=true&frame_source=' + window.document.URL,
         },
         'prod': {
-            'gene':      'https://gene.iobio.io/?launchedFromClin=true&frame_source=' + window.document.URL,
-            'genefull':  'https://gene.iobio.io/?launchedFromClin=true&frame_source=' + window.document.URL,
+            'gene':      'https://stage.gene.iobio.io/?launchedFromClin=true&frame_source=' + window.document.URL,
+            'genefull':  'https://stage.gene.iobio.io/?launchedFromClin=true&frame_source=' + window.document.URL,
         },
       },
 
