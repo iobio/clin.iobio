@@ -125,6 +125,9 @@ $horizontal-dashboard-height: 140px
 
 <template>
 <div id="application-content" :class="{'workflow-new': newWorkflow ? true : false}">
+  <Nav1
+    :cohortModel="cohortModel">
+  </Nav1>
   <landing-page v-if="!launchedFromMosaic && showLandingPage"></landing-page>
   <navigation v-if="!showLandingPage && !showSplash && isAuthenticated  && workflow && analysis"
    :caseSummary="caseSummary"
@@ -305,7 +308,14 @@ import LandingPage   from '../pages/LandingPage.vue'
 
 import MosaicSession from  '../../models/MosaicSession.js'
 import GenomeBuildHelper from '../../models/GenomeBuildHelper.js'
-
+import CohortModel       from '../../models/CohortModel'
+import FreebayesSettings from '../../models/FreebayesSettings'
+import Glyph              from '../../partials/Glyph.js'
+import Bam                from  '../../models/Bam.iobio.js'
+import vcfiobio           from  '../../models/Vcf.iobio.js'
+import Translator         from  '../../models/Translator.js'
+import GenericAnnotation  from  '../../models/GenericAnnotation.js'
+import EndpointCmd        from  '../../models/EndpointCmd.js'
 
 import SaveAnalysisPopup  from '../partials/SaveAnalysisPopup.vue'
 
@@ -318,7 +328,7 @@ import { saveAs } from 'file-saver'
 import { bus } from '../../main'
 
 import NewComponents from 'iobio-phenotype-extractor-vue';
-
+import Nav1 from './Nav1.vue'
 
 export default {
   name: 'home',
@@ -332,6 +342,7 @@ export default {
     SaveAnalysisPopup,
     LoadingDialog,
     LandingPage,
+    Nav1,
     ...NewComponents
   },
   props: {
@@ -461,6 +472,7 @@ export default {
       },
       reviewCaseBadges: null,
       generatingReport: false,
+      cohortModel: null,
     }
 
   },
@@ -610,6 +622,39 @@ export default {
           // TODO - genome build is required
           self.genomeBuildHelper.setCurrentBuild("GRCh37")
         }
+        
+        let glyph = new Glyph();
+        let translator = new Translator(self.globalApp, glyph);
+        let genericAnnotation = new GenericAnnotation(glyph);
+
+        // self.geneModel = new GeneModel(self.globalApp, self.forceLocalStorage, self.launchedFromHub);
+        // self.geneModel.geneSource = self.forMyGene2 ? "refseq" : "gencode";
+        // self.geneModel.genomeBuildHelper = self.genomeBuildHelper;
+        // self.geneModel.setAllKnownGenes(self.allGenes);
+        // self.geneModel.translator = translator;
+
+
+        // Instantiate helper class than encapsulates IOBIO commands
+
+        // self.variantExporter = new VariantExporter(self.globalApp);
+        let endpoint = new EndpointCmd(self.globalApp,
+          1588141188430,
+          self.genomeBuildHelper,
+          self.globalApp.utility.getHumanRefNames);
+
+        self.cohortModel = new CohortModel(
+          self.globalApp,
+          null,
+          null,
+          endpoint,
+          genericAnnotation,
+          translator,
+          self.geneModel,
+          self.variantExporter,
+          self.cacheHelper,
+          self.genomeBuildHelper,
+          new FreebayesSettings());
+
 
         if (localStorage.getItem('hub-iobio-tkn') && localStorage.getItem('hub-iobio-tkn').length > 0 && self.paramSampleId && self.paramSource) {
           self.showLandingPage = false;
@@ -968,6 +1013,9 @@ export default {
         if (self.paramGeneBatchSize && (appName == 'gene' || appName == 'genefull')) {
           msgObject.batchSize = +self.paramGeneBatchSize;
         }
+        
+        console.log("ClinHome.setData  " + appName + " msgObject is: " + msgObject.modelInfo)
+
 
 
 
