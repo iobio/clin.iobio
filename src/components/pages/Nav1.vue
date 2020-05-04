@@ -9,6 +9,20 @@
   <div>
     NAV1 | <span> <a @click="onShowFiles"> Files </a></span>
     
+    <vcf-form
+          :cohortModel="cohortModel"
+          :dataType="getDataType('vcf')"
+          :fileType="getFileType('vcf')"
+          :slideBackground="slideBackground"
+          :modelInfoList="modelInfoList"
+          :allDataModels="DATA_MODELS"
+          :maxSamples="MAX_SAMPLES"
+          :uploadedUrl="uploadedVcfUrl"
+          :uploadedIndexUrl="uploadedTbiUrl"
+          :parentModelInfoIdx="modelInfoIdx"
+>
+</vcf-form>
+    
     <files-dialog
       v-if="showFiles"
      :cohortModel="cohortModel"
@@ -24,10 +38,11 @@
 
 <script>
 import FilesDialog from '../partials/FilesDialog.vue'
-
+import VcfForm from './VcfForm.vue'
 export default {
   components: {
-    FilesDialog
+    FilesDialog,
+    VcfForm
   },
   props: {
     cohortModel: null,
@@ -35,6 +50,33 @@ export default {
   data () {
     return {
       showFiles: false,
+      slideBackground: 'white',
+      modelInfoList: [],
+      DATA_MODELS: [
+          'vcf',
+          'coverage',
+          'cnv',
+          'rnaSeq',
+          'atacSeq'
+      ],
+      DATA_DESCRIPTORS: [
+    'Variant Calls',
+    'Read Coverage',
+    'Copy Number',
+    'Raw RNAseq',
+    'Raw ATACseq'
+],                FILE_DESCRIPTORS: [
+                    'vcf',
+                    'bam',
+                    'cnv',
+                    'bam',
+                    'bam'
+                ],
+      MAX_SAMPLES: 6,
+      uploadedVcfUrl: null,
+      uploadedTbiUrl: null,
+      uploadedSelectedSamples: [],
+      modelInfoIdx: 0
     }
   }, 
   methods: {
@@ -52,6 +94,17 @@ export default {
     onIsDemo: function(bool){
       this.$emit("isDemo", bool);
     },
+    getDataType: function (type) {
+    let idx = this.DATA_MODELS.indexOf(type);
+    return this.DATA_DESCRIPTORS[idx];
+},
+getFileType: function (type) {
+    let idx = this.DATA_MODELS.indexOf(type);
+    if (idx < 0) {
+        return 'summary';
+    }
+    return this.FILE_DESCRIPTORS[idx];
+},
 
   }
 }

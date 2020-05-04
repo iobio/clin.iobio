@@ -27,6 +27,10 @@ class CohortModel {
     this.annotationScheme = 'vep';
 
     this.analyzeCodingVariantsOnly = false;
+    
+    this.sampleModelUtil = new SampleModel(globalApp);  // Used to do initial file checking in uploader
+    this.sampleModelUtil.init(this);
+
 
     this.isLoaded = false;
     this.isSfariProject = false;  // True if launched from Mosaic w/ SSC project
