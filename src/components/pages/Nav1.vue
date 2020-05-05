@@ -9,7 +9,7 @@
   <div>
     NAV1 | <span> <a @click="onShowFiles"> Files </a></span>
     
-    <vcf-form
+    <!-- <vcf-form
           :cohortModel="cohortModel"
           :dataType="getDataType('vcf')"
           :fileType="getFileType('vcf')"
@@ -21,7 +21,7 @@
           :uploadedIndexUrl="uploadedTbiUrl"
           :parentModelInfoIdx="modelInfoIdx"
 >
-</vcf-form>
+</vcf-form> -->
     
     <files-dialog
       v-if="showFiles"

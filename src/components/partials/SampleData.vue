@@ -131,7 +131,6 @@ export default {
     onVcfUrlEntered: function(vcfUrl, tbiUrl) {
       let self = this;
       console.log("onVcfUrlEntered", vcfUrl);
-      console.log("self.modelInfo", self.modelInfo)
 
       self.$set(self, "sample", null);
       self.$set(self, "samples", []);
@@ -152,7 +151,8 @@ export default {
               self.modelInfo.sample = null;
               self.modelInfo.model.sampleName =  null;
             }
-            self.$emit("samples-available", self.modelInfo.relationship, self.samples);
+            // self.$emit("vcfUrl-emit", self.modelInfo.relationship, vcfUrl)
+            self.$emit("samples-available", self.modelInfo.relationship, self.samples, vcfUrl);
 
           }
           self.$emit("sample-data-changed");
@@ -200,6 +200,7 @@ export default {
       }
     },
     onSampleSelected: function() {
+      console.log("onSampleSelected", this.sample)
       let self = this;
       self.modelInfo.sample = this.sample;
       if (self.modelInfo.model) {

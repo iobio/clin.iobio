@@ -290,7 +290,13 @@ export default {
       probandSamples: null,
       affectedSibs: null,
       unaffectedSibs: null,
-      inProgress: false
+      inProgress: false, 
+      vcfUrls: {
+        proband: '', 
+        mother: '', 
+        father: '',
+        sibling: ''
+      }
     }
   },
   watch: {
@@ -312,7 +318,8 @@ export default {
     onLoad: function() {
       let self = this;
       self.inProgress = true;
-
+      console.log("self.mode", self.mode)
+      console.log("self.modelInfo", self.modelInfo)
       self.cohortModel.mode = self.mode;
       self.cohortModel.genomeBuildHelper.setCurrentBuild(self.buildName);
       self.cohortModel.genomeBuildHelper.setCurrentSpecies(self.speciesName);
@@ -414,19 +421,25 @@ export default {
     },
     validate: function() {
       this.isValid = false;
+      console.log("this.modelInfoMap", this.modelInfoMap)
       if (this.mode == 'single') {
         if (this.modelInfoMap.proband && this.modelInfoMap.proband.model.isReadyToLoad()) {
           this.isValid = true;
+          console.log("this.isValid", this.isValid)
         }
       } else {
         if (this.modelInfoMap.proband && this.modelInfoMap.proband.model && this.modelInfoMap.proband.model.isReadyToLoad()
             && this.modelInfoMap.mother && this.modelInfoMap.mother.model && this.modelInfoMap.mother.model.isReadyToLoad()
             && this.modelInfoMap.father && this.modelInfoMap.father.model && this.modelInfoMap.father.model.isReadyToLoad()) {
           this.isValid = true;
+          console.log("this.isValid for trio", this.isValid)
         }
       }
     },
-    onSamplesAvailable: function(relationship, samples) {
+    onSamplesAvailable: function(relationship, samples, vcf) {
+      console.log("onSamplesAvailable", relationship , " samples : ", samples)
+      this.vcfUrls[relationship] = vcf; 
+      console.log("this.vcfUrls", this.vcfUrls)
       if (relationship == 'proband') {
         this.probandSamples = samples;
         if (this.cohortModel.sampleMapSibs.affected && this.cohortModel.sampleMapSibs.affected.length > 0) {
