@@ -31,6 +31,7 @@
      @load-demo-data="onLoadDemoData"
      @on-cancel="showFiles = false"
      @isDemo="onIsDemo"
+     @get-modeinfo-map="getModelInfoMap"
     >
     </files-dialog>
   </div>
@@ -76,7 +77,9 @@ export default {
       uploadedVcfUrl: null,
       uploadedTbiUrl: null,
       uploadedSelectedSamples: [],
-      modelInfoIdx: 0
+      modelInfoIdx: 0, 
+      customModelInfos: [], 
+      geneSet:['PRX']
     }
   }, 
   methods: {
@@ -94,17 +97,47 @@ export default {
     onIsDemo: function(bool){
       this.$emit("isDemo", bool);
     },
+    getModelInfoMap: function(modelInfoMap, vcfUrls){
+      console.log("this.modelInfoMap on load", modelInfoMap, vcfUrls);
+      // var probandBam =  "https://s3.amazonaws.com/iobio/samples/bam/NA12878.exome.bam"; 
+      // var motherBam = "https://s3.amazonaws.com/iobio/samples/bam/NA12892.exome.bam"; 
+      // var fatherBam = "https://s3.amazonaws.com/iobio/samples/bam/NA12891.exome.bam"; 
+      // var siblingBam = "https://s3.amazonaws.com/iobio/samples/bam/NA12877.exome.bam"
+      var bamUrls = {
+        'proband': 'https://s3.amazonaws.com/iobio/samples/bam/NA12878.exome.bam',
+        'mother':  'https://s3.amazonaws.com/iobio/samples/bam/NA12892.exome.bam',
+        'father':  'https://s3.amazonaws.com/iobio/samples/bam/NA12891.exome.bam',
+        'sibling': 'https://s3.amazonaws.com/iobio/samples/bam/NA12877.exome.bam'
+      }
+      for(var model in modelInfoMap){
+        var obj = {}; 
+        obj.relationship = model 
+        obj.affectedStatus = "affected" 
+        obj.name = modelInfoMap[model].name 
+        obj.sample = modelInfoMap[model].sample 
+        obj.sex = "female" 
+        var vcf = modelInfoMap[model].vcf !== undefined ? modelInfoMap[model].vcf : vcfUrls[model];
+        obj.vcf = vcf; 
+        obj.tbi = null, 
+        obj.bam = bamUrls[model]; 
+        obj.bai = null
+        this.customModelInfos.push(obj)
+      }
+      console.log("this.customModelInfos", this.customModelInfos)
+      this.$emit("custom-model-info",this.customModelInfos); 
+      this.$emit('setGeneSet', this.geneSet)
+    }, 
     getDataType: function (type) {
-    let idx = this.DATA_MODELS.indexOf(type);
-    return this.DATA_DESCRIPTORS[idx];
-},
-getFileType: function (type) {
-    let idx = this.DATA_MODELS.indexOf(type);
-    if (idx < 0) {
-        return 'summary';
-    }
-    return this.FILE_DESCRIPTORS[idx];
-},
+        let idx = this.DATA_MODELS.indexOf(type);
+        return this.DATA_DESCRIPTORS[idx];
+    },
+    getFileType: function (type) {
+        let idx = this.DATA_MODELS.indexOf(type);
+        if (idx < 0) {
+            return 'summary';
+        }
+        return this.FILE_DESCRIPTORS[idx];
+    },
 
   }
 }

@@ -126,7 +126,9 @@ $horizontal-dashboard-height: 140px
 <template>
 <div id="application-content" :class="{'workflow-new': newWorkflow ? true : false}">
   <Nav1
-    :cohortModel="cohortModel">
+    :cohortModel="cohortModel"
+    @custom-model-info="customModelInfo"
+    @setGeneSet="setGeneSet">
   </Nav1>
   <landing-page v-if="!launchedFromMosaic && showLandingPage"></landing-page>
   <navigation v-if="!showLandingPage && !showSplash && isAuthenticated  && workflow && analysis"
@@ -473,6 +475,7 @@ export default {
       reviewCaseBadges: null,
       generatingReport: false,
       cohortModel: null,
+      customData: false
     }
 
   },
@@ -686,7 +689,7 @@ export default {
             self.modelInfos = data.modelInfos;
             self.user       = data.user;
             self.geneSet    = data.geneSet;
-
+            console.log("data.rawPedigree", data.rawPedigree)
             self.coverageHistos = data.coverageHistos;
             self.rawPedigree = data.rawPedigree;
             self.allVarCounts = data.allVarCounts;
@@ -985,10 +988,12 @@ export default {
           console.log("Unable to locate proband model info");
           return;
         }
-
+        if(self.customData){
+          self.analysis.payload.genes = ['PRX']
+        }
 
         let app = self.apps[appName];
-
+        console.log("this.analysis.payload.genes", self.analysis.payload.genes)
         console.log("ClinHome.setData  sending data to " + appName)
 
         var msgObject = {
@@ -1837,6 +1842,19 @@ export default {
 
     updateAverageCoverage(cov){
       this.averageCoverage = cov;
+    }, 
+    
+    customModelInfo(modelInfos){
+      console.log("modelInfos", modelInfos)
+      this.modelInfos = modelInfos; 
+      this.customData = true; 
+      // this.setGeneSet(); 
+    },
+    
+    setGeneSet(geneSet){
+      console.log("this.analysis.payload", this.analysis.payload)
+      this.analysis.payload.genes = geneSet;
+      
     }
 
   }

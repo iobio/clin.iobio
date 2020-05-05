@@ -319,7 +319,12 @@ export default {
       let self = this;
       self.inProgress = true;
       console.log("self.mode", self.mode)
-      console.log("self.modelInfo", self.modelInfo)
+      // console.log("self.modelInfo", self.modelInfo)
+      console.log("vcfUrls", self.vcfUrls)
+      console.log("this.modelInfoMap on load", this.modelInfoMap)
+
+      self.$emit("get-modeinfo-map", self.modelInfoMap, self.vcfUrls); 
+      
       self.cohortModel.mode = self.mode;
       self.cohortModel.genomeBuildHelper.setCurrentBuild(self.buildName);
       self.cohortModel.genomeBuildHelper.setCurrentSpecies(self.speciesName);
@@ -422,6 +427,7 @@ export default {
     validate: function() {
       this.isValid = false;
       console.log("this.modelInfoMap", this.modelInfoMap)
+      // this.$emit("Set-modelInfoMap", this.modelInfoMap)
       if (this.mode == 'single') {
         if (this.modelInfoMap.proband && this.modelInfoMap.proband.model.isReadyToLoad()) {
           this.isValid = true;
