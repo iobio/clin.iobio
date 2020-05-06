@@ -118,11 +118,11 @@
             <div v-for="(geneHit, index) in genePhenotypeRankings.slice(0,3)" :key="geneHit.key" class="variant-row" style="flex-flow:column">
               <div v-for="geneRank in geneHit.geneRanks" :key="geneRank.rank">
                 <div>
-                  <v-chip v-if="geneRank.rank" class="high">
+                  <v-chip  color="white" v-if="geneRank.rank" class="high">
                     <span class="mr-1">#{{ geneRank.rank  }}</span>
                     <span v-if="geneRank.source">{{  geneRank.source }}</span>
                   </v-chip>
-                  <v-chip v-else class="high">
+                  <v-chip  color="white" v-else class="high">
                     <span v-if="geneRank.source"> {{ geneRank.source }}</span>
                   </v-chip>
                   <span v-if="geneHit.searchTerm && geneRank.source!=='HPO'" class="pheno-search-term">
@@ -139,6 +139,7 @@
             <v-btn id="show-more-gene-association-button"
               text small color="primary"
               slot="activator"
+              style="float:right"
               v-tooltip.bottom-center="`Show all associations for this variant`"
               @click="showMoreGeneAssociationsDialog=true">
                 <v-icon>zoom_out_map</v-icon>Show more
@@ -153,33 +154,6 @@
               @close-gene-association-dialog="onCloseGeneAssociationDialog($event)">
             </gene-associations-dialog>
           </div>
-          <!-- <div v-if="genePhenotypeRankings" v-for="geneHit in genePhenotypeRankings" :key="geneHit.key" class="variant-row" style="flex-flow:column">
-            <div v-for="geneRank in geneHit.geneRanks" :key="geneRank.rank">
-              <div>
-                <v-chip class="high">#{{ geneRank.rank }}</v-chip>
-                <span v-if="geneRank.source" class="pheno-source">{{ geneRank.source }}</span>
-                <span v-if="geneHit.searchTerm" class="pheno-search-term">{{ geneHit.searchTerm }}</span>
-              </div>
-              
-              <div>
-                  <v-chip v-if="geneRank.rank" class="high">
-                    <span class="mr-1">#{{ geneRank.rank  }}</span>
-                    <span v-if="geneRank.source">{{  geneRank.source }}</span>
-                  </v-chip>
-                  <v-chip v-else class="high">
-                    <span v-if="geneRank.source"> {{ geneRank.source }}</span>
-                  </v-chip>
-                  <span v-if="geneHit.searchTerm && geneRank.source!=='HPO'" class="pheno-search-term">
-                    {{ geneHit.searchTerm  }}
-                  </span>
-                  <span v-else-if="geneRank.source==='HPO' && geneRank.hpoPhenotype" class="pheno-search-term">
-                    {{ geneRank.hpoPhenotype  }}
-                  </span>
-                </div>
-                
-                
-            </div>
-          </div> -->
       </div>      
       <div class="variant-inspect-column" v-if="selectedVariant && info">
           <div class="variant-column-header">
@@ -1230,10 +1204,11 @@ export default {
           margin-bottom: 0px
 
       .pheno-search-term
-        max-width: 90px
+        max-width: 100px
         display: inline-block
         vertical-align: top
         line-height: 14px
+        padding-top: 5px
 
       #qual-track
         margin-top: 0px

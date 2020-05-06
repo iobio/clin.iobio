@@ -5,7 +5,6 @@
   margin-top: 2px
   margin-bottom: 0px
   margin-right: 0px
-  background-color: white !important
   &.high_gene_rank
     .chip__content, .v-chip__content
       background-color:  $danger-color !important
