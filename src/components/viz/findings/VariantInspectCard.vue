@@ -114,15 +114,72 @@
             Gene Associations
             <v-divider></v-divider>
           </div>
-          <div v-if="genePhenotypeRankings" v-for="geneHit in genePhenotypeRankings" :key="geneHit.key" class="variant-row" style="flex-flow:column">
+          <div v-if="genePhenotypeRankings && genePhenotypeRankings!==null && genePhenotypeRankings.length" >
+            <div v-for="(geneHit, index) in genePhenotypeRankings.slice(0,3)" :key="geneHit.key" class="variant-row" style="flex-flow:column">
+              <div v-for="geneRank in geneHit.geneRanks" :key="geneRank.rank">
+                <div>
+                  <v-chip v-if="geneRank.rank" class="high">
+                    <span class="mr-1">#{{ geneRank.rank  }}</span>
+                    <span v-if="geneRank.source">{{  geneRank.source }}</span>
+                  </v-chip>
+                  <v-chip v-else class="high">
+                    <span v-if="geneRank.source"> {{ geneRank.source }}</span>
+                  </v-chip>
+                  <span v-if="geneHit.searchTerm && geneRank.source!=='HPO'" class="pheno-search-term">
+                    {{ geneHit.searchTerm | to-firstCharacterUppercase }}
+                  </span>
+                  <span v-else-if="geneRank.source==='HPO' && geneRank.hpoPhenotype" class="pheno-search-term">
+                    {{ geneRank.hpoPhenotype | to-firstCharacterUppercase }}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div v-if="genePhenotypeRankings!==null && genePhenotypeRankings.length>=4">
+            <v-btn id="show-more-gene-association-button"
+              text small color="primary"
+              slot="activator"
+              v-tooltip.bottom-center="`Show all associations for this variant`"
+              @click="showMoreGeneAssociationsDialog=true">
+                <v-icon>zoom_out_map</v-icon>Show more
+            </v-btn>
+          </div>
+          <div>
+            <gene-associations-dialog
+              v-if="showMoreGeneAssociationsDialog"
+              :showDialog="showMoreGeneAssociationsDialog"
+              :genePhenotypeHits="genePhenotypeRankings"
+              :selectedGene="selectedGene.gene_name"
+              @close-gene-association-dialog="onCloseGeneAssociationDialog($event)">
+            </gene-associations-dialog>
+          </div>
+          <!-- <div v-if="genePhenotypeRankings" v-for="geneHit in genePhenotypeRankings" :key="geneHit.key" class="variant-row" style="flex-flow:column">
             <div v-for="geneRank in geneHit.geneRanks" :key="geneRank.rank">
               <div>
                 <v-chip class="high">#{{ geneRank.rank }}</v-chip>
                 <span v-if="geneRank.source" class="pheno-source">{{ geneRank.source }}</span>
                 <span v-if="geneHit.searchTerm" class="pheno-search-term">{{ geneHit.searchTerm }}</span>
               </div>
+              
+              <div>
+                  <v-chip v-if="geneRank.rank" class="high">
+                    <span class="mr-1">#{{ geneRank.rank  }}</span>
+                    <span v-if="geneRank.source">{{  geneRank.source }}</span>
+                  </v-chip>
+                  <v-chip v-else class="high">
+                    <span v-if="geneRank.source"> {{ geneRank.source }}</span>
+                  </v-chip>
+                  <span v-if="geneHit.searchTerm && geneRank.source!=='HPO'" class="pheno-search-term">
+                    {{ geneHit.searchTerm  }}
+                  </span>
+                  <span v-else-if="geneRank.source==='HPO' && geneRank.hpoPhenotype" class="pheno-search-term">
+                    {{ geneRank.hpoPhenotype  }}
+                  </span>
+                </div>
+                
+                
             </div>
-          </div>
+          </div> -->
       </div>      
       <div class="variant-inspect-column" v-if="selectedVariant && info">
           <div class="variant-column-header">
@@ -307,7 +364,7 @@ import GeneViz                  from "../../viz/findings/GeneViz.vue"
 import PedigreeGenotypeViz      from "../../viz/findings/PedigreeGenotypeViz.vue"
 import ConservationScoresViz    from "../../viz/findings/ConservationScoresViz.vue"
 import MultialignSeqViz         from "../../viz/findings/MultialignSeqViz.vue"
-
+import GeneAssociationsDialog   from "./GeneAssociationsDialog.vue"
 
 import BarChartD3               from '../../../d3/findings/BarChart.d3.js'
 import MultiAlignD3             from '../../../d3/findings/MultiAlign.d3.js'
@@ -331,7 +388,8 @@ export default {
     ToggleButton,
     ConservationScoresViz,
     MultialignSeqViz,
-    VariantInterpretationBadge
+    VariantInterpretationBadge,
+    GeneAssociationsDialog
   },
   props: {
     selectedVariant: null,
@@ -399,7 +457,8 @@ export default {
       ],
 
       // TODO - Need way to get coverage thresholds
-      geneCoverageMin: 10
+      geneCoverageMin: 10,
+      showMoreGeneAssociationsDialog: false,
 
 
 
@@ -876,6 +935,9 @@ export default {
     },
     gotoStep: function(stepIndex){
       bus.$emit('navigate-to-step',stepIndex); 
+    },
+    onCloseGeneAssociationDialog: function(data){
+      this.showMoreGeneAssociationsDialog = false;
     }
   },
 
