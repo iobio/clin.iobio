@@ -125,10 +125,10 @@
                   <v-chip  color="white" v-else class="high">
                     <span v-if="geneRank.source"> {{ geneRank.source }}</span>
                   </v-chip>
-                  <span v-if="geneHit.searchTerm && geneRank.source!=='HPO'" class="pheno-search-term">
+                  <span v-if="geneHit.searchTerm && geneRank.source!=='HPO'" class="pheno-search-term_clin">
                     {{ geneHit.searchTerm | to-firstCharacterUppercase }}
                   </span>
-                  <span v-else-if="geneRank.source==='HPO' && geneRank.hpoPhenotype" class="pheno-search-term">
+                  <span v-else-if="geneRank.source==='HPO' && geneRank.hpoPhenotype" class="pheno-search-term_clin">
                     {{ geneRank.hpoPhenotype | to-firstCharacterUppercase }}
                   </span>
                 </div>
@@ -1203,7 +1203,7 @@ export default {
         &.last
           margin-bottom: 0px
 
-      .pheno-search-term
+      .pheno-search-term_clin
         max-width: 100px
         display: inline-block
         vertical-align: top
