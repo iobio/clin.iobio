@@ -147,20 +147,18 @@ export default {
         margin-top: 0px
         margin-bottom: 0px
         margin-right: 0px
-        background: none
-        height: 16px
         .chip__content, .v-chip__content
-          padding: 0 0px
-          height: 15px
-          width: 34px
-          font-size: 12px
+          padding: 10px !important
+          height: 18px !important
+          width: 70px !important
+          font-size: 11px !important
           justify-content: center
           color: $text-color
-          border-radius: 28px
         &.high
           .chip__content, .v-chip__content
             background-color:  $danger-color
             color: white
+            border-radius: 16px
         
 
 
