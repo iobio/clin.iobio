@@ -20,7 +20,14 @@
         <v-divider id="gene-associations-dialog-divider"></v-divider>
         <v-card-text style="padding-bottom: 0px">
           <div class="container">
-
+            <v-data-table
+              :headers="headers"
+              :items="drugs"
+              :items-per-page="10"
+              class="elevation-1"
+        			sort-by="fda"
+        			sort-desc
+            ></v-data-table>
           </div>
         </v-card-text>
         <v-card-actions>
@@ -48,6 +55,12 @@ export default {
   },
   data () {
     return {
+      headers: [
+        { text: 'Gene Name', sortable: false, value: 'drugName' },
+        { text: 'CHEMBL id', sortable: false, value: 'drugChemblId' },
+        { text: 'FDA approved', sortable: false, value: 'fda_approved' },
+        { text: 'Interaction type', sortable: false, value: 'interactionTypes[0]' },
+      ],
       showDrugInfoDialog: true,
       gtrHits: [], 
       phenolyzerHits: [], 

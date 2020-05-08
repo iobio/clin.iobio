@@ -316,8 +316,9 @@
       </div>
 
     </div>
-    <v-btn text color="primary" @click="showDrugInformationDialog=true">
-      Drug interaction for {{ selectedGene.gene_name }}
+    <v-btn :disabled="!drugs.length" text color="primary" @click="showDrugInformationDialog=true">
+      <v-icon color="primary" class="mr-2">fas fa-pills</v-icon>
+      <span class="pt-1">Drug information for <strong>{{ selectedGene.gene_name }}</strong></span>
     </v-btn>
     
     <div>
