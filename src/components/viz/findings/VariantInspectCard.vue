@@ -316,6 +316,19 @@
       </div>
 
     </div>
+    <v-btn text color="primary" @click="showDrugInformationDialog=true">
+      Drug interaction for {{ selectedGene.gene_name }}
+    </v-btn>
+    
+    <div>
+      <drug-info-dialog
+        v-if="showDrugInformationDialog"
+        :showDialog="showDrugInformationDialog"
+        :gene="selectedGene.gene_name"
+        :drugs="drugs"
+        @close-drug-info-dialog="onCloseDrugInfoDialog">
+      </drug-info-dialog>
+    </div>
 
   </div>
 
@@ -339,6 +352,7 @@ import PedigreeGenotypeViz      from "../../viz/findings/PedigreeGenotypeViz.vue
 import ConservationScoresViz    from "../../viz/findings/ConservationScoresViz.vue"
 import MultialignSeqViz         from "../../viz/findings/MultialignSeqViz.vue"
 import GeneAssociationsDialog   from "./GeneAssociationsDialog.vue"
+import DrugInfoDialog           from './DrugInfoDialog.vue'
 
 import BarChartD3               from '../../../d3/findings/BarChart.d3.js'
 import MultiAlignD3             from '../../../d3/findings/MultiAlign.d3.js'
@@ -363,7 +377,8 @@ export default {
     ConservationScoresViz,
     MultialignSeqViz,
     VariantInterpretationBadge,
-    GeneAssociationsDialog
+    GeneAssociationsDialog,
+    DrugInfoDialog
   },
   props: {
     selectedVariant: null,
@@ -433,8 +448,8 @@ export default {
       // TODO - Need way to get coverage thresholds
       geneCoverageMin: 10,
       showMoreGeneAssociationsDialog: false,
-
-
+      showDrugInformationDialog: false,
+      drugs: []
 
     }
   },
@@ -912,6 +927,33 @@ export default {
     },
     onCloseGeneAssociationDialog: function(data){
       this.showMoreGeneAssociationsDialog = false;
+    }, 
+    onCloseDrugInfoDialog: function(){
+      this.showDrugInformationDialog = false
+    },
+    fetchDrugInfo: function(){
+      let selectedGene = this.selectedGene.gene_name; 
+      
+      fetch(`http://dev.backend.iobio.io:9003/geneToDrugs?gene=${selectedGene}`)
+        .then(res => res.json())
+        .then(json => {
+          let interactions = json.matchedTerms[0].interactions
+          return Promise.all(
+            interactions.map(drug => {
+              let chembl_id = drug.drugChemblId; 
+              fetch(`http://dev.backend.iobio.io:9003/drugs?id=${chembl_id}`)
+              .then(response => response.json())
+              .then(data => {
+                this.drugs.push({
+                  drugName : drug.drugName, 
+                  drugChemblId : drug.drugChemblId,
+                  interactionTypes : drug.interactionTypes,
+                  fda_approved : data.fda_approved,
+                }); 
+              })
+            })
+          )
+        })
     }
   },
 
@@ -1065,6 +1107,7 @@ export default {
 
   mounted: function() {
     this.loadData();
+    this.fetchDrugInfo()
   },
 
   created: function() {
