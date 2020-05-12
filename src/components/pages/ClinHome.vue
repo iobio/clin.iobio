@@ -472,6 +472,11 @@ export default {
 
 
   mounted: function() {
+    fetch(`https://platform-api.opentargets.io/v3/platform/public/evidence/filter?target=ENSG00000055118&datasource=chembl&size=15&datatype=known_drug`)
+    .then(res => res.json())
+    .then(data => {
+      console.log(data)
+    })
     this.init();
     bus.$on("getAnalysisObject", ()=>{
       this.generatePDF()
@@ -638,6 +643,7 @@ export default {
           self.mosaicSession.promiseInit(self.params.sample_id, self.params.source,
             true, self.params.project_id, self.params.client_application_id, self.params.gene_set_id)
           .then(data => {
+            console.log("data.modelInfos", data.modelInfos)
             self.modelInfos = data.modelInfos;
             self.user       = data.user;
             self.geneSet    = data.geneSet;
