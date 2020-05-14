@@ -472,41 +472,6 @@ export default {
 
 
   mounted: function() {
-    // fetch(`https://platform-api.opentargets.io/v3/platform/public/evidence/filter?target=ENSG00000055118&datasource=chembl&size=15&datatype=known_drug`)
-    // .then(res => res.json())
-    // .then(data => {
-    //   console.log("platform api", data)
-    // })
-    
-    fetch(`https://platform-api.opentargets.io/v3/platform/public/search?q=KCNH2`)
-    .then(res => res.json())
-    .then(result => {
-      var ensembl_gene_id = result.data[0].data.ensembl_gene_id; 
-      console.log("platform api", ensembl_gene_id)
-      fetch(`https://platform-api.opentargets.io/v3/platform/public/evidence/filter?target=${ensembl_gene_id}&datasource=chembl&size=350&datatype=known_drug`)
-      .then(res => res.json())
-      .then(data => {
-        console.log("platform data", data)
-
-        let drugs_arr = []; 
-        var obj = []
-        data.data.map(drug => {
-          if(!drugs_arr.includes(drug.drug.molecule_name)){
-            drugs_arr.push(drug.drug.molecule_name)
-            obj.push({
-              name: drug.drug.molecule_name, 
-              molecule_type: drug.drug.molecule_type, 
-              action: drug.evidence.target2drug.action_type, 
-              mechanism_of_action: drug.evidence.target2drug.mechanism_of_action, 
-              target_type: drug.target.target_type,
-              activity: drug.target.activity
-            })
-          }
-        })
-        console.log("platform drugs_arr", drugs_arr)
-        console.log("platform obj", obj)
-      })
-    })
     this.init();
     bus.$on("getAnalysisObject", ()=>{
       this.generatePDF()

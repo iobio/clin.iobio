@@ -17,7 +17,7 @@
           </v-btn>
           <v-card-title class="headline" style="padding-top: 10px;">
             <v-icon class="mr-2">fas fa-pills</v-icon>
-            Drug information for {{ gene }}
+            Drugs for {{ gene }}
           </v-card-title>
         </div>
         <v-divider id="gene-associations-dialog-divider"></v-divider>
@@ -75,7 +75,7 @@
               </template>
             </v-data-table>
             <div class="pt-2">
-              <span>Source: <a href="https://www.targetvalidation.org/"> Open Targets Platform</a></span>
+              <span>Source: <a href="https://www.targetvalidation.org/" target="_blank"> Open Targets Platform</a></span>
             </div>
           </div>
         </v-card-text>
