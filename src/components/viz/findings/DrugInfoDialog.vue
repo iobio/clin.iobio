@@ -25,10 +25,16 @@
           <div class="container">
             <v-card-title>
               <span style="margin-left:-22px">
-                <v-btn style="cursor:auto" small class="ma-2" fab color="green lighten-1">
-                  <span style="color: white; font-size: 16px"> <strong>{{ drugs.length }}</strong> </span>
-                </v-btn>
+                <v-tooltip top>
+                  <template v-slot:activator="{ on }">
+                    <v-btn style="cursor:auto" small class="ma-2" fab color="green lighten-1" v-on="on">
+                      <span style="color: white; font-size: 16px"> <strong>{{ drugs.length }}</strong> </span>
+                    </v-btn>
+                  </template>
+                  <span><i>Drugs in clinical trials or approved for {{ gene }}</i></span>
+                </v-tooltip>
                 <span class="badge-label"> <strong>Unique drugs</strong> </span>
+
               </span>
               <v-spacer></v-spacer>
               <div class="col-md-3" pa-0 style="margin-right:-20px">

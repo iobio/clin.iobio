@@ -939,11 +939,9 @@ export default {
       .then(res => res.json())
       .then(result => {
         var ensembl_gene_id = result.data[0].data.ensembl_gene_id; 
-        console.log("platform api", ensembl_gene_id)
         fetch(`https://platform-api.opentargets.io/v3/platform/public/evidence/filter?target=${ensembl_gene_id}&datasource=chembl&size=350&datatype=known_drug`)
         .then(res => res.json())
         .then(data => {
-          console.log("platform data", data)
           this.drugs = []; 
           let drugs_arr = []; 
           var obj = []
@@ -962,32 +960,9 @@ export default {
               })
             }
           })
-          console.log("platform drugs_arr", drugs_arr)
-          console.log("platform obj", obj)
           this.drugs = obj;
         })
       })
-      
-      // fetch(`http://dev.backend.iobio.io:9003/geneToDrugs?gene=${selectedGene}`)
-      //   .then(res => res.json())
-      //   .then(json => {
-      //     let interactions = json.matchedTerms[0].interactions
-      //     return Promise.all(
-      //       interactions.map(drug => {
-      //         let chembl_id = drug.drugChemblId; 
-      //         fetch(`http://dev.backend.iobio.io:9003/drugs?id=${chembl_id}`)
-      //         .then(response => response.json())
-      //         .then(data => {
-      //           this.drugs.push({
-      //             drugName : drug.drugName, 
-      //             drugChemblId : drug.drugChemblId,
-      //             interactionTypes : drug.interactionTypes,
-      //             fda_approved : data.fda_approved,
-      //           }); 
-      //         })
-      //       })
-      //     )
-      //   })
     }, 
     getMoleculeId(url_id){
       let url = new URL(url_id)
