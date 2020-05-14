@@ -5,9 +5,9 @@
 
 <template>
     <v-dialog
-    width="1450" persistent
-    :close-on-content-click="false"
-    v-model="showDrugInfoDialog"
+      width="1450" persistent
+      :close-on-content-click="false"
+      v-model="showDrugInfoDialog"
     >
 
       <v-card class="full-width">
@@ -34,7 +34,6 @@
                   <span><i>Drugs in clinical trials or approved for {{ gene }}</i></span>
                 </v-tooltip>
                 <span class="badge-label"> <strong>Unique drugs</strong> </span>
-
               </span>
               <v-spacer></v-spacer>
               <div class="col-md-3" pa-0 style="margin-right:-20px">
@@ -86,8 +85,8 @@
             Cancel
           </v-btn>
         </v-card-actions>
-
       </v-card>
+      
     </v-dialog>
 </template>
 
@@ -131,7 +130,6 @@ export default {
   created: function() {
   },
   mounted: function() {
-    console.log("drugs", this.drugs)
   },
   updated: function() {
   },
