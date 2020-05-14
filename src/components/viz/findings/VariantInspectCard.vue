@@ -944,7 +944,7 @@ export default {
         .then(res => res.json())
         .then(data => {
           console.log("platform data", data)
-
+          this.drugs = []; 
           let drugs_arr = []; 
           var obj = []
           data.data.map(drug => {
@@ -953,10 +953,12 @@ export default {
               obj.push({
                 drugName: drug.drug.molecule_name, 
                 molecule_type: drug.drug.molecule_type, 
-                action_type: drug.evidence.target2drug.action_type, 
+                action_type: drug.evidence.target2drug.action_type.toLowerCase(), 
                 mechanism_of_action: drug.evidence.target2drug.mechanism_of_action, 
-                target_type: drug.target.target_type,
-                activity: drug.target.activity
+                target_type: drug.target.target_type.replace("_", " "),
+                activity: drug.target.activity.replace("_", " "), 
+                id: this.getMoleculeId(drug.drug.id), 
+                id_url: drug.drug.id, 
               })
             }
           })
@@ -986,6 +988,10 @@ export default {
       //       })
       //     )
       //   })
+    }, 
+    getMoleculeId(url_id){
+      let url = new URL(url_id)
+      return url.pathname.split("/")[2];
     }
   },
 

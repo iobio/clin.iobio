@@ -5,7 +5,7 @@
 
 <template>
     <v-dialog
-    width="1200" persistent
+    width="1450" persistent
     :close-on-content-click="false"
     v-model="showDrugInfoDialog"
     >
@@ -20,14 +20,49 @@
         <v-divider id="gene-associations-dialog-divider"></v-divider>
         <v-card-text style="padding-bottom: 0px">
           <div class="container">
+            <v-card-title>
+              Drug info
+              <v-spacer></v-spacer>
+              <div class="row">
+                <div class="col-md-7"></div>
+                <div class="col-md-4">
+                  <v-text-field
+                    v-model="search"
+                    append-icon="mdi-magnify"
+                    label="Search drug name"
+                    single-line
+                    hide-details
+                  ></v-text-field>
+                </div>
+              </div>
+            </v-card-title>
             <v-data-table
               :headers="headers"
               :items="drugs"
-              :items-per-page="10"
               class="elevation-1"
-        			sort-by="fda"
-        			sort-desc
-            ></v-data-table>
+        			sort-by="drugName"
+            >
+            <template v-slot:item.drugName="{ item }">
+              <strong>{{ item.drugName }}</strong>
+            </template>
+            
+            <template v-slot:item.id="{ item }">
+              <a :href="item.id_url" target="_blank">{{ item.id }}</a>
+            </template>
+            
+            <template v-slot:item.action_type="{ item }">
+              <span>{{ item.action_type | to-firstCharacterUppercase}}</span>
+            </template>
+
+            <template v-slot:item.activity="{ item }">
+              <span>{{ item.activity | to-firstCharacterUppercase }}</span>
+            </template>
+
+            <template v-slot:item.target_type="{ item }">
+              <span>{{ item.target_type | to-firstCharacterUppercase }}</span>
+            </template>
+
+          </v-data-table>
           </div>
         </v-card-text>
         <v-card-actions>
@@ -56,7 +91,8 @@ export default {
   data () {
     return {
       headers: [
-        { text: 'Drug', sortable: false, value: 'drugName' },
+        { text: 'Drug', sortable: false, value: 'drugName', width: '17%'},
+        { text: 'Molecule ID', sortable: false, value: 'id' },
         { text: 'Molecule type', sortable: false, value: 'molecule_type' },
         { text: 'Mechanism of action', sortable: false, value: 'mechanism_of_action' },
         { text: 'Action type', sortable: false, value: 'action_type' },
@@ -64,9 +100,7 @@ export default {
         { text: 'Target class', sortable: false, value: 'target_type' },
       ],
       showDrugInfoDialog: true,
-      gtrHits: [], 
-      phenolyzerHits: [], 
-      hpoHits: [], 
+      search: '',
     }
   },
   watch: {
