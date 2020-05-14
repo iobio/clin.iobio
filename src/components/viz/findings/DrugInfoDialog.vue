@@ -15,54 +15,63 @@
           <v-btn text @click="onCancel" class="close-button" color="white">
             <v-icon>close</v-icon>
           </v-btn>
-          <v-card-title class="headline" style="padding-top: 10px;">Drug information for {{ gene }}</v-card-title>
+          <v-card-title class="headline" style="padding-top: 10px;">
+            <v-icon class="mr-2">fas fa-pills</v-icon>
+            Drug information for {{ gene }}
+          </v-card-title>
         </div>
         <v-divider id="gene-associations-dialog-divider"></v-divider>
         <v-card-text style="padding-bottom: 0px">
           <div class="container">
             <v-card-title>
-              Drug info
+              <span style="margin-left:-22px">
+                <v-btn style="cursor:auto" small class="ma-2" fab color="green lighten-1">
+                  <span style="color: white; font-size: 16px"> <strong>{{ drugs.length }}</strong> </span>
+                </v-btn>
+                <span class="badge-label"> <strong>Unique drugs</strong> </span>
+              </span>
               <v-spacer></v-spacer>
-              <div class="row">
-                <div class="col-md-7"></div>
-                <div class="col-md-4">
-                  <v-text-field
-                    v-model="search"
-                    append-icon="mdi-magnify"
-                    label="Search drug name"
-                    single-line
-                    hide-details
-                  ></v-text-field>
-                </div>
+              <div class="col-md-3" pa-0 style="margin-right:-20px">
+                <v-text-field
+                  v-model="search"
+                  append-icon="mdi-magnify"
+                  label="Search drug name"
+                  single-line
+                  hide-details
+                ></v-text-field>
               </div>
             </v-card-title>
             <v-data-table
               :headers="headers"
               :items="drugs"
-              class="elevation-1"
+              class="elevation-3"
         			sort-by="drugName"
+              :items-per-page="5"
+              :search="search"
             >
-            <template v-slot:item.drugName="{ item }">
-              <strong>{{ item.drugName }}</strong>
-            </template>
-            
-            <template v-slot:item.id="{ item }">
-              <a :href="item.id_url" target="_blank">{{ item.id }}</a>
-            </template>
-            
-            <template v-slot:item.action_type="{ item }">
-              <span>{{ item.action_type | to-firstCharacterUppercase}}</span>
-            </template>
+              <template v-slot:item.drugName="{ item }">
+                <strong>{{ item.drugName }}</strong>
+              </template>
+              
+              <template v-slot:item.id="{ item }">
+                <a :href="item.id_url" target="_blank">{{ item.id }}</a>
+              </template>
+              
+              <template v-slot:item.action_type="{ item }">
+                <span>{{ item.action_type | to-firstCharacterUppercase}}</span>
+              </template>
 
-            <template v-slot:item.activity="{ item }">
-              <span>{{ item.activity | to-firstCharacterUppercase }}</span>
-            </template>
+              <template v-slot:item.activity="{ item }">
+                <span>{{ item.activity | to-firstCharacterUppercase }}</span>
+              </template>
 
-            <template v-slot:item.target_type="{ item }">
-              <span>{{ item.target_type | to-firstCharacterUppercase }}</span>
-            </template>
-
-          </v-data-table>
+              <template v-slot:item.target_type="{ item }">
+                <span>{{ item.target_type | to-firstCharacterUppercase }}</span>
+              </template>
+            </v-data-table>
+            <div class="pt-2">
+              <span>Source: <a href="https://www.targetvalidation.org/"> Open Targets Platform</a></span>
+            </div>
           </div>
         </v-card-text>
         <v-card-actions>
