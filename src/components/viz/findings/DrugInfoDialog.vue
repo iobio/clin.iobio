@@ -5,7 +5,7 @@
 
 <template>
     <v-dialog
-    width="1000" persistent
+    width="1200" persistent
     :close-on-content-click="false"
     v-model="showDrugInfoDialog"
     >
@@ -56,10 +56,12 @@ export default {
   data () {
     return {
       headers: [
-        { text: 'Gene Name', sortable: false, value: 'drugName' },
-        { text: 'CHEMBL id', sortable: false, value: 'drugChemblId' },
-        { text: 'FDA approved', sortable: false, value: 'fda_approved' },
-        { text: 'Interaction type', sortable: false, value: 'interactionTypes[0]' },
+        { text: 'Drug', sortable: false, value: 'drugName' },
+        { text: 'Molecule type', sortable: false, value: 'molecule_type' },
+        { text: 'Mechanism of action', sortable: false, value: 'mechanism_of_action' },
+        { text: 'Action type', sortable: false, value: 'action_type' },
+        { text: 'Activity', sortable: false, value: 'activity' },
+        { text: 'Target class', sortable: false, value: 'target_type' },
       ],
       showDrugInfoDialog: true,
       gtrHits: [], 

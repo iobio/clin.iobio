@@ -935,26 +935,57 @@ export default {
     fetchDrugInfo: function(){
       let selectedGene = this.selectedGene.gene_name; 
       
-      fetch(`http://dev.backend.iobio.io:9003/geneToDrugs?gene=${selectedGene}`)
+      fetch(`https://platform-api.opentargets.io/v3/platform/public/search?q=${selectedGene}`)
+      .then(res => res.json())
+      .then(result => {
+        var ensembl_gene_id = result.data[0].data.ensembl_gene_id; 
+        console.log("platform api", ensembl_gene_id)
+        fetch(`https://platform-api.opentargets.io/v3/platform/public/evidence/filter?target=${ensembl_gene_id}&datasource=chembl&size=350&datatype=known_drug`)
         .then(res => res.json())
-        .then(json => {
-          let interactions = json.matchedTerms[0].interactions
-          return Promise.all(
-            interactions.map(drug => {
-              let chembl_id = drug.drugChemblId; 
-              fetch(`http://dev.backend.iobio.io:9003/drugs?id=${chembl_id}`)
-              .then(response => response.json())
-              .then(data => {
-                this.drugs.push({
-                  drugName : drug.drugName, 
-                  drugChemblId : drug.drugChemblId,
-                  interactionTypes : drug.interactionTypes,
-                  fda_approved : data.fda_approved,
-                }); 
+        .then(data => {
+          console.log("platform data", data)
+
+          let drugs_arr = []; 
+          var obj = []
+          data.data.map(drug => {
+            if(!drugs_arr.includes(drug.drug.molecule_name)){
+              drugs_arr.push(drug.drug.molecule_name)
+              obj.push({
+                drugName: drug.drug.molecule_name, 
+                molecule_type: drug.drug.molecule_type, 
+                action_type: drug.evidence.target2drug.action_type, 
+                mechanism_of_action: drug.evidence.target2drug.mechanism_of_action, 
+                target_type: drug.target.target_type,
+                activity: drug.target.activity
               })
-            })
-          )
+            }
+          })
+          console.log("platform drugs_arr", drugs_arr)
+          console.log("platform obj", obj)
+          this.drugs = obj;
         })
+      })
+      
+      // fetch(`http://dev.backend.iobio.io:9003/geneToDrugs?gene=${selectedGene}`)
+      //   .then(res => res.json())
+      //   .then(json => {
+      //     let interactions = json.matchedTerms[0].interactions
+      //     return Promise.all(
+      //       interactions.map(drug => {
+      //         let chembl_id = drug.drugChemblId; 
+      //         fetch(`http://dev.backend.iobio.io:9003/drugs?id=${chembl_id}`)
+      //         .then(response => response.json())
+      //         .then(data => {
+      //           this.drugs.push({
+      //             drugName : drug.drugName, 
+      //             drugChemblId : drug.drugChemblId,
+      //             interactionTypes : drug.interactionTypes,
+      //             fda_approved : data.fda_approved,
+      //           }); 
+      //         })
+      //       })
+      //     )
+      //   })
     }
   },
 
