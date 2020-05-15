@@ -4,6 +4,7 @@
 </style>
 
 <template>
+  <div>
     <v-dialog
       width="1450" persistent
       :close-on-content-click="false"
@@ -23,7 +24,7 @@
         <v-divider id="gene-associations-dialog-divider"></v-divider>
         <v-card-text style="padding-bottom: 0px">
           <div class="container">
-            <v-card-title>
+            <v-card-title v-if="drugs.length">
               <span style="margin-left:-22px">
                 <v-tooltip top>
                   <template v-slot:activator="{ on }">
@@ -50,9 +51,10 @@
               :headers="headers"
               :items="drugs"
               class="elevation-3"
-        			sort-by="drugName"
+              sort-by="drugName"
               :items-per-page="5"
               :search="search"
+              no-data-text="Sorry, no drug information is currently available for this gene"
             >
               <template v-slot:item.drugName="{ item }">
                 <strong>{{ item.drugName }}</strong>
@@ -88,6 +90,7 @@
       </v-card>
       
     </v-dialog>
+  </div>
 </template>
 
 <script>
@@ -100,7 +103,6 @@ export default {
   props: {
     gene: null,
     showDialog: null,
-    drugs: null
   },
   data () {
     return {
@@ -115,6 +117,7 @@ export default {
       ],
       showDrugInfoDialog: true,
       search: '',
+      drugs: []
     }
   },
   watch: {
@@ -125,11 +128,48 @@ export default {
     onCancel: function() {
       this.showDrugInfoDialog = false;
       this.$emit("close-drug-info-dialog", this.showDrugInfoDialog)
+    },
+    fetchDrugInfo: function(){
+      let selectedGene = this.gene; 
+      
+      fetch(`https://platform-api.opentargets.io/v3/platform/public/search?q=${selectedGene}`)
+      .then(res => res.json())
+      .then(result => {
+        var ensembl_gene_id = result.data[0].data.ensembl_gene_id; 
+        fetch(`https://platform-api.opentargets.io/v3/platform/public/evidence/filter?target=${ensembl_gene_id}&datasource=chembl&size=350&datatype=known_drug`)
+        .then(res => res.json())
+        .then(data => {
+          this.drugs = []; 
+          let drugs_arr = []; 
+          var obj = []
+          data.data.map(drug => {
+            if(!drugs_arr.includes(drug.drug.molecule_name)){
+              drugs_arr.push(drug.drug.molecule_name)
+              obj.push({
+                drugName: drug.drug.molecule_name, 
+                molecule_type: drug.drug.molecule_type, 
+                action_type: drug.evidence.target2drug.action_type.toLowerCase(), 
+                mechanism_of_action: drug.evidence.target2drug.mechanism_of_action, 
+                target_type: drug.target.target_type.replace("_", " "),
+                activity: drug.target.activity.replace("_", " "), 
+                id: this.getMoleculeId(drug.drug.id), 
+                id_url: drug.drug.id, 
+              })
+            }
+          })
+          this.drugs = obj;
+        })
+      })
     }, 
+    getMoleculeId(url_id){
+      let url = new URL(url_id)
+      return url.pathname.split("/")[2];
+    } 
   },
   created: function() {
   },
   mounted: function() {
+    this.fetchDrugInfo(); 
   },
   updated: function() {
   },

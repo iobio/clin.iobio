@@ -316,7 +316,7 @@
       </div>
 
     </div>
-    <v-btn :disabled="!drugs.length" text color="primary" @click="showDrugInformationDialog=true">
+    <v-btn text color="primary" @click="showDrugInformationDialog=true">
       <v-icon color="primary" class="mr-2">fas fa-pills</v-icon>
       <span class="pt-1">Drugs for <strong>{{ selectedGene.gene_name }}</strong></span>
     </v-btn>
@@ -326,7 +326,6 @@
         v-if="showDrugInformationDialog"
         :showDialog="showDrugInformationDialog"
         :gene="selectedGene.gene_name"
-        :drugs="drugs"
         @close-drug-info-dialog="onCloseDrugInfoDialog">
       </drug-info-dialog>
     </div>
@@ -450,7 +449,6 @@ export default {
       geneCoverageMin: 10,
       showMoreGeneAssociationsDialog: false,
       showDrugInformationDialog: false,
-      drugs: []
 
     }
   },
@@ -932,42 +930,6 @@ export default {
     onCloseDrugInfoDialog: function(){
       this.showDrugInformationDialog = false
     },
-    fetchDrugInfo: function(){
-      let selectedGene = this.selectedGene.gene_name; 
-      
-      fetch(`https://platform-api.opentargets.io/v3/platform/public/search?q=${selectedGene}`)
-      .then(res => res.json())
-      .then(result => {
-        var ensembl_gene_id = result.data[0].data.ensembl_gene_id; 
-        fetch(`https://platform-api.opentargets.io/v3/platform/public/evidence/filter?target=${ensembl_gene_id}&datasource=chembl&size=350&datatype=known_drug`)
-        .then(res => res.json())
-        .then(data => {
-          this.drugs = []; 
-          let drugs_arr = []; 
-          var obj = []
-          data.data.map(drug => {
-            if(!drugs_arr.includes(drug.drug.molecule_name)){
-              drugs_arr.push(drug.drug.molecule_name)
-              obj.push({
-                drugName: drug.drug.molecule_name, 
-                molecule_type: drug.drug.molecule_type, 
-                action_type: drug.evidence.target2drug.action_type.toLowerCase(), 
-                mechanism_of_action: drug.evidence.target2drug.mechanism_of_action, 
-                target_type: drug.target.target_type.replace("_", " "),
-                activity: drug.target.activity.replace("_", " "), 
-                id: this.getMoleculeId(drug.drug.id), 
-                id_url: drug.drug.id, 
-              })
-            }
-          })
-          this.drugs = obj;
-        })
-      })
-    }, 
-    getMoleculeId(url_id){
-      let url = new URL(url_id)
-      return url.pathname.split("/")[2];
-    }
   },
 
 
@@ -1120,7 +1082,6 @@ export default {
 
   mounted: function() {
     this.loadData();
-    this.fetchDrugInfo()
   },
 
   created: function() {
