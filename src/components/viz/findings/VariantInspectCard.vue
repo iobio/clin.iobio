@@ -316,7 +316,7 @@
       </div>
 
     </div>
-    <v-btn text color="primary" @click="showDrugInformationDialog=true">
+    <v-btn text :disabled="!drugsData.length" color="primary" @click="showDrugInformationDialog=true">
       <v-icon color="primary" class="mr-2">fas fa-pills</v-icon>
       <span class="pt-1">Drugs for <strong>{{ selectedGene.gene_name }}</strong></span>
     </v-btn>
@@ -326,7 +326,8 @@
         v-if="showDrugInformationDialog"
         :showDialog="showDrugInformationDialog"
         :gene="selectedGene.gene_name"
-        @close-drug-info-dialog="onCloseDrugInfoDialog">
+        @close-drug-info-dialog="onCloseDrugInfoDialog"
+        :drugsData="drugsData">
       </drug-info-dialog>
     </div>
 
@@ -388,7 +389,8 @@ export default {
     selectedTranscript: null,
     info: null,
     genePhenotypeHits: null,
-    interpretationMap: null
+    interpretationMap: null,
+    drugsObj: null,
   },
   data() {
     return {
@@ -449,7 +451,7 @@ export default {
       geneCoverageMin: 10,
       showMoreGeneAssociationsDialog: false,
       showDrugInformationDialog: false,
-
+      drugsData: [],
     }
   },
 
@@ -655,9 +657,55 @@ export default {
         }
       }
     },
+    
+    fetchDrugInfo: function(){
+      let selectedGene = this.selectedGene.gene_name; 
+      fetch(`https://platform-api.opentargets.io/v3/platform/public/search?q=${selectedGene}`)
+      .then(res => res.json())
+      .then(result => {
+        var ensembl_gene_id = result.data[0].data.ensembl_gene_id; 
+        fetch(`https://platform-api.opentargets.io/v3/platform/public/evidence/filter?target=${ensembl_gene_id}&datasource=chembl&size=350&datatype=known_drug`)
+        .then(res => res.json())
+        .then(data => {
+          this.drugsData = []; 
+          let drugs_arr = []; 
+          var obj = []
+          data.data.map(drug => {
+            if(!drugs_arr.includes(drug.drug.molecule_name)){
+              drugs_arr.push(drug.drug.molecule_name)
+              obj.push({
+                drugName: drug.drug.molecule_name, 
+                molecule_type: drug.drug.molecule_type, 
+                action_type: drug.evidence.target2drug.action_type.toLowerCase(), 
+                mechanism_of_action: drug.evidence.target2drug.mechanism_of_action, 
+                target_type: drug.target.target_type.replace("_", " "),
+                activity: drug.target.activity.replace("_", " "), 
+                id: this.getMoleculeId(drug.drug.id), 
+                id_url: drug.drug.id, 
+              })
+            }
+          })
+          this.drugsData = obj;
+          if(this.drugsObj[this.selectedGene.gene_name]===undefined){
+            this.drugsObj[this.selectedGene.gene_name] = this.drugsData; 
+          }
+        })
+      })
+    }, 
+    getMoleculeId(url_id){
+      let url = new URL(url_id)
+      return url.pathname.split("/")[2];
+    },
+     
     loadData: function() {
       let self = this;
       if (self.selectedVariant) {
+        if(self.drugsObj[self.selectedGene.gene_name]!==undefined){
+          self.drugsData = self.drugsObj[self.selectedGene.gene_name]; 
+        }
+        else if(self.drugsObj[self.selectedGene.gene_name]===undefined){
+          self.fetchDrugInfo(); 
+        }
 
         self.initPedigreeGenotypes();
         self.initGenePhenotypeHits();
@@ -1077,7 +1125,6 @@ export default {
   },
 
   updated: function() {
-
   },
 
   mounted: function() {

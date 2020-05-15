@@ -129,7 +129,7 @@
           <template
            v-for="geneObject in geneList.genes">
 
-            <template v-for="(variant, index) in geneObject.variants">
+            <div v-for="(variant, index) in geneObject.variants" :key="variant.variantInspect.geneObject.gene_name">
               <div>
                 <variant-inspect-card
                  :modelInfos="modelInfos"
@@ -140,11 +140,12 @@
                  :info="variant.variantInspect.infoObject"
                  :genePhenotypeHits="variant.variantInspect.genePhenotypeHits"
                  :interpretationMap="interpretationMap"
+                 :drugsObj="drugsObj"
                 >
 
                 </variant-inspect-card>
               </div>
-            </template>
+            </div>
           </template>
 
 
@@ -183,7 +184,8 @@ export default {
     return {
       clinicalNotes: null,
       note: null, 
-      variantsInterpreted: false
+      variantsInterpreted: false, 
+      drugsObj: {},
     }
 
   },
@@ -284,7 +286,7 @@ export default {
     variantsByInterpretation: function() {
       this.initClinicalNotes();
       this.checkIfVariantsinterpreted(); 
-    }
+    }, 
   },
 }
 </script>

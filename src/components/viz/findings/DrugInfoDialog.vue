@@ -103,6 +103,7 @@ export default {
   props: {
     gene: null,
     showDialog: null,
+    drugsData: null
   },
   data () {
     return {
@@ -129,47 +130,11 @@ export default {
       this.showDrugInfoDialog = false;
       this.$emit("close-drug-info-dialog", this.showDrugInfoDialog)
     },
-    fetchDrugInfo: function(){
-      let selectedGene = this.gene; 
-      
-      fetch(`https://platform-api.opentargets.io/v3/platform/public/search?q=${selectedGene}`)
-      .then(res => res.json())
-      .then(result => {
-        var ensembl_gene_id = result.data[0].data.ensembl_gene_id; 
-        fetch(`https://platform-api.opentargets.io/v3/platform/public/evidence/filter?target=${ensembl_gene_id}&datasource=chembl&size=350&datatype=known_drug`)
-        .then(res => res.json())
-        .then(data => {
-          this.drugs = []; 
-          let drugs_arr = []; 
-          var obj = []
-          data.data.map(drug => {
-            if(!drugs_arr.includes(drug.drug.molecule_name)){
-              drugs_arr.push(drug.drug.molecule_name)
-              obj.push({
-                drugName: drug.drug.molecule_name, 
-                molecule_type: drug.drug.molecule_type, 
-                action_type: drug.evidence.target2drug.action_type.toLowerCase(), 
-                mechanism_of_action: drug.evidence.target2drug.mechanism_of_action, 
-                target_type: drug.target.target_type.replace("_", " "),
-                activity: drug.target.activity.replace("_", " "), 
-                id: this.getMoleculeId(drug.drug.id), 
-                id_url: drug.drug.id, 
-              })
-            }
-          })
-          this.drugs = obj;
-        })
-      })
-    }, 
-    getMoleculeId(url_id){
-      let url = new URL(url_id)
-      return url.pathname.split("/")[2];
-    } 
   },
   created: function() {
   },
   mounted: function() {
-    this.fetchDrugInfo(); 
+    this.drugs= this.drugsData
   },
   updated: function() {
   },
