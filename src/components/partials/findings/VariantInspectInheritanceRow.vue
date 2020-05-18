@@ -6,8 +6,8 @@
     <app-icon v-if="selectedVariant.inheritance.indexOf('n/a') >= 0" class="level-unremarkable" width="18" height="18" style="padding-right: 4px" icon="not-significant">
     </app-icon>
 
-    <app-icon v-if="selectedVariant.inheritance.indexOf('n/a') == -1" :icon="selectedVariant.inheritance" style="margin-right:4px" width="16" height="16"></app-icon>
-    
+    <app-icon :icon="selectedVariant.inheritance" style="margin-right:4px" width="16" height="16"></app-icon>
+
     <span style="width:100px;line-height:14px">{{ selectedVariant.inheritance == 'denovo' ? 'de novo' : selectedVariant.inheritance }}</span>
   </div>
 </template>
@@ -46,7 +46,7 @@ export default {
 
 
   computed: {
-    
+
 
   },
 
