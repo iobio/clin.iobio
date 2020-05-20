@@ -24,7 +24,7 @@
     "express": "^4.15.3",
     "file-saver": "^2.0.2",
     "hooper": "^0.3.4",
-    "iobio-phenotype-extractor-vue": "^2.1.1",
+    "iobio-phenotype-extractor-vue": "^2.2.5",
     "is-number": "^7.0.0",
     "jquery": "^3.4.1",
     "material-design-icons-iconfont": "^5.0.1",
