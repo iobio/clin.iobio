@@ -236,14 +236,15 @@
                 </div>
                 <v-card-actions class="mb-4">
                   <v-spacer></v-spacer>
-                  <v-btn class="load-button action-button"
-                    @click="onLoad"
-                    :disabled="!isValid">
-                    Load
-                  </v-btn>
 
                   <v-btn class="cancer-button action-button" @click="onCancel">
                    Cancel
+                 </v-btn>
+                 
+                 <v-btn class="load-button action-button"
+                   @click="onLoad"
+                   :disabled="!isValid">
+                   Next
                  </v-btn>
 
                 </v-card-actions>

@@ -149,7 +149,7 @@
       </NavBarDialog>
       
       <files-dialog
-        v-if="showFiles"
+        v-if="showFiles && pageCounter===0"
        :cohortModel="cohortModel"
        :showDialog="showFiles"
        @on-files-loaded="onFilesLoaded"
@@ -159,6 +159,28 @@
        @get-modeinfo-map="getModelInfoMap"
       >
       </files-dialog>
+      
+      <v-dialog v-model="geneSetDiialog" v-if="pageCounter===1" persistent max-width="890">
+        <v-card class="full-width" style="height: auto;overflow-y:scroll">
+          <v-card-title class="headline">Gene Sets</v-card-title>
+          <v-card-text>
+            <v-col cols="12" md="12">
+              <v-textarea
+                solo auto-grow
+                name="input-7-4"
+                label="Enter Genes"
+                v-model="genes"					
+              ></v-textarea>
+          </v-col>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <!-- <v-btn color="green darken-1" text @click="geneSetDiialog = false">Back</v-btn> -->
+            <v-btn color="primary darken-1" text @click="addGeneSet">Load</v-btn>
+          </v-card-actions>
+
+          </v-card-text>
+        </v-card>
+      </v-dialog>
 
     </v-content>
 
@@ -260,7 +282,11 @@ export default {
           `
       },
       geneSet:['PRX'],
+      geneSetDiialog: false,
+      genes: '',
+      customModelInfos: [],
       showFiles: false, 
+      pageCounter: 0
     }
   },
   methods:  {
@@ -270,8 +296,18 @@ export default {
     },
     onFilesLoaded: function(analyzeAll) {
       this.showFiles = false;
+      this.pageCounter = this.pageCounter+1; 
+      this.geneSetDiialog = true
       this.$emit("on-files-loaded", analyzeAll);
     },
+    addGeneSet: function(){
+      this.pageCounter = 0; 
+      this.geneSetDiialog = false;
+      this.geneSet = this.genes.split(",").map(gene => gene.trim()); 
+      console.log("genes", this.geneSet)
+      this.$emit('setGeneSet', this.geneSet)
+      this.getStarted();
+    }, 
     onLoadDemoData: function(loadAction) {
       this.$emit("load-demo-data", loadAction);
     },
@@ -302,7 +338,7 @@ export default {
       }
       console.log("this.customModelInfos", this.customModelInfos)
       this.$emit("custom-model-info",this.customModelInfos); 
-      this.$emit('setGeneSet', this.geneSet)
+      // this.$emit('setGeneSet', this.geneSet)
     }, 
     getStarted(){
       bus.$emit("initialize-clin")

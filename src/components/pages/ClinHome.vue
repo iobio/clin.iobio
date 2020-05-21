@@ -134,7 +134,7 @@ $horizontal-dashboard-height: 140px
     v-if="!launchedFromMosaic && showLandingPage"
     :cohortModel="cohortModel"
     @custom-model-info="customModelInfo"
-    @setGeneSet="setGeneSet">
+    @setGeneSet="setGeneSet($event)">
   </landing-page>
   <navigation v-if="!showLandingPage && !showSplash && isAuthenticated  && workflow && analysis"
    :caseSummary="caseSummary"
@@ -480,7 +480,8 @@ export default {
       reviewCaseBadges: null,
       generatingReport: false,
       cohortModel: null,
-      customData: false
+      customData: false, 
+      customGeneSet: []
     }
 
   },
@@ -994,8 +995,10 @@ export default {
           return;
         }
         if(self.customData){
-          self.analysis.payload.genes = ['PRX']
+          // self.analysis.payload.genes = ['PRX']
+          self.analysis.payload.genes = self.customGeneSet;
         }
+        console.log("self.analysis.payload.genes", self.analysis.payload.genes)
 
         let app = self.apps[appName];
         console.log("this.analysis.payload.genes", self.analysis.payload.genes)
@@ -1857,9 +1860,7 @@ export default {
     },
     
     setGeneSet(geneSet){
-      console.log("this.analysis.payload", this.analysis.payload)
-      this.analysis.payload.genes = geneSet;
-      
+      this.customGeneSet = geneSet      
     }
 
   }
