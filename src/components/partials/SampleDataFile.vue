@@ -54,13 +54,13 @@
     </v-flex>
 
     <v-flex xs3 class="mt-2" >
-      or
+      <!-- or
       <file-chooser  class="ml-1"
       title="Choose files"
       :isMultiple="true"
       :showLabel="false"
       @file-selected="onFileSelected">
-      </file-chooser>
+      </file-chooser> -->
     </v-flex>
 
     <v-flex xs12 >

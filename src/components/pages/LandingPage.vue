@@ -46,6 +46,10 @@
                         <v-icon>explore</v-icon> 
                         <span class="ml-2">Try it with demo data</span>
                       </v-btn>
+                      <v-btn color="white" outlined x-large @click="onShowFiles" class="mt-8 ml-4">
+                        <v-icon>fas fa-upload</v-icon> 
+                        <span class="ml-2">Upload data</span>
+                      </v-btn>
                     </v-flex>
                   </v-flex>
                   <v-flex xs12 md12 sm12 lg1 xl1 ></v-flex>
@@ -143,6 +147,19 @@
         :content="terms.content"
         id="TermsDialogLandingPage">
       </NavBarDialog>
+      
+      <files-dialog
+        v-if="showFiles"
+       :cohortModel="cohortModel"
+       :showDialog="showFiles"
+       @on-files-loaded="onFilesLoaded"
+       @load-demo-data="onLoadDemoData"
+       @on-cancel="showFiles = false"
+       @isDemo="onIsDemo"
+       @get-modeinfo-map="getModelInfoMap"
+      >
+      </files-dialog>
+
     </v-content>
 
   </div>
@@ -171,6 +188,7 @@ import review_case_img        from '../../assets/images/landing_page/review_case
 import review_phenotypes_img  from '../../assets/images/landing_page/review_phenotypes.png'
 import review_variants_img    from '../../assets/images/landing_page/review_case.png'
 import findings_img           from '../../assets/images/landing_page/findings.png'
+import FilesDialog            from '../partials/FilesDialog.vue'
 
 export default {
   name: 'landing-page',
@@ -185,9 +203,11 @@ export default {
     findingsIcon,
     LandingPageSlide,
     MoreMenu,
-    NavBarDialog
+    NavBarDialog,
+    FilesDialog
   },
   props: {
+    cohortModel: null,
   },
   data () {
     let self = this;
@@ -238,10 +258,52 @@ export default {
           <br>
           Commercial use of clin.iobio is licensed through Frameshift Genomics. Please contact Frameshift at  <a href="mailto:admin@frameshift.io" target="_top">admin@frameshift.io</a> to discuss any commercial use of this tool.
           `
-      }, 
+      },
+      geneSet:['PRX'],
+      showFiles: false, 
     }
   },
   methods:  {
+    onShowFiles: function() {
+      console.log("show files")
+      this.showFiles = true;
+    },
+    onFilesLoaded: function(analyzeAll) {
+      this.showFiles = false;
+      this.$emit("on-files-loaded", analyzeAll);
+    },
+    onLoadDemoData: function(loadAction) {
+      this.$emit("load-demo-data", loadAction);
+    },
+    onIsDemo: function(bool){
+      this.$emit("isDemo", bool);
+    },
+    getModelInfoMap: function(modelInfoMap, vcfUrls){
+      console.log("this.modelInfoMap on load", modelInfoMap, vcfUrls);
+      var bamUrls = {
+        'proband': 'https://s3.amazonaws.com/iobio/samples/bam/NA12878.exome.bam',
+        'mother':  'https://s3.amazonaws.com/iobio/samples/bam/NA12892.exome.bam',
+        'father':  'https://s3.amazonaws.com/iobio/samples/bam/NA12891.exome.bam',
+        'sibling': 'https://s3.amazonaws.com/iobio/samples/bam/NA12877.exome.bam'
+      }
+      for(var model in modelInfoMap){
+        var obj = {}; 
+        obj.relationship = model 
+        obj.affectedStatus = "affected" 
+        obj.name = modelInfoMap[model].name 
+        obj.sample = modelInfoMap[model].sample 
+        obj.sex = "female" 
+        var vcf = modelInfoMap[model].vcf !== undefined ? modelInfoMap[model].vcf : vcfUrls[model];
+        obj.vcf = vcf; 
+        obj.tbi = null, 
+        obj.bam = bamUrls[model]; 
+        obj.bai = null
+        this.customModelInfos.push(obj)
+      }
+      console.log("this.customModelInfos", this.customModelInfos)
+      this.$emit("custom-model-info",this.customModelInfos); 
+      this.$emit('setGeneSet', this.geneSet)
+    }, 
     getStarted(){
       bus.$emit("initialize-clin")
     }, 

@@ -112,7 +112,7 @@
 
 <template>
    <v-dialog v-model="showFilesDialog" persistent max-width="890" >
-      <v-card class="full-width" style="min-height:0px;max-height:670px;overflow-y:scroll">
+      <v-card class="full-width" style="height: auto;overflow-y:scroll">
 
 
 
@@ -120,21 +120,6 @@
 
             <v-layout row nowrap class="mt-0">
              <v-card-title class="headline">Files</v-card-title>
-
-              <v-flex xs12 class="mt-2 text-xs-right">
-                <div class="loader" v-show="inProgress">
-                  <img src="../../assets/images/wheel.gif">
-                </div>
-                <v-btn class="load-button action-button"
-                  @click="onLoad"
-                  :disabled="!isValid">
-                  Load
-                </v-btn>
-
-                <v-btn class="cancer-button action-button" @click="onCancel">
-                 Cancel
-               </v-btn>
-              </v-flex>
             </v-layout>
 
 
@@ -171,7 +156,7 @@
                 ></v-select>
                </v-flex>
 
-              <v-flex style="max-width:160px" class="ml-2">
+              <!-- <v-flex style="max-width:160px" class="ml-2">
                   <v-select
                     :items="demoActions"
                     item-value="value"
@@ -180,7 +165,7 @@
                     v-model="demoAction"
                     hide-details
                     label="Demo data"></v-select>
-              </v-flex>
+              </v-flex> -->
 
             </v-layout>
 
@@ -242,6 +227,27 @@
                   >
                 </v-autocomplete>
                </v-flex>
+            </v-layout>
+            
+            <v-layout row wrap>
+              <v-flex xs12 class="mt-2 text-xs-right">
+                <div class="loader" v-show="inProgress">
+                  <img src="../../assets/images/wheel.gif">
+                </div>
+                <v-card-actions class="mb-4">
+                  <v-spacer></v-spacer>
+                  <v-btn class="load-button action-button"
+                    @click="onLoad"
+                    :disabled="!isValid">
+                    Load
+                  </v-btn>
+
+                  <v-btn class="cancer-button action-button" @click="onCancel">
+                   Cancel
+                 </v-btn>
+
+                </v-card-actions>
+              </v-flex>
             </v-layout>
 
           </v-form>

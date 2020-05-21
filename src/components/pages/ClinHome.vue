@@ -125,12 +125,17 @@ $horizontal-dashboard-height: 140px
 
 <template>
 <div id="application-content" :class="{'workflow-new': newWorkflow ? true : false}">
-  <Nav1
+  <!-- <Nav1
     :cohortModel="cohortModel"
     @custom-model-info="customModelInfo"
     @setGeneSet="setGeneSet">
-  </Nav1>
-  <landing-page v-if="!launchedFromMosaic && showLandingPage"></landing-page>
+  </Nav1> -->
+  <landing-page 
+    v-if="!launchedFromMosaic && showLandingPage"
+    :cohortModel="cohortModel"
+    @custom-model-info="customModelInfo"
+    @setGeneSet="setGeneSet">
+  </landing-page>
   <navigation v-if="!showLandingPage && !showSplash && isAuthenticated  && workflow && analysis"
    :caseSummary="caseSummary"
    :analysis="analysis"
