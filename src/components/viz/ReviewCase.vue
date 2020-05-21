@@ -237,11 +237,13 @@ export default {
     this.varCountsArray = this.allVarCounts;
 
     if(this.launchedFromMosaic) {
+      console.log("true ");
       this.formatVarCountsArray();
       this.convertPropsToData();
       this.buildPage();
     }
     else{
+      console.log("false, bbut  i should bbe here and modelInfos", this.modelInfos);
       this.overridePropsWithDemoData();
       this.buildPage();
     }
@@ -451,8 +453,10 @@ export default {
     },
 
     populateRelationshipMap(){
+      console.log("this.modelInfos", this.modelInfos)
       this.sampleIdRelationshipMap = {};
       for(let i = 0; i < this.modelInfosData.length; i++){
+        console.log("this.modelInfos[i]", this.modelInfos[i]);
         this.sampleIdRelationshipMap[this.modelInfos[i].sample] = this.modelInfos[i].relationship
       }
     },

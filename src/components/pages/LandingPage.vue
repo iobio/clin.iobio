@@ -160,6 +160,8 @@
       >
       </files-dialog>
       
+      
+      <!-- Genes set dialog -->
       <v-dialog v-model="geneSetDiialog" v-if="pageCounter===1" persistent max-width="890">
         <v-card class="full-width" style="height: auto;overflow-y:scroll">
           <v-card-title class="headline">Gene Sets</v-card-title>
@@ -175,7 +177,25 @@
           <v-card-actions>
             <v-spacer></v-spacer>
             <!-- <v-btn color="green darken-1" text @click="geneSetDiialog = false">Back</v-btn> -->
-            <v-btn color="primary darken-1" text @click="addGeneSet">Load</v-btn>
+            <v-btn color="primary darken-1" text @click="addGeneSet">Next</v-btn>
+          </v-card-actions>
+
+          </v-card-text>
+        </v-card>
+      </v-dialog>
+      <!-- End gene sets dialog -->
+      
+      <!-- Pedigree upload dialog -->
+      <v-dialog v-model="pedigreeUploadDialog" v-if="pageCounter===2" persistent max-width="890">
+        <v-card class="full-width" style="height: auto;overflow-y:scroll">
+          <v-card-title class="headline">Pedigree upload</v-card-title>
+          <v-card-text>
+            <v-col cols="12" md="12">
+              <PedFileReader class="uploader" @load-ped-file="uploadedPedTxt($event)"></PedFileReader>
+            </v-col>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn :disabled="!pedData" color="primary darken-1" text @click="addPedigree">Load</v-btn>
           </v-card-actions>
 
           </v-card-text>
@@ -197,6 +217,7 @@ import { bus }          from '../../main'
 import LandingPageSlide from '../partials/LandingPageSlide.vue'
 import MoreMenu         from '../partials/MoreMenu.vue'
 import NavBarDialog     from '../partials/NavBarDialog.vue'
+import PedFileReader    from './PedFileReader.vue'
 
 import {
   Hooper,
@@ -226,7 +247,8 @@ export default {
     LandingPageSlide,
     MoreMenu,
     NavBarDialog,
-    FilesDialog
+    FilesDialog,
+    PedFileReader
   },
   props: {
     cohortModel: null,
@@ -286,7 +308,9 @@ export default {
       genes: '',
       customModelInfos: [],
       showFiles: false, 
-      pageCounter: 0
+      pageCounter: 0, 
+      pedigreeUploadDialog: false, 
+      pedData: null, 
     }
   },
   methods:  {
@@ -301,13 +325,20 @@ export default {
       this.$emit("on-files-loaded", analyzeAll);
     },
     addGeneSet: function(){
-      this.pageCounter = 0; 
+      this.pageCounter = this.pageCounter+1;  
       this.geneSetDiialog = false;
-      this.geneSet = this.genes.split(",").map(gene => gene.trim()); 
-      console.log("genes", this.geneSet)
+      this.geneSet = this.genes.split(",").map(gene => gene.trim().toUpperCase()); 
       this.$emit('setGeneSet', this.geneSet)
-      this.getStarted();
+      this.pedigreeUploadDialog = true; 
     }, 
+    uploadedPedTxt(ped){
+       this.pedData = ped; 
+    }, 
+    addPedigree(){
+      this.pedigreeUploadDialog = false; 
+      this.$emit("set-ped-data", this.pedData); 
+      this.getStarted();
+    },
     onLoadDemoData: function(loadAction) {
       this.$emit("load-demo-data", loadAction);
     },

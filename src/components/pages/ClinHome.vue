@@ -695,7 +695,9 @@ export default {
             self.modelInfos = data.modelInfos;
             self.user       = data.user;
             self.geneSet    = data.geneSet;
-            console.log("data.rawPedigree", data.rawPedigree)
+            console.log("data.rawPedigree", data.rawPedigree);
+            console.log("data.coverageHistos", data.coverageHistos)
+            console.log("data.allVarCounts", data.allVarCounts)
             self.coverageHistos = data.coverageHistos;
             self.rawPedigree = data.rawPedigree;
             self.allVarCounts = data.allVarCounts;
