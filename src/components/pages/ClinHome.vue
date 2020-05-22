@@ -475,7 +475,7 @@ export default {
       reviewCaseBadges: null,
       generatingReport: false,
       cohortModel: null,
-      customData: true, 
+      customData: false, 
       customGeneSet: []
     }
 
