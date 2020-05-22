@@ -125,11 +125,6 @@ $horizontal-dashboard-height: 140px
 
 <template>
 <div id="application-content" :class="{'workflow-new': newWorkflow ? true : false}">
-  <!-- <Nav1
-    :cohortModel="cohortModel"
-    @custom-model-info="customModelInfo"
-    @setGeneSet="setGeneSet">
-  </Nav1> -->
   <landing-page 
     v-if="!launchedFromMosaic && showLandingPage"
     :cohortModel="cohortModel"
@@ -337,7 +332,6 @@ import { saveAs } from 'file-saver'
 import { bus } from '../../main'
 
 import NewComponents from 'iobio-phenotype-extractor-vue';
-import Nav1 from './Nav1.vue'
 
 export default {
   name: 'home',
@@ -351,7 +345,6 @@ export default {
     SaveAnalysisPopup,
     LoadingDialog,
     LandingPage,
-    Nav1,
     ...NewComponents
   },
   props: {
