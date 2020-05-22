@@ -237,11 +237,11 @@
                 <v-card-actions class="mb-4">
                   <v-spacer></v-spacer>
 
-                  <v-btn class="cancer-button action-button" @click="onCancel">
+                  <v-btn  @click="onCancel">
                    Cancel
                  </v-btn>
                  
-                 <v-btn class="load-button action-button"
+                 <v-btn class="ml-2" color="primary"
                    @click="onLoad"
                    :disabled="!isValid">
                    Next
@@ -309,7 +309,6 @@ export default {
   watch: {
     showDialog: function() {
       if (this.cohortModel && this.showDialog) {
-        console.log("here")
         this.showFilesDialog = true
         this.mode = this.cohortModel.mode;
         this.init();
@@ -325,10 +324,10 @@ export default {
     onLoad: function() {
       let self = this;
       self.inProgress = true;
-      console.log("self.mode", self.mode)
+      // console.log("self.mode", self.mode)
       // console.log("self.modelInfo", self.modelInfo)
-      console.log("vcfUrls", self.vcfUrls)
-      console.log("this.modelInfoMap on load", this.modelInfoMap)
+      // console.log("vcfUrls", self.vcfUrls)
+      // console.log("this.modelInfoMap on load", this.modelInfoMap)
 
       self.$emit("get-modeinfo-map", self.modelInfoMap, self.vcfUrls); 
       
@@ -433,26 +432,25 @@ export default {
     },
     validate: function() {
       this.isValid = false;
-      console.log("this.modelInfoMap", this.modelInfoMap)
+      // console.log("this.modelInfoMap", this.modelInfoMap)
       // this.$emit("Set-modelInfoMap", this.modelInfoMap)
       if (this.mode == 'single') {
         if (this.modelInfoMap.proband && this.modelInfoMap.proband.model.isReadyToLoad()) {
           this.isValid = true;
-          console.log("this.isValid", this.isValid)
+          // console.log("this.isValid", this.isValid)
         }
       } else {
         if (this.modelInfoMap.proband && this.modelInfoMap.proband.model && this.modelInfoMap.proband.model.isReadyToLoad()
             && this.modelInfoMap.mother && this.modelInfoMap.mother.model && this.modelInfoMap.mother.model.isReadyToLoad()
             && this.modelInfoMap.father && this.modelInfoMap.father.model && this.modelInfoMap.father.model.isReadyToLoad()) {
           this.isValid = true;
-          console.log("this.isValid for trio", this.isValid)
         }
       }
     },
     onSamplesAvailable: function(relationship, samples, vcf) {
-      console.log("onSamplesAvailable", relationship , " samples : ", samples)
+      // console.log("onSamplesAvailable", relationship , " samples : ", samples)
       this.vcfUrls[relationship] = vcf; 
-      console.log("this.vcfUrls", this.vcfUrls)
+      // console.log("this.vcfUrls", this.vcfUrls)
       if (relationship == 'proband') {
         this.probandSamples = samples;
         if (this.cohortModel.sampleMapSibs.affected && this.cohortModel.sampleMapSibs.affected.length > 0) {
@@ -581,10 +579,7 @@ export default {
     let self = this;
 
   },
-  mounted: function() {
-    console.log("files dialog mounted", this.showDialog)
-    console.log("this.cohortModel in clin", this.cohortModel)
-    
+  mounted: function() {    
     if (this.cohortModel) {
       this.speciesName =  this.cohortModel.genomeBuildHelper.getCurrentSpeciesName();
       this.buildName   =  this.cohortModel.genomeBuildHelper.getCurrentBuildName();
@@ -596,7 +591,6 @@ export default {
     }
 
     if (this.cohortModel && this.showDialog) {
-      console.log("here")
       this.showFilesDialog = true
       this.mode = this.cohortModel.mode;
       this.init();

@@ -177,7 +177,7 @@
           <v-card-actions>
             <v-spacer></v-spacer>
             <!-- <v-btn color="green darken-1" text @click="geneSetDiialog = false">Back</v-btn> -->
-            <v-btn color="primary darken-1" text @click="addGeneSet">Next</v-btn>
+            <v-btn color="primary" @click="addGeneSet">Next</v-btn>
           </v-card-actions>
 
           </v-card-text>
@@ -195,7 +195,7 @@
             </v-col>
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn :disabled="!pedData" color="primary darken-1" text @click="addPedigree">Load</v-btn>
+            <v-btn :disabled="!pedData" color="primary" @click="addPedigree">Load</v-btn>
           </v-card-actions>
 
           </v-card-text>
@@ -315,7 +315,6 @@ export default {
   },
   methods:  {
     onShowFiles: function() {
-      console.log("show files")
       this.showFiles = true;
     },
     onFilesLoaded: function(analyzeAll) {
@@ -346,7 +345,6 @@ export default {
       this.$emit("isDemo", bool);
     },
     getModelInfoMap: function(modelInfoMap, vcfUrls){
-      console.log("this.modelInfoMap on load", modelInfoMap, vcfUrls);
       var bamUrls = {
         'proband': 'https://s3.amazonaws.com/iobio/samples/bam/NA12878.exome.bam',
         'mother':  'https://s3.amazonaws.com/iobio/samples/bam/NA12892.exome.bam',
@@ -367,9 +365,7 @@ export default {
         obj.bai = null
         this.customModelInfos.push(obj)
       }
-      console.log("this.customModelInfos", this.customModelInfos)
       this.$emit("custom-model-info",this.customModelInfos); 
-      // this.$emit('setGeneSet', this.geneSet)
     }, 
     getStarted(){
       bus.$emit("initialize-clin")

@@ -130,7 +130,7 @@ export default {
   methods: {
     onVcfUrlEntered: function(vcfUrl, tbiUrl) {
       let self = this;
-      console.log("onVcfUrlEntered", vcfUrl);
+      // console.log("onVcfUrlEntered", vcfUrl);
 
       self.$set(self, "sample", null);
       self.$set(self, "samples", []);
@@ -200,7 +200,7 @@ export default {
       }
     },
     onSampleSelected: function() {
-      console.log("onSampleSelected", this.sample)
+      // console.log("onSampleSelected", this.sample)
       let self = this;
       self.modelInfo.sample = this.sample;
       if (self.modelInfo.model) {
@@ -237,7 +237,7 @@ export default {
 
   },
   mounted: function() {
-    console.log("modelinfo moounted", this.modelInfo);
+    // console.log("modelinfo moounted", this.modelInfo);
     this.samples = this.modelInfo.samples;
     this.isAffected = this.modelInfo.isAffected;
     if (this.modelInfo.vcf) {
