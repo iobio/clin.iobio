@@ -243,8 +243,9 @@ export default {
       this.buildPage();
     }
     else if(this.customData){
-      console.log("pedigree data: ",this.pedigree)
       //TODO: build pedigree from the prop: this.pedigree
+
+      console.log("pedigree data: ",this.pedigree)
     }
     else{
       this.overridePropsWithDemoData();
