@@ -13,7 +13,10 @@
 import { createHoster } from 'fibridge-host';
 
 export default function vcfiobio(theGlobalApp) {
-
+  var backendPath = "backend.iobio.io";
+  var apiClient = new iobioApiClient.Client(backendPath, { secure: true });
+  console.log("apiClient", apiClient)
+  
   var globalApp = theGlobalApp;
 
   var debug =  false;
@@ -22,7 +25,7 @@ export default function vcfiobio(theGlobalApp) {
 
   var isEduMode = false;
 
-  var dispatch = d3.dispatch( 'dataReady', 'dataLoading');
+  // var dispatch = d3.dispatch( 'dataReady', 'dataLoading');
 
   var SOURCE_TYPE_URL = "URL";
   var SOURCE_TYPE_FILE = "file";
@@ -49,7 +52,7 @@ export default function vcfiobio(theGlobalApp) {
   var genericAnnotation = null;
   var genomeBuildHelper = null;
 
-
+  var samples = [];
 
 
   var VEP_FIELDS_AF_1000G  = "AF|AFR_AF|AMR_AF|EAS_AF|EUR_AF|SAS_AF".split("|");
@@ -553,6 +556,550 @@ export default function vcfiobio(theGlobalApp) {
     });
 
   }
+  
+  exports.sayHello = function(){
+    console.log("Hello from vcf.iobio.js")
+  }
+  
+  exports._getRegions = function(refs, options) {
+    console.log("called getRegions");
+    regionIndex = 0;
+    regions.length = 0;
+    var me = this;
+    var allRegions = [];
+
+    console.log("refData", refData)
+    refData = [
+  {
+    "name": "1",
+    "value": 249250621,
+    "refLength": 249250621,
+    "calcRefLength": 249233408,
+    "idx": 0,
+    "genomePercent": 0.0805,
+    "width": 106.20188030962638,
+    "offset": 0
+  },
+  {
+    "name": "2",
+    "value": 243199373,
+    "refLength": 243199373,
+    "calcRefLength": 243040256,
+    "idx": 1,
+    "genomePercent": 0.0786,
+    "width": 103.62353601807948,
+    "offset": 106.20188030962638
+  },
+  {
+    "name": "3",
+    "value": 198022430,
+    "refLength": 198022430,
+    "calcRefLength": 197853184,
+    "idx": 2,
+    "genomePercent": 0.064,
+    "width": 84.37433104522282,
+    "offset": 209.82541632770585
+  },
+  {
+    "name": "4",
+    "value": 191154276,
+    "refLength": 191154276,
+    "calcRefLength": 191004672,
+    "idx": 3,
+    "genomePercent": 0.0617,
+    "width": 81.44791559185437,
+    "offset": 294.19974737292864
+  },
+  {
+    "name": "5",
+    "value": 180915260,
+    "refLength": 180915260,
+    "calcRefLength": 180682752,
+    "idx": 4,
+    "genomePercent": 0.0584,
+    "width": 77.08522735718654,
+    "offset": 375.647662964783
+  },
+  {
+    "name": "6",
+    "value": 171115067,
+    "refLength": 171115067,
+    "calcRefLength": 170950656,
+    "idx": 5,
+    "genomePercent": 0.0553,
+    "width": 72.90951489628463,
+    "offset": 452.73289032196953
+  },
+  {
+    "name": "7",
+    "value": 159138663,
+    "refLength": 159138663,
+    "calcRefLength": 158941184,
+    "idx": 6,
+    "genomePercent": 0.0514,
+    "width": 67.8065521873262,
+    "offset": 525.6424052182542
+  },
+  {
+    "name": "8",
+    "value": 146364022,
+    "refLength": 146364022,
+    "calcRefLength": 146292736,
+    "idx": 7,
+    "genomePercent": 0.0473,
+    "width": 62.3634728921278,
+    "offset": 593.4489574055805
+  },
+  {
+    "name": "9",
+    "value": 141213431,
+    "refLength": 141213431,
+    "calcRefLength": 141082624,
+    "idx": 8,
+    "genomePercent": 0.0456,
+    "width": 60.168884783535525,
+    "offset": 655.8124302977083
+  },
+  {
+    "name": "10",
+    "value": 135534747,
+    "refLength": 135534747,
+    "calcRefLength": 135495680,
+    "idx": 9,
+    "genomePercent": 0.0438,
+    "width": 57.749284318491185,
+    "offset": 715.9813150812438
+  },
+  {
+    "name": "11",
+    "value": 135006516,
+    "refLength": 135006516,
+    "calcRefLength": 134266880,
+    "idx": 10,
+    "genomePercent": 0.0436,
+    "width": 57.524213162348175,
+    "offset": 773.730599399735
+  },
+  {
+    "name": "12",
+    "value": 133851895,
+    "refLength": 133851895,
+    "calcRefLength": 133791744,
+    "idx": 11,
+    "genomePercent": 0.0432,
+    "width": 57.032246800326625,
+    "offset": 831.2548125620831
+  },
+  {
+    "name": "13",
+    "value": 115169878,
+    "refLength": 115169878,
+    "calcRefLength": 115064832,
+    "idx": 12,
+    "genomePercent": 0.0372,
+    "width": 49.072124873984855,
+    "offset": 888.2870593624098
+  },
+  {
+    "name": "14",
+    "value": 107349540,
+    "refLength": 107349540,
+    "calcRefLength": 107298816,
+    "idx": 13,
+    "genomePercent": 0.0347,
+    "width": 45.739998370449186,
+    "offset": 937.3591842363946
+  },
+  {
+    "name": "15",
+    "value": 102531392,
+    "refLength": 102531392,
+    "calcRefLength": 102531072,
+    "idx": 14,
+    "genomePercent": 0.0331,
+    "width": 43.687059143428904,
+    "offset": 983.0991826068438
+  },
+  {
+    "name": "16",
+    "value": 90354753,
+    "refLength": 90354753,
+    "calcRefLength": 90177536,
+    "idx": 15,
+    "genomePercent": 0.0292,
+    "width": 38.498779361162974,
+    "offset": 1026.7862417502727
+  },
+  {
+    "name": "17",
+    "value": 81195210,
+    "refLength": 81195210,
+    "calcRefLength": 81068032,
+    "idx": 16,
+    "genomePercent": 0.0262,
+    "width": 34.596038074203946,
+    "offset": 1065.2850211114355
+  },
+  {
+    "name": "18",
+    "value": 78077248,
+    "refLength": 78077248,
+    "calcRefLength": 77971456,
+    "idx": 17,
+    "genomePercent": 0.0252,
+    "width": 33.26752211783262,
+    "offset": 1099.8810591856395
+  },
+  {
+    "name": "19",
+    "value": 59128983,
+    "refLength": 59128983,
+    "calcRefLength": 59113472,
+    "idx": 18,
+    "genomePercent": 0.0191,
+    "width": 25.193955987760337,
+    "offset": 1133.1485813034722
+  },
+  {
+    "name": "20",
+    "value": 63025520,
+    "refLength": 63025520,
+    "calcRefLength": 62914560,
+    "idx": 19,
+    "genomePercent": 0.0204,
+    "width": 26.854210852666093,
+    "offset": 1158.3425372912325
+  },
+  {
+    "name": "21",
+    "value": 48129895,
+    "refLength": 48129895,
+    "calcRefLength": 48087040,
+    "idx": 20,
+    "genomePercent": 0.0155,
+    "width": 20.507412690076645,
+    "offset": 1185.1967481438985
+  },
+  {
+    "name": "22",
+    "value": 51304566,
+    "refLength": 51304566,
+    "calcRefLength": 51249152,
+    "idx": 21,
+    "genomePercent": 0.0166,
+    "width": 21.86009148466405,
+    "offset": 1205.704160833975
+  },
+  {
+    "name": "X",
+    "value": 155270560,
+    "refLength": 155270560,
+    "calcRefLength": 155271168,
+    "idx": 22,
+    "genomePercent": 0.0502,
+    "width": 66.15841261526349,
+    "offset": 1227.564252318639
+  },
+  {
+    "name": "Y",
+    "value": 59373566,
+    "refLength": 59373566,
+    "calcRefLength": 24559616,
+    "idx": 23,
+    "sparsePointData": [
+      {
+        "pos": 2834432,
+        "depth": 1
+      },
+      {
+        "pos": 4964352,
+        "depth": 1
+      },
+      {
+        "pos": 5488640,
+        "depth": 1
+      },
+      {
+        "pos": 6111232,
+        "depth": 1
+      },
+      {
+        "pos": 6127616,
+        "depth": 1
+      },
+      {
+        "pos": 6946816,
+        "depth": 1
+      },
+      {
+        "pos": 7192576,
+        "depth": 1
+      },
+      {
+        "pos": 9175040,
+        "depth": 1
+      },
+      {
+        "pos": 9191424,
+        "depth": 1
+      },
+      {
+        "pos": 9207808,
+        "depth": 1
+      },
+      {
+        "pos": 9289728,
+        "depth": 1
+      },
+      {
+        "pos": 9322496,
+        "depth": 1
+      },
+      {
+        "pos": 9355264,
+        "depth": 1
+      },
+      {
+        "pos": 9732096,
+        "depth": 1
+      },
+      {
+        "pos": 13484032,
+        "depth": 18592
+      },
+      {
+        "pos": 13500416,
+        "depth": 1
+      },
+      {
+        "pos": 14073856,
+        "depth": 1
+      },
+      {
+        "pos": 14106624,
+        "depth": 1
+      },
+      {
+        "pos": 14516224,
+        "depth": 1
+      },
+      {
+        "pos": 14843904,
+        "depth": 1
+      },
+      {
+        "pos": 14893056,
+        "depth": 1
+      },
+      {
+        "pos": 14942208,
+        "depth": 1
+      },
+      {
+        "pos": 14958592,
+        "depth": 1
+      },
+      {
+        "pos": 15024128,
+        "depth": 1
+      },
+      {
+        "pos": 15433728,
+        "depth": 1
+      },
+      {
+        "pos": 15581184,
+        "depth": 1
+      },
+      {
+        "pos": 16941056,
+        "depth": 1
+      },
+      {
+        "pos": 21856256,
+        "depth": 1
+      },
+      {
+        "pos": 21889024,
+        "depth": 1
+      },
+      {
+        "pos": 24313856,
+        "depth": 1
+      },
+      {
+        "pos": 24543232,
+        "depth": 8752
+      }
+    ],
+    "genomePercent": 0.0192,
+    "width": 25.298169066097362,
+    "offset": 1293.7226649339025
+  }
+  ]
+    var bedRegions;
+    for (var j=0; j < refs.length; j++) {
+      var ref      = refData[refs[j]];
+      var start    = options.start ? options.start : 0;
+      var end      = options.end ? options.end : ref.refLength;
+      var length   = end - start;
+      var sparsePointData = ref.sparsePointData;
+
+      if ( options.fullAnalysis || length < options.binSize * options.binNumber) {
+        regions.push({
+          'name' : ref.name,
+          'start': start,
+          'end'  : end
+        });
+      } else {
+         // If this is sparse data, seed with known regions first
+         if (sparsePointData != null && sparsePointData.length > 0) {
+          sparsePointData.forEach( function(point) {
+            regions.push( {
+              'name' : ref.name,
+              'start' : point.pos,
+              'end' : point.pos + options.binSize
+            })
+          })
+         }
+         // create random reference coordinates
+         for (var i=0; i < options.binNumber; i++) {
+            var s = start + parseInt(Math.random()*length);
+            regions.push( {
+               'name' : ref.name,
+               'start' : s,
+               'end' : s + options.binSize
+            });
+         }
+         // sort by start value
+         regions = regions.sort(function(a,b) {
+            if (a.name == b.name)
+              return ((a.start < b.start) ? -1 : ((a.start > b.start) ? 1 : 0));
+            else
+              return ((a.name < b.name) ? -1 : ((a.name > b.name) ? 1 : 0));
+         });
+      }
+    }
+    // map random region coordinates to bed coordinates
+    if (window.bed != undefined) {
+      if (refs.length == 1)
+        var bedArray = this._bedToArray(bed, refData[refs[0]].name, {name:ref.name, 'start':start, 'end':end});
+      else
+        var bedArray = this._bedToArray(bed, refData[refs[0]].name);
+      regions = me._bedGetRegions(bedArray, options.binNumber * refs.length, options);
+    }
+      // regions = me._mapToBedCoordinates(regions, window.bed)
+
+    // sort by start value
+    regions = regions.sort(function(a,b) {
+      if (a.name == b.name)
+        return ((a.start < b.start) ? -1 : ((a.start > b.start) ? 1 : 0));
+      else
+        return ((a.name < b.name) ? -1 : ((a.name > b.name) ? 1 : 0));
+    });
+    return regions;
+
+  }
+  
+  exports.getStats = function(refs, options, callback) {
+    this.vcfURL = "https://s3.amazonaws.com/iobio/samples/vcf/platinum-exome.vcf.gz"
+    console.log("called getStats")
+    console.log("vcfURL", this.vcfURL)
+    console.log("refData", this.refData)
+    console.log("refs", refs)
+    console.log("options", options)
+    this._getRemoteStats(refs, options, callback);
+  }
+  
+  exports._getRemoteStats = function(refs, options, callback) {
+    var me = this;
+    console.log("called _getRemoteStats");
+
+    me._getRegions(refs, options);
+
+    // This is the tabix url.  Here we send the regions as arguments.  tabix
+    // output (vcf header+records for the regions) will be piped
+    // to the vcfstatsalive server.
+    var regionStr = "";
+    regions.forEach(function(region) {
+      regionStr += " " + region.name + ":" + region.start + "-" + region.end
+    });
+
+    var refNames = [];
+
+    var contigStr = "";
+    for (var j=0; j < refs.length; j++) {
+      var ref      = refData[refs[j]];
+      contigStr += "##contig=<ID=" + ref.name + ">\n";
+      refNames.push(ref.name);
+    }
+    var contigNameFile = new Blob([contigStr])
+
+    var cmd = null;
+console.log("me.tbiURL", me.tbiURL)
+    var tabixArgs = ['-h', '"'+me.vcfURL+'"', regionStr];
+    if (me.tbiURL) {
+       tabixArgs.push('"'+me.tbiURL+'"');
+    }
+    samples = ["NA12878"]
+    console.log("samples", samples)
+    
+    if (samples && samples.length > 0) {
+      var sampleNameFile = new Blob([samples.join("\n")]);
+
+      cmd = apiClient.streamCommand('vcfStatsStream', {
+        url: me.vcfURL,
+        indexUrl: me.tbiURL,
+        regions,
+        refNames,
+        sampleNames: samples,
+      });
+    } else {
+
+      cmd = apiClient.streamCommand('vcfStatsStream', {
+        url: me.vcfURL,
+        indexUrl: me.tbiURL,
+        regions,
+        refNames,
+      });
+    }
+
+
+    // Run like normal
+    cmd.run();
+
+    var buffer = "";
+    // Use Results
+    cmd.on('data', function(results) {
+         results.split(';').forEach(function(data) {
+           if (data == undefined) {
+              return;
+           }
+           var success = true;
+           try {
+             var obj = JSON.parse(buffer + data);
+           } catch(e) {
+             success = false;
+             buffer += data;
+           }
+           if(success) {
+             buffer = "";
+             callback(obj);
+           }
+        });
+    });
+
+    cmd.on('end', function() {
+
+    });
+
+    cmd.on('error', function(error) {
+      console.log("error while annotating vcf records " + error);
+    });
+
+
+  };
+
 
 
   exports._getRemoteReferenceLengths = function(callback, callbackError) {
@@ -3149,9 +3696,806 @@ exports._getHighestScore = function(theObject, cullFunction, theTranscriptId) {
 
   // Allow on() method to be invoked on this class
   // to handle data events
-  d3.rebind(exports, dispatch, 'on');
+  // d3.rebind(exports, dispatch, 'on');
 
   // Return this scope so that all subsequent calls
   // will be made on this scope.
   return exports;
 };
+
+
+var iobioApiClient = (function (exports) {
+  'use strict';
+
+  // This code was originally adapted from
+  const XHR_LOADING = 3;
+  const XHR_DONE = 4;
+
+  class Stream {
+    constructor(xhr, body) {
+
+      this._body = body;
+
+      xhr.seenBytes = 0;
+
+      xhr.onreadystatechange = () => { 
+        switch (xhr.readyState) {
+          //case XHR_HEADERS_RECEIVED:
+          //  if (xhr.status !== 200) {
+          //    this._onError(xhr.reponseText);
+          //  }
+
+          //  break;
+          case XHR_LOADING:
+
+            if (xhr.status === 200) {
+              const newData = xhr.responseText.substr(xhr.seenBytes); 
+              this._onData(newData);
+
+              xhr.seenBytes = xhr.responseText.length; 
+            }
+            else {
+              this._onError(xhr.responseText);
+            }
+
+            break;
+          case XHR_DONE:
+
+            if (xhr.status === 200) {
+              const lastData = xhr.responseText.substr(xhr.seenBytes); 
+              this._onData(lastData);
+              this._onEnd();
+            }
+            else {
+              this._onError(xhr.responseText);
+            }
+
+            break;
+          default:
+            //console.error("Unhandle XHR code: " + xhr.readyState);
+            break;
+        }
+      };
+
+      this._xhr = xhr;
+      this._started = false;
+    }
+
+    onData(callback) {
+      if (!this._started) {
+        this._started = true;
+        this.start();
+      }
+
+      this._onData = callback;
+    }
+
+    onEnd(callback) {
+      this._onEnd = callback;
+    }
+
+    onError(callback) {
+      this._onError = callback;
+    }
+
+    start() {
+      if (this._body) {
+        this._xhr.send(this._body);
+      }
+      else {
+        this._xhr.send();
+      }
+    }
+
+    cancel() {
+      this._xhr.abort();
+    }
+  }
+
+
+  function request(url, options) {
+    let method = 'GET';
+
+    let params;
+    let contentType = "application/json;charset=UTF-8";
+
+    if (options !== undefined) {
+      method = options.method ? options.method : method;
+
+      params = options.params;
+
+      contentType = options.contentType ? options.contentType : contentType;
+    }
+
+    var xhr = new XMLHttpRequest();
+    xhr.open(method, url);
+
+    let body;
+    if (params) {
+      xhr.setRequestHeader("Content-Type", contentType);
+      body = JSON.stringify(params);
+    }
+    
+    return new Stream(xhr, body);
+  }
+
+  var domain;
+
+  // This constructor is used to store event handlers. Instantiating this is
+  // faster than explicitly calling `Object.create(null)` to get a "clean" empty
+  // object (tested with v8 v4.9).
+  function EventHandlers() {}
+  EventHandlers.prototype = Object.create(null);
+
+  function EventEmitter() {
+    EventEmitter.init.call(this);
+  }
+
+  // nodejs oddity
+  // require('events') === require('events').EventEmitter
+  EventEmitter.EventEmitter = EventEmitter;
+
+  EventEmitter.usingDomains = false;
+
+  EventEmitter.prototype.domain = undefined;
+  EventEmitter.prototype._events = undefined;
+  EventEmitter.prototype._maxListeners = undefined;
+
+  // By default EventEmitters will print a warning if more than 10 listeners are
+  // added to it. This is a useful default which helps finding memory leaks.
+  EventEmitter.defaultMaxListeners = 10;
+
+  EventEmitter.init = function() {
+    this.domain = null;
+    if (EventEmitter.usingDomains) {
+      // if there is an active domain, then attach to it.
+      if (domain.active && !(this instanceof domain.Domain)) ;
+    }
+
+    if (!this._events || this._events === Object.getPrototypeOf(this)._events) {
+      this._events = new EventHandlers();
+      this._eventsCount = 0;
+    }
+
+    this._maxListeners = this._maxListeners || undefined;
+  };
+
+  // Obviously not all Emitters should be limited to 10. This function allows
+  // that to be increased. Set to zero for unlimited.
+  EventEmitter.prototype.setMaxListeners = function setMaxListeners(n) {
+    if (typeof n !== 'number' || n < 0 || isNaN(n))
+      throw new TypeError('"n" argument must be a positive number');
+    this._maxListeners = n;
+    return this;
+  };
+
+  function $getMaxListeners(that) {
+    if (that._maxListeners === undefined)
+      return EventEmitter.defaultMaxListeners;
+    return that._maxListeners;
+  }
+
+  EventEmitter.prototype.getMaxListeners = function getMaxListeners() {
+    return $getMaxListeners(this);
+  };
+
+  // These standalone emit* functions are used to optimize calling of event
+  // handlers for fast cases because emit() itself often has a variable number of
+  // arguments and can be deoptimized because of that. These functions always have
+  // the same number of arguments and thus do not get deoptimized, so the code
+  // inside them can execute faster.
+  function emitNone(handler, isFn, self) {
+    if (isFn)
+      handler.call(self);
+    else {
+      var len = handler.length;
+      var listeners = arrayClone(handler, len);
+      for (var i = 0; i < len; ++i)
+        listeners[i].call(self);
+    }
+  }
+  function emitOne(handler, isFn, self, arg1) {
+    if (isFn)
+      handler.call(self, arg1);
+    else {
+      var len = handler.length;
+      var listeners = arrayClone(handler, len);
+      for (var i = 0; i < len; ++i)
+        listeners[i].call(self, arg1);
+    }
+  }
+  function emitTwo(handler, isFn, self, arg1, arg2) {
+    if (isFn)
+      handler.call(self, arg1, arg2);
+    else {
+      var len = handler.length;
+      var listeners = arrayClone(handler, len);
+      for (var i = 0; i < len; ++i)
+        listeners[i].call(self, arg1, arg2);
+    }
+  }
+  function emitThree(handler, isFn, self, arg1, arg2, arg3) {
+    if (isFn)
+      handler.call(self, arg1, arg2, arg3);
+    else {
+      var len = handler.length;
+      var listeners = arrayClone(handler, len);
+      for (var i = 0; i < len; ++i)
+        listeners[i].call(self, arg1, arg2, arg3);
+    }
+  }
+
+  function emitMany(handler, isFn, self, args) {
+    if (isFn)
+      handler.apply(self, args);
+    else {
+      var len = handler.length;
+      var listeners = arrayClone(handler, len);
+      for (var i = 0; i < len; ++i)
+        listeners[i].apply(self, args);
+    }
+  }
+
+  EventEmitter.prototype.emit = function emit(type) {
+    var er, handler, len, args, i, events, domain;
+    var doError = (type === 'error');
+
+    events = this._events;
+    if (events)
+      doError = (doError && events.error == null);
+    else if (!doError)
+      return false;
+
+    domain = this.domain;
+
+    // If there is no 'error' event listener then throw.
+    if (doError) {
+      er = arguments[1];
+      if (domain) {
+        if (!er)
+          er = new Error('Uncaught, unspecified "error" event');
+        er.domainEmitter = this;
+        er.domain = domain;
+        er.domainThrown = false;
+        domain.emit('error', er);
+      } else if (er instanceof Error) {
+        throw er; // Unhandled 'error' event
+      } else {
+        // At least give some kind of context to the user
+        var err = new Error('Uncaught, unspecified "error" event. (' + er + ')');
+        err.context = er;
+        throw err;
+      }
+      return false;
+    }
+
+    handler = events[type];
+
+    if (!handler)
+      return false;
+
+    var isFn = typeof handler === 'function';
+    len = arguments.length;
+    switch (len) {
+      // fast cases
+      case 1:
+        emitNone(handler, isFn, this);
+        break;
+      case 2:
+        emitOne(handler, isFn, this, arguments[1]);
+        break;
+      case 3:
+        emitTwo(handler, isFn, this, arguments[1], arguments[2]);
+        break;
+      case 4:
+        emitThree(handler, isFn, this, arguments[1], arguments[2], arguments[3]);
+        break;
+      // slower
+      default:
+        args = new Array(len - 1);
+        for (i = 1; i < len; i++)
+          args[i - 1] = arguments[i];
+        emitMany(handler, isFn, this, args);
+    }
+
+    return true;
+  };
+
+  function _addListener(target, type, listener, prepend) {
+    var m;
+    var events;
+    var existing;
+
+    if (typeof listener !== 'function')
+      throw new TypeError('"listener" argument must be a function');
+
+    events = target._events;
+    if (!events) {
+      events = target._events = new EventHandlers();
+      target._eventsCount = 0;
+    } else {
+      // To avoid recursion in the case that type === "newListener"! Before
+      // adding it to the listeners, first emit "newListener".
+      if (events.newListener) {
+        target.emit('newListener', type,
+                    listener.listener ? listener.listener : listener);
+
+        // Re-assign `events` because a newListener handler could have caused the
+        // this._events to be assigned to a new object
+        events = target._events;
+      }
+      existing = events[type];
+    }
+
+    if (!existing) {
+      // Optimize the case of one listener. Don't need the extra array object.
+      existing = events[type] = listener;
+      ++target._eventsCount;
+    } else {
+      if (typeof existing === 'function') {
+        // Adding the second element, need to change to array.
+        existing = events[type] = prepend ? [listener, existing] :
+                                            [existing, listener];
+      } else {
+        // If we've already got an array, just append.
+        if (prepend) {
+          existing.unshift(listener);
+        } else {
+          existing.push(listener);
+        }
+      }
+
+      // Check for listener leak
+      if (!existing.warned) {
+        m = $getMaxListeners(target);
+        if (m && m > 0 && existing.length > m) {
+          existing.warned = true;
+          var w = new Error('Possible EventEmitter memory leak detected. ' +
+                              existing.length + ' ' + type + ' listeners added. ' +
+                              'Use emitter.setMaxListeners() to increase limit');
+          w.name = 'MaxListenersExceededWarning';
+          w.emitter = target;
+          w.type = type;
+          w.count = existing.length;
+          emitWarning(w);
+        }
+      }
+    }
+
+    return target;
+  }
+  function emitWarning(e) {
+    typeof console.warn === 'function' ? console.warn(e) : console.log(e);
+  }
+  EventEmitter.prototype.addListener = function addListener(type, listener) {
+    return _addListener(this, type, listener, false);
+  };
+
+  EventEmitter.prototype.on = EventEmitter.prototype.addListener;
+
+  EventEmitter.prototype.prependListener =
+      function prependListener(type, listener) {
+        return _addListener(this, type, listener, true);
+      };
+
+  function _onceWrap(target, type, listener) {
+    var fired = false;
+    function g() {
+      target.removeListener(type, g);
+      if (!fired) {
+        fired = true;
+        listener.apply(target, arguments);
+      }
+    }
+    g.listener = listener;
+    return g;
+  }
+
+  EventEmitter.prototype.once = function once(type, listener) {
+    if (typeof listener !== 'function')
+      throw new TypeError('"listener" argument must be a function');
+    this.on(type, _onceWrap(this, type, listener));
+    return this;
+  };
+
+  EventEmitter.prototype.prependOnceListener =
+      function prependOnceListener(type, listener) {
+        if (typeof listener !== 'function')
+          throw new TypeError('"listener" argument must be a function');
+        this.prependListener(type, _onceWrap(this, type, listener));
+        return this;
+      };
+
+  // emits a 'removeListener' event iff the listener was removed
+  EventEmitter.prototype.removeListener =
+      function removeListener(type, listener) {
+        var list, events, position, i, originalListener;
+
+        if (typeof listener !== 'function')
+          throw new TypeError('"listener" argument must be a function');
+
+        events = this._events;
+        if (!events)
+          return this;
+
+        list = events[type];
+        if (!list)
+          return this;
+
+        if (list === listener || (list.listener && list.listener === listener)) {
+          if (--this._eventsCount === 0)
+            this._events = new EventHandlers();
+          else {
+            delete events[type];
+            if (events.removeListener)
+              this.emit('removeListener', type, list.listener || listener);
+          }
+        } else if (typeof list !== 'function') {
+          position = -1;
+
+          for (i = list.length; i-- > 0;) {
+            if (list[i] === listener ||
+                (list[i].listener && list[i].listener === listener)) {
+              originalListener = list[i].listener;
+              position = i;
+              break;
+            }
+          }
+
+          if (position < 0)
+            return this;
+
+          if (list.length === 1) {
+            list[0] = undefined;
+            if (--this._eventsCount === 0) {
+              this._events = new EventHandlers();
+              return this;
+            } else {
+              delete events[type];
+            }
+          } else {
+            spliceOne(list, position);
+          }
+
+          if (events.removeListener)
+            this.emit('removeListener', type, originalListener || listener);
+        }
+
+        return this;
+      };
+
+  EventEmitter.prototype.removeAllListeners =
+      function removeAllListeners(type) {
+        var listeners, events;
+
+        events = this._events;
+        if (!events)
+          return this;
+
+        // not listening for removeListener, no need to emit
+        if (!events.removeListener) {
+          if (arguments.length === 0) {
+            this._events = new EventHandlers();
+            this._eventsCount = 0;
+          } else if (events[type]) {
+            if (--this._eventsCount === 0)
+              this._events = new EventHandlers();
+            else
+              delete events[type];
+          }
+          return this;
+        }
+
+        // emit removeListener for all listeners on all events
+        if (arguments.length === 0) {
+          var keys = Object.keys(events);
+          for (var i = 0, key; i < keys.length; ++i) {
+            key = keys[i];
+            if (key === 'removeListener') continue;
+            this.removeAllListeners(key);
+          }
+          this.removeAllListeners('removeListener');
+          this._events = new EventHandlers();
+          this._eventsCount = 0;
+          return this;
+        }
+
+        listeners = events[type];
+
+        if (typeof listeners === 'function') {
+          this.removeListener(type, listeners);
+        } else if (listeners) {
+          // LIFO order
+          do {
+            this.removeListener(type, listeners[listeners.length - 1]);
+          } while (listeners[0]);
+        }
+
+        return this;
+      };
+
+  EventEmitter.prototype.listeners = function listeners(type) {
+    var evlistener;
+    var ret;
+    var events = this._events;
+
+    if (!events)
+      ret = [];
+    else {
+      evlistener = events[type];
+      if (!evlistener)
+        ret = [];
+      else if (typeof evlistener === 'function')
+        ret = [evlistener.listener || evlistener];
+      else
+        ret = unwrapListeners(evlistener);
+    }
+
+    return ret;
+  };
+
+  EventEmitter.listenerCount = function(emitter, type) {
+    if (typeof emitter.listenerCount === 'function') {
+      return emitter.listenerCount(type);
+    } else {
+      return listenerCount.call(emitter, type);
+    }
+  };
+
+  EventEmitter.prototype.listenerCount = listenerCount;
+  function listenerCount(type) {
+    var events = this._events;
+
+    if (events) {
+      var evlistener = events[type];
+
+      if (typeof evlistener === 'function') {
+        return 1;
+      } else if (evlistener) {
+        return evlistener.length;
+      }
+    }
+
+    return 0;
+  }
+
+  EventEmitter.prototype.eventNames = function eventNames() {
+    return this._eventsCount > 0 ? Reflect.ownKeys(this._events) : [];
+  };
+
+  // About 1.5x faster than the two-arg version of Array#splice().
+  function spliceOne(list, index) {
+    for (var i = index, k = i + 1, n = list.length; k < n; i += 1, k += 1)
+      list[i] = list[k];
+    list.pop();
+  }
+
+  function arrayClone(arr, i) {
+    var copy = new Array(i);
+    while (i--)
+      copy[i] = arr[i];
+    return copy;
+  }
+
+  function unwrapListeners(arr) {
+    var ret = new Array(arr.length);
+    for (var i = 0; i < ret.length; ++i) {
+      ret[i] = arr[i].listener || arr[i];
+    }
+    return ret;
+  }
+
+  class Client {
+
+    constructor(server, options) {
+      this.cmd = Command;
+      const proto = options && options.secure ? 'https://' : 'http://';
+      this._server = proto + server;
+    }
+
+    streamCommand(commandName, params) {
+      return new PostCommand(this._server, commandName, params);
+    }
+
+    // bam.iobio endpoints
+    //
+    streamAlignmentHeader(url) {
+      return new Command(this._server, 'alignmentHeader', { url });
+    }
+
+    streamBaiReadDepth(url) {
+      return new Command(this._server, 'baiReadDepth', { url });
+    }
+
+    streamCraiReadDepth(url) {
+      return new Command(this._server, 'craiReadDepth', { url });
+    }
+
+    streamAlignmentStatsStream(url, indexUrl, regions) {
+
+      //const regArr = regions.map(function(d) { return d.name+ ":"+ d.start + '-' + d.end;});
+      //const regStr = JSON.stringify(regions.map(function(d) { return {start:d.start,end:d.end,chr:d.name};}));
+      return new Command(this._server, 'alignmentStatsStream', {
+        url,
+        indexUrl: indexUrl ? indexUrl : "",
+        regions: JSON.stringify(regions),
+      });
+    }
+
+
+    // gene.iobio endpoints
+    //
+    streamVariantHeader(url, indexUrl) {
+      return new Command(this._server, 'variantHeader', { 
+        url,
+        indexUrl: indexUrl ? indexUrl : "",
+      });
+    }
+
+    streamVcfReadDepth(url) {
+      return new Command(this._server, 'vcfReadDepth', { url });
+    }
+
+    streamAlignmentCoverage(url, indexUrl, samtoolsRegion, maxPoints, coverageRegions) {
+      return new PostCommand(this._server, 'alignmentCoverage', {
+        url,
+        indexUrl: indexUrl ? indexUrl : "",
+        samtoolsRegion,
+        maxPoints,
+        coverageRegions,
+      });
+    }
+
+    streamGeneCoverage(url, indexUrl, refName, geneName, regionStart, regionEnd, regions) {
+      return new Command(this._server, 'geneCoverage', {
+        url,
+        indexUrl: indexUrl ? indexUrl : "",
+        refName,
+        geneName,
+        regionStart,
+        regionEnd,
+        regions: JSON.stringify(regions),
+      });
+    }
+
+    streamNormalizeVariants(vcfUrl, tbiUrl, refName, regions, contigStr, refFastaFile) {
+      return new Command(this._server, 'normalizeVariants', {
+        vcfUrl,
+        tbiUrl: tbiUrl ? tbiUrl: "",
+        refName,
+        regions: JSON.stringify(regions),
+        contigStr: encodeURIComponent(contigStr),
+        refFastaFile: encodeURIComponent(refFastaFile),
+      });
+    }
+
+    streamAnnotateVariants(args) {
+      return new Command(this._server, 'annotateVariants', Object.assign({},
+        args, {
+          refNames: JSON.stringify(args.refNames),
+          regions: JSON.stringify(args.regions),
+          vcfSampleNames: JSON.stringify(args.vcfSampleNames),
+        }
+      ));
+    }
+
+    streamFreebayesJointCall(args) {
+      return new PostCommand(this._server, 'freebayesJointCall', args);
+    }
+
+    streamClinvarCountsForGene(args) {
+      return new PostCommand(this._server, 'clinvarCountsForGene', args);
+    }
+
+    // genepanel endpoints
+    //
+    async clinphen(args) {
+      return fetchNoStream(this._server, 'clinphen', args);
+    }
+    streamClinphen(args) {
+      return new Command(this._server, 'clinphen', args);
+    }
+  }
+
+
+  async function fetchNoStream(server, endpoint, params) {
+    const query = encodeURI(server + '/' + endpoint + encodeParams(params));
+    const response = await fetch(query);
+    if (response.ok) {
+      return response.text();
+    }
+    else {
+      throw new Error(`iobio API call failed with status code ${response.status}: '${query}'`);
+    }
+  }
+
+
+  class Command extends EventEmitter {
+    constructor(server, endpoint, params) {
+      super();
+
+      this._server = server;
+      this._endpoint = endpoint;
+      this._params = params;
+    }
+
+    run() {
+      const query = encodeURI(this._server + '/' + this._endpoint + encodeParams(this._params));
+      //console.log(query);
+      this._stream = request(query);
+
+      this._stream.onData((data) => {
+        this.emit('data', data);
+      });
+      this._stream.onEnd(() => {
+        this.emit('end');
+      });
+      this._stream.onError((e) => {
+        this.emit('error', e);
+      });
+    }
+
+    cancel() {
+      this._stream.cancel();
+    }
+  }
+
+
+  class PostCommand extends EventEmitter {
+    constructor(server, endpoint, params) {
+      super();
+
+      this._server = server;
+      this._endpoint = endpoint;
+      this._params = params;
+    }
+
+    run() {
+      const query = this._server + '/' + this._endpoint;
+      //console.log(query);
+      this._stream = request(query, {
+        method: 'POST',
+        params: this._params,
+        contentType: 'text/plain; charset=utf-8',
+      });
+
+      this._stream.onData((data) => {
+        this.emit('data', data);
+      });
+      this._stream.onEnd(() => {
+        this.emit('end');
+      });
+      this._stream.onError((e) => {
+        this.emit('error', e);
+      });
+    }
+
+    cancel() {
+      this._stream.cancel();
+    }
+  }
+
+
+  function encodeParams(obj) {
+
+    const params = Object.keys(obj).map((key, i) => {
+      let sep = '&';
+      if (i === 0) {
+        sep = '?';
+      }
+
+      // TODO: might need this
+      //const value = encodeURIComponent(String(obj[key]));
+      const value = String(obj[key]);
+
+      return sep + key + '=' + value;
+    });
+
+    return params.join('');
+  }
+
+  exports.Client = Client;
+
+  return exports;
+
+}({}));

@@ -116,6 +116,11 @@
             </div>
           </div>
       </div>
+      
+      <div v-if="statsReceived">
+        <QualitativeBarChart :data="varCountsArray[0].counts" :width="300" :height="150" style="padding-top: 20px"></QualitativeBarChart>
+
+      </div>
 
 
     <div v-if="isSorted">
@@ -183,6 +188,9 @@ import AppIcon       from '../partials/AppIcon.vue';
 import QualitativeBarChart from './QualitativeBarChart.vue'
 import BarChart from './BarChart.vue'
 
+import Vcfiobio           from '../../models/Vcf.iobio'
+var vcfiobio = new Vcfiobio(); 
+
 import analysisData  from '../../data/analysis.json'
 
 export default {
@@ -229,13 +237,62 @@ export default {
       reviewCaseBadges: null,
       badCoverageCount: null,
       averageCoverage: null,
-
+      statsReceived: false
     }
 
   },
 
   mounted: function(){
-    this.varCountsArray = this.allVarCounts;
+    console.log("mounted in review case")
+    vcfiobio.sayHello(); 
+    
+    
+    
+    var options = {
+    "samplingMultiplier": 1,
+    "binSize": 80000,
+    "binNumber": 2,
+    "minFileSamplingSize": 1000000,
+    "start": 1
+  }
+  
+  var refs = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23]; 
+  vcfiobio.getStats(refs, options, function(data) {
+    console.log("data var_type", data.var_type)
+    callOutSide(data.var_type); 
+    // var stats = data.var_type
+    // var indels = stats.INS + stats.DEL
+    // // this.statsReceived = true; 
+    // this.varCountsArray = [{
+    //   "id":"3261", 
+    //   "counts": {
+    //     "SNP": stats.SNP, 
+    //     "indel": indels, 
+    //     "indel": stats.OTHER
+    //   }
+    // }]
+    // console.log("varCountsArray", this.varCountsArray)
+    // renderStats(data);
+  });
+  
+  var callOutSide = (stats)=>{
+    console.log("callled outside!")
+    var indels = stats.INS + stats.DEL
+    this.statsReceived = true; 
+    this.varCountsArray = [{
+      "id":"3261", 
+      "counts": {
+        "SNP": stats.SNP, 
+        "indel": indels, 
+        "other": stats.OTHER
+      }
+    }]
+    console.log("varCountsArray", this.varCountsArray)
+
+  } 
+    
+    
+    // this.varCountsArray = this.allVarCounts;
 
     if(this.launchedFromMosaic) {
       this.formatVarCountsArray();
@@ -245,7 +302,8 @@ export default {
     else if(this.customData){
       //TODO: build pedigree from the prop: this.pedigree
 
-      console.log("pedigree data: ",this.pedigree)
+      // console.log("model info: ",this.modelInfos)
+      // this.getVarCountFromCustomData(this.modelInfos[0])
     }
     else{
       this.overridePropsWithDemoData();
@@ -254,7 +312,10 @@ export default {
   },
 
   methods: {
-
+    
+    getVarCountFromCustomData(data){
+      // console.log("data", data)
+    }, 
     populateBadCoverageCount(){
       this.badCoverageCount = 0;
       for(let i = 0; i < this.medianCoverages.length; i++){
