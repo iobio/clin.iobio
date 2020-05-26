@@ -117,14 +117,20 @@
           </div>
       </div>
 
-    <div v-if="customData" v-for="(d, i) in sampleIds" >
-      <div style=" width: 100%; display: inline-flex; flex-direction: row; justify-content: space-around;">
-        <div style="text-align: center; width: 150px" class="capitalize">
-          {{sampleIdsAndRelationships[i]}}
-          <PedigreeGraph :data="allPedigreeDataArrays[i]" :id="sampleUuids[i]" :width="100" :height="75" :pedigree="pedigree"></PedigreeGraph>
+      <div v-if="statsReceived">
+        <div style=" width: 100%; display: inline-flex; flex-direction: row; justify-content: space-around; padding-bottom: 10px">
+
+        <div v-if="customData" v-for="(d, i) in sampleIds" >
+          <div style=" width: 100%; display: inline-flex; flex-direction: row; justify-content: space-around;">
+            <div style="text-align: center; width: 150px" class="capitalize">
+              {{sampleIdsAndRelationships[i]}}
+              <PedigreeGraph :data="allPedigreeDataArrays[i]" :id="sampleUuids[i]" :width="100" :height="75" :pedigree="pedigree"></PedigreeGraph>
+            </div>
+          </div>
         </div>
+        <QualitativeBarChart :data="varCountsArray[0].counts" :width="300" :height="150" style="padding-top: 20px"></QualitativeBarChart>
       </div>
-    </div>
+      </div>
 
 
     <div v-if="isSorted">
@@ -192,6 +198,9 @@ import AppIcon       from '../partials/AppIcon.vue';
 import QualitativeBarChart from './QualitativeBarChart.vue'
 import BarChart from './BarChart.vue'
 
+import Vcfiobio           from '../../models/Vcf.iobio'
+var vcfiobio = new Vcfiobio();
+
 import analysisData  from '../../data/analysis.json'
 
 export default {
@@ -238,13 +247,45 @@ export default {
       reviewCaseBadges: null,
       badCoverageCount: null,
       averageCoverage: null,
-
+      statsReceived: false
     }
 
   },
 
   mounted: function(){
-    this.varCountsArray = this.allVarCounts;
+    var options = {
+    "samplingMultiplier": 1,
+    "binSize": 80000,
+    "binNumber": 2,
+    "minFileSamplingSize": 1000000,
+    "start": 1
+  }
+
+  var refs = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23];
+  vcfiobio.getStats(refs, options, function(data) {
+    console.log("data var_type", data.var_type)
+    addToVarCountsArray(data.var_type);
+    // console.log("varCountsArray", this.varCountsArray)
+    // renderStats(data);
+  });
+
+  var addToVarCountsArray = (stats)=>{
+    var indels = stats.INS + stats.DEL
+    this.statsReceived = true;
+    this.varCountsArray = [{
+      "id":"3261",
+      "counts": {
+        "SNP": stats.SNP,
+        "indel": indels,
+        "other": stats.OTHER
+      }
+    }]
+    console.log("varCountsArray", this.varCountsArray)
+
+  }
+
+
+    // this.varCountsArray = this.allVarCounts;
 
     if(this.launchedFromMosaic) {
       this.formatVarCountsArray();
@@ -255,6 +296,7 @@ export default {
     else if(this.customData){
 
       this.buildCustomPage();
+
     }
     else{
       this.overridePropsWithDemoData();
@@ -350,6 +392,10 @@ export default {
         }
       }
       return pedArr;
+    },
+
+    getVarCountFromCustomData(data){
+      // console.log("data", data)
     },
     populateBadCoverageCount(){
       this.badCoverageCount = 0;
