@@ -117,6 +117,15 @@
           </div>
       </div>
 
+    <div v-if="customData" v-for="(d, i) in sampleIdsAndRelationships" >
+      <div style=" width: 100%; display: inline-flex; flex-direction: row; justify-content: space-around;">
+        <div style="text-align: center; width: 150px" class="capitalize">
+          {{sampleIdsAndRelationships[i]}}
+          <PedigreeGraph :data="allPedigreeDataArrays[i]" :id="sampleUuids[i]" :width="100" :height="75" :pedigree="pedigree"></PedigreeGraph>
+        </div>
+      </div>
+    </div>
+
 
     <div v-if="isSorted">
       <div style=" width: 100%; display: inline-flex; flex-direction: row; justify-content: space-around; padding-bottom: 10px">
@@ -203,7 +212,7 @@ export default {
     sampleId:    null,
     allVarCounts: null,
     coverageHistos: null,
-    launchedFromMosaic: null, 
+    launchedFromMosaic: null,
     customData:   null
   },
   data() {
@@ -241,20 +250,68 @@ export default {
       this.formatVarCountsArray();
       this.convertPropsToData();
       this.buildPage();
+
     }
     else if(this.customData){
-      //TODO: build pedigree from the prop: this.pedigree
 
-      console.log("pedigree data: ",this.pedigree)
+      this.buildCustomPage();
     }
     else{
       this.overridePropsWithDemoData();
       this.buildPage();
     }
+
   },
 
   methods: {
 
+    buildCustomPage: function(){
+
+      this.allPedigreeDataArrays = [];
+      this.pedigreeDataArray = [];
+      this.sampleIds = [];
+      this.sampleUuids = [];
+      this.sampleIdsAndRelationships = [];
+
+      this.modelInfosData = this.modelInfos;
+
+      this.populateRelationshipMap();
+
+      this.sampleIdsAndRelationships = ["NA12878\tproband"];
+      this.sampleUuids = [12878];
+
+
+      this.pedigreeDataArray = this.buildPedFromTxt(this.pedigree);
+
+      this.allPedigreeDataArrays = [this.pedigreeDataArray];
+
+
+    },
+
+    buildPedFromTxt(txt) {
+      let pedLines = txt.split('\n');
+      let pedArr = [];
+      for (let i = 0; i < pedLines.length; i++) {
+        let splitLine = pedLines[i].split(" ");
+
+        let sample = {id: parseInt(splitLine[1])};
+        let pedigree = {
+          kindred_id: splitLine[0],
+          sample_id: parseInt(splitLine[1]),
+          paternal_id: parseInt(splitLine[2]),
+          maternal_id: parseInt(splitLine[3]),
+          sex: splitLine[4],
+          affection_status: splitLine[5]
+        }
+
+        sample.pedigree = pedigree;
+
+        if(sample.id) {
+          pedArr.push(sample);
+        }
+      }
+      return pedArr;
+    },
     populateBadCoverageCount(){
       this.badCoverageCount = 0;
       for(let i = 0; i < this.medianCoverages.length; i++){
@@ -325,6 +382,11 @@ export default {
       this.sortData();
       this.populateBadCoverageCount();
       this.populateReviewCaseBadges();
+
+      console.log("this.pedigreeData", this.pedigreeData);
+      console.log("pedigreeDataArray", this.pedigreeDataArray);
+      console.log("this.allPedigreeDataArrays", this.allPedigreeDataArrays);
+
     },
 
     populateCoverageMedians(){
