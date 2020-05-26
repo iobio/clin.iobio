@@ -117,8 +117,8 @@
           </div>
       </div>
       
-      <div v-if="statsReceived">
-        <QualitativeBarChart :data="varCountsArray[0].counts" :width="300" :height="150" style="padding-top: 20px"></QualitativeBarChart>
+      <div v-if="statsReceived" v-for="vartype in varCountsArray">
+        <QualitativeBarChart :data="vartype.counts" :width="300" :height="150" style="padding-top: 20px"></QualitativeBarChart>
 
       </div>
 
@@ -227,7 +227,7 @@ export default {
       yDomain: null,
       sampleIdRelationshipMap: null,
       sortedIndices: null,
-      varCountsArray: null,
+      varCountsArray: [],
       isSorted: false,
       demoData: null,
       on: null,
@@ -243,37 +243,37 @@ export default {
   },
 
   mounted: function(){
-    var options = {
-    "samplingMultiplier": 1,
-    "binSize": 80000,
-    "binNumber": 2,
-    "minFileSamplingSize": 1000000,
-    "start": 1
-  }
-  
-  var refs = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23]; 
-  vcfiobio.getStats(refs, options, function(data) {
-    console.log("data var_type", data.var_type)
-    addToVarCountsArray(data.var_type); 
-    // console.log("varCountsArray", this.varCountsArray)
-    // renderStats(data);
-  });
-  
-  var addToVarCountsArray = (stats)=>{
-    var indels = stats.INS + stats.DEL
-    this.statsReceived = true; 
-    this.varCountsArray = [{
-      "id":"3261", 
-      "counts": {
-        "SNP": stats.SNP, 
-        "indel": indels, 
-        "other": stats.OTHER
-      }
-    }]
-    console.log("varCountsArray", this.varCountsArray)
-
-  } 
-    
+  //   var options = {
+  //   "samplingMultiplier": 1,
+  //   "binSize": 80000,
+  //   "binNumber": 2,
+  //   "minFileSamplingSize": 1000000,
+  //   "start": 1
+  // }
+  // 
+  // var refs = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23]; 
+  // vcfiobio.getStats(refs, options, function(data) {
+  //   console.log("data var_type", data.var_type)
+  //   addToVarCountsArray(data.var_type); 
+  //   // console.log("varCountsArray", this.varCountsArray)
+  //   // renderStats(data);
+  // });
+  // 
+  // var addToVarCountsArray = (stats)=>{
+  //   var indels = stats.INS + stats.DEL
+  //   this.statsReceived = true; 
+  //   this.varCountsArray = [{
+  //     "id":"3261", 
+  //     "counts": {
+  //       "SNP": stats.SNP, 
+  //       "indel": indels, 
+  //       "other": stats.OTHER
+  //     }
+  //   }]
+  //   console.log("varCountsArray", this.varCountsArray)
+  // 
+  // } 
+  // 
     
     // this.varCountsArray = this.allVarCounts;
 
@@ -286,7 +286,7 @@ export default {
       //TODO: build pedigree from the prop: this.pedigree
 
       // console.log("model info: ",this.modelInfos)
-      // this.getVarCountFromCustomData(this.modelInfos[0])
+      this.getVarCountFromCustomData(this.modelInfos)
     }
     else{
       this.overridePropsWithDemoData();
@@ -296,9 +296,53 @@ export default {
 
   methods: {
     
-    getVarCountFromCustomData(data){
-      // console.log("data", data)
+    getVcfStats(refs, options, vcf, sample){
+      return new Promise((resolve, reject) => {
+        vcfiobio.getStats(refs, options, vcf, sample, function(data) {
+          var obj = {
+            sample: sample, 
+            data: data.var_type
+          }
+          resolve(obj)
+        });
+      })
     }, 
+    
+    getVarCountFromCustomData(modelInfos){
+      var options = {
+        "samplingMultiplier": 1,
+        "binSize": 80000,
+        "binNumber": 100,
+        "minFileSamplingSize": 1000000,
+        "start": 1
+      }
+      
+      var refs = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23]; 
+      let promises = []; 
+      for(let i=0; i<modelInfos.length; i++){
+        promises.push(this.getVcfStats(refs, options, modelInfos[i].vcf, modelInfos[i].sample))      
+      }
+      Promise.all(promises).then((results)=>{
+        results.forEach(stats => {
+          addToVarCountsArray(stats.data, stats.sample)
+        })
+      })
+      
+      var addToVarCountsArray = (stats, sample)=>{
+        var indels = stats.INS + stats.DEL
+        this.statsReceived = true; 
+        this.varCountsArray.push({
+          "id":"3261", 
+          "sample": sample,
+          "counts": {
+            "SNP": stats.SNP, 
+            "indel": indels, 
+            "other": stats.OTHER
+          }
+        })
+      } 
+    }, 
+    
     populateBadCoverageCount(){
       this.badCoverageCount = 0;
       for(let i = 0; i < this.medianCoverages.length; i++){
