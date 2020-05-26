@@ -117,7 +117,7 @@
           </div>
       </div>
 
-    <div v-if="customData" v-for="(d, i) in sampleIdsAndRelationships" >
+    <div v-if="customData" v-for="(d, i) in sampleIds" >
       <div style=" width: 100%; display: inline-flex; flex-direction: row; justify-content: space-around;">
         <div style="text-align: center; width: 150px" class="capitalize">
           {{sampleIdsAndRelationships[i]}}
@@ -269,45 +269,92 @@ export default {
 
       this.allPedigreeDataArrays = [];
       this.pedigreeDataArray = [];
-      this.sampleIds = [];
-      this.sampleUuids = [];
-      this.sampleIdsAndRelationships = [];
 
       this.modelInfosData = this.modelInfos;
 
       this.populateRelationshipMap();
+      this.populateSampleIdsFromCustom(this.pedigree);
+      this.populateSampleIdsAndRelationships();
+      this.populateSampleUuidArray();
 
-      this.sampleIdsAndRelationships = ["NA12878\tproband"];
-      this.sampleUuids = [12878];
-
+      console.log("this.relationshipMap", this.sampleIdRelationshipMap);
+      console.log("sampleIds", this.sampleIds);
+      console.log("sampleUuids", this.sampleUuids);
+      console.log("sampleIdsAndRelationships", this.sampleIdsAndRelationships);
 
       this.pedigreeDataArray = this.buildPedFromTxt(this.pedigree);
+
+      console.log("this.pedigreeDataArray", this.pedigreeDataArray);
 
       this.allPedigreeDataArrays = [this.pedigreeDataArray];
 
 
     },
 
+    populateSampleIdsAndRelationships(){
+
+      this.sampleIdsAndRelationships = [];
+
+      let keys = Object.keys(this.sampleIdRelationshipMap);
+
+
+      for(let i = 0; i < keys.length; i++){
+        let key = keys[i]
+        this.sampleIdsAndRelationships.push(key + " " + this.sampleIdRelationshipMap[key]);
+      }
+    },
+
+    getUuidFromId(id){
+
+      console.log("id", id);
+      if(id === "0"){
+        console.log("id check");
+        return 0;
+      }
+      return this.sampleIds.indexOf(id.toString()) + 1000;
+    },
+
+    populateSampleUuidArray(){
+      this.sampleUuids = [];
+      for(let i = 0; i < this.sampleIds.length; i++){
+        this.sampleUuids.push(i+1000);
+      }
+    },
+
+    populateSampleIdsFromCustom(txt){
+      this.sampleIds = [];
+      let txtCopy  = txt.slice();
+        let pedLines = txtCopy.split('\n');
+        for (let i = 0; i < pedLines.length; i++) {
+          let splitLine = pedLines[i].split(" ");
+          this.sampleIds.push(splitLine[1]);
+        }
+    },
+
     buildPedFromTxt(txt) {
       let pedLines = txt.split('\n');
       let pedArr = [];
+      console.log("pedLines", pedLines);;
       for (let i = 0; i < pedLines.length; i++) {
         let splitLine = pedLines[i].split(" ");
 
-        let sample = {id: parseInt(splitLine[1])};
-        let pedigree = {
-          kindred_id: splitLine[0],
-          sample_id: parseInt(splitLine[1]),
-          paternal_id: parseInt(splitLine[2]),
-          maternal_id: parseInt(splitLine[3]),
-          sex: splitLine[4],
-          affection_status: splitLine[5]
-        }
+        if(splitLine[0] !== "") {
 
-        sample.pedigree = pedigree;
+          let sample = {id: this.getUuidFromId(splitLine[1])};
+          let pedigree = {
+            kindred_id: splitLine[0],
+            sample_id: this.getUuidFromId(splitLine[1]),
+            paternal_id: this.getUuidFromId(splitLine[2]),
+            maternal_id: this.getUuidFromId(splitLine[3]),
+            sex: parseInt(splitLine[4]),
+            affection_status: parseInt(splitLine[5])
+          }
 
-        if(sample.id) {
-          pedArr.push(sample);
+          sample.pedigree = pedigree;
+
+          if (sample.id) {
+            pedArr.push(sample);
+          }
         }
       }
       return pedArr;
