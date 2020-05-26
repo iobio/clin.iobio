@@ -556,11 +556,7 @@ export default function vcfiobio(theGlobalApp) {
     });
 
   }
-  
-  exports.sayHello = function(){
-    console.log("Hello from vcf.iobio.js")
-  }
-  
+    
   exports._getRegions = function(refs, options) {
     console.log("called getRegions");
     regionIndex = 0;

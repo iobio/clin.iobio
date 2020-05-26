@@ -243,11 +243,6 @@ export default {
   },
 
   mounted: function(){
-    console.log("mounted in review case")
-    vcfiobio.sayHello(); 
-    
-    
-    
     var options = {
     "samplingMultiplier": 1,
     "binSize": 80000,
@@ -259,24 +254,12 @@ export default {
   var refs = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23]; 
   vcfiobio.getStats(refs, options, function(data) {
     console.log("data var_type", data.var_type)
-    callOutSide(data.var_type); 
-    // var stats = data.var_type
-    // var indels = stats.INS + stats.DEL
-    // // this.statsReceived = true; 
-    // this.varCountsArray = [{
-    //   "id":"3261", 
-    //   "counts": {
-    //     "SNP": stats.SNP, 
-    //     "indel": indels, 
-    //     "indel": stats.OTHER
-    //   }
-    // }]
+    addToVarCountsArray(data.var_type); 
     // console.log("varCountsArray", this.varCountsArray)
     // renderStats(data);
   });
   
-  var callOutSide = (stats)=>{
-    console.log("callled outside!")
+  var addToVarCountsArray = (stats)=>{
     var indels = stats.INS + stats.DEL
     this.statsReceived = true; 
     this.varCountsArray = [{
