@@ -267,8 +267,9 @@ export default {
 
     buildCustomPage: function(){
 
+      let self = this;
+
       this.allPedigreeDataArrays = [];
-      this.pedigreeDataArray = [];
 
       this.modelInfosData = this.modelInfos;
 
@@ -277,18 +278,13 @@ export default {
       this.populateSampleIdsAndRelationships();
       this.populateSampleUuidArray();
 
-      console.log("this.relationshipMap", this.sampleIdRelationshipMap);
-      console.log("sampleIds", this.sampleIds);
-      console.log("sampleUuids", this.sampleUuids);
-      console.log("sampleIdsAndRelationships", this.sampleIdsAndRelationships);
-
       this.pedigreeDataArray = this.buildPedFromTxt(this.pedigree);
 
-      console.log("this.pedigreeDataArray", this.pedigreeDataArray);
+      let len = Object.keys(self.sampleIdRelationshipMap).length;
 
-      this.allPedigreeDataArrays = [this.pedigreeDataArray];
-
-
+      for(let i = 0; i < len; i++){
+        this.allPedigreeDataArrays.push(this.pedigreeDataArray)
+      }
     },
 
     populateSampleIdsAndRelationships(){
@@ -305,10 +301,7 @@ export default {
     },
 
     getUuidFromId(id){
-
-      console.log("id", id);
       if(id === "0"){
-        console.log("id check");
         return 0;
       }
       return this.sampleIds.indexOf(id.toString()) + 1000;
@@ -334,7 +327,6 @@ export default {
     buildPedFromTxt(txt) {
       let pedLines = txt.split('\n');
       let pedArr = [];
-      console.log("pedLines", pedLines);;
       for (let i = 0; i < pedLines.length; i++) {
         let splitLine = pedLines[i].split(" ");
 
@@ -429,10 +421,6 @@ export default {
       this.sortData();
       this.populateBadCoverageCount();
       this.populateReviewCaseBadges();
-
-      console.log("this.pedigreeData", this.pedigreeData);
-      console.log("pedigreeDataArray", this.pedigreeDataArray);
-      console.log("this.allPedigreeDataArrays", this.allPedigreeDataArrays);
 
     },
 

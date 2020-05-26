@@ -14,8 +14,6 @@ export function makeMultiDTreeData(samples, id) {
 function makeDTreeData(samples, id) {
     const root = findTreeRoot(samples);
 
-    console.log("root", root);
-
     const rootObject = makeDTreeObject(root, id);
 
     const dtreeData = [rootObject];
@@ -147,9 +145,6 @@ function moralizeGraph(samples) {
             neighbors.push(father);
         }
 
-        console.log("neightbors", neighbors);
-        console.log("nodes", nodes);
-
         addToNeighbors(nodes, sample.id, neighbors);
     });
 
@@ -160,8 +155,6 @@ function findConnectedComponents(samples) {
     const components = [];
 
     const graph = moralizeGraph(samples);
-
-    console.log("moralized graph", graph);
 
     const visited = {};
     const nNodes = samples.length;
@@ -180,17 +173,11 @@ function findConnectedComponents(samples) {
         visited[start] = true;
         const component = [];
 
-        console.log("frontier.length", frontier.length);
-        console.log("graph", graph);
-
         while (frontier.length > 0) {
             const node = frontier.pop();
-            console.log("node", node);
             component.push(node);
 
             const neighbors = graph[node];
-
-            console.log("neighbors", neighbors);
 
             neighbors.forEach((neighbor) => {
                 if (!visited[neighbor]) {

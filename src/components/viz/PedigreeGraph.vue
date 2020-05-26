@@ -81,11 +81,6 @@ export default {
 
 
     init() {
-
-
-      console.log("this.data in init", this.data);
-      console.log("self.id", this.id);
-
       const self = this;
       const pedigraph = self.$refs.pedigreeGraph;
       const pedigree = this.data;
@@ -98,7 +93,6 @@ export default {
         return;
       }
       const dTreeData = makeMultiDTreeData(pedigree, Number(self.id));
-      console.log("dTreeData", dTreeData);
       // init dTree
       dTree.init(dTreeData, {
         target: pedigraph,
