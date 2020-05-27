@@ -117,16 +117,27 @@
           </div>
       </div>
       
-      <div v-if="statsReceived" v-for="vartype in varCountsArray">
-        <QualitativeBarChart :data="vartype.counts" :width="300" :height="150" style="padding-top: 20px"></QualitativeBarChart>
-
-      </div>
-
-    <div v-if="customData" v-for="(d, i) in sampleIds" >
-      <div style=" width: 100%; display: inline-flex; flex-direction: row; justify-content: space-around;">
-        <div style="text-align: center; width: 150px" class="capitalize">
-          {{sampleIdsAndRelationships[i]}}
-          <PedigreeGraph :data="allPedigreeDataArrays[i]" :id="sampleUuids[i]" :width="100" :height="75" :pedigree="pedigree"></PedigreeGraph>
+    <div v-if="customData && statsReceived" >      
+      <div class="column ml-5">
+        <div class="row">
+          <div class="col-md-4">
+            <div class="heading mb-4">Sample</div>
+            <div v-for="(d, i) in sampleIds" >
+              <div style="text-align: center; width: 150px" class="capitalize">
+                {{sampleIdsAndRelationships[i]}}
+                <PedigreeGraph :data="allPedigreeDataArrays[i]" :id="sampleUuids[i]" :width="100" :height="75" :pedigree="pedigree"></PedigreeGraph>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <!-- Read covergae goes here -->
+          </div>
+          <div class="col-md-4">
+            <div class="heading mb-4" >Variant Types <i>(Sampled) </i></div>
+            <div v-for="(d, i) in varCountsArray">
+              <QualitativeBarChart :data="varCountsArray[i].counts" :width="300" :height="150" style="padding-top: 20px"></QualitativeBarChart>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -401,8 +412,8 @@ export default {
           "sample": sample,
           "counts": {
             "SNP": stats.SNP, 
-            "indel": indels, 
-            "other": stats.OTHER
+            "INS": stats.INS, 
+            "DEL": stats.DEL
           }
         })
       } 
