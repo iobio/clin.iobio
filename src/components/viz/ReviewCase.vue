@@ -116,6 +116,11 @@
             </div>
           </div>
       </div>
+      
+      <div v-if="statsReceived" v-for="vartype in varCountsArray">
+        <QualitativeBarChart :data="vartype.counts" :width="300" :height="150" style="padding-top: 20px"></QualitativeBarChart>
+
+      </div>
 
     <div v-if="customData" v-for="(d, i) in sampleIds" >
       <div style=" width: 100%; display: inline-flex; flex-direction: row; justify-content: space-around;">
@@ -192,6 +197,9 @@ import AppIcon       from '../partials/AppIcon.vue';
 import QualitativeBarChart from './QualitativeBarChart.vue'
 import BarChart from './BarChart.vue'
 
+import Vcfiobio           from '../../models/Vcf.iobio'
+var vcfiobio = new Vcfiobio(); 
+
 import analysisData  from '../../data/analysis.json'
 
 export default {
@@ -228,7 +236,7 @@ export default {
       yDomain: null,
       sampleIdRelationshipMap: null,
       sortedIndices: null,
-      varCountsArray: null,
+      varCountsArray: [],
       isSorted: false,
       demoData: null,
       on: null,
@@ -238,13 +246,12 @@ export default {
       reviewCaseBadges: null,
       badCoverageCount: null,
       averageCoverage: null,
-
+      statsReceived: false
     }
 
   },
 
   mounted: function(){
-    this.varCountsArray = this.allVarCounts;
 
     if(this.launchedFromMosaic) {
       this.formatVarCountsArray();
@@ -277,6 +284,8 @@ export default {
       this.populateSampleIdsFromCustom(this.pedigree);
       this.populateSampleIdsAndRelationships();
       this.populateSampleUuidArray();
+      this.getVarCountFromCustomData(this.modelInfos); 
+
 
       this.pedigreeDataArray = this.buildPedFromTxt(this.pedigree);
 
@@ -351,6 +360,53 @@ export default {
       }
       return pedArr;
     },
+    
+    getVcfStats(refs, options, vcf, sample){
+      return new Promise((resolve, reject) => {
+        vcfiobio.getStats(refs, options, vcf, sample, function(data) {
+          var obj = {
+            sample: sample, 
+            data: data.var_type
+          }
+          resolve(obj)
+        });
+      })
+    }, 
+
+    getVarCountFromCustomData(modelInfos){
+      var options = {
+        "samplingMultiplier": 1,
+        "binSize": 80000,
+        "binNumber": 50,
+        "minFileSamplingSize": 1000000,
+        "start": 1
+      }
+      
+      var refs = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23]; 
+      let promises = []; 
+      for(let i=0; i<modelInfos.length; i++){
+        promises.push(this.getVcfStats(refs, options, modelInfos[i].vcf, modelInfos[i].sample))      
+      }
+      Promise.all(promises).then((results)=>{
+        results.forEach(stats => {
+          addToVarCountsArray(stats.data, stats.sample)
+        })
+      })
+      
+      var addToVarCountsArray = (stats, sample)=>{
+        var indels = stats.INS + stats.DEL
+        this.statsReceived = true; 
+        this.varCountsArray.push({
+          "id":"3261", 
+          "sample": sample,
+          "counts": {
+            "SNP": stats.SNP, 
+            "indel": indels, 
+            "other": stats.OTHER
+          }
+        })
+      } 
+    }, 
     populateBadCoverageCount(){
       this.badCoverageCount = 0;
       for(let i = 0; i < this.medianCoverages.length; i++){
