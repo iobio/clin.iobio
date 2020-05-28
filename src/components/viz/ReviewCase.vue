@@ -132,6 +132,16 @@
           <div class="col-md-4">
             <!-- Read covergae goes here -->
             <div class="heading mb-4" >Read Coverage <i>(Sampled) </i></div>
+            <v-text-field
+              id="minCoverageInput"
+              label="Expected Coverage"
+              outlined
+              dense
+              value="minCutoff"
+              v-model.number="minCutoff"
+              style="width: 150px"
+            >
+            </v-text-field>
             <div v-for="(d, i) in coverageDataArray">
               <BarChart :data="coverageDataArray[i]" :width="400" :height="150" :x-domain="xDomain" :y-domain="yDomain" :median-coverage="medianCoverages[i]" :minCutoff="minCutoff"></BarChart>
               
