@@ -131,6 +131,31 @@
           </div>
           <div class="col-md-4">
             <!-- Read covergae goes here -->
+            <div class="heading mb-4" >Read Coverage <i>(Sampled) </i></div>
+            <div v-for="(d, i) in coverageDataArray">
+              <BarChart :data="coverageDataArray[i]" :width="400" :height="150" :x-domain="xDomain" :y-domain="yDomain" :median-coverage="medianCoverages[i]" :minCutoff="minCutoff"></BarChart>
+              
+              <div style="padding-top: 20px" v-show="goodCoverage(i)">
+              <v-tooltip top class="valign">
+                <template v-slot:activator="{ on }">
+                  <v-icon class="good-coverage" v-on="on" top color="green"
+                           @click="">check_circle</v-icon>
+                </template>
+                <span>Median coverage is above expected coverage threshold of {{minCutoff}}X</span>
+
+              </v-tooltip>
+                <div v-if="badCoverage" style=" display: inline-flex; width: 120px; line-height: 16px; font-size: 12px; padding-left: 5px;"></div>
+              </div>
+              <div style="padding-top: 20px" v-show="!goodCoverage(i)">
+                    <v-icon v-on="on"     @click=""
+                            top color="#B33A3A">mdi-alert-circle</v-icon>
+
+
+                <div v-if="badCoverage" style=" display: inline-flex; width: 120px; line-height: 14px; font-size: 13px; padding-left: 5px;">Median coverage is below expected coverage threshold of {{minCutoff}}X</div>
+
+              </div>
+            </div>
+
           </div>
           <div class="col-md-4">
             <div class="heading mb-4" >Variant Types <i>(Sampled) </i></div>
@@ -261,6 +286,7 @@ export default {
       badCoverageCount: null,
       averageCoverage: null,
       statsReceived: false, 
+      coverageHistosData: [],
       selectedBamURL: "http://s3.amazonaws.com/iobio/NA12878/NA12878.autsome.bam",
       backendSource: "backend.iobio.io", 
       showFullURL: false,
@@ -348,13 +374,32 @@ export default {
     
       Promise.all(promises).then((results) => {
         console.log("promise res: ", results)
+        results.forEach(stats => {
+          addToCoverageDataArray(stats) 
+        })
+        toFormatCoverage()
       })
+      
+      var addToCoverageDataArray = (stats) => {
+        this.coverageHistosData.push({
+          "id":"3261",
+          "coverage": stats
+        })
+        console.log("this.coverageHistosData", this.coverageHistosData)
+      }
+      
+      var toFormatCoverage = () => {
+        this.formatCoverageData(); 
+        this.populateDomains();
+        this.populateCoverageMedians();
+        this.populateBadCoverageCount();
+      }
       
     }, 
     loadBamStats: function(selectedBamURL, sample) {
       console.log("selectedBamURL", selectedBamURL);
       return new Promise((resolve, reject) => {
-        this.bed = undefined;
+        let bed = undefined;
         this.selectedBaiURL = undefined;
         let bam = {}
         if (selectedBamURL && selectedBamURL != '' ) {
@@ -363,12 +408,12 @@ export default {
             bai: this.selectedBaiURL
           });
 
-          this.goBam(this.region, resolve, reject, bam);
+          this.goBam(this.region, resolve, reject, bam, bed);
         }
       })
     }, 
 
-    goBam: function (region, resolve, reject, bam) {
+    goBam: function (region, resolve, reject, bam, bed) {
       let refIndex = 0;
 
       bam.getHeader().then((header) => {
@@ -428,9 +473,9 @@ export default {
         bam.getHeader().then(() => {
           // Set selected seq & region
           if (!region || (region && region.chr == 'all'))
-            this.setSelectedSeq('all', start, end, resolve, reject, bam);
+            this.setSelectedSeq('all', start, end, resolve, reject, bam, bed);
           else
-            this.setSelectedSeq(region.chr, start, end, resolve, reject, bam);
+            this.setSelectedSeq(region.chr, start, end, resolve, reject, bam, bed);
         });
 
       }.bind(this),
@@ -440,10 +485,10 @@ export default {
     },
 
 
-    setSelectedSeq: function (selected, start, end, resolve, reject, bam) {
+    setSelectedSeq: function (selected, start, end, resolve, reject, bam, bed) {
       this.selectedSeqId = selected;
 
-      var seqDataIds = this.getSelectedSeqIds(resolve, reject, bam);
+      var seqDataIds = this.getSelectedSeqIds(resolve, reject, bam, bed);
 
       // start sampling
       if (start != undefined && end != undefined) {
@@ -454,12 +499,12 @@ export default {
           this.draw = true;
         }.bind(this), 200);
       } else {
-        this.goSampling({sampling: this.sampling, sequenceNames: seqDataIds},resolve, reject, bam);
+        this.goSampling({sampling: this.sampling, sequenceNames: seqDataIds},resolve, reject, bam, bed);
       }
     },
 
 
-    getSelectedSeqIds: function (resolve, reject, bam) {
+    getSelectedSeqIds: function (resolve, reject, bam, bed) {
       if (this.selectedSeqId == 'all') {
         return Object.keys(bam.readDepth)
           .filter(function (key) {
@@ -472,11 +517,11 @@ export default {
         return [this.selectedSeqId];
     },
 
-    goSampling: function (options, resolve, reject, bam) {
+    goSampling: function (options, resolve, reject, bam, bed) {
       // add default options
       options = $.extend({
         exomeSampling: this.exomeSampling, //'checked' == $("#depth-distribution input").attr("checked"),
-        bed: this.bed,
+        bed: bed,
         onEnd: function () {
         }
       }, options);
@@ -915,6 +960,7 @@ export default {
         const coverageArr = self.formatCoverageArray(d.coverage);
         self.coverageDataArray.push(coverageArr);
       });
+      console.log("coverageDataArray", self.coverageDataArray)
     },
 
     assignProbandToEachSample(){
