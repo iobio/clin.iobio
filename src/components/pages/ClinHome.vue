@@ -315,7 +315,7 @@ import GenomeBuildHelper from '../../models/GenomeBuildHelper.js'
 import CohortModel       from '../../models/CohortModel'
 import FreebayesSettings from '../../models/FreebayesSettings'
 import Glyph              from '../../partials/Glyph.js'
-import Bam                from  '../../models/Bam.iobio.js'
+// import Bam                from  '../../models/Bam.iobio.js'
 import vcfiobio           from  '../../models/Vcf.iobio.js'
 import Translator         from  '../../models/Translator.js'
 import GenericAnnotation  from  '../../models/GenericAnnotation.js'
@@ -332,6 +332,9 @@ import { saveAs } from 'file-saver'
 import { bus } from '../../main'
 
 import NewComponents from 'iobio-phenotype-extractor-vue';
+
+import { Bam } from './bam.iobio.js';
+import Vue from 'vue';
 
 export default {
   name: 'home',
@@ -476,7 +479,70 @@ export default {
       generatingReport: false,
       cohortModel: null,
       customData: false, 
-      customGeneSet: []
+      customGeneSet: [], 
+      selectedBamURL: "http://s3.amazonaws.com/iobio/NA12878/NA12878.autsome.bam",
+      backendSource: "backend.iobio.io", 
+      showFullURL: false,
+
+      // default sampling values
+      binNumber: 20,
+      binSize: 40000,
+      sampleMultiplier: 1,
+      sampleMultiplierLimit: 4,
+      totalReads: 0,
+
+      exomeSampling: false,
+      draw: false,
+
+      sampleStats: {},
+
+      readDepthConversionRatio: 0,
+
+      bam: {},
+      bed: {},
+
+      readDepthChartData: [],
+      references: [],
+
+      selectedSeqId: 'all',
+      coverageBrushRange: {},
+
+      // Percent Chart Data
+      mappedReadsData: [],
+      forwardStrandsData: [],
+      properPairsData: [],
+      singletonsData: [],
+      bothMatesData: [],
+      duplicatesData: [],
+
+      // Histogram Chart Data
+      readOutliers: false,
+      readCoverageData: [],
+      lengthData: [],
+      qualityData: [],
+
+      lengthXAxisLabel: 'Fragment Length',
+      qualityXAxisLabel: 'Mapping Quality',
+
+      clinIobioUrls: ["http://localhost:4030", "http://clin.iobio.io"],
+      clinIobioUrl: null,
+
+      clinTooltip: {
+        genome_wide_coverage: {show: false, content: ''},
+        median_coverage:      {show: false, content: ''},
+        mapped_reads:         {show: false, content: ''},
+        duplicate_rate:       {show: false, content: ''}
+      },
+
+      // this is used to achieve a "natural sort". see
+      // https://stackoverflow.com/a/38641281/943814
+      sorter: new Intl.Collator(undefined, {
+        numeric: true,
+        sensitivity: 'base'
+      }),
+
+      coverageMean: 0,
+      bamCounter: 0
     }
 
   },
@@ -488,6 +554,7 @@ export default {
 
 
   mounted: function() {
+    this.load()
     this.init();
     bus.$on("getAnalysisObject", ()=>{
       this.generatePDF()
@@ -595,6 +662,160 @@ export default {
   },
 
   methods: {
+    
+    load: function() {
+      this.bed = undefined;
+      this.selectedBaiURL = undefined;
+      if ( this.selectedBamURL && this.selectedBamURL != '' ) {
+        // Props should be set by query params
+        this.bam = new Bam(this.backendSource, this.selectedBamURL, {
+          bai: this.selectedBaiURL
+        });
+
+        this.goBam(this.region);
+      }
+    }, 
+
+    goBam: function (region) {
+      let refIndex = 0;
+
+      this.bam.getHeader().then((header) => {
+        this.references = header.sq.filter((sq) => {
+          return !filterRef(sq.name);
+        })
+        .map((sq) => {
+          return {
+            id: sq.name,
+            length: sq.end,
+          };
+        });
+      });
+
+      // get read depth
+      this.bam.estimateBaiReadDepth((name, index, ref) => {
+
+          // turn off read depth loading msg
+
+          if (ref.depths.length > 0 && !filterRef(name)) {
+            // Have to use Object.freeze here to prevent Vue from
+            // recursively setting up data listeners, which causes huge
+            // performance issues with data this big.
+            Vue.set(this.readDepthChartData, index, Object.freeze(ref.depths));
+
+            if (!this.draw) {
+              this.draw = true;
+            }
+          }
+        },
+        function doneCallback() {
+
+        const keys = Object.keys(this.bam.readDepth);
+
+        // if (keys.length == 1) {
+        //   // turn on sampling message
+        //   $(".samplingLoader").css("display", "block");
+        // }
+
+        const allPoints = keys
+          //.sort(this.sorter.compare)
+          .filter(function (key) {
+            if (filterRef(key))
+              return false
+            if (this.bam.readDepth[key].depths.length > 0)
+              return true
+          }.bind(this))
+          .map(function (key) {
+            return {
+              name: key,
+              data: this.bam.readDepth[key].depths,
+              sqLength: this.bam.readDepth[key].sqLength,
+            }
+          }.bind(this));
+
+        allPoints
+          .sort((a, b) => this.sorter.compare(a.name, b.name));
+
+        var start = region ? region.start : undefined;
+        var end = region ? region.end : undefined;
+
+        this.bam.getHeader().then(() => {
+          // Set selected seq & region
+          if (!region || (region && region.chr == 'all'))
+            this.setSelectedSeq('all', start, end);
+          else
+            this.setSelectedSeq(region.chr, start, end);
+        });
+
+      }.bind(this),
+      (err) => {
+        this.$emit('error');
+      })
+    },
+
+
+    setSelectedSeq: function (selected, start, end) {
+      this.selectedSeqId = selected;
+
+      var seqDataIds = this.getSelectedSeqIds();
+
+      // $("#reference-select").val(this.selectedSeqId);
+
+      // start sampling
+      if (start != undefined && end != undefined) {
+        this.goSampling({sampling: this.sampling, sequenceNames: seqDataIds, 'start': start, 'end': end});
+        this.draw = false; // force re-draw so brush region is set correctly
+        setTimeout(function () {
+          this.setBrush(start, end)
+          this.draw = true;
+        }.bind(this), 200);
+      } else {
+        this.goSampling({sampling: this.sampling, sequenceNames: seqDataIds});
+      }
+    },
+
+
+    getSelectedSeqIds: function () {
+      if (this.selectedSeqId == 'all') {
+        return Object.keys(this.bam.readDepth)
+          .filter(function (key) {
+            if (filterRef(key))
+              return false
+            if (this.bam.readDepth[key].depths.length > 0)
+              return true
+          }.bind(this))
+      } else
+        return [this.selectedSeqId];
+    },
+
+    goSampling: function (options) {
+      // add default options
+      options = $.extend({
+        exomeSampling: this.exomeSampling, //'checked' == $("#depth-distribution input").attr("checked"),
+        bed: this.bed,
+        onEnd: function () {
+          // NProgress.done();
+        }
+      }, options);
+
+      this.totalReads = 0;
+
+      // NProgress.start();
+      // NProgress.set(0);
+
+      // update selected stats
+      this.bam.sampleStats(function (data, error, end) {
+        if ( error!=undefined && error!='' ){
+          alert(error);
+          // NProgress.done();
+        }
+        else {
+
+          this.sampleStats = data.coverage_hist;
+          this.bamCounter = this.bamCounter+1; 
+          console.log("sample sets data", this.sampleStats)
+        }
+      }.bind(this), options);
+    },
 
     init: function() {
       let self = this;
@@ -1857,4 +2078,22 @@ export default {
 
   }
 }
+
+function precisionRound(number, precision) {
+  var factor = Math.pow(10, precision);
+  return Math.round(number * factor) / factor;
+}
+
+const validRefs = {};
+for (let i = 1; i <= 22; i++) {
+  validRefs[i] = true;
+  validRefs['chr' + i] = true;
+}
+validRefs['X'] = true;
+validRefs['Y'] = true;
+
+function filterRef(ref) {
+  return validRefs[ref] === undefined;
+}
+
 </script>
