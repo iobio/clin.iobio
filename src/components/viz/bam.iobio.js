@@ -50,7 +50,7 @@ class LineReader extends EventEmitter {
   }
 }
 
-
+var outputObject = "Hello"
 var Bam = Class.extend({
 
    init: function(backendSource, bamUri, options) {
@@ -318,7 +318,6 @@ var Bam = Class.extend({
    },
 
    sampleStats: function(callback, options) {
-     console.log("sampleStats called", options)
       var binSize = 10000;
       var binNumber = 20;
       if (options.sampling == 'low') {
@@ -338,7 +337,6 @@ var Bam = Class.extend({
       var me = this;
 
       function goSampling(SQs) {
-        console.log("SQs", SQs)
         if (SQs.length == 0) {
           callback(undefined, "Make sure index file exists and is valid.")
         } else {
@@ -388,29 +386,28 @@ var Bam = Class.extend({
           cmd.on('queue', function (q) {
             console.log('queue = ' + q);
           })
-
+          
           cmd.on('data', function (datas, options) {
             datas.split(';').forEach(function (data) {
-              // console.log("datas", data)
 
               if (data == undefined || data == "\n") return;
               var success = true;
               try {
                 var obj = JSON.parse(buffer + data)
-                console.log("obj", obj)
+                outputObject = obj
               } catch (e) {
                 success = false;
                 buffer += data;
               }
               if (success) {
-                console.log("its a success!")
                 buffer = "";
-                callback(obj);
+                // callback(obj);
               }
             });
           });
 
           cmd.on('end', function () {
+            callback(outputObject)
             if (options.onEnd != undefined)
               options.onEnd();
           });

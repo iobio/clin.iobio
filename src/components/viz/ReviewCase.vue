@@ -10,7 +10,7 @@
   background-color:  white
 
   svg
-    #minText
+    #minTextgetBamStats
       font-weight: 600 !important
     #minLine
       stroke-dasharray: 3 1 !important
@@ -208,6 +208,9 @@ import AppIcon       from '../partials/AppIcon.vue';
 import QualitativeBarChart from './QualitativeBarChart.vue'
 import BarChart from './BarChart.vue'
 
+import { Bam } from './bam.iobio.js';
+import Vue from 'vue';
+
 import Vcfiobio           from '../../models/Vcf.iobio'
 var vcfiobio = new Vcfiobio(); 
 
@@ -257,12 +260,67 @@ export default {
       reviewCaseBadges: null,
       badCoverageCount: null,
       averageCoverage: null,
-      statsReceived: false
+      statsReceived: false, 
+      selectedBamURL: "http://s3.amazonaws.com/iobio/NA12878/NA12878.autsome.bam",
+      backendSource: "backend.iobio.io", 
+      showFullURL: false,
+
+      // default sampling values
+      binNumber: 20,
+      binSize: 40000,
+      sampleMultiplier: 1,
+      sampleMultiplierLimit: 4,
+      totalReads: 0,
+
+      exomeSampling: false,
+      draw: false,
+
+      sampleStats: {},
+
+      readDepthConversionRatio: 0,
+
+      bam: {},
+      bed: {},
+
+      readDepthChartData: [],
+      references: [],
+
+      selectedSeqId: 'all',
+      coverageBrushRange: {},
+
+      // Percent Chart Data
+      mappedReadsData: [],
+      forwardStrandsData: [],
+      properPairsData: [],
+      singletonsData: [],
+      bothMatesData: [],
+      duplicatesData: [],
+
+      // Histogram Chart Data
+      readOutliers: false,
+      readCoverageData: [],
+      lengthData: [],
+      qualityData: [],
+
+      lengthXAxisLabel: 'Fragment Length',
+      qualityXAxisLabel: 'Mapping Quality',
+
+      // this is used to achieve a "natural sort". see
+      // https://stackoverflow.com/a/38641281/943814
+      sorter: new Intl.Collator(undefined, {
+        numeric: true,
+        sensitivity: 'base'
+      }),
+
+      coverageMean: 0,
+      bamCounter: 0
+
     }
 
   },
 
   mounted: function(){
+    this.getBamStatsFromCustomData()
 
     if(this.launchedFromMosaic) {
       this.formatVarCountsArray();
@@ -282,6 +340,160 @@ export default {
   },
 
   methods: {
+    getBamStatsFromCustomData: function(){
+      let promises = []; 
+      promises.push(this.loadBamStats()); 
+    
+      Promise.all(promises).then((results) => {
+        console.log("promise res: ", results)
+      })
+      
+    }, 
+    loadBamStats: function() {
+      return new Promise((resolve, reject) => {
+        this.bed = undefined;
+        this.selectedBaiURL = undefined;
+        if ( this.selectedBamURL && this.selectedBamURL != '' ) {
+          // Props should be set by query params
+          this.bam = new Bam(this.backendSource, this.selectedBamURL, {
+            bai: this.selectedBaiURL
+          });
+
+          this.goBam(this.region, resolve, reject);
+        }
+      })
+    }, 
+
+    goBam: function (region, resolve, reject) {
+      let refIndex = 0;
+
+      this.bam.getHeader().then((header) => {
+        this.references = header.sq.filter((sq) => {
+          return !filterRef(sq.name);
+        })
+        .map((sq) => {
+          return {
+            id: sq.name,
+            length: sq.end,
+          };
+        });
+      });
+
+      // get read depth
+      this.bam.estimateBaiReadDepth((name, index, ref) => {
+
+          // turn off read depth loading msg
+
+          if (ref.depths.length > 0 && !filterRef(name)) {
+            // Have to use Object.freeze here to prevent Vue from
+            // recursively setting up data listeners, which causes huge
+            // performance issues with data this big.
+            Vue.set(this.readDepthChartData, index, Object.freeze(ref.depths));
+
+            if (!this.draw) {
+              this.draw = true;
+            }
+          }
+        },
+        function doneCallback() {
+
+        const keys = Object.keys(this.bam.readDepth);
+
+        const allPoints = keys
+          //.sort(this.sorter.compare)
+          .filter(function (key) {
+            if (filterRef(key))
+              return false
+            if (this.bam.readDepth[key].depths.length > 0)
+              return true
+          }.bind(this))
+          .map(function (key) {
+            return {
+              name: key,
+              data: this.bam.readDepth[key].depths,
+              sqLength: this.bam.readDepth[key].sqLength,
+            }
+          }.bind(this));
+
+        allPoints
+          .sort((a, b) => this.sorter.compare(a.name, b.name));
+
+        var start = region ? region.start : undefined;
+        var end = region ? region.end : undefined;
+
+        this.bam.getHeader().then(() => {
+          // Set selected seq & region
+          if (!region || (region && region.chr == 'all'))
+            this.setSelectedSeq('all', start, end, resolve, reject);
+          else
+            this.setSelectedSeq(region.chr, start, end, resolve, reject);
+        });
+
+      }.bind(this),
+      (err) => {
+        this.$emit('error');
+      })
+    },
+
+
+    setSelectedSeq: function (selected, start, end, resolve, reject) {
+      this.selectedSeqId = selected;
+
+      var seqDataIds = this.getSelectedSeqIds(resolve, reject);
+
+      // start sampling
+      if (start != undefined && end != undefined) {
+        this.goSampling({sampling: this.sampling, sequenceNames: seqDataIds, 'start': start, 'end': end});
+        this.draw = false; // force re-draw so brush region is set correctly
+        setTimeout(function () {
+          this.setBrush(start, end)
+          this.draw = true;
+        }.bind(this), 200);
+      } else {
+        this.goSampling({sampling: this.sampling, sequenceNames: seqDataIds},resolve, reject);
+      }
+    },
+
+
+    getSelectedSeqIds: function (resolve, reject) {
+      if (this.selectedSeqId == 'all') {
+        return Object.keys(this.bam.readDepth)
+          .filter(function (key) {
+            if (filterRef(key))
+              return false
+            if (this.bam.readDepth[key].depths.length > 0)
+              return true
+          }.bind(this))
+      } else
+        return [this.selectedSeqId];
+    },
+
+    goSampling: function (options, resolve, reject) {
+      // add default options
+      options = $.extend({
+        exomeSampling: this.exomeSampling, //'checked' == $("#depth-distribution input").attr("checked"),
+        bed: this.bed,
+        onEnd: function () {
+        }
+      }, options);
+
+      this.totalReads = 0;
+
+      // update selected stats
+      this.bam.sampleStats(function (data, error, end) {
+        if ( error!=undefined && error!='' ){
+          alert(error);
+        }
+        else {
+
+          this.sampleStats = data.coverage_hist;
+          this.bamCounter = this.bamCounter+1; 
+          console.log("sample sets data in review case", this.sampleStats)
+          resolve(this.sampleStats)
+        }
+      }.bind(this), options);
+    },
+
 
     buildCustomPage: function(){
 
@@ -296,7 +508,6 @@ export default {
       this.populateSampleIdsAndRelationships();
       this.populateSampleUuidArray();
       this.getVarCountFromCustomData(this.modelInfos); 
-
 
       this.pedigreeDataArray = this.buildPedFromTxt(this.pedigree);
 
@@ -717,6 +928,18 @@ export default {
       this.populateReviewCaseBadges();
     }
   },
+}
+
+const validRefs = {};
+for (let i = 1; i <= 22; i++) {
+  validRefs[i] = true;
+  validRefs['chr' + i] = true;
+}
+validRefs['X'] = true;
+validRefs['Y'] = true;
+
+function filterRef(ref) {
+  return validRefs[ref] === undefined;
 }
 </script>
 
