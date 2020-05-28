@@ -320,7 +320,6 @@ export default {
   },
 
   mounted: function(){
-    this.getBamStatsFromCustomData()
 
     if(this.launchedFromMosaic) {
       this.formatVarCountsArray();
@@ -340,34 +339,39 @@ export default {
   },
 
   methods: {
-    getBamStatsFromCustomData: function(){
+    getBamStatsFromCustomData: function(modelInfos){
+      console.log("called getBamStatsFromCustomData")
       let promises = []; 
-      promises.push(this.loadBamStats()); 
+      for(let i=0; i<modelInfos.length; i++){
+        promises.push(this.loadBamStats(modelInfos[i].bam, modelInfos[i].sample)); 
+      }
     
       Promise.all(promises).then((results) => {
         console.log("promise res: ", results)
       })
       
     }, 
-    loadBamStats: function() {
+    loadBamStats: function(selectedBamURL, sample) {
+      console.log("selectedBamURL", selectedBamURL);
       return new Promise((resolve, reject) => {
         this.bed = undefined;
         this.selectedBaiURL = undefined;
-        if ( this.selectedBamURL && this.selectedBamURL != '' ) {
+        let bam = {}
+        if (selectedBamURL && selectedBamURL != '' ) {
           // Props should be set by query params
-          this.bam = new Bam(this.backendSource, this.selectedBamURL, {
+          bam = new Bam(this.backendSource, this.selectedBamURL, {
             bai: this.selectedBaiURL
           });
 
-          this.goBam(this.region, resolve, reject);
+          this.goBam(this.region, resolve, reject, bam);
         }
       })
     }, 
 
-    goBam: function (region, resolve, reject) {
+    goBam: function (region, resolve, reject, bam) {
       let refIndex = 0;
 
-      this.bam.getHeader().then((header) => {
+      bam.getHeader().then((header) => {
         this.references = header.sq.filter((sq) => {
           return !filterRef(sq.name);
         })
@@ -380,7 +384,7 @@ export default {
       });
 
       // get read depth
-      this.bam.estimateBaiReadDepth((name, index, ref) => {
+      bam.estimateBaiReadDepth((name, index, ref) => {
 
           // turn off read depth loading msg
 
@@ -397,21 +401,21 @@ export default {
         },
         function doneCallback() {
 
-        const keys = Object.keys(this.bam.readDepth);
+        const keys = Object.keys(bam.readDepth);
 
         const allPoints = keys
           //.sort(this.sorter.compare)
           .filter(function (key) {
             if (filterRef(key))
               return false
-            if (this.bam.readDepth[key].depths.length > 0)
+            if (bam.readDepth[key].depths.length > 0)
               return true
           }.bind(this))
           .map(function (key) {
             return {
               name: key,
-              data: this.bam.readDepth[key].depths,
-              sqLength: this.bam.readDepth[key].sqLength,
+              data: bam.readDepth[key].depths,
+              sqLength: bam.readDepth[key].sqLength,
             }
           }.bind(this));
 
@@ -421,12 +425,12 @@ export default {
         var start = region ? region.start : undefined;
         var end = region ? region.end : undefined;
 
-        this.bam.getHeader().then(() => {
+        bam.getHeader().then(() => {
           // Set selected seq & region
           if (!region || (region && region.chr == 'all'))
-            this.setSelectedSeq('all', start, end, resolve, reject);
+            this.setSelectedSeq('all', start, end, resolve, reject, bam);
           else
-            this.setSelectedSeq(region.chr, start, end, resolve, reject);
+            this.setSelectedSeq(region.chr, start, end, resolve, reject, bam);
         });
 
       }.bind(this),
@@ -436,10 +440,10 @@ export default {
     },
 
 
-    setSelectedSeq: function (selected, start, end, resolve, reject) {
+    setSelectedSeq: function (selected, start, end, resolve, reject, bam) {
       this.selectedSeqId = selected;
 
-      var seqDataIds = this.getSelectedSeqIds(resolve, reject);
+      var seqDataIds = this.getSelectedSeqIds(resolve, reject, bam);
 
       // start sampling
       if (start != undefined && end != undefined) {
@@ -450,25 +454,25 @@ export default {
           this.draw = true;
         }.bind(this), 200);
       } else {
-        this.goSampling({sampling: this.sampling, sequenceNames: seqDataIds},resolve, reject);
+        this.goSampling({sampling: this.sampling, sequenceNames: seqDataIds},resolve, reject, bam);
       }
     },
 
 
-    getSelectedSeqIds: function (resolve, reject) {
+    getSelectedSeqIds: function (resolve, reject, bam) {
       if (this.selectedSeqId == 'all') {
-        return Object.keys(this.bam.readDepth)
+        return Object.keys(bam.readDepth)
           .filter(function (key) {
             if (filterRef(key))
               return false
-            if (this.bam.readDepth[key].depths.length > 0)
+            if (bam.readDepth[key].depths.length > 0)
               return true
           }.bind(this))
       } else
         return [this.selectedSeqId];
     },
 
-    goSampling: function (options, resolve, reject) {
+    goSampling: function (options, resolve, reject, bam) {
       // add default options
       options = $.extend({
         exomeSampling: this.exomeSampling, //'checked' == $("#depth-distribution input").attr("checked"),
@@ -480,7 +484,7 @@ export default {
       this.totalReads = 0;
 
       // update selected stats
-      this.bam.sampleStats(function (data, error, end) {
+      bam.sampleStats(function (data, error, end) {
         if ( error!=undefined && error!='' ){
           alert(error);
         }
@@ -508,6 +512,7 @@ export default {
       this.populateSampleIdsAndRelationships();
       this.populateSampleUuidArray();
       this.getVarCountFromCustomData(this.modelInfos); 
+      this.getBamStatsFromCustomData(this.modelInfos)
 
       this.pedigreeDataArray = this.buildPedFromTxt(this.pedigree);
 
