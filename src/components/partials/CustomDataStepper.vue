@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-stepper  alt-labels v-model="pageCounter">
+    <v-stepper alt-labels v-model="pageCounter">
       <v-stepper-header>
         <v-stepper-step :complete="pageCounter > 1" step="1">Files</v-stepper-step>
 

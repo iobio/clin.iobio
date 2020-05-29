@@ -61,9 +61,10 @@
       vertical-align: top
       margin-left: 0px
       font-size: 15px
-      color: $app-color
+      color: black
       display: inline-block
       margin-right: 20px
+      font-weight: 600
     .switch
       display: inline-block
       width: 100px
@@ -130,13 +131,13 @@
 
               <v-flex class="mt-0" style="max-width: 90px;margin-right: 10px;" >
                   <v-radio-group v-model="mode" @change="onModeChanged"  hide-details column>
-                        <v-radio label="Single"  value="single"></v-radio>
-                        <v-radio label="Trio"    value="trio"></v-radio>
+                        <v-radio color="primary" label="Single"  value="single"></v-radio>
+                        <v-radio color="primary" label="Trio"    value="trio"></v-radio>
                   </v-radio-group>
               </v-flex>
 
               <v-flex style="width:90px;margin-right:10px" class="mt-2" >
-                  <v-switch  label="Separate URL for index" hide-details v-model="separateUrlForIndex">
+                  <v-switch color="primary" label="Separate URL for index" hide-details v-model="separateUrlForIndex">
                   </v-switch>
               </v-flex>
 
@@ -184,6 +185,7 @@
                     v-if="modelInfoMap && modelInfoMap[rel] && Object.keys(modelInfoMap[rel]).length > 0">
 
                   <sample-data
+                    class="mt-5"
                    ref="sampleDataRef"
                    v-if="modelInfoMap && modelInfoMap[rel] && Object.keys(modelInfoMap[rel]).length > 0"
                    :modelInfo="modelInfoMap[rel]"
@@ -198,7 +200,7 @@
 
             <v-layout row nowrap class="mt-2">
 
-               <v-flex  class="sample-label mt-3 pl-2 pr-3" >
+               <!-- <v-flex  class="sample-label mt-3 pl-2 pr-3" >
                 <span v-if="probandSamples && probandSamples.length > 0"
                  dark small >
                   siblings
@@ -229,7 +231,7 @@
                   hide-details
                   >
                 </v-autocomplete>
-               </v-flex>
+               </v-flex> -->
             </v-layout>
             
             <v-layout row wrap>

@@ -532,3 +532,8 @@ export default {
     margin-top: 72px    
 </style>
 
+<style lang="sass">
+  .v-label 
+    font-size: 12px
+    font-weight: 200
+</style>
