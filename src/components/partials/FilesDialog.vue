@@ -113,6 +113,9 @@
 <template>
    <v-dialog v-model="showFilesDialog" persistent max-width="890" >
       <v-card class="full-width" style="height: auto;overflow-y:scroll">
+        <CustomDataStepper
+          :pageCounter="pageCounter">
+        </CustomDataStepper>
 
 
 
@@ -259,16 +262,18 @@
 <script>
 
 import SampleData          from '../partials/SampleData.vue'
-
+import CustomDataStepper   from '../partials/CustomDataStepper.vue'
 
 export default {
   name: 'files-dialog',
   components: {
-    SampleData
+    SampleData,
+    CustomDataStepper
   },
   props: {
     cohortModel: null,
-    showDialog: null
+    showDialog: null, 
+    pageCounter: null
   },
   data () {
     return {

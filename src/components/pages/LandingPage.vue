@@ -149,7 +149,7 @@
       </NavBarDialog>
       
       <files-dialog
-        v-if="showFiles && pageCounter===0"
+        v-if="showFiles && pageCounter===1"
        :cohortModel="cohortModel"
        :showDialog="showFiles"
        @on-files-loaded="onFilesLoaded"
@@ -157,13 +157,17 @@
        @on-cancel="showFiles = false"
        @isDemo="onIsDemo"
        @get-modeinfo-map="getModelInfoMap"
+       :pageCounter="pageCounter"
       >
       </files-dialog>
       
       
       <!-- Genes set dialog -->
-      <v-dialog v-model="geneSetDiialog" v-if="pageCounter===1" persistent max-width="890">
+      <v-dialog v-model="geneSetDiialog" v-if="pageCounter===2" persistent max-width="890">
         <v-card class="full-width" style="height: auto;overflow-y:scroll">
+          <CustomDataStepper
+            :pageCounter="pageCounter">
+          </CustomDataStepper>
           <v-card-title class="headline">Gene Sets</v-card-title>
           <v-card-text>
             <v-col cols="12" md="12">
@@ -186,8 +190,11 @@
       <!-- End gene sets dialog -->
       
       <!-- Pedigree upload dialog -->
-      <v-dialog v-model="pedigreeUploadDialog" v-if="pageCounter===2" persistent max-width="890">
+      <v-dialog v-model="pedigreeUploadDialog" v-if="pageCounter===3" persistent max-width="890">
         <v-card class="full-width" style="height: auto;overflow-y:scroll">
+          <CustomDataStepper
+            :pageCounter="pageCounter">
+          </CustomDataStepper>
           <v-card-title class="headline">Pedigree upload</v-card-title>
           <v-card-text>
             <v-col cols="12" md="12">
@@ -232,6 +239,7 @@ import review_phenotypes_img  from '../../assets/images/landing_page/review_phen
 import review_variants_img    from '../../assets/images/landing_page/review_case.png'
 import findings_img           from '../../assets/images/landing_page/findings.png'
 import FilesDialog            from '../partials/FilesDialog.vue'
+import CustomDataStepper      from '../partials/CustomDataStepper.vue'
 
 export default {
   name: 'landing-page',
@@ -248,7 +256,8 @@ export default {
     MoreMenu,
     NavBarDialog,
     FilesDialog,
-    PedFileReader
+    PedFileReader,
+    CustomDataStepper
   },
   props: {
     cohortModel: null,
@@ -308,7 +317,7 @@ export default {
       genes: '',
       customModelInfos: [],
       showFiles: false, 
-      pageCounter: 0, 
+      pageCounter: 1, 
       pedigreeUploadDialog: false, 
       pedData: null, 
     }
