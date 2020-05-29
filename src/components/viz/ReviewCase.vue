@@ -117,81 +117,60 @@
           </div>
       </div>
       
-    <div v-if="customData && statsReceived && coverageStatsReceived" >      
-      <div class="column ml-5">
-        <div class="row">
-          <div class="col-md-4">
-            <center>
-              <div class="heading mb-4">Sample</div>
-              <br><br><br>
-              <div v-for="(d, i) in sampleIds" >
-                <div style="text-align: center; width: 150px" class="capitalize">
-                  {{sampleIdsAndRelationships[i]}}
-                  <PedigreeGraph :data="allPedigreeDataArrays[i]" :id="sampleUuids[i]" :width="100" :height="75" :pedigree="pedigree"></PedigreeGraph>
-                </div>
-              </div>
-            </center>
-          </div>
-          <div class="col-md-4">
-            <!-- Read covergae goes here -->
-            <center>
-              <div class="col-md-6">
-                <div class="heading mb-4" >Read Coverage</div>
-              </div>
-              <div class="col-md-6">
-                <v-text-field
-                  id="minCoverageInput"
-                  label="Expected Coverage"
-                  outlined
-                  dense
-                  value="minCutoff"
-                  v-model.number="minCutoff"
-                  style="width: 150px"
-                >
-                </v-text-field>
-              </div>
-              <div v-if="coverageStatsReceived" v-for="(d, i) in coverageDataArray">
-                <div class="col-md-11">
-                  <BarChart :data="coverageDataArray[i]" :width="450" :height="150" :x-domain="xDomain" :y-domain="yDomain" :median-coverage="medianCoverages[i]" :minCutoff="minCutoff"></BarChart>
-                </div>
-                <div class="col-md-1">
-                  <div style="padding-top: 20px" v-show="goodCoverage(i)">
-                  <v-tooltip top class="valign">
-                    <template v-slot:activator="{ on }">
-                      <v-icon class="good-coverage" v-on="on" top color="green"
-                               @click="">check_circle</v-icon>
-                    </template>
-                    <span>Median coverage is above expected coverage threshold of {{minCutoff}}X</span>
-
-                  </v-tooltip>
-                    <div v-if="badCoverage" style=" display: inline-flex; width: 120px; line-height: 16px; font-size: 12px; padding-left: 5px;"></div>
-                  </div>
-                  <div style="padding-top: 20px" v-show="!goodCoverage(i)">
-                        <v-icon v-on="on"     @click=""
-                                top color="#B33A3A">mdi-alert-circle</v-icon>
-                    <div v-if="badCoverage" style=" display: inline-flex; width: 120px; line-height: 14px; font-size: 13px; padding-left: 5px;">Median coverage is below expected coverage threshold of {{minCutoff}}X</div>
-
-                  </div>
-                </div>
-
-              </div>
-            </center>
-
-          </div>
-          <div class="col-md-4">
-            <center>
-              <div class="heading mb-4" >Variant Types</div>
-              <br><br><br>
-              <div v-for="(d, i) in varCountsArray">
-                <QualitativeBarChart :data="varCountsArray[i].counts" :width="300" :height="150" style="padding-top: 20px"></QualitativeBarChart>
-              </div>
-            </center>
-          </div>
-        </div>
-      </div>
-    </div>
     
-    <div v-else>
+    <div v-if="customData && statsReceived && coverageStatsReceived">
+      <div style=" width: 100%; display: inline-flex; flex-direction: row; justify-content: space-around; padding-bottom: 10px">
+        <div class="heading" style="margin-right: 90px">Sample</div> <div class="heading" style="margin-right: 90px; display:flex;flex-direction:row;justify-content:space-between">
+        <div style="margin-right: 20px">Read Coverage</div>
+        <v-text-field
+                id="minCoverageInput"
+              label="Expected Coverage"
+              outlined
+              dense
+              value="minCutoff"
+              v-model.number="minCutoff"
+                style="width: 150px"
+      ></v-text-field></div>
+
+        <div class="heading" style="margin-right: 50px">Variant Types</div>
+      </div>
+      <div v-for="(d, i) in varCountsArray" >
+        <div style=" width: 100%; display: inline-flex; flex-direction: row; justify-content: space-around;">
+            <div style="text-align: center; width: 150px" class="capitalize">
+              {{sampleIdsAndRelationships[i]}}
+              <PedigreeGraph :data="allPedigreeDataArrays[i]" :id="sampleUuids[i]" :width="100" :height="75" :pedigree="pedigree"></PedigreeGraph>
+            </div>
+
+          <div style="display: inline-flex;">
+            <BarChart :data="coverageDataArray[i]" :width="400" :height="150" :x-domain="xDomain" :y-domain="yDomain" :median-coverage="medianCoverages[i]" :minCutoff="minCutoff"></BarChart>
+
+            <div style="padding-top: 20px" v-show="goodCoverage(i)">
+            <v-tooltip top class="valign">
+              <template v-slot:activator="{ on }">
+                <v-icon class="good-coverage" v-on="on" top color="green"
+                         @click="">check_circle</v-icon>
+              </template>
+              <span>Median coverage is above expected coverage threshold of {{minCutoff}}X</span>
+
+            </v-tooltip>
+              <div v-if="badCoverage" style=" display: inline-flex; width: 120px; line-height: 16px; font-size: 12px; padding-left: 5px;"></div>
+            </div>
+            <div style="padding-top: 20px" v-show="!goodCoverage(i)">
+                  <v-icon v-on="on"     @click=""
+                          top color="#B33A3A">mdi-alert-circle</v-icon>
+
+
+              <div v-if="badCoverage" style=" display: inline-flex; width: 120px; line-height: 14px; font-size: 13px; padding-left: 5px;">Median coverage is below expected coverage threshold of {{minCutoff}}X</div>
+
+            </div>
+
+          </div>
+          <QualitativeBarChart :data="varCountsArray[i].counts" :width="300" :height="150" style="padding-top: 20px"></QualitativeBarChart>
+
+        </div>
+     </div>
+    </div>
+    <div v-if="customData && !statsReceived && !coverageStatsReceived">
       <center> 
         <br>
         <v-progress-linear
@@ -204,7 +183,8 @@
         <i> Loading stats ... </i>
 
       </center>
-    </div>
+    </div> 
+
 
 
     <div v-if="isSorted">
