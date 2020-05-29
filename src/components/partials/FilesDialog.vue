@@ -242,9 +242,10 @@
                 <v-card-actions class="mb-4">
                   <v-spacer></v-spacer>
 
-                  <v-btn  @click="onCancel">
+                  <!-- <v-btn  @click="onCancel">
                    Cancel
-                 </v-btn>
+                 </v-btn> -->
+                 <v-btn color="primary" text @click="onCancel"> Back</v-btn>
                  
                  <v-btn class="ml-2" color="primary"
                    @click="onLoad"

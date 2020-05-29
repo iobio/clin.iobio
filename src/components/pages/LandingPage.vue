@@ -148,8 +148,46 @@
         id="TermsDialogLandingPage">
       </NavBarDialog>
       
+      <!-- caseDescriptionDialog -->
+      <v-dialog v-model="caseDescriptionDialog" v-if="pageCounter===1" persistent max-width="890">
+        <v-card class="full-width" style="height: auto;overflow-y:scroll">
+          <CustomDataStepper
+            :pageCounter="pageCounter">
+          </CustomDataStepper>
+          <v-card-title class="headline">Case summary</v-card-title>
+          <v-card-text>
+            <v-col cols="12" md="12">
+              <label>Title </label>
+              <v-text-field
+                label="Solo"
+                placeholder="WGS analysis"
+                solo
+                v-model="caseTitle"
+              ></v-text-field>
+              
+              <label>Description </label>
+              <v-textarea
+                solo auto-grow
+                name="input-7-4"
+                label="The data set (NA12878) is high quality exome sequencing data from three individuals"
+                v-model="caseDescription"					
+              ></v-textarea>
+          </v-col>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="primary" text>close</v-btn>
+            <v-btn color="primary" @click="addCaseDescription">Next</v-btn>
+          </v-card-actions>
+
+          </v-card-text>
+        </v-card>
+      </v-dialog>
+      <!-- End caseDescriptionDialog -->
+      
+
+      
       <files-dialog
-        v-if="showFiles && pageCounter===1"
+        v-if="showFiles && pageCounter===2"
        :cohortModel="cohortModel"
        :showDialog="showFiles"
        @on-files-loaded="onFilesLoaded"
@@ -163,7 +201,7 @@
       
       
       <!-- Genes set dialog -->
-      <v-dialog v-model="geneSetDiialog" v-if="pageCounter===2" persistent max-width="890">
+      <v-dialog v-model="geneSetDiialog" v-if="pageCounter===3" persistent max-width="890">
         <v-card class="full-width" style="height: auto;overflow-y:scroll">
           <CustomDataStepper
             :pageCounter="pageCounter">
@@ -180,7 +218,7 @@
           </v-col>
           <v-card-actions>
             <v-spacer></v-spacer>
-            <!-- <v-btn color="green darken-1" text @click="geneSetDiialog = false">Back</v-btn> -->
+            <v-btn color="primary" text>Back</v-btn>
             <v-btn color="primary" @click="addGeneSet">Next</v-btn>
           </v-card-actions>
 
@@ -190,7 +228,7 @@
       <!-- End gene sets dialog -->
       
       <!-- Pedigree upload dialog -->
-      <v-dialog v-model="pedigreeUploadDialog" v-if="pageCounter===3" persistent max-width="890">
+      <v-dialog v-model="pedigreeUploadDialog" v-if="pageCounter===4" persistent max-width="890">
         <v-card class="full-width" style="height: auto;overflow-y:scroll">
           <CustomDataStepper
             :pageCounter="pageCounter">
@@ -202,6 +240,7 @@
             </v-col>
           <v-card-actions>
             <v-spacer></v-spacer>
+            <v-btn color="primary" text>Back</v-btn>
             <v-btn :disabled="!pedData" color="primary" @click="addPedigree">Load</v-btn>
           </v-card-actions>
 
@@ -319,12 +358,24 @@ export default {
       showFiles: false, 
       pageCounter: 1, 
       pedigreeUploadDialog: false, 
-      pedData: null, 
+      pedData: null,
+      caseDescriptionDialog: false,
+      caseDescription: '', 
+      caseTitle: '', 
     }
   },
   methods:  {
     onShowFiles: function() {
-      this.showFiles = true;
+      this.caseDescriptionDialog = true;
+    },
+    addCaseDescription: function() {
+      this.caseDescriptionDialog = false;
+      this.pageCounter = this.pageCounter+1;
+      this.showFiles = true; 
+      this.$emit("set-custom-case-summary", {
+        name: this.caseTitle, 
+        description: this.caseDescription
+      })
     },
     onFilesLoaded: function(analyzeAll) {
       this.showFiles = false;

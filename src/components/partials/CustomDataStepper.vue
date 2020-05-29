@@ -1,16 +1,20 @@
 <template>
-  <div>
+  <div class="mb-4">
     <v-stepper alt-labels v-model="pageCounter">
       <v-stepper-header>
-        <v-stepper-step :complete="pageCounter > 1" step="1">Files</v-stepper-step>
+        <v-stepper-step :complete="pageCounter > 1" step="1">Description</v-stepper-step>
 
         <v-divider></v-divider>
 
-        <v-stepper-step :complete="pageCounter > 2" step="2">Gene sets</v-stepper-step>
+        <v-stepper-step :complete="pageCounter > 2" step="2">Files</v-stepper-step>
 
         <v-divider></v-divider>
 
-        <v-stepper-step step="3" :complete="pageCounter > 3"  >Pedigree</v-stepper-step>
+        <v-stepper-step :complete="pageCounter > 3" step="3">Gene sets</v-stepper-step>
+
+        <v-divider></v-divider>
+
+        <v-stepper-step step="4" :complete="pageCounter > 4"  >Pedigree</v-stepper-step>
       </v-stepper-header>
     </v-stepper>
   </div>

@@ -130,7 +130,8 @@ $horizontal-dashboard-height: 140px
     :cohortModel="cohortModel"
     @custom-model-info="customModelInfo"
     @setGeneSet="setGeneSet($event)"
-    @set-ped-data="setPedData($event)">
+    @set-ped-data="setPedData($event)"
+    @set-custom-case-summary="setCustomCaseSummary($event)">
   </landing-page>
   <navigation v-if="!showLandingPage && !showSplash && isAuthenticated  && workflow && analysis"
    :caseSummary="caseSummary"
@@ -480,69 +481,7 @@ export default {
       cohortModel: null,
       customData: false, 
       customGeneSet: [], 
-      selectedBamURL: "http://s3.amazonaws.com/iobio/NA12878/NA12878.autsome.bam",
-      backendSource: "backend.iobio.io", 
-      showFullURL: false,
 
-      // default sampling values
-      binNumber: 20,
-      binSize: 40000,
-      sampleMultiplier: 1,
-      sampleMultiplierLimit: 4,
-      totalReads: 0,
-
-      exomeSampling: false,
-      draw: false,
-
-      sampleStats: {},
-
-      readDepthConversionRatio: 0,
-
-      bam: {},
-      bed: {},
-
-      readDepthChartData: [],
-      references: [],
-
-      selectedSeqId: 'all',
-      coverageBrushRange: {},
-
-      // Percent Chart Data
-      mappedReadsData: [],
-      forwardStrandsData: [],
-      properPairsData: [],
-      singletonsData: [],
-      bothMatesData: [],
-      duplicatesData: [],
-
-      // Histogram Chart Data
-      readOutliers: false,
-      readCoverageData: [],
-      lengthData: [],
-      qualityData: [],
-
-      lengthXAxisLabel: 'Fragment Length',
-      qualityXAxisLabel: 'Mapping Quality',
-
-      clinIobioUrls: ["http://localhost:4030", "http://clin.iobio.io"],
-      clinIobioUrl: null,
-
-      clinTooltip: {
-        genome_wide_coverage: {show: false, content: ''},
-        median_coverage:      {show: false, content: ''},
-        mapped_reads:         {show: false, content: ''},
-        duplicate_rate:       {show: false, content: ''}
-      },
-
-      // this is used to achieve a "natural sort". see
-      // https://stackoverflow.com/a/38641281/943814
-      sorter: new Intl.Collator(undefined, {
-        numeric: true,
-        sensitivity: 'base'
-      }),
-
-      coverageMean: 0,
-      bamCounter: 0
     }
 
   },
@@ -2074,26 +2013,14 @@ export default {
     }, 
     setPedData(pedigree){
       this.rawPedigree = pedigree; 
+    }, 
+    setCustomCaseSummary(caseSummary){
+      this.caseSummary = {}; 
+      this.caseSummary.name = caseSummary.name; 
+      this.caseSummary.description = caseSummary.description; 
     }
 
   }
-}
-
-function precisionRound(number, precision) {
-  var factor = Math.pow(10, precision);
-  return Math.round(number * factor) / factor;
-}
-
-const validRefs = {};
-for (let i = 1; i <= 22; i++) {
-  validRefs[i] = true;
-  validRefs['chr' + i] = true;
-}
-validRefs['X'] = true;
-validRefs['Y'] = true;
-
-function filterRef(ref) {
-  return validRefs[ref] === undefined;
 }
 
 </script>
