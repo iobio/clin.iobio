@@ -170,7 +170,7 @@
         </div>
      </div>
     </div>
-    <div v-if="customData && !statsReceived && !coverageStatsReceived">
+    <div v-if="customData && !coverageStatsReceived">
       <center> 
         <br>
         <v-progress-linear
@@ -387,14 +387,12 @@ export default {
 
   methods: {
     getBamStatsFromCustomData: function(modelInfos){
-      console.log("called getBamStatsFromCustomData")
       let promises = []; 
       for(let i=0; i<modelInfos.length; i++){
         promises.push(this.loadBamStats(modelInfos[i].bam, modelInfos[i].sample)); 
       }
     
       Promise.all(promises).then((results) => {
-        console.log("promise res: ", results)
         results.forEach(stats => {
           addToCoverageDataArray(stats) 
         })
@@ -419,13 +417,11 @@ export default {
       
     }, 
     loadBamStats: function(selectedBamURL, sample) {
-      console.log("selectedBamURL", selectedBamURL);
       return new Promise((resolve, reject) => {
         let bed = undefined;
         this.selectedBaiURL = undefined;
         let bam = {}
         if (selectedBamURL && selectedBamURL != '' ) {
-          // Props should be set by query params
           bam = new Bam(this.backendSource, this.selectedBamURL, {
             bai: this.selectedBaiURL
           });
@@ -579,7 +575,8 @@ export default {
       this.populateSampleIdsAndRelationships();
       this.populateSampleUuidArray();
       this.getVarCountFromCustomData(this.modelInfos); 
-      this.getBamStatsFromCustomData(this.modelInfos)
+      this.getBamStatsFromCustomData(this.modelInfos); 
+      this.populateReviewCaseBadges(); 
 
       this.pedigreeDataArray = this.buildPedFromTxt(this.pedigree);
 
@@ -714,30 +711,52 @@ export default {
     populateReviewCaseBadges(){
 
       let famName = "family";
+      //Temporary workaround for custom data.. 
+      if(this.customData){
+        if(this.modelInfos.length === 1){
+          famName = "individual"
+        }
+        else if(this.modelInfos.length === 2) {
+          famName = "duo"
+        }
+        else if(this.modelInfos.length === 3) {
+          famName = "trio"
+        }
+        else if (this.modelInfos.length > 3) {
+          famName = "family"
+        }
+        this.reviewCaseBadges = [{label: "samples (" + famName + ")", count: this.modelInfos.length  }];
+        if(this.badCoverage){
+          this.reviewCaseBadges.push({label:  "failed QC", count: this.badCoverageCount, class: 'failed'})
+        }
+        this.$emit('update', this.reviewCaseBadges);
+      }
+      else {
+        if(this.sampleIds.length === 1){
+          famName = "individual"
+        }
 
-      if(this.sampleIds.length === 1){
-        famName = "individual"
+        if(this.sampleIds.length === 2){
+          famName = "duo"
+        }
+        else if(this.sample)
+        if(this.sampleIds.length === 3){
+          famName = "trio"
+        }
+        else if(this.sampleIds.length === 4){
+          famName = "quad"
+        }
+        else if(this.sampleIds.length > 4){
+          famName = "family"
+        }
+        this.reviewCaseBadges = [{label: "samples (" + famName + ")", count: this.sampleIds.length  }];
+
+        if(this.badCoverage){
+          this.reviewCaseBadges.push({label:  "failed QC", count: this.badCoverageCount, class: 'failed'})
+        }
+        this.$emit('update', this.reviewCaseBadges);
       }
 
-      if(this.sampleIds.length === 2){
-        famName = "duo"
-      }
-      else if(this.sample)
-      if(this.sampleIds.length === 3){
-        famName = "trio"
-      }
-      else if(this.sampleIds.length === 4){
-        famName = "quad"
-      }
-      else if(this.sampleIds.length > 4){
-        famName = "family"
-      }
-      this.reviewCaseBadges = [{label: "samples (" + famName + ")", count: this.sampleIds.length  }];
-
-      if(this.badCoverage){
-        this.reviewCaseBadges.push({label:  "failed QC", count: this.badCoverageCount, class: 'failed'})
-      }
-      this.$emit('update', this.reviewCaseBadges);
     },
 
     goodCoverage(i){
