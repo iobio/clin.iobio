@@ -116,8 +116,8 @@
             </div>
           </div>
       </div>
-      
-    
+
+
     <div v-if="customData && statsReceived && coverageStatsReceived">
       <div style=" width: 100%; display: inline-flex; flex-direction: row; justify-content: space-around; padding-bottom: 10px">
         <div class="heading" style="margin-right: 90px">Sample</div> <div class="heading" style="margin-right: 90px; display:flex;flex-direction:row;justify-content:space-between">
@@ -171,7 +171,7 @@
      </div>
     </div>
     <div v-if="customData && !coverageStatsReceived">
-      <center> 
+      <center>
         <br>
         <v-progress-linear
           color="primary"
@@ -183,7 +183,7 @@
         <i> Loading stats ... </i>
 
       </center>
-    </div> 
+    </div>
 
 
 
@@ -256,7 +256,7 @@ import { Bam } from './bam.iobio.js';
 import Vue from 'vue';
 
 import Vcfiobio           from '../../models/Vcf.iobio'
-var vcfiobio = new Vcfiobio(); 
+var vcfiobio = new Vcfiobio();
 
 import analysisData  from '../../data/analysis.json'
 
@@ -306,10 +306,10 @@ export default {
       averageCoverage: null,
       statsReceived: false,
       coverageStatsReceived: false,
-      transition: 'scale-transition', 
+      transition: 'scale-transition',
       coverageHistosData: [],
       selectedBamURL: "http://s3.amazonaws.com/iobio/NA12878/NA12878.autsome.bam",
-      backendSource: "backend.iobio.io", 
+      backendSource: "backend.iobio.io",
       showFullURL: false,
 
       // default sampling values
@@ -387,18 +387,18 @@ export default {
 
   methods: {
     getBamStatsFromCustomData: function(modelInfos){
-      let promises = []; 
+      let promises = [];
       for(let i=0; i<modelInfos.length; i++){
-        promises.push(this.loadBamStats(modelInfos[i].bam, modelInfos[i].sample)); 
+        promises.push(this.loadBamStats(modelInfos[i].bam, modelInfos[i].sample));
       }
-    
+
       Promise.all(promises).then((results) => {
         results.forEach(stats => {
-          addToCoverageDataArray(stats) 
+          addToCoverageDataArray(stats)
         })
         toFormatCoverage()
       })
-      
+
       var addToCoverageDataArray = (stats) => {
         this.coverageHistosData.push({
           "id":"3261",
@@ -406,16 +406,16 @@ export default {
         })
         console.log("this.coverageHistosData", this.coverageHistosData)
       }
-      
+
       var toFormatCoverage = () => {
-        this.formatCoverageData(); 
+        this.formatCoverageData();
         this.populateDomains();
         this.populateCoverageMedians();
         this.populateBadCoverageCount();
         this.coverageStatsReceived = true
       }
-      
-    }, 
+
+    },
     loadBamStats: function(selectedBamURL, sample) {
       return new Promise((resolve, reject) => {
         let bed = undefined;
@@ -429,7 +429,7 @@ export default {
           this.goBam(this.region, resolve, reject, bam, bed);
         }
       })
-    }, 
+    },
 
     goBam: function (region, resolve, reject, bam, bed) {
       let refIndex = 0;
@@ -554,7 +554,7 @@ export default {
         else {
 
           this.sampleStats = data.coverage_hist;
-          this.bamCounter = this.bamCounter+1; 
+          this.bamCounter = this.bamCounter+1;
           console.log("sample sets data in review case", this.sampleStats)
           resolve(this.sampleStats)
         }
@@ -574,9 +574,9 @@ export default {
       this.populateSampleIdsFromCustom(this.pedigree);
       this.populateSampleIdsAndRelationships();
       this.populateSampleUuidArray();
-      this.getVarCountFromCustomData(this.modelInfos); 
-      this.getBamStatsFromCustomData(this.modelInfos); 
-      this.populateReviewCaseBadges(); 
+      this.getVarCountFromCustomData(this.modelInfos);
+      this.getBamStatsFromCustomData(this.modelInfos);
+      this.populateReviewCaseBadges();
 
       this.pedigreeDataArray = this.buildPedFromTxt(this.pedigree);
 
@@ -588,11 +588,9 @@ export default {
     },
 
     populateSampleIdsAndRelationships(){
-
       this.sampleIdsAndRelationships = [];
 
       let keys = Object.keys(this.sampleIdRelationshipMap);
-
 
       for(let i = 0; i < keys.length; i++){
         let key = keys[i]
@@ -604,7 +602,7 @@ export default {
       if(id === "0"){
         return 0;
       }
-      return this.sampleIds.indexOf(id.toString()) + 1000;
+      return this.sampleIds.indexOf(id) + 1000;
     },
 
     populateSampleUuidArray(){
@@ -619,8 +617,11 @@ export default {
       let txtCopy  = txt.slice();
         let pedLines = txtCopy.split('\n');
         for (let i = 0; i < pedLines.length; i++) {
-          let splitLine = pedLines[i].split(" ");
-          this.sampleIds.push(splitLine[1]);
+          let splitLine = pedLines[i].match(/\S+/g)
+          if(splitLine && splitLine[0] !== "") {
+            console.log("splitLine", splitLine);
+            this.sampleIds.push(splitLine[1]);
+          }
         }
     },
 
@@ -628,9 +629,9 @@ export default {
       let pedLines = txt.split('\n');
       let pedArr = [];
       for (let i = 0; i < pedLines.length; i++) {
-        let splitLine = pedLines[i].split(" ");
+        let splitLine = pedLines[i].match(/\S+/g);
 
-        if(splitLine[0] !== "") {
+        if(splitLine && splitLine[0] !== "") {
 
           let sample = {id: this.getUuidFromId(splitLine[1])};
           let pedigree = {
@@ -651,18 +652,18 @@ export default {
       }
       return pedArr;
     },
-    
+
     getVcfStats(refs, options, vcf, sample){
       return new Promise((resolve, reject) => {
         vcfiobio.getStats(refs, options, vcf, sample, function(data) {
           var obj = {
-            sample: sample, 
+            sample: sample,
             data: data.var_type
           }
           resolve(obj)
         });
       })
-    }, 
+    },
 
     getVarCountFromCustomData(modelInfos){
       var options = {
@@ -672,32 +673,32 @@ export default {
         "minFileSamplingSize": 1000000,
         "start": 1
       }
-      
-      var refs = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23]; 
-      let promises = []; 
+
+      var refs = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23];
+      let promises = [];
       for(let i=0; i<modelInfos.length; i++){
-        promises.push(this.getVcfStats(refs, options, modelInfos[i].vcf, modelInfos[i].sample))      
+        promises.push(this.getVcfStats(refs, options, modelInfos[i].vcf, modelInfos[i].sample))
       }
       Promise.all(promises).then((results)=>{
         results.forEach(stats => {
           addToVarCountsArray(stats.data, stats.sample)
         })
       })
-      
+
       var addToVarCountsArray = (stats, sample)=>{
         var indels = stats.INS + stats.DEL
-        this.statsReceived = true; 
+        this.statsReceived = true;
         this.varCountsArray.push({
-          "id":"3261", 
+          "id":"3261",
           "sample": sample,
           "counts": {
-            "SNP": stats.SNP, 
-            "INS": stats.INS, 
+            "SNP": stats.SNP,
+            "INS": stats.INS,
             "DEL": stats.DEL
           }
         })
-      } 
-    }, 
+      }
+    },
     populateBadCoverageCount(){
       this.badCoverageCount = 0;
       for(let i = 0; i < this.medianCoverages.length; i++){
@@ -711,7 +712,7 @@ export default {
     populateReviewCaseBadges(){
 
       let famName = "family";
-      //Temporary workaround for custom data.. 
+      //Temporary workaround for custom data..
       if(this.customData){
         if(this.modelInfos.length === 1){
           famName = "individual"
