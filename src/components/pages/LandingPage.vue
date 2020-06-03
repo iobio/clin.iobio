@@ -175,7 +175,7 @@
           </v-col>
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn color="primary" text>close</v-btn>
+            <v-btn color="primary" @click="closeCaseDescription" text>close</v-btn>
             <v-btn color="primary" @click="addCaseDescription">Next</v-btn>
           </v-card-actions>
 
@@ -192,7 +192,7 @@
        :showDialog="showFiles"
        @on-files-loaded="onFilesLoaded"
        @load-demo-data="onLoadDemoData"
-       @on-cancel="showFiles = false"
+       @on-cancel="backToCaseDescription"
        @isDemo="onIsDemo"
        @get-modeinfo-map="getModelInfoMap"
        :pageCounter="pageCounter"
@@ -218,7 +218,7 @@
           </v-col>
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn color="primary" text>Back</v-btn>
+            <v-btn color="primary" @click="backToFiles" text>Back</v-btn>
             <v-btn color="primary" @click="addGeneSet">Next</v-btn>
           </v-card-actions>
 
@@ -240,7 +240,7 @@
             </v-col>
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn color="primary" text>Back</v-btn>
+            <v-btn color="primary" @click="backToGeneSets" text>Back</v-btn>
             <v-btn :disabled="!pedData" color="primary" @click="addPedigree">Load</v-btn>
           </v-card-actions>
 
@@ -377,11 +377,20 @@ export default {
         description: this.caseDescription
       })
     },
+    closeCaseDescription: function() {
+      this.caseDescriptionDialog = false;
+      this.pageCounter = 1; 
+    }, 
     onFilesLoaded: function(analyzeAll) {
       this.showFiles = false;
       this.pageCounter = this.pageCounter+1; 
       this.geneSetDiialog = true
       this.$emit("on-files-loaded", analyzeAll);
+    },
+    backToCaseDescription: function(){
+      this.showFiles = false;
+      this.pageCounter = 1;
+      this.onShowFiles(); 
     },
     addGeneSet: function(){
       this.pageCounter = this.pageCounter+1;  
@@ -389,7 +398,12 @@ export default {
       this.geneSet = this.genes.split(",").map(gene => gene.trim().toUpperCase()); 
       this.$emit('setGeneSet', this.geneSet)
       this.pedigreeUploadDialog = true; 
-    }, 
+    },
+    backToFiles: function(){
+      this.geneSetDiialog = false;
+      this.pageCounter = 2;
+      this.showFiles = true; 
+    },  
     uploadedPedTxt(ped){
        this.pedData = ped; 
     }, 
@@ -398,6 +412,11 @@ export default {
       this.$emit("set-ped-data", this.pedData); 
       this.getStarted();
     },
+    backToGeneSets: function(){
+      this.pedigreeUploadDialog = false;
+      this.pageCounter = 3;
+      this.geneSetDiialog = true;
+    }, 
     onLoadDemoData: function(loadAction) {
       this.$emit("load-demo-data", loadAction);
     },
