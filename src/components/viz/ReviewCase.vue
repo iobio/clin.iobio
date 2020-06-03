@@ -367,7 +367,6 @@ export default {
   },
 
   mounted: function(){
-
     if(this.launchedFromMosaic) {
       this.formatVarCountsArray();
       this.convertPropsToData();
@@ -389,7 +388,7 @@ export default {
     getBamStatsFromCustomData: function(modelInfos){
       let promises = []; 
       for(let i=0; i<modelInfos.length; i++){
-        promises.push(this.loadBamStats(modelInfos[i].bam, modelInfos[i].sample)); 
+        promises.push(this.loadBamStats(modelInfos[i].bam, modelInfos[i].bai, modelInfos[i].sample)); 
       }
     
       Promise.all(promises).then((results) => {
@@ -404,7 +403,7 @@ export default {
           "id":"3261",
           "coverage": stats
         })
-        console.log("this.coverageHistosData", this.coverageHistosData)
+        // console.log("this.coverageHistosData", this.coverageHistosData)
       }
       
       var toFormatCoverage = () => {
@@ -416,14 +415,14 @@ export default {
       }
       
     }, 
-    loadBamStats: function(selectedBamURL, sample) {
+    loadBamStats: function(selectedBamURL, selectedBaiURL, sample) {
       return new Promise((resolve, reject) => {
         let bed = undefined;
-        this.selectedBaiURL = undefined;
+        // this.selectedBaiURL = undefined;
         let bam = {}
         if (selectedBamURL && selectedBamURL != '' ) {
-          bam = new Bam(this.backendSource, this.selectedBamURL, {
-            bai: this.selectedBaiURL
+          bam = new Bam(this.backendSource, selectedBamURL, {
+            bai: selectedBaiURL
           });
 
           this.goBam(this.region, resolve, reject, bam, bed);
@@ -555,7 +554,7 @@ export default {
 
           this.sampleStats = data.coverage_hist;
           this.bamCounter = this.bamCounter+1; 
-          console.log("sample sets data in review case", this.sampleStats)
+          // console.log("sample sets data in review case", this.sampleStats)
           resolve(this.sampleStats)
         }
       }.bind(this), options);
@@ -652,9 +651,9 @@ export default {
       return pedArr;
     },
     
-    getVcfStats(refs, options, vcf, sample){
+    getVcfStats(refs, options, vcf, tbi, sample){
       return new Promise((resolve, reject) => {
-        vcfiobio.getStats(refs, options, vcf, sample, function(data) {
+        vcfiobio.getStats(refs, options, vcf, tbi, sample, function(data) {
           var obj = {
             sample: sample, 
             data: data.var_type
@@ -676,7 +675,7 @@ export default {
       var refs = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23]; 
       let promises = []; 
       for(let i=0; i<modelInfos.length; i++){
-        promises.push(this.getVcfStats(refs, options, modelInfos[i].vcf, modelInfos[i].sample))      
+        promises.push(this.getVcfStats(refs, options, modelInfos[i].vcf, modelInfos[i].tbi, modelInfos[i].sample))      
       }
       Promise.all(promises).then((results)=>{
         results.forEach(stats => {
@@ -1001,7 +1000,7 @@ export default {
         const coverageArr = self.formatCoverageArray(d.coverage);
         self.coverageDataArray.push(coverageArr);
       });
-      console.log("coverageDataArray", self.coverageDataArray)
+      // console.log("coverageDataArray", self.coverageDataArray)
     },
 
     assignProbandToEachSample(){

@@ -404,27 +404,23 @@ export default {
     onIsDemo: function(bool){
       this.$emit("isDemo", bool);
     },
-    getModelInfoMap: function(modelInfoMap, vcfUrls){
-      var bamUrls = {
-        'proband': 'https://s3.amazonaws.com/iobio/samples/bam/NA12878.exome.bam',
-        'mother':  'https://s3.amazonaws.com/iobio/samples/bam/NA12892.exome.bam',
-        'father':  'https://s3.amazonaws.com/iobio/samples/bam/NA12891.exome.bam',
-        'sibling': 'https://s3.amazonaws.com/iobio/samples/bam/NA12877.exome.bam'
-      }
+    getModelInfoMap: function(modelInfoMap, vcfUrls, tbiUrls, bamUrls, baiUrls){
       for(var model in modelInfoMap){
         var obj = {}; 
         obj.relationship = model 
-        obj.affectedStatus = "affected" 
+        obj.affectedStatus = modelInfoMap[model].isAffected
         obj.name = modelInfoMap[model].name 
         obj.sample = modelInfoMap[model].sample 
-        obj.sex = "female" 
+        obj.sex = "" 
         var vcf = modelInfoMap[model].vcf !== undefined ? modelInfoMap[model].vcf : vcfUrls[model];
-        obj.vcf = vcf; 
-        obj.tbi = null, 
-        obj.bam = bamUrls[model]; 
-        obj.bai = null
+        obj.vcf = vcf 
+        var tbi = modelInfoMap[model].tbi !== undefined ? modelInfoMap[model].tbi : tbiUrls[model];
+        obj.tbi = tbi 
+        obj.bam = bamUrls[model]
+        obj.bai = baiUrls[model]
         this.customModelInfos.push(obj)
       }
+      console.log("this.customModelInfos", this.customModelInfos)
       this.$emit("custom-model-info",this.customModelInfos); 
     }, 
     getStarted(){

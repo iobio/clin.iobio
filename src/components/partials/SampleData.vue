@@ -152,7 +152,7 @@ export default {
               self.modelInfo.model.sampleName =  null;
             }
             // self.$emit("vcfUrl-emit", self.modelInfo.relationship, vcfUrl)
-            self.$emit("samples-available", self.modelInfo.relationship, self.samples, vcfUrl);
+            self.$emit("samples-available", self.modelInfo.relationship, self.samples, vcfUrl, tbiUrl);
 
           }
           self.$emit("sample-data-changed");
@@ -211,6 +211,8 @@ export default {
     },
     onBamUrlEntered: function(bamUrl, baiUrl) {
       let self = this;
+      self.$emit("bam-urls", self.modelInfo.relationship, bamUrl, baiUrl);
+
       if (self.modelInfo && self.modelInfo.model) {
         self.modelInfo.model.onBamUrlEntered(bamUrl, baiUrl, function(success) {
           if (success) {

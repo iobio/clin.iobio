@@ -997,20 +997,14 @@ export default function vcfiobio(theGlobalApp) {
 
   }
   
-  exports.getStats = function(refs, options, vcf, sample, callback) {
-    // this.vcfURL = "https://s3.amazonaws.com/iobio/samples/vcf/platinum-exome.vcf.gz"
-    this.vcfURL = vcf; 
-    // console.log("called getStats")
-    // console.log("vcfURL", this.vcfURL)
-    // console.log("refData", this.refData)
-    // console.log("refs", refs)
-    // console.log("options", options)
+  exports.getStats = function(refs, options, vcf, tbi, sample, callback) {
+    this.vcfURL = vcf;
+    this.tbiURL = tbi;
     this._getRemoteStats(refs, options, sample, callback);
   }
   
   exports._getRemoteStats = function(refs, options, sample, callback) {
     var me = this;
-    // console.log("called _getRemoteStats");
 
     me._getRegions(refs, options);
 
@@ -1040,8 +1034,6 @@ export default function vcfiobio(theGlobalApp) {
     }
     samples = []; 
     samples.push(sample)
-    // samples = ["NA12878"]
-    // console.log("samples", samples)
     
     if (samples && samples.length > 0) {
       var sampleNameFile = new Blob([samples.join("\n")]);

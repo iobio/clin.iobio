@@ -186,12 +186,13 @@
 
                   <sample-data
                     class="mt-5"
-                   ref="sampleDataRef"
-                   v-if="modelInfoMap && modelInfoMap[rel] && Object.keys(modelInfoMap[rel]).length > 0"
-                   :modelInfo="modelInfoMap[rel]"
-                   :separateUrlForIndex="separateUrlForIndex"
-                   @sample-data-changed="validate"
-                   @samples-available="onSamplesAvailable"
+                    ref="sampleDataRef"
+                    v-if="modelInfoMap && modelInfoMap[rel] && Object.keys(modelInfoMap[rel]).length > 0"
+                    :modelInfo="modelInfoMap[rel]"
+                    :separateUrlForIndex="separateUrlForIndex"
+                    @sample-data-changed="validate"
+                    @samples-available="onSamplesAvailable"
+                    @bam-urls="setBamUrls"
                   >
                 </sample-data>
                </v-flex>
@@ -311,7 +312,25 @@ export default {
         mother: '', 
         father: '',
         sibling: ''
-      }
+      }, 
+      tbiUrls: {
+        proband: '', 
+        mother: '', 
+        father: '',
+        sibling: ''
+      },
+      bamUrls: {
+        proband: '', 
+        mother: '', 
+        father: '',
+        sibling: ''
+      }, 
+      baiUrls: {
+        proband: '', 
+        mother: '', 
+        father: '',
+        sibling: ''
+      }, 
     }
   },
   watch: {
@@ -337,7 +356,7 @@ export default {
       // console.log("vcfUrls", self.vcfUrls)
       // console.log("this.modelInfoMap on load", this.modelInfoMap)
 
-      self.$emit("get-modeinfo-map", self.modelInfoMap, self.vcfUrls); 
+      self.$emit("get-modeinfo-map", self.modelInfoMap, self.vcfUrls, self.tbiUrls, self.bamUrls, self.baiUrls); 
       
       self.cohortModel.mode = self.mode;
       self.cohortModel.genomeBuildHelper.setCurrentBuild(self.buildName);
@@ -455,9 +474,14 @@ export default {
         }
       }
     },
-    onSamplesAvailable: function(relationship, samples, vcf) {
+    setBamUrls: function(relationship, bam, bai){
+      this.bamUrls[relationship] = bam; 
+      this.baiUrls[relationship] = bai; 
+    }, 
+    onSamplesAvailable: function(relationship, samples, vcf, tbiUrl) {
       // console.log("onSamplesAvailable", relationship , " samples : ", samples)
       this.vcfUrls[relationship] = vcf; 
+      this.tbiUrls[relationship] = tbiUrl; 
       // console.log("this.vcfUrls", this.vcfUrls)
       if (relationship == 'proband') {
         this.probandSamples = samples;
