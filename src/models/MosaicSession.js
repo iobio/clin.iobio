@@ -3,7 +3,7 @@ export default class MosaicSession {
     this.vcf = null;
     this.samples = null;
     this.url = null;
-    this.apiVersion =  '/apiv1';
+    this.apiVersion =  '/api/v1';
     this.client_application_id = null;
     this.variantSetTxtCols = [
       "chrom",
@@ -57,7 +57,7 @@ export default class MosaicSession {
 
           let pedigree    = isPedigree ? data.pedigree : {'proband': data.proband};
           let rawPedigree = data.rawPedigree;
-   
+
           // Let's get the proband info first
           let probandSample = isPedigree ? pedigree.proband : data.proband;
           self.promiseGetFileMapForSample(projectId, probandSample, 'proband').then(data => {
@@ -152,7 +152,7 @@ export default class MosaicSession {
 
           })
         })
-              
+
       })
       .catch(error => {
         reject(error);
