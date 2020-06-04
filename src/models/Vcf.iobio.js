@@ -15,7 +15,6 @@ import { createHoster } from 'fibridge-host';
 export default function vcfiobio(theGlobalApp) {
   var backendPath = "backend.iobio.io";
   var apiClient = new iobioApiClient.Client(backendPath, { secure: true });
-  console.log("apiClient", apiClient)
   
   var globalApp = theGlobalApp;
 

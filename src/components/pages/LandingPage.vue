@@ -163,7 +163,7 @@
           </v-card-title>
           <v-card-text>
             <v-col cols="12" md="12">
-              <label>Title </label>
+              <label>Project Name </label>
               <v-text-field
                 label="Solo"
                 placeholder="WGS analysis"
@@ -171,7 +171,7 @@
                 v-model="caseTitle"
               ></v-text-field>
               
-              <label>Description </label>
+              <label>Project Description </label>
               <v-textarea
                 solo auto-grow
                 name="input-7-4"
