@@ -257,6 +257,7 @@
               <PedFileReader class="uploader" @load-ped-file="uploadedPedTxt($event)"></PedFileReader>
             </v-col>
           <v-card-actions>
+            <v-btn color="primary" @click="saveAsConfig">Save as config</v-btn>
             <v-spacer></v-spacer>
             <v-btn color="primary" @click="backToGeneSets" text>Back</v-btn>
             <v-btn :disabled="!pedData" color="primary" @click="addPedigree">Load</v-btn>
@@ -480,6 +481,10 @@ export default {
       this.geneSetDiialog = false; 
       this.pedigreeUploadDialog = false;
       this.pageCounter = 1; 
+    }, 
+    saveAsConfig: function(){
+      this.$emit("set-ped-data", this.pedData);
+      bus.$emit("save-input-config"); 
     }
   },
   mounted: function() {

@@ -504,6 +504,9 @@ export default {
         this.onAuthenticated();
       }, 2000)
     })
+    bus.$on("save-input-config", ()=>{
+      this.saveAsInputConfig(); 
+    })
   },
 
   computed: {
@@ -1863,7 +1866,19 @@ export default {
       this.caseSummary = {}; 
       this.caseSummary.name = caseSummary.name; 
       this.caseSummary.description = caseSummary.description; 
-    }
+    }, 
+    saveAsInputConfig(){
+      var configObj = {
+        "caseSummary": this.caseSummary,
+        "modelInfos": this.modelInfos,
+        "customGeneSet": this.customGeneSet,
+        "rawPedigree": this.rawPedigree        
+      }
+      console.log("obj", configObj);
+      let configData = JSON.stringify(configObj);
+      const jsonBlob = new Blob([configData], { type: "application/json" }); 
+      saveAs(jsonBlob, "clin-input-config.json")
+    },
 
   }
 }
