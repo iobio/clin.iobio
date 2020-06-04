@@ -154,7 +154,13 @@
           <CustomDataStepper
             :pageCounter="pageCounter">
           </CustomDataStepper>
-          <v-card-title class="headline">Case summary</v-card-title>
+          <v-card-title class="headline">
+            Case summary
+            <v-spacer></v-spacer>
+            <span>
+              <v-btn text icon @click="closeUploadDataDialogs"><v-icon>close</v-icon></v-btn>
+            </span>
+          </v-card-title>
           <v-card-text>
             <v-col cols="12" md="12">
               <label>Title </label>
@@ -206,7 +212,13 @@
           <CustomDataStepper
             :pageCounter="pageCounter">
           </CustomDataStepper>
-          <v-card-title class="headline">Gene Sets</v-card-title>
+          <v-card-title class="headline">
+            Gene Sets
+            <v-spacer></v-spacer>
+            <span>
+              <v-btn text icon @click="closeUploadDataDialogs"><v-icon>close</v-icon></v-btn>
+            </span>
+          </v-card-title>
           <v-card-text>
             <v-col cols="12" md="12">
               <v-textarea
@@ -219,7 +231,7 @@
           <v-card-actions>
             <v-spacer></v-spacer>
             <v-btn color="primary" @click="backToFiles" text>Back</v-btn>
-            <v-btn color="primary" @click="addGeneSet">Next</v-btn>
+            <v-btn color="primary" @click="addGeneSet" :disabled="genes.length<3">Next</v-btn>
           </v-card-actions>
 
           </v-card-text>
@@ -233,7 +245,13 @@
           <CustomDataStepper
             :pageCounter="pageCounter">
           </CustomDataStepper>
-          <v-card-title class="headline">Pedigree upload</v-card-title>
+          <v-card-title class="headline">
+            Pedigree upload
+            <v-spacer></v-spacer>
+            <span>
+              <v-btn text icon @click="closeUploadDataDialogs"><v-icon>close</v-icon></v-btn>
+            </span>
+          </v-card-title>
           <v-card-text>
             <v-col cols="12" md="12">
               <PedFileReader class="uploader" @load-ped-file="uploadedPedTxt($event)"></PedFileReader>
@@ -351,7 +369,7 @@ export default {
           Commercial use of clin.iobio is licensed through Frameshift Genomics. Please contact Frameshift at  <a href="mailto:admin@frameshift.io" target="_top">admin@frameshift.io</a> to discuss any commercial use of this tool.
           `
       },
-      geneSet:['PRX'],
+      geneSet:[],
       geneSetDiialog: false,
       genes: '',
       customModelInfos: [],
@@ -456,10 +474,20 @@ export default {
     onShowTermsOfService: function(){
       this.showTermsOfService = true;
     },
+    closeUploadDataDialogs: function(){
+      this.caseDescriptionDialog = false; 
+      this.showFiles = false; 
+      this.geneSetDiialog = false; 
+      this.pedigreeUploadDialog = false;
+      this.pageCounter = 1; 
+    }
   },
   mounted: function() {
     bus.$on("close_dialog", ()=>{
       this.showTermsOfService = false; 
+    })
+    bus.$on("close-files-dialog", ()=>{
+      this.closeUploadDataDialogs(); 
     })
   },
   watch: {

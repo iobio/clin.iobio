@@ -69,35 +69,6 @@
       display: inline-block
       width: 100px
 
-  button
-
-    height: 24px !important
-    min-width: 100px
-
-    &.action-button
-
-      height: 30px !important
-      min-width: 77px
-      color: $app-button-color
-
-      &.cancer-button
-        color: $text-color
-
-    &.load-button
-      padding: 0px
-      height: 30px !important
-      background-color: $app-button-color !important
-      color: white !important
-      min-width: 100px !important
-      margin: 0px
-
-      &.disabled
-        opacity: 0.20 !important
-
-      &.v-btn--disabled
-        opacity: 0.20 !important
-
-
   .v-text-field__slot,
   .v-select__slot
     input
@@ -122,27 +93,33 @@
 
           <v-form id="files-form">
 
-            <v-layout row nowrap class="mt-0">
-             <v-card-title class="headline">Files</v-card-title>
-            </v-layout>
+            <!-- <v-layout row nowrap class="mt-0"> -->
+             <v-card-title class="headline">
+                <span style="margin-left: -30px; font-weight:500">Files</span>
+                <v-spacer></v-spacer>
+                <span>
+                  <v-btn text @click="closeFilesDialog" icon><v-icon>close</v-icon></v-btn>
+                </span>
+             </v-card-title>
+            <!-- </v-layout> -->
 
 
-            <v-layout row nowrap class="mt-0">
+            <v-layout row nowrap class="mt-0" style="padding-right:32px">
 
-              <v-flex class="mt-0" style="max-width: 90px;margin-right: 10px;" >
+              <v-flex class="mt-0" style="max-width: 160px;margin-left: 10px;" >
                   <v-radio-group v-model="mode" @change="onModeChanged"  hide-details column>
                         <v-radio color="primary" label="Single"  value="single"></v-radio>
                         <v-radio color="primary" label="Trio"    value="trio"></v-radio>
                   </v-radio-group>
               </v-flex>
 
-              <v-flex style="width:90px;margin-right:10px" class="mt-2" >
+              <v-flex style="width:90px;margin-right:10px" >
                   <v-switch color="primary" label="Separate URL for index" hide-details v-model="separateUrlForIndex">
                   </v-switch>
               </v-flex>
 
 
-              <v-flex style="max-width:160px" >
+              <v-flex style="max-width:190px" >
                 <v-select
                   label="Species"
                   hide-details
@@ -267,6 +244,7 @@
 
 import SampleData          from '../partials/SampleData.vue'
 import CustomDataStepper   from '../partials/CustomDataStepper.vue'
+import { bus }             from  '../../main'
 
 export default {
   name: 'files-dialog',
@@ -351,9 +329,7 @@ export default {
     onLoad: function() {
       let self = this;
       self.inProgress = true;
-      // console.log("self.mode", self.mode)
       // console.log("self.modelInfo", self.modelInfo)
-      // console.log("vcfUrls", self.vcfUrls)
       // console.log("this.modelInfoMap on load", this.modelInfoMap)
 
       self.$emit("get-modeinfo-map", self.modelInfoMap, self.vcfUrls, self.tbiUrls, self.bamUrls, self.baiUrls); 
@@ -594,6 +570,10 @@ export default {
       delete self.modelInfoMap.father;
       self.cohortModel.removeSample("mother");
       self.cohortModel.removeSample("father");
+    }, 
+    closeFilesDialog: function() {
+      this.showFilesDialog = false; 
+      bus.$emit("close-files-dialog")
     }
   },
   computed: {
