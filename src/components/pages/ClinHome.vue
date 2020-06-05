@@ -125,11 +125,6 @@ $horizontal-dashboard-height: 140px
 
 <template>
 <div id="application-content" :class="{'workflow-new': newWorkflow ? true : false}">
-  <!-- <v-btn color="success" @click="$refs.inputUpload.click()">Success</v-btn>
-  <input v-show="false" ref="inputUpload" type="file" @change="importSavedInputConfig"  accept=".json,"> -->
-
-  <!-- <input type="file" @change="importSavedInputConfig"  accept=".json," style="color:transparent;" onchange="this.style.color = 'black';"  size="35"> -->
-
   <landing-page 
     v-if="!launchedFromMosaic && showLandingPage"
     :cohortModel="cohortModel"
