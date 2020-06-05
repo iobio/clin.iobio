@@ -1,5 +1,20 @@
 <template>
   <div>
+    <v-file-input 
+      @change="importSavedInputConfig"  
+      accept=".json,"
+      label="Ped file input" 
+      v-model="savedInputConfig" 
+      show-size counter>
+      <template v-slot:selection="{ text }">
+        <v-chip
+          label
+          color="primary"
+        >
+          {{ text }}
+        </v-chip>
+      </template>
+    </v-file-input>
     <v-app-bar
       color="white"
       light
@@ -380,7 +395,8 @@ export default {
       pedData: null,
       caseDescriptionDialog: false,
       caseDescription: '', 
-      caseTitle: '', 
+      caseTitle: '',
+      savedInputConfig: null, 
     }
   },
   methods:  {
@@ -485,6 +501,14 @@ export default {
     saveAsConfig: function(){
       this.$emit("set-ped-data", this.pedData);
       bus.$emit("save-input-config"); 
+    }, 
+    importSavedInputConfig(ev) {
+      var reader = new FileReader();
+      reader.readAsText(this.savedInputConfig);
+      reader.onload = () => {
+        console.log("reader result", reader.result);
+        this.$emit("load-saved-input-config", reader.result)
+      }
     }
   },
   mounted: function() {

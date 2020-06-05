@@ -125,13 +125,19 @@ $horizontal-dashboard-height: 140px
 
 <template>
 <div id="application-content" :class="{'workflow-new': newWorkflow ? true : false}">
+  <!-- <v-btn color="success" @click="$refs.inputUpload.click()">Success</v-btn>
+  <input v-show="false" ref="inputUpload" type="file" @change="importSavedInputConfig"  accept=".json,"> -->
+
+  <!-- <input type="file" @change="importSavedInputConfig"  accept=".json," style="color:transparent;" onchange="this.style.color = 'black';"  size="35"> -->
+
   <landing-page 
     v-if="!launchedFromMosaic && showLandingPage"
     :cohortModel="cohortModel"
     @custom-model-info="customModelInfo"
     @setGeneSet="setGeneSet($event)"
     @set-ped-data="setPedData($event)"
-    @set-custom-case-summary="setCustomCaseSummary($event)">
+    @set-custom-case-summary="setCustomCaseSummary($event)"
+    @load-saved-input-config="loadSavedInputConfig($event)">
   </landing-page>
   <navigation v-if="!showLandingPage && !showSplash && isAuthenticated  && workflow && analysis"
    :caseSummary="caseSummary"
@@ -1879,7 +1885,33 @@ export default {
       const jsonBlob = new Blob([configData], { type: "application/json" }); 
       saveAs(jsonBlob, "clin-input-config.json")
     },
+    importSavedInputConfig(ev){
+      const file = ev.target.files[0];
+      const reader = new FileReader();
+      reader.onload = e => {
+        console.log("e.target.result;", e.target.result); 
+        return e.target.result;
+      }
+      reader.readAsText(file);
+    },
+    loadSavedInputConfig(data){
+      let customData = JSON.parse(data);
+      console.log(customData)
 
+      this.caseSummary = {};
+      this.caseSummary.name = customData.caseSummary.name; 
+      this.caseSummary.description = customData.caseSummary.description; 
+      this.rawPedigree = customData.rawPedigree; 
+      this.customGeneSet = customData.customGeneSet; 
+      this.modelInfos = customData.modelInfos; 
+      this.customData = true;
+      
+      this.showLandingPage = false;
+      this.showSplash = true;
+      setTimeout(()=>{
+        this.onAuthenticated();
+      }, 2000)
+    }
   }
 }
 
