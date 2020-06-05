@@ -12,9 +12,9 @@
 
       <v-spacer></v-spacer>
 
-      <v-btn class="ml-2 mr-2" outlined color="rgb(69, 69, 69)">
+      <v-btn @click.stop="videoDialog = true" class="ml-2 mr-2" outlined color="rgb(69, 69, 69)">
         <v-icon>play_circle_outline</v-icon>
-        <span class="ml-1" @click.stop="videoDialog = true">Watch video</span>
+        <span class="ml-1">Watch video</span>
       </v-btn>
       
       <v-btn @click="onShowTermsOfService" color="rgb(69, 69, 69)" class="ml-4" icon title="Terms of Service">
@@ -324,7 +324,15 @@
               <PedFileReader class="uploader" @load-ped-file="uploadedPedTxt($event)"></PedFileReader>
             </v-col>
           <v-card-actions>
-            <v-btn color="primary" @click="saveAsConfig">Save as config</v-btn>
+            <v-tooltip top>
+              <template v-slot:activator="{ on }">
+                <v-btn :disabled="!pedData" v-on="on" color="primary" @click="saveAsConfig" outlined>
+                  <v-icon>save</v-icon>
+                  <span class="ml-1">Save configuration</span>
+                </v-btn>
+              </template>
+              <span>Download the entered information in a config file for easier accees in future</span>
+            </v-tooltip>
             <v-spacer></v-spacer>
             <v-btn color="primary" @click="backToGeneSets" text>Back</v-btn>
             <v-btn :disabled="!pedData" color="primary" @click="addPedigree">Load</v-btn>
@@ -501,7 +509,7 @@ export default {
       this.showFiles = true; 
     },  
     uploadedPedTxt(ped){
-       this.pedData = ped; 
+      this.pedData = ped; 
     }, 
     addPedigree(){
       this.pedigreeUploadDialog = false; 
