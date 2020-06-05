@@ -107,10 +107,14 @@ class SampleModel {
 
   isReadyToLoad() {
     if (this.isVcfReadyToLoad()) {
-      return this.isSampleSelected();
-    } else {
-      return this.isBamReadyToLoad();
+      return this.isSampleSelected() && this.isBamReadyToLoad();
     }
+    //Use the code below if bam or vcf files need to be optional: 
+    // if (this.isVcfReadyToLoad()) {
+    //   return this.isSampleSelected();
+    // } else {
+    //   return this.isBamReadyToLoad();
+    // }
   }
 
   isBamReadyToLoad() {
