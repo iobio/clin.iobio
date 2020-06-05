@@ -1894,10 +1894,7 @@ export default {
       }
       reader.readAsText(file);
     },
-    loadSavedInputConfig(data){
-      let customData = JSON.parse(data);
-      console.log(customData)
-
+    loadSavedInputConfig(customData){
       this.caseSummary = {};
       this.caseSummary.name = customData.caseSummary.name; 
       this.caseSummary.description = customData.caseSummary.description; 
