@@ -12,9 +12,9 @@
 
       <v-spacer></v-spacer>
 
-      <v-btn class="ml-2 mr-2" outlined color="rgb(69, 69, 69)">
+      <v-btn @click.stop="videoDialog = true" class="ml-2 mr-2" outlined color="rgb(69, 69, 69)">
         <v-icon>play_circle_outline</v-icon>
-        <span class="ml-1" @click.stop="videoDialog = true">Watch video</span>
+        <span class="ml-1">Watch video</span>
       </v-btn>
       
       <v-btn @click="onShowTermsOfService" color="rgb(69, 69, 69)" class="ml-4" icon title="Terms of Service">
@@ -46,9 +46,9 @@
                         <v-icon>explore</v-icon> 
                         <span class="ml-2">Try it with demo data</span>
                       </v-btn>
-                      <v-btn color="white" outlined x-large @click="onShowFiles" class="mt-8 ml-4">
+                      <v-btn color="white" outlined x-large @click="inputOptionsDialog=true" class="mt-8 ml-4">
                         <v-icon>fas fa-upload</v-icon> 
-                        <span class="ml-2">Upload data</span>
+                        <span class="ml-2">Load data</span>
                       </v-btn>
                     </v-flex>
                   </v-flex>
@@ -147,6 +147,73 @@
         :content="terms.content"
         id="TermsDialogLandingPage">
       </NavBarDialog>
+      
+      <!-- input options dialog -->
+      <v-dialog
+        v-model="inputOptionsDialog"
+        scrollable
+        :overlay="false"
+        max-width="450px"
+      >
+        <v-card class="full-width" style="height: auto;overflow-y:scroll">
+          <v-card-title primary-title>
+            
+          </v-card-title>
+          <v-card-text>
+            <div class="container">
+              <v-btn color="primary" block outlined x-large @click="onShowFiles">
+                <v-icon>input</v-icon>
+                <span class="ml-2">Enter data</span>
+              </v-btn>
+              <v-divider></v-divider>
+              <v-btn color="primary" block outlined x-large @click="importConfiguration">
+                <v-icon>folder_open</v-icon>
+                <span class="ml-2">Upload configuration</span>
+              </v-btn>
+            </div>
+          </v-card-text>
+        </v-card>
+      </v-dialog>
+      <!-- end input options dialog -->
+      
+      <!-- import configuration dialog -->
+      <v-dialog
+        v-model="importConfigurationDialog"
+        scrollable
+        :overlay="false"
+        max-width="890"
+      >
+        <v-card class="full-width" style="height: auto;overflow-y:scroll">
+          <v-card-title primary-title>
+            
+          </v-card-title>
+          <v-card-text>
+            <div class="container">
+              <v-file-input 
+                @change="importSavedInputConfig"  
+                accept=".json,"
+                label="Saved input configuration" 
+                v-model="savedInputConfig" 
+                show-size counter>
+                <template v-slot:selection="{ text }">
+                  <v-chip
+                    label
+                    color="primary"
+                  >
+                    {{ text }}
+                  </v-chip>
+                </template>
+              </v-file-input>
+            </div>
+          </v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="primary" @click="savedInputConfig=false" text>close</v-btn>
+            <v-btn color="primary" @click="loadFromConfigInput" :disabled="!validateSavedConfig && savedInputConfig==null">Load</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+      <!-- end input configuration dialog -->
       
       <!-- caseDescriptionDialog -->
       <v-dialog v-model="caseDescriptionDialog" v-if="pageCounter===1" persistent max-width="890">
@@ -257,6 +324,15 @@
               <PedFileReader class="uploader" @load-ped-file="uploadedPedTxt($event)"></PedFileReader>
             </v-col>
           <v-card-actions>
+            <v-tooltip top>
+              <template v-slot:activator="{ on }">
+                <v-btn :disabled="!pedData" v-on="on" color="primary" @click="saveAsConfig" outlined>
+                  <v-icon>save</v-icon>
+                  <span class="ml-1">Save configuration</span>
+                </v-btn>
+              </template>
+              <span>Download the entered information in a config file for easier accees in future</span>
+            </v-tooltip>
             <v-spacer></v-spacer>
             <v-btn color="primary" @click="backToGeneSets" text>Back</v-btn>
             <v-btn :disabled="!pedData" color="primary" @click="addPedigree">Load</v-btn>
@@ -379,12 +455,22 @@ export default {
       pedData: null,
       caseDescriptionDialog: false,
       caseDescription: '', 
-      caseTitle: '', 
+      caseTitle: '',
+      savedInputConfig: null,
+      inputOptionsDialog: false,
+      importConfigurationDialog: false,
+      validateSavedConfig: false,
+      configCustomData: {}
     }
   },
   methods:  {
     onShowFiles: function() {
+      this.inputOptionsDialog = false;
       this.caseDescriptionDialog = true;
+    },
+    importConfiguration: function(){
+      this.inputOptionsDialog = false;
+      this.importConfigurationDialog = true;
     },
     addCaseDescription: function() {
       this.caseDescriptionDialog = false;
@@ -423,7 +509,7 @@ export default {
       this.showFiles = true; 
     },  
     uploadedPedTxt(ped){
-       this.pedData = ped; 
+      this.pedData = ped; 
     }, 
     addPedigree(){
       this.pedigreeUploadDialog = false; 
@@ -480,6 +566,29 @@ export default {
       this.geneSetDiialog = false; 
       this.pedigreeUploadDialog = false;
       this.pageCounter = 1; 
+    }, 
+    saveAsConfig: function(){
+      this.$emit("set-ped-data", this.pedData);
+      bus.$emit("save-input-config"); 
+    }, 
+    importSavedInputConfig(ev) {
+      var reader = new FileReader();
+      if(this.savedInputConfig){
+        reader.readAsText(this.savedInputConfig);
+        reader.onload = () => {
+          let data = reader.result;
+          this.configCustomData = JSON.parse(data);
+          if(typeof this.configCustomData === "object"){
+            this.validateSavedConfig = true; 
+          }
+        }
+      }
+      else {
+        this.validateSavedConfig = false;
+      }
+    },
+    loadFromConfigInput(){
+      this.$emit("load-saved-input-config", this.configCustomData)
     }
   },
   mounted: function() {

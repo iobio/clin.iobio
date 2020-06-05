@@ -131,7 +131,8 @@ $horizontal-dashboard-height: 140px
     @custom-model-info="customModelInfo"
     @setGeneSet="setGeneSet($event)"
     @set-ped-data="setPedData($event)"
-    @set-custom-case-summary="setCustomCaseSummary($event)">
+    @set-custom-case-summary="setCustomCaseSummary($event)"
+    @load-saved-input-config="loadSavedInputConfig($event)">
   </landing-page>
   <navigation v-if="!showLandingPage && !showSplash && isAuthenticated  && workflow && analysis"
    :caseSummary="caseSummary"
@@ -503,6 +504,9 @@ export default {
       setTimeout(()=>{
         this.onAuthenticated();
       }, 2000)
+    })
+    bus.$on("save-input-config", ()=>{
+      this.saveAsInputConfig(); 
     })
   },
 
@@ -1863,8 +1867,43 @@ export default {
       this.caseSummary = {}; 
       this.caseSummary.name = caseSummary.name; 
       this.caseSummary.description = caseSummary.description; 
+    }, 
+    saveAsInputConfig(){
+      var configObj = {
+        "caseSummary": this.caseSummary,
+        "modelInfos": this.modelInfos,
+        "customGeneSet": this.customGeneSet,
+        "rawPedigree": this.rawPedigree        
+      }
+      console.log("obj", configObj);
+      let configData = JSON.stringify(configObj);
+      const jsonBlob = new Blob([configData], { type: "application/json" }); 
+      saveAs(jsonBlob, "clin-input-config.json")
+    },
+    importSavedInputConfig(ev){
+      const file = ev.target.files[0];
+      const reader = new FileReader();
+      reader.onload = e => {
+        console.log("e.target.result;", e.target.result); 
+        return e.target.result;
+      }
+      reader.readAsText(file);
+    },
+    loadSavedInputConfig(customData){
+      this.caseSummary = {};
+      this.caseSummary.name = customData.caseSummary.name; 
+      this.caseSummary.description = customData.caseSummary.description; 
+      this.rawPedigree = customData.rawPedigree; 
+      this.customGeneSet = customData.customGeneSet; 
+      this.modelInfos = customData.modelInfos; 
+      this.customData = true;
+      
+      this.showLandingPage = false;
+      this.showSplash = true;
+      setTimeout(()=>{
+        this.onAuthenticated();
+      }, 2000)
     }
-
   }
 }
 

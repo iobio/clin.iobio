@@ -30,8 +30,13 @@
     methods: {
       loadTextFromFile(ev) {
         var reader = new FileReader();
-        reader.readAsText(this.pedData);
-        reader.onload = () => this.$emit("load-ped-file", reader.result)
+        if(this.pedData){
+          reader.readAsText(this.pedData);
+          reader.onload = () => this.$emit("load-ped-file", reader.result)
+        }
+        else {
+          this.$emit("load-ped-file", this.pedData);
+        }
       }
     }
   };
