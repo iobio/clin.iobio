@@ -44,11 +44,11 @@
                       <br>
                       <v-btn color="white" outlined x-large @click="getStarted" class="mt-8">
                         <v-icon>explore</v-icon> 
-                        <span class="ml-2">Try it with demo data</span>
+                        <span class="ml-2">RUN WITH DEMO DATA</span>
                       </v-btn>
                       <v-btn color="white" outlined x-large @click="inputOptionsDialog=true" class="mt-8 ml-4">
                         <v-icon>fas fa-upload</v-icon> 
-                        <span class="ml-2">Load data</span>
+                        <span class="ml-2">LOAD YOUR DATA</span>
                       </v-btn>
                     </v-flex>
                   </v-flex>
@@ -163,12 +163,12 @@
             <div class="container">
               <v-btn color="primary" block outlined x-large @click="onShowFiles">
                 <v-icon>input</v-icon>
-                <span class="ml-2">Enter data</span>
+                <span class="ml-2">ENTER YOUR DATA</span>
               </v-btn>
               <v-divider></v-divider>
               <v-btn color="primary" block outlined x-large @click="importConfiguration">
                 <v-icon>folder_open</v-icon>
-                <span class="ml-2">Upload configuration</span>
+                <span class="ml-2">UPLOAD CONFIGURATION</span>
               </v-btn>
             </div>
           </v-card-text>
