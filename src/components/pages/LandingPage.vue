@@ -157,7 +157,10 @@
       >
         <v-card class="full-width" style="height: auto;overflow-y:scroll">
           <v-card-title primary-title>
-            
+            <v-spacer></v-spacer>
+            <span>
+              <v-btn text icon @click="inputOptionsDialog=false"><v-icon>close</v-icon></v-btn>
+            </span>
           </v-card-title>
           <v-card-text>
             <div class="container">
@@ -185,7 +188,10 @@
       >
         <v-card class="full-width" style="height: auto;overflow-y:scroll">
           <v-card-title primary-title>
-            
+            <v-spacer></v-spacer>
+            <span>
+              <v-btn text icon @click="importConfigurationDialog=false"><v-icon>close</v-icon></v-btn>
+            </span>
           </v-card-title>
           <v-card-text>
             <div class="container">
@@ -208,7 +214,7 @@
           </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn color="primary" @click="savedInputConfig=false" text>close</v-btn>
+            <v-btn color="primary" @click="importConfigurationDialog=false" text>close</v-btn>
             <v-btn color="primary" @click="loadFromConfigInput" :disabled="!validateSavedConfig && savedInputConfig==null">Load</v-btn>
           </v-card-actions>
         </v-card>
