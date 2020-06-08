@@ -322,6 +322,16 @@
           <v-card-text>
             <v-col cols="12" md="12">
               <PedFileReader class="uploader" @load-ped-file="uploadedPedTxt($event)"></PedFileReader>
+              <br>
+              <center>OR </center>
+              <br>
+              <v-text-field
+                name="name"
+                label="Enter URL for PED file"
+                hide-details
+                v-model="pedUrl"
+                @change="onPedUrlChange"
+              ></v-text-field>
             </v-col>
           <v-card-actions>
             <v-tooltip top>
@@ -460,7 +470,8 @@ export default {
       inputOptionsDialog: false,
       importConfigurationDialog: false,
       validateSavedConfig: false,
-      configCustomData: {}
+      configCustomData: {},
+      pedUrl: null,
     }
   },
   methods:  {
@@ -589,7 +600,29 @@ export default {
     },
     loadFromConfigInput(){
       this.$emit("load-saved-input-config", this.configCustomData)
-    }
+    },
+    onPedUrlChange: _.debounce(function (url) {
+      console.log("newUrl", url);
+      if(url && url.length > 0){
+        fetch(url)
+          .then(res => {
+            if(!res.ok){
+              alert("Please enter a correct URL or a presigned URL that can be accessed."); 
+            }
+            else{
+              return res.text(); 
+            }
+          })
+           .then(ped => {
+             console.log("ped data is: ", ped); 
+             this.pedData = ped;
+           })
+           .catch(error => console.log(error))
+      }
+      else {
+        this.pedData = null;
+      }
+    }, 100),
   },
   mounted: function() {
     bus.$on("close_dialog", ()=>{
@@ -598,6 +631,17 @@ export default {
     bus.$on("close-files-dialog", ()=>{
       this.closeUploadDataDialogs(); 
     })
+    fetch("https://raw.githubusercontent.com/mvelinder/ped_draw/master/examples/platinum.ped")
+      .then(res => {
+        if(!res.ok){
+          alert("Please enter a correct URL or a presigned URL that can be accessed."); 
+        }
+        else{
+          return res.text(); 
+        }
+      })
+        .then(data => console.log(data))
+        .catch(error => console.log(error))
   },
   watch: {
     carouselData () {
