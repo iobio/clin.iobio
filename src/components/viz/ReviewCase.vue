@@ -388,7 +388,7 @@ export default {
     getBamStatsFromCustomData: function(modelInfos){
       let promises = [];
       for(let i=0; i<modelInfos.length; i++){
-        promises.push(this.loadBamStats(modelInfos[i].bam, modelInfos[i].bai, modelInfos[i].sample)); 
+        promises.push(this.loadBamStats(modelInfos[i].bam, modelInfos[i].bai, modelInfos[i].sample));
       }
 
       Promise.all(promises).then((results) => {
@@ -413,8 +413,8 @@ export default {
         this.populateBadCoverageCount();
         this.coverageStatsReceived = true
       }
-      
-    }, 
+
+    },
     loadBamStats: function(selectedBamURL, selectedBaiURL, sample) {
       return new Promise((resolve, reject) => {
         let bed = undefined;
@@ -553,7 +553,7 @@ export default {
         else {
 
           this.sampleStats = data.coverage_hist;
-          this.bamCounter = this.bamCounter+1; 
+          this.bamCounter = this.bamCounter+1;
           // console.log("sample sets data in review case", this.sampleStats)
           resolve(this.sampleStats)
         }
@@ -617,8 +617,7 @@ export default {
         let pedLines = txtCopy.split('\n');
         for (let i = 0; i < pedLines.length; i++) {
           let splitLine = pedLines[i].match(/\S+/g)
-          if(splitLine && splitLine[0] !== "") {
-            console.log("splitLine", splitLine);
+          if(splitLine && splitLine[0] !== "" && !isNaN(parseInt(splitLine[4]))) {
             this.sampleIds.push(splitLine[1]);
           }
         }
@@ -630,7 +629,7 @@ export default {
       for (let i = 0; i < pedLines.length; i++) {
         let splitLine = pedLines[i].match(/\S+/g);
 
-        if(splitLine && splitLine[0] !== "") {
+        if(splitLine && splitLine[0] !== "" && !isNaN(parseInt(splitLine[4]))) {
 
           let sample = {id: this.getUuidFromId(splitLine[1])};
           let pedigree = {
@@ -651,7 +650,7 @@ export default {
       }
       return pedArr;
     },
-    
+
     getVcfStats(refs, options, vcf, tbi, sample){
       return new Promise((resolve, reject) => {
         vcfiobio.getStats(refs, options, vcf, tbi, sample, function(data) {
@@ -676,7 +675,7 @@ export default {
       var refs = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23];
       let promises = [];
       for(let i=0; i<modelInfos.length; i++){
-        promises.push(this.getVcfStats(refs, options, modelInfos[i].vcf, modelInfos[i].tbi, modelInfos[i].sample))      
+        promises.push(this.getVcfStats(refs, options, modelInfos[i].vcf, modelInfos[i].tbi, modelInfos[i].sample))
       }
       Promise.all(promises).then((results)=>{
         results.forEach(stats => {
