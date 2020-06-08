@@ -330,7 +330,9 @@
                 label="Enter URL for PED file"
                 hide-details
                 v-model="pedUrl"
+                :rules="urlRules"
                 @change="onPedUrlChange"
+                type="url"
               ></v-text-field>
             </v-col>
           <v-card-actions>
@@ -472,6 +474,9 @@ export default {
       validateSavedConfig: false,
       configCustomData: {},
       pedUrl: null,
+      urlRules: [
+  			v => /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/.test(v) || 'URL must be valid',
+  		],
     }
   },
   methods:  {
@@ -599,11 +604,15 @@ export default {
       }
     },
     loadFromConfigInput(){
-      this.$emit("load-saved-input-config", this.configCustomData)
+        this.$emit("load-saved-input-config", this.configCustomData)
+    },
+    isValidUrl(url){
+      var expression = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/; 
+      var regex = new RegExp(expression);
+      return url.match(regex); 
     },
     onPedUrlChange: _.debounce(function (url) {
-      console.log("newUrl", url);
-      if(url && url.length > 0){
+      if(url && url.length > 0 && this.isValidUrl(url)){
         fetch(url)
           .then(res => {
             if(!res.ok){
@@ -614,7 +623,6 @@ export default {
             }
           })
            .then(ped => {
-             console.log("ped data is: ", ped); 
              this.pedData = ped;
            })
            .catch(error => console.log(error))
