@@ -328,6 +328,7 @@
               <v-text-field
                 name="name"
                 label="Enter URL for PED file"
+                prepend-icon="link"
                 hide-details
                 v-model="pedUrl"
                 :rules="urlRules"
@@ -639,17 +640,6 @@ export default {
     bus.$on("close-files-dialog", ()=>{
       this.closeUploadDataDialogs(); 
     })
-    fetch("https://raw.githubusercontent.com/mvelinder/ped_draw/master/examples/platinum.ped")
-      .then(res => {
-        if(!res.ok){
-          alert("Please enter a correct URL or a presigned URL that can be accessed."); 
-        }
-        else{
-          return res.text(); 
-        }
-      })
-        .then(data => console.log(data))
-        .catch(error => console.log(error))
   },
   watch: {
     carouselData () {
