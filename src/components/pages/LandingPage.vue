@@ -157,7 +157,10 @@
       >
         <v-card class="full-width" style="height: auto;overflow-y:scroll">
           <v-card-title primary-title>
-            
+            <v-spacer></v-spacer>
+            <span>
+              <v-btn text icon @click="inputOptionsDialog=false"><v-icon>close</v-icon></v-btn>
+            </span>
           </v-card-title>
           <v-card-text>
             <div class="container">
@@ -185,7 +188,10 @@
       >
         <v-card class="full-width" style="height: auto;overflow-y:scroll">
           <v-card-title primary-title>
-            
+            <v-spacer></v-spacer>
+            <span>
+              <v-btn text icon @click="importConfigurationDialog=false"><v-icon>close</v-icon></v-btn>
+            </span>
           </v-card-title>
           <v-card-text>
             <div class="container">
@@ -208,7 +214,7 @@
           </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn color="primary" @click="savedInputConfig=false" text>close</v-btn>
+            <v-btn color="primary" @click="importConfigurationDialog=false" text>close</v-btn>
             <v-btn color="primary" @click="loadFromConfigInput" :disabled="!validateSavedConfig && savedInputConfig==null">Load</v-btn>
           </v-card-actions>
         </v-card>
@@ -322,6 +328,19 @@
           <v-card-text>
             <v-col cols="12" md="12">
               <PedFileReader class="uploader" @load-ped-file="uploadedPedTxt($event)"></PedFileReader>
+              <br>
+              <center>OR </center>
+              <br>
+              <v-text-field
+                name="name"
+                label="Enter URL for PED file"
+                prepend-icon="link"
+                hide-details
+                v-model="pedUrl"
+                :rules="urlRules"
+                @change="onPedUrlChange"
+                type="url"
+              ></v-text-field>
             </v-col>
           <v-card-actions>
             <v-tooltip top>
@@ -460,7 +479,11 @@ export default {
       inputOptionsDialog: false,
       importConfigurationDialog: false,
       validateSavedConfig: false,
-      configCustomData: {}
+      configCustomData: {},
+      pedUrl: null,
+      urlRules: [
+  			v => /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/.test(v) || 'URL must be valid',
+  		],
     }
   },
   methods:  {
@@ -588,8 +611,33 @@ export default {
       }
     },
     loadFromConfigInput(){
-      this.$emit("load-saved-input-config", this.configCustomData)
-    }
+        this.$emit("load-saved-input-config", this.configCustomData)
+    },
+    isValidUrl(url){
+      var expression = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/; 
+      var regex = new RegExp(expression);
+      return url.match(regex); 
+    },
+    onPedUrlChange: _.debounce(function (url) {
+      if(url && url.length > 0 && this.isValidUrl(url)){
+        fetch(url)
+          .then(res => {
+            if(!res.ok){
+              alert("Please enter a correct URL or a presigned URL that can be accessed."); 
+            }
+            else{
+              return res.text(); 
+            }
+          })
+           .then(ped => {
+             this.pedData = ped;
+           })
+           .catch(error => console.log(error))
+      }
+      else {
+        this.pedData = null;
+      }
+    }, 100),
   },
   mounted: function() {
     bus.$on("close_dialog", ()=>{
