@@ -595,6 +595,7 @@ export default {
         let key = keys[i]
         this.sampleIdsAndRelationships.push(key + " " + this.sampleIdRelationshipMap[key]);
       }
+      console.log("this.sampleIdsAndRelationships: ", this.sampleIdsAndRelationships);
     },
 
     getUuidFromId(id){
@@ -609,6 +610,7 @@ export default {
       for(let i = 0; i < this.sampleIds.length; i++){
         this.sampleUuids.push(i+1000);
       }
+      console.log("this.sampleUuids: ", this.sampleUuids);
     },
 
     populateSampleIdsFromCustom(txt){
@@ -621,6 +623,7 @@ export default {
             this.sampleIds.push(splitLine[1]);
           }
         }
+        console.log("this.sampleIds: ", this.sampleIds);
     },
 
     buildPedFromTxt(txt) {
@@ -646,8 +649,11 @@ export default {
           if (sample.id) {
             pedArr.push(sample);
           }
+          console.log("sample: ", sample);
+
         }
       }
+      console.log("pedArr: ", pedArr);
       return pedArr;
     },
 
@@ -926,6 +932,7 @@ export default {
       for(let i = 0; i < this.modelInfosData.length; i++){
         this.sampleIdRelationshipMap[this.modelInfos[i].sample] = this.modelInfos[i].relationship
       }
+      console.log("this.sampleIdRelationshipMap: ", this.sampleIdRelationshipMap);
     },
 
 

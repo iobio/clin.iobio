@@ -487,6 +487,26 @@ export default {
       urlRules: [
   			v => /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/.test(v) || 'URL must be valid',
   		],
+      pedTempData: {
+        "NA12878": {
+          sample: "NA12878", 
+          sex: "Male", 
+          isAffected: true,
+          relationship: "proband",
+        }, 
+        "NA12891": {
+          sample: "NA12891", 
+          sex: "Male", 
+          isAffected: false,
+          relationship: "father",
+        },
+        "NA12892": {
+          sample: "NA12892", 
+          sex: "Female", 
+          isAffected: false,
+          relationship: "mother",
+        }, 
+      }
     }
   },
   methods:  {
@@ -553,14 +573,45 @@ export default {
     onIsDemo: function(bool){
       this.$emit("isDemo", bool);
     },
+    isBamUrlValid: function(url, sample){
+      if(url.includes(sample)){
+        console.log("BAM url is valid");
+      }
+      else {
+        console.log("bam url is not valid");
+      }
+    }, 
     getModelInfoMap: function(modelInfoMap, vcfUrls, tbiUrls, bamUrls, baiUrls){
+      console.log("modelInfoMap: ", modelInfoMap);
       for(var model in modelInfoMap){
+        if(this.pedTempData.hasOwnProperty(modelInfoMap[model].sample)){
+          console.log("true!", modelInfoMap[model].sample, " is present" )
+        }
+        
+        //check if sample id is correctly assigned: proband should correspond to proband from the pedTempData
+        console.log("should output relationship:" , this.pedTempData[modelInfoMap[model].sample]);
+        if(this.pedTempData[modelInfoMap[model].sample].relationship ===  model){
+          console.log("true!! sample id is correctly assigned");
+        }
+        else {
+          console.log("sample id is incorrectly assigned");
+        }
+        
+        // Validate bam and bai urls 
+        if(bamUrls[model].length){
+          //does it have the correct sample id? 
+          this.isBamUrlValid(bamUrls[model], modelInfoMap[model].sample)
+        }
+
+
         var obj = {}; 
         obj.relationship = model 
-        obj.affectedStatus = modelInfoMap[model].isAffected
+        // obj.affectedStatus = modelInfoMap[model].isAffected
+        obj.affectedStatus = this.pedTempData[modelInfoMap[model].sample].isAffected
         obj.name = modelInfoMap[model].name 
         obj.sample = modelInfoMap[model].sample 
-        obj.sex = "" 
+        // obj.sex = ""
+        obj.sex = this.pedTempData[modelInfoMap[model].sample].sex
         var vcf = modelInfoMap[model].vcf !== undefined ? modelInfoMap[model].vcf : vcfUrls[model];
         obj.vcf = vcf 
         var tbi = modelInfoMap[model].tbi !== undefined ? modelInfoMap[model].tbi : tbiUrls[model];
