@@ -329,6 +329,7 @@
         @isDemo="onIsDemo"
         @get-modeinfo-map="getModelInfoMap"
         :pageCounter="pageCounter"
+        :customPedigreeMapData="customPedigreeMapData"
       >
       </files-dialog>
       <!-- End VCF and BAM files dialog -->
@@ -536,6 +537,7 @@ export default {
       this.pageCounter = 1; 
     }, 
     onFilesLoaded: function(analyzeAll) {
+      console.log("analyzeAll", analyzeAll);
       this.showFiles = false;
       this.pageCounter = this.pageCounter+1; 
       this.geneSetDiialog = true
@@ -613,49 +615,52 @@ export default {
       else {
         console.log("bam url is not valid");
       }
-    }, 
-    getModelInfoMap: function(modelInfoMap, vcfUrls, tbiUrls, bamUrls, baiUrls){
-      console.log("modelInfoMap: ", modelInfoMap);
-      for(var model in modelInfoMap){
-        if(this.customPedigreeMapData.hasOwnProperty(modelInfoMap[model].sample)){
-          console.log("true!", modelInfoMap[model].sample, " is present" )
-        }
-        
-        // //check if sample id is correctly assigned: proband should correspond to proband from the pedTempData
-        // console.log("should output relationship:" , this.customPedigreeMapData[modelInfoMap[model].sample]);
-        // if(this.customPedigreeMapData[modelInfoMap[model].sample].relationship ===  model){
-        //   console.log("true!! sample id is correctly assigned");
-        // }
-        // else {
-        //   console.log("sample id is incorrectly assigned");
-        // }
-        
-        // Validate bam and bai urls 
-        if(bamUrls[model].length){
-          //does it have the correct sample id? 
-          this.isBamUrlValid(bamUrls[model], modelInfoMap[model].sample)
-        }
-
-
-        var obj = {}; 
-        obj.relationship = model 
-        // obj.affectedStatus = modelInfoMap[model].isAffected
-        obj.affectedStatus = this.customPedigreeMapData[modelInfoMap[model].sample].isAffected
-        obj.name = modelInfoMap[model].name 
-        obj.sample = modelInfoMap[model].sample 
-        // obj.sex = ""
-        obj.sex = this.customPedigreeMapData[modelInfoMap[model].sample].sex
-        var vcf = modelInfoMap[model].vcf !== undefined ? modelInfoMap[model].vcf : vcfUrls[model];
-        obj.vcf = vcf 
-        var tbi = modelInfoMap[model].tbi !== undefined ? modelInfoMap[model].tbi : tbiUrls[model];
-        obj.tbi = tbi 
-        obj.bam = bamUrls[model]
-        obj.bai = baiUrls[model]
-        this.customModelInfos.push(obj)
-      }
-      console.log("this.customModelInfos", this.customModelInfos); 
-      this.$emit("custom-model-info",this.customModelInfos); 
     },
+    getModelInfoMap: function(customModelInfos){
+        this.$emit("custom-model-info",customModelInfos); 
+    }, 
+    // getModelInfoMap: function(modelInfoMap, vcfUrls, tbiUrls, bamUrls, baiUrls){
+    //   console.log("modelInfoMap: ", modelInfoMap);
+    //   for(var model in modelInfoMap){
+    //     if(this.customPedigreeMapData.hasOwnProperty(modelInfoMap[model].sample)){
+    //       console.log("true!", modelInfoMap[model].sample, " is present" )
+    //     }
+    // 
+    //     // //check if sample id is correctly assigned: proband should correspond to proband from the pedTempData
+    //     // console.log("should output relationship:" , this.customPedigreeMapData[modelInfoMap[model].sample]);
+    //     // if(this.customPedigreeMapData[modelInfoMap[model].sample].relationship ===  model){
+    //     //   console.log("true!! sample id is correctly assigned");
+    //     // }
+    //     // else {
+    //     //   console.log("sample id is incorrectly assigned");
+    //     // }
+    // 
+    //     // Validate bam and bai urls 
+    //     if(bamUrls[model].length){
+    //       //does it have the correct sample id? 
+    //       this.isBamUrlValid(bamUrls[model], modelInfoMap[model].sample)
+    //     }
+    // 
+    //     console.log("affected status", this.customPedigreeMapData[modelInfoMap[model].sample].isAffected);
+    //     var obj = {}; 
+    //     obj.relationship = model 
+    //     // obj.affectedStatus = modelInfoMap[model].isAffected
+    //     obj.affectedStatus = this.customPedigreeMapData[modelInfoMap[model].sample].isAffected
+    //     obj.name = modelInfoMap[model].name 
+    //     obj.sample = modelInfoMap[model].sample 
+    //     // obj.sex = ""
+    //     obj.sex = this.customPedigreeMapData[modelInfoMap[model].sample].sex
+    //     var vcf = modelInfoMap[model].vcf !== undefined ? modelInfoMap[model].vcf : vcfUrls[model];
+    //     obj.vcf = vcf 
+    //     var tbi = modelInfoMap[model].tbi !== undefined ? modelInfoMap[model].tbi : tbiUrls[model];
+    //     obj.tbi = tbi 
+    //     obj.bam = bamUrls[model]
+    //     obj.bai = baiUrls[model]
+    //     this.customModelInfos.push(obj)
+    //   }
+    //   console.log("this.customModelInfos", this.customModelInfos); 
+    //   this.$emit("custom-model-info",this.customModelInfos); 
+    // },
     getStarted(){
       bus.$emit("initialize-clin")
     }, 

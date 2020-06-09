@@ -255,7 +255,8 @@ export default {
   props: {
     cohortModel: null,
     showDialog: null, 
-    pageCounter: null
+    pageCounter: null,
+    customPedigreeMapData: null,
   },
   data () {
     return {
@@ -309,6 +310,9 @@ export default {
         father: '',
         sibling: ''
       }, 
+      customModelInfos: [],
+      sampleIdDupsCounter: {},
+      validationErrors: [],
     }
   },
   watch: {
@@ -326,14 +330,72 @@ export default {
     }
   },
   methods: {
+    isBamUrlValid: function(url, sample){
+      //does bam url have the correct sample id? 
+      if(url.includes(sample)){
+        console.log("BAM url is valid");
+        return true; 
+      }
+      else {
+        console.log("bam url is not valid");
+        this.validationErrors.push(`The BAM url does not match for the sample ${sample}`)
+        return false; 
+      }
+    }, 
+    getModelInfoMap: function(modelInfoMap, vcfUrls, tbiUrls, bamUrls, baiUrls){
+      for(var model in modelInfoMap){
+        if(this.customPedigreeMapData.hasOwnProperty(modelInfoMap[model].sample)){
+          console.log("success 1 ");
+          if(this.sampleIdDupsCounter[modelInfoMap[model].sample] === undefined){ //check if sample ids are duplicated
+            console.log("success 2");
+            this.sampleIdDupsCounter[modelInfoMap[model].sample] = 1; 
+            // Validate bam  urls 
+            if(this.isBamUrlValid(bamUrls[model], modelInfoMap[model].sample)){
+              console.log("success 3");
+              var obj = {}; 
+              obj.relationship = model 
+              obj.affectedStatus = this.customPedigreeMapData[modelInfoMap[model].sample].isAffected
+              obj.name = modelInfoMap[model].name 
+              obj.sample = modelInfoMap[model].sample 
+              obj.sex = this.customPedigreeMapData[modelInfoMap[model].sample].sex
+              var vcf = modelInfoMap[model].vcf !== undefined ? modelInfoMap[model].vcf : vcfUrls[model];
+              obj.vcf = vcf 
+              var tbi = modelInfoMap[model].tbi !== undefined ? modelInfoMap[model].tbi : tbiUrls[model];
+              obj.tbi = tbi 
+              obj.bam = bamUrls[model]
+              obj.bai = baiUrls[model]
+              this.customModelInfos.push(obj)
+            }
+            else {
+              console.log("failed 3");
+            }
+          }
+          else {
+            this.validationErrors.push(`Sample id ${modelInfoMap[model].sample} is duplicated.`)
+            console.log("failed 2");
+          }
+        }
+        else{
+          console.log("failed 1");
+        }
+      }
+      console.log("this.customModelInfos in files dialog", this.customModelInfos); 
+      // if(!this.validationErrors.length){
+      //   self.$emit("get-modeinfo-map", this.customModelInfos); 
+      // }
+      // else {
+      // 
+      // }
+      // this.$emit("custom-model-info",this.customModelInfos); 
+    },
     onLoad: function() {
       let self = this;
       self.inProgress = true;
       // console.log("self.modelInfo", self.modelInfo)
       // console.log("this.modelInfoMap on load", this.modelInfoMap)
 
-      self.$emit("get-modeinfo-map", self.modelInfoMap, self.vcfUrls, self.tbiUrls, self.bamUrls, self.baiUrls); 
-      
+      // self.$emit("get-modeinfo-map", self.modelInfoMap, self.vcfUrls, self.tbiUrls, self.bamUrls, self.baiUrls); 
+      // self.getModelInfoMap(self.modelInfoMap, self.vcfUrls, self.tbiUrls, self.bamUrls, self.baiUrls); 
       self.cohortModel.mode = self.mode;
       self.cohortModel.genomeBuildHelper.setCurrentBuild(self.buildName);
       self.cohortModel.genomeBuildHelper.setCurrentSpecies(self.speciesName);
@@ -355,10 +417,24 @@ export default {
       })
       .then(function() {
         let performAnalyzeAll = self.demoAction ? true : false;
-        self.inProgress = false;
-
-        self.$emit("on-files-loaded", performAnalyzeAll);
-        self.showFilesDialog = false;
+        self.getModelInfoMap(self.modelInfoMap, self.vcfUrls, self.tbiUrls, self.bamUrls, self.baiUrls); 
+        if(!self.validationErrors.length){ //If there are no validation errors, its a success and go to next page 
+          self.inProgress = false;
+          self.$emit("on-files-loaded", performAnalyzeAll);
+          self.showFilesDialog = false;
+          self.$emit("get-modeinfo-map", self.customModelInfos);
+        }
+        else {
+          self.inProgress = false;
+          self.isValid = false;
+          self.validationErrors = [];
+          self.customModelInfos = [];
+          self.sampleIdDupsCounter = {};
+        }
+        // self.inProgress = false;
+        // 
+        // self.$emit("on-files-loaded", performAnalyzeAll);
+        // self.showFilesDialog = false;
       })
     },
     onCancel:  function() {
