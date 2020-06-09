@@ -263,55 +263,6 @@
       </v-dialog>
       <!-- End caseDescriptionDialog -->
       
-
-      
-      <files-dialog
-        v-if="showFiles && pageCounter===2"
-       :cohortModel="cohortModel"
-       :showDialog="showFiles"
-       @on-files-loaded="onFilesLoaded"
-       @load-demo-data="onLoadDemoData"
-       @on-cancel="backToCaseDescription"
-       @isDemo="onIsDemo"
-       @get-modeinfo-map="getModelInfoMap"
-       :pageCounter="pageCounter"
-      >
-      </files-dialog>
-      
-      
-      <!-- Genes set dialog -->
-      <v-dialog v-model="geneSetDiialog" v-if="pageCounter===3" persistent max-width="890">
-        <v-card class="full-width" style="height: auto;overflow-y:scroll">
-          <CustomDataStepper
-            :pageCounter="pageCounter">
-          </CustomDataStepper>
-          <v-card-title class="headline">
-            Gene Sets
-            <v-spacer></v-spacer>
-            <span>
-              <v-btn text icon @click="closeUploadDataDialogs"><v-icon>close</v-icon></v-btn>
-            </span>
-          </v-card-title>
-          <v-card-text>
-            <v-col cols="12" md="12">
-              <v-textarea
-                solo auto-grow
-                name="input-7-4"
-                label="Enter Genes"
-                v-model="genes"					
-              ></v-textarea>
-          </v-col>
-          <v-card-actions>
-            <v-spacer></v-spacer>
-            <v-btn color="primary" @click="backToFiles" text>Back</v-btn>
-            <v-btn color="primary" @click="addGeneSet" :disabled="genes.length<3">Next</v-btn>
-          </v-card-actions>
-
-          </v-card-text>
-        </v-card>
-      </v-dialog>
-      <!-- End gene sets dialog -->
-      
       <!-- Pedigree upload dialog -->
       <v-dialog v-model="pedigreeUploadDialog" v-if="pageCounter===4" persistent max-width="890">
         <v-card class="full-width" style="height: auto;overflow-y:scroll">
@@ -360,7 +311,59 @@
           </v-card-text>
         </v-card>
       </v-dialog>
+      <!-- End Pedigree upload dialog -->
 
+      
+
+      <!-- VCF and BAM files dialog -->
+      <files-dialog
+        v-if="showFiles && pageCounter===2"
+        :cohortModel="cohortModel"
+        :showDialog="showFiles"
+        @on-files-loaded="onFilesLoaded"
+        @load-demo-data="onLoadDemoData"
+        @on-cancel="backToCaseDescription"
+        @isDemo="onIsDemo"
+        @get-modeinfo-map="getModelInfoMap"
+        :pageCounter="pageCounter"
+      >
+      </files-dialog>
+      <!-- End VCF and BAM files dialog -->
+      
+      
+      <!-- Genes set dialog -->
+      <v-dialog v-model="geneSetDiialog" v-if="pageCounter===3" persistent max-width="890">
+        <v-card class="full-width" style="height: auto;overflow-y:scroll">
+          <CustomDataStepper
+            :pageCounter="pageCounter">
+          </CustomDataStepper>
+          <v-card-title class="headline">
+            Gene Sets
+            <v-spacer></v-spacer>
+            <span>
+              <v-btn text icon @click="closeUploadDataDialogs"><v-icon>close</v-icon></v-btn>
+            </span>
+          </v-card-title>
+          <v-card-text>
+            <v-col cols="12" md="12">
+              <v-textarea
+                solo auto-grow
+                name="input-7-4"
+                label="Enter Genes"
+                v-model="genes"					
+              ></v-textarea>
+          </v-col>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="primary" @click="backToFiles" text>Back</v-btn>
+            <v-btn color="primary" @click="addGeneSet" :disabled="genes.length<3">Next</v-btn>
+          </v-card-actions>
+
+          </v-card-text>
+        </v-card>
+      </v-dialog>
+      <!-- End gene sets dialog -->
+      
     </v-content>
 
   </div>
