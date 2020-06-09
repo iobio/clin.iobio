@@ -251,6 +251,9 @@
                 label="The data set (NA12878) is high quality exome sequencing data from three individuals"
                 v-model="caseDescription"					
               ></v-textarea>
+              <br>
+              <PedFileReader class="uploader" @load-ped-file="uploadedPedTxt($event)"></PedFileReader>
+
           </v-col>
           <v-card-actions>
             <v-spacer></v-spacer>
@@ -487,6 +490,7 @@ export default {
       urlRules: [
   			v => /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/.test(v) || 'URL must be valid',
   		],
+      customPedigreeMapData: {},
       pedTempData: {
         "NA12878": {
           sample: "NA12878", 
@@ -555,7 +559,36 @@ export default {
       this.showFiles = true; 
     },  
     uploadedPedTxt(ped){
-      this.pedData = ped; 
+      this.pedData = ped;
+      this.buildPedFromTxt(this.pedData);  
+    },
+    buildPedFromTxt(txt) {
+      let pedLines = txt.split('\n');
+      let pedArr = [];
+      for (let i = 0; i < pedLines.length; i++) {
+        let splitLine = pedLines[i].match(/\S+/g);
+        let sexMap = {
+          1: "Male",
+          2: "Female", 
+        }
+        let statusMap = {
+          0: false,
+          1: false,
+          2: true           
+        }
+        
+        if(splitLine && splitLine[0] !== "" && !isNaN(parseInt(splitLine[4]))) {
+          var sample = splitLine[1];
+          var sex = sexMap[parseInt(splitLine[4])]; 
+          var isAffected = statusMap[parseInt(splitLine[5])]
+          if(this.customPedigreeMapData[sample] === undefined){
+            this.customPedigreeMapData[sample] = {
+              sample, sex, isAffected
+            }
+          }
+        }
+      }
+      console.log("this.customPedigreeMapData", this.customPedigreeMapData);
     }, 
     addPedigree(){
       this.pedigreeUploadDialog = false; 
@@ -584,18 +617,18 @@ export default {
     getModelInfoMap: function(modelInfoMap, vcfUrls, tbiUrls, bamUrls, baiUrls){
       console.log("modelInfoMap: ", modelInfoMap);
       for(var model in modelInfoMap){
-        if(this.pedTempData.hasOwnProperty(modelInfoMap[model].sample)){
+        if(this.customPedigreeMapData.hasOwnProperty(modelInfoMap[model].sample)){
           console.log("true!", modelInfoMap[model].sample, " is present" )
         }
         
-        //check if sample id is correctly assigned: proband should correspond to proband from the pedTempData
-        console.log("should output relationship:" , this.pedTempData[modelInfoMap[model].sample]);
-        if(this.pedTempData[modelInfoMap[model].sample].relationship ===  model){
-          console.log("true!! sample id is correctly assigned");
-        }
-        else {
-          console.log("sample id is incorrectly assigned");
-        }
+        // //check if sample id is correctly assigned: proband should correspond to proband from the pedTempData
+        // console.log("should output relationship:" , this.customPedigreeMapData[modelInfoMap[model].sample]);
+        // if(this.customPedigreeMapData[modelInfoMap[model].sample].relationship ===  model){
+        //   console.log("true!! sample id is correctly assigned");
+        // }
+        // else {
+        //   console.log("sample id is incorrectly assigned");
+        // }
         
         // Validate bam and bai urls 
         if(bamUrls[model].length){
@@ -607,11 +640,11 @@ export default {
         var obj = {}; 
         obj.relationship = model 
         // obj.affectedStatus = modelInfoMap[model].isAffected
-        obj.affectedStatus = this.pedTempData[modelInfoMap[model].sample].isAffected
+        obj.affectedStatus = this.customPedigreeMapData[modelInfoMap[model].sample].isAffected
         obj.name = modelInfoMap[model].name 
         obj.sample = modelInfoMap[model].sample 
         // obj.sex = ""
-        obj.sex = this.pedTempData[modelInfoMap[model].sample].sex
+        obj.sex = this.customPedigreeMapData[modelInfoMap[model].sample].sex
         var vcf = modelInfoMap[model].vcf !== undefined ? modelInfoMap[model].vcf : vcfUrls[model];
         obj.vcf = vcf 
         var tbi = modelInfoMap[model].tbi !== undefined ? modelInfoMap[model].tbi : tbiUrls[model];
@@ -620,9 +653,9 @@ export default {
         obj.bai = baiUrls[model]
         this.customModelInfos.push(obj)
       }
-      console.log("this.customModelInfos", this.customModelInfos)
+      console.log("this.customModelInfos", this.customModelInfos); 
       this.$emit("custom-model-info",this.customModelInfos); 
-    }, 
+    },
     getStarted(){
       bus.$emit("initialize-clin")
     }, 

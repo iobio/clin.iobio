@@ -584,6 +584,7 @@ export default {
       for(let i = 0; i < len; i++){
         this.allPedigreeDataArrays.push(this.pedigreeDataArray)
       }
+      console.log("this.allPedigreeDataArrays: ", this.allPedigreeDataArrays);
     },
 
     populateSampleIdsAndRelationships(){
