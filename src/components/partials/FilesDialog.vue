@@ -102,9 +102,27 @@
                 </span>
              </v-card-title>
             <!-- </v-layout> -->
-
+            <v-flex v-if="validationErrors.length">
+              Please correct the following errors:
+              <div v-for="(error, idx) in validationErrors" >
+                <v-alert
+                  border="left"
+                  colored-border
+                  type="error"
+                  icon="error_outline"
+                  dense
+                  elevation="1"
+                  style="font-size:12px"
+                >
+                  {{ error }}
+                </v-alert>
+              </div>
+              <br>
+            </v-flex>
 
             <v-layout row nowrap class="mt-0" style="padding-right:32px">
+              
+
 
               <v-flex class="mt-0" style="max-width: 160px;margin-left: 10px;" >
                   <v-radio-group v-model="mode" @change="onModeChanged"  hide-details column>
@@ -390,6 +408,7 @@ export default {
     },
     onLoad: function() {
       let self = this;
+      self.validationErrors = [];
       self.inProgress = true;
       // console.log("self.modelInfo", self.modelInfo)
       // console.log("this.modelInfoMap on load", this.modelInfoMap)
@@ -418,7 +437,9 @@ export default {
       .then(function() {
         let performAnalyzeAll = self.demoAction ? true : false;
         self.getModelInfoMap(self.modelInfoMap, self.vcfUrls, self.tbiUrls, self.bamUrls, self.baiUrls); 
-        if(!self.validationErrors.length){ //If there are no validation errors, its a success and go to next page 
+        console.log(("object length: ",Object.keys(self.modelInfoMap).length ));
+        if(self.customModelInfos.length === Object.keys(self.modelInfoMap).length){
+        // if(!self.validationErrors.length){ //If there are no validation errors, its a success and go to next page 
           self.inProgress = false;
           self.$emit("on-files-loaded", performAnalyzeAll);
           self.showFilesDialog = false;
@@ -427,7 +448,7 @@ export default {
         else {
           self.inProgress = false;
           self.isValid = false;
-          self.validationErrors = [];
+          // self.validationErrors = [];
           self.customModelInfos = [];
           self.sampleIdDupsCounter = {};
         }
