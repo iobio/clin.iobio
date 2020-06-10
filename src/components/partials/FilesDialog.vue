@@ -351,11 +351,9 @@ export default {
     isBamUrlValid: function(url, sample){
       //does bam url have the correct sample id? 
       if(url.includes(sample)){
-        console.log("BAM url is valid");
         return true; 
       }
       else {
-        console.log("bam url is not valid");
         this.validationErrors.push(`The BAM url does not match for the sample ${sample}`)
         return false; 
       }
@@ -363,13 +361,10 @@ export default {
     getModelInfoMap: function(modelInfoMap, vcfUrls, tbiUrls, bamUrls, baiUrls){
       for(var model in modelInfoMap){
         if(this.customPedigreeMapData.hasOwnProperty(modelInfoMap[model].sample)){
-          console.log("success 1 ");
           if(this.sampleIdDupsCounter[modelInfoMap[model].sample] === undefined){ //check if sample ids are duplicated
-            console.log("success 2");
             this.sampleIdDupsCounter[modelInfoMap[model].sample] = 1; 
             // Validate bam  urls 
             if(this.isBamUrlValid(bamUrls[model], modelInfoMap[model].sample)){
-              console.log("success 3");
               var obj = {}; 
               obj.relationship = model 
               obj.affectedStatus = this.customPedigreeMapData[modelInfoMap[model].sample].isAffected
@@ -385,16 +380,13 @@ export default {
               this.customModelInfos.push(obj)
             }
             else {
-              console.log("failed 3");
             }
           }
           else {
             this.validationErrors.push(`Sample id ${modelInfoMap[model].sample} is duplicated.`)
-            console.log("failed 2");
           }
         }
         else{
-          console.log("failed 1");
         }
       }
       console.log("this.customModelInfos in files dialog", this.customModelInfos); 

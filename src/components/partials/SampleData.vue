@@ -44,9 +44,9 @@
 <template>
 
  <v-layout id="sample-data-form" row wrap :class="{'ml-2': true,   'mt-3' : modelInfo.relationship != 'proband', 'mt-1' : modelInfo.relationship == 'proband'}">
-    <v-flex xs12 class="sample-label" >
+    <v-flex xs12 class="sample-label mb-4 mt-1" >
       <span> {{ modelInfo.relationship }} </span>
-      <v-switch  label="Affected" hide-details @change="onIsAffected" v-model="isAffected"></v-switch>
+      <!-- <v-switch  label="Affected" hide-details @change="onIsAffected" v-model="isAffected"></v-switch> -->
     </v-flex>
     <v-flex xs12  class="ml-3" style="margin-top: -15px">
       <sample-data-file
@@ -62,7 +62,7 @@
       </sample-data-file>
     </v-flex>
 
-    <v-flex xs4   id="sample-selection">
+    <v-flex xs4  class="ml-9" id="sample-selection">
       <v-autocomplete
         v-bind:class="samples == null || samples.length == 0 ? 'hide' : ''"
         label="Sample"

@@ -43,6 +43,7 @@
         hide-details
         v-model="url"
         @change="onUrlChange"
+        prepend-icon="link"
       ></v-text-field>
       <v-text-field
         v-if="fileType == 'url' && (separateUrlForIndex || indexUrl)"
@@ -50,6 +51,7 @@
         hide-details
         v-model="indexUrl"
         @change="onUrlChange"
+        prepend-icon="link"
       ></v-text-field>
     </v-flex>
 

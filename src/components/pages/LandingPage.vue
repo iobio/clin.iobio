@@ -537,7 +537,6 @@ export default {
       this.pageCounter = 1; 
     }, 
     onFilesLoaded: function(analyzeAll) {
-      console.log("analyzeAll", analyzeAll);
       this.showFiles = false;
       this.pageCounter = this.pageCounter+1; 
       this.geneSetDiialog = true
