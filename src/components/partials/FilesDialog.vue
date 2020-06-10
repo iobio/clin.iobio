@@ -361,11 +361,20 @@ export default {
     }, 
     getModelInfoMap: function(modelInfoMap, vcfUrls, tbiUrls, bamUrls, baiUrls){
       for(var model in modelInfoMap){
+        var bam; 
+        if(modelInfoMap[model].bam){
+          bam = modelInfoMap[model].bam
+        }
+        else {
+          bam = bamUrls[model];
+        }
+        // TODO: Add a similar check for bai urls
+        
         if(this.customPedigreeMapData.hasOwnProperty(modelInfoMap[model].sample)){
           if(this.sampleIdDupsCounter[modelInfoMap[model].sample] === undefined){ //check if sample ids are duplicated
             this.sampleIdDupsCounter[modelInfoMap[model].sample] = 1; 
             // Validate bam  urls 
-            if(this.isBamUrlValid(bamUrls[model], modelInfoMap[model].sample)){
+            if(this.isBamUrlValid(bam, modelInfoMap[model].sample)){
               var obj = {}; 
               obj.relationship = model 
               // obj.affectedStatus = this.customPedigreeMapData[modelInfoMap[model].sample].isAffected
@@ -377,7 +386,8 @@ export default {
               obj.vcf = vcf 
               var tbi = modelInfoMap[model].tbi !== undefined ? modelInfoMap[model].tbi : tbiUrls[model];
               obj.tbi = tbi 
-              obj.bam = bamUrls[model]
+              // obj.bam = bamUrls[model]
+              obj.bam = bam
               obj.bai = baiUrls[model]
               this.customModelInfos.push(obj)
             }
@@ -392,13 +402,6 @@ export default {
         }
       }
       console.log("this.customModelInfos in files dialog", this.customModelInfos); 
-      // if(!this.validationErrors.length){
-      //   self.$emit("get-modeinfo-map", this.customModelInfos); 
-      // }
-      // else {
-      // 
-      // }
-      // this.$emit("custom-model-info",this.customModelInfos); 
     },
     onLoad: function() {
       let self = this;
