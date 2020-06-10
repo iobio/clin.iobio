@@ -267,7 +267,7 @@
       <!-- End caseDescriptionDialog -->
       
       <!-- Pedigree upload dialog -->
-      <v-dialog v-model="pedigreeUploadDialog" v-if="pageCounter===4" persistent max-width="890">
+      <v-dialog v-model="pedigreeUploadDialog" v-if="pageCounter===2" persistent max-width="890">
         <v-card class="full-width" style="height: auto;overflow-y:scroll">
           <CustomDataStepper
             :pageCounter="pageCounter">
@@ -297,15 +297,6 @@
               ></v-text-field>
             </v-col>
           <v-card-actions>
-            <v-tooltip top>
-              <template v-slot:activator="{ on }">
-                <v-btn :disabled="!pedData" v-on="on" color="primary" @click="saveAsConfig" outlined>
-                  <v-icon>save</v-icon>
-                  <span class="ml-1">Save configuration</span>
-                </v-btn>
-              </template>
-              <span>Download the entered information in a config file for easier accees in future</span>
-            </v-tooltip>
             <v-spacer></v-spacer>
             <v-btn color="primary" @click="backToGeneSets" text>Back</v-btn>
             <v-btn :disabled="!pedData" color="primary" @click="addPedigree">Load</v-btn>
@@ -320,7 +311,7 @@
 
       <!-- VCF and BAM files dialog -->
       <files-dialog
-        v-if="showFiles && pageCounter===2"
+        v-if="showFiles && pageCounter===3"
         :cohortModel="cohortModel"
         :showDialog="showFiles"
         @on-files-loaded="onFilesLoaded"
@@ -336,7 +327,7 @@
       
       
       <!-- Genes set dialog -->
-      <v-dialog v-model="geneSetDiialog" v-if="pageCounter===3" persistent max-width="890">
+      <v-dialog v-model="geneSetDiialog" v-if="pageCounter===4" persistent max-width="890">
         <v-card class="full-width" style="height: auto;overflow-y:scroll">
           <CustomDataStepper
             :pageCounter="pageCounter">
@@ -358,6 +349,15 @@
               ></v-textarea>
           </v-col>
           <v-card-actions>
+            <v-tooltip top>
+              <template v-slot:activator="{ on }">
+                <v-btn :disabled="genes.length<3" v-on="on" color="primary" @click="saveAsConfig" outlined>
+                  <v-icon>save</v-icon>
+                  <span class="ml-1">Save configuration</span>
+                </v-btn>
+              </template>
+              <span>Download the entered information in a config file for easier accees in future</span>
+            </v-tooltip>
             <v-spacer></v-spacer>
             <v-btn color="primary" @click="backToFiles" text>Back</v-btn>
             <v-btn color="primary" @click="addGeneSet" :disabled="genes.length<3">Next</v-btn>
@@ -548,16 +548,19 @@ export default {
       this.onShowFiles(); 
     },
     addGeneSet: function(){
-      this.pageCounter = this.pageCounter+1;  
+      // this.pageCounter = this.pageCounter+1;  
+      this.pageCounter = 1;
       this.geneSetDiialog = false;
       this.geneSet = this.genes.split(",").map(gene => gene.trim().toUpperCase()); 
       this.$emit('setGeneSet', this.geneSet)
-      this.pedigreeUploadDialog = true; 
+      // this.pedigreeUploadDialog = true;
+      this.getStarted();
     },
     backToFiles: function(){
       this.geneSetDiialog = false;
       this.pageCounter = 2;
-      this.showFiles = true; 
+      this.showFiles = true;
+      bus.$emit("back-to-files")
     },  
     uploadedPedTxt(ped){
       this.pedData = ped;
@@ -594,7 +597,7 @@ export default {
     addPedigree(){
       this.pedigreeUploadDialog = false; 
       this.$emit("set-ped-data", this.pedData); 
-      this.getStarted();
+      // this.getStarted();
     },
     backToGeneSets: function(){
       this.pedigreeUploadDialog = false;

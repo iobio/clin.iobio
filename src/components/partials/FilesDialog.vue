@@ -681,7 +681,11 @@ export default {
     let self = this;
 
   },
-  mounted: function() {    
+  mounted: function() {
+    bus.$on("back-to-files", () => {
+      self.sampleIdDupsCounter = {};
+      self.validationErrors = [];
+    })    
     if (this.cohortModel) {
       this.speciesName =  this.cohortModel.genomeBuildHelper.getCurrentSpeciesName();
       this.buildName   =  this.cohortModel.genomeBuildHelper.getCurrentBuildName();
