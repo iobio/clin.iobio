@@ -251,8 +251,8 @@
                 label="The data set (NA12878) is high quality exome sequencing data from three individuals"
                 v-model="caseDescription"					
               ></v-textarea>
-              <br>
-              <PedFileReader class="uploader" @load-ped-file="uploadedPedTxt($event)"></PedFileReader>
+              <!-- <br>
+              <PedFileReader class="uploader" @load-ped-file="uploadedPedTxt($event)"></PedFileReader> -->
 
           </v-col>
           <v-card-actions>
@@ -286,7 +286,7 @@
               <center>OR </center>
               <br>
               <v-text-field
-                name="name"
+                name="pedUrlInput"
                 label="Enter URL for PED file"
                 prepend-icon="link"
                 hide-details
@@ -298,7 +298,8 @@
             </v-col>
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn color="primary" @click="backToGeneSets" text>Back</v-btn>
+            <!-- <v-btn color="primary" @click="backToGeneSets" text>Back</v-btn> -->
+            <v-btn color="primary" @click="backToCaseDescription" text>Back</v-btn>
             <v-btn :disabled="!pedData" color="primary" @click="addPedigree">Load</v-btn>
           </v-card-actions>
 
@@ -316,7 +317,7 @@
         :showDialog="showFiles"
         @on-files-loaded="onFilesLoaded"
         @load-demo-data="onLoadDemoData"
-        @on-cancel="backToCaseDescription"
+        @on-cancel="backToPedUpload"
         @isDemo="onIsDemo"
         @get-modeinfo-map="getModelInfoMap"
         :pageCounter="pageCounter"
@@ -487,31 +488,11 @@ export default {
       importConfigurationDialog: false,
       validateSavedConfig: false,
       configCustomData: {},
-      pedUrl: null,
+      pedUrl: '',
       urlRules: [
   			v => /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/.test(v) || 'URL must be valid',
   		],
       customPedigreeMapData: {},
-      pedTempData: {
-        "NA12878": {
-          sample: "NA12878", 
-          sex: "Male", 
-          isAffected: true,
-          relationship: "proband",
-        }, 
-        "NA12891": {
-          sample: "NA12891", 
-          sex: "Male", 
-          isAffected: false,
-          relationship: "father",
-        },
-        "NA12892": {
-          sample: "NA12892", 
-          sex: "Female", 
-          isAffected: false,
-          relationship: "mother",
-        }, 
-      }
     }
   },
   methods:  {
@@ -526,11 +507,12 @@ export default {
     addCaseDescription: function() {
       this.caseDescriptionDialog = false;
       this.pageCounter = this.pageCounter+1;
-      this.showFiles = true; 
+      // this.showFiles = true; 
       this.$emit("set-custom-case-summary", {
         name: this.caseTitle, 
         description: this.caseDescription
       })
+      this.pedigreeUploadDialog = true;
     },
     closeCaseDescription: function() {
       this.caseDescriptionDialog = false;
@@ -543,9 +525,15 @@ export default {
       this.$emit("on-files-loaded", analyzeAll);
     },
     backToCaseDescription: function(){
-      this.showFiles = false;
+      // this.showFiles = false;
+      this.pedigreeUploadDialog = false; 
       this.pageCounter = 1;
       this.onShowFiles(); 
+    },
+    backToPedUpload: function(){
+      this.showFiles = false; 
+      this.pedigreeUploadDialog = true;
+      this.pageCounter = 2;
     },
     addGeneSet: function(){
       // this.pageCounter = this.pageCounter+1;  
@@ -558,7 +546,7 @@ export default {
     },
     backToFiles: function(){
       this.geneSetDiialog = false;
-      this.pageCounter = 2;
+      this.pageCounter = 3;
       this.showFiles = true;
       bus.$emit("back-to-files")
     },  
@@ -596,6 +584,8 @@ export default {
     }, 
     addPedigree(){
       this.pedigreeUploadDialog = false; 
+      this.pageCounter = this.pageCounter+1; 
+      this.showFiles = true;
       this.$emit("set-ped-data", this.pedData); 
       // this.getStarted();
     },
