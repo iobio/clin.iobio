@@ -251,6 +251,9 @@
                 label="The data set (NA12878) is high quality exome sequencing data from three individuals"
                 v-model="caseDescription"					
               ></v-textarea>
+              <!-- <br>
+              <PedFileReader class="uploader" @load-ped-file="uploadedPedTxt($event)"></PedFileReader> -->
+
           </v-col>
           <v-card-actions>
             <v-spacer></v-spacer>
@@ -264,7 +267,7 @@
       <!-- End caseDescriptionDialog -->
       
       <!-- Pedigree upload dialog -->
-      <v-dialog v-model="pedigreeUploadDialog" v-if="pageCounter===4" persistent max-width="890">
+      <v-dialog v-model="pedigreeUploadDialog" v-if="pageCounter===2" persistent max-width="890">
         <v-card class="full-width" style="height: auto;overflow-y:scroll">
           <CustomDataStepper
             :pageCounter="pageCounter">
@@ -283,7 +286,7 @@
               <center>OR </center>
               <br>
               <v-text-field
-                name="name"
+                name="pedUrlInput"
                 label="Enter URL for PED file"
                 prepend-icon="link"
                 hide-details
@@ -294,17 +297,9 @@
               ></v-text-field>
             </v-col>
           <v-card-actions>
-            <v-tooltip top>
-              <template v-slot:activator="{ on }">
-                <v-btn :disabled="!pedData" v-on="on" color="primary" @click="saveAsConfig" outlined>
-                  <v-icon>save</v-icon>
-                  <span class="ml-1">Save configuration</span>
-                </v-btn>
-              </template>
-              <span>Download the entered information in a config file for easier accees in future</span>
-            </v-tooltip>
             <v-spacer></v-spacer>
-            <v-btn color="primary" @click="backToGeneSets" text>Back</v-btn>
+            <!-- <v-btn color="primary" @click="backToGeneSets" text>Back</v-btn> -->
+            <v-btn color="primary" @click="backToCaseDescription" text>Back</v-btn>
             <v-btn :disabled="!pedData" color="primary" @click="addPedigree">Load</v-btn>
           </v-card-actions>
 
@@ -317,22 +312,23 @@
 
       <!-- VCF and BAM files dialog -->
       <files-dialog
-        v-if="showFiles && pageCounter===2"
+        v-if="showFiles && pageCounter===3"
         :cohortModel="cohortModel"
         :showDialog="showFiles"
         @on-files-loaded="onFilesLoaded"
         @load-demo-data="onLoadDemoData"
-        @on-cancel="backToCaseDescription"
+        @on-cancel="backToPedUpload"
         @isDemo="onIsDemo"
         @get-modeinfo-map="getModelInfoMap"
         :pageCounter="pageCounter"
+        :customPedigreeMapData="customPedigreeMapData"
       >
       </files-dialog>
       <!-- End VCF and BAM files dialog -->
       
       
       <!-- Genes set dialog -->
-      <v-dialog v-model="geneSetDiialog" v-if="pageCounter===3" persistent max-width="890">
+      <v-dialog v-model="geneSetDiialog" v-if="pageCounter===4" persistent max-width="890">
         <v-card class="full-width" style="height: auto;overflow-y:scroll">
           <CustomDataStepper
             :pageCounter="pageCounter">
@@ -354,6 +350,15 @@
               ></v-textarea>
           </v-col>
           <v-card-actions>
+            <v-tooltip top>
+              <template v-slot:activator="{ on }">
+                <v-btn :disabled="genes.length<3" v-on="on" color="primary" @click="saveAsConfig" outlined>
+                  <v-icon>save</v-icon>
+                  <span class="ml-1">Save configuration</span>
+                </v-btn>
+              </template>
+              <span>Download the entered information in a config file for easier accees in future</span>
+            </v-tooltip>
             <v-spacer></v-spacer>
             <v-btn color="primary" @click="backToFiles" text>Back</v-btn>
             <v-btn color="primary" @click="addGeneSet" :disabled="genes.length<3">Next</v-btn>
@@ -483,10 +488,11 @@ export default {
       importConfigurationDialog: false,
       validateSavedConfig: false,
       configCustomData: {},
-      pedUrl: null,
+      pedUrl: '',
       urlRules: [
   			v => /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/.test(v) || 'URL must be valid',
   		],
+      customPedigreeMapData: {},
     }
   },
   methods:  {
@@ -501,11 +507,12 @@ export default {
     addCaseDescription: function() {
       this.caseDescriptionDialog = false;
       this.pageCounter = this.pageCounter+1;
-      this.showFiles = true; 
+      // this.showFiles = true; 
       this.$emit("set-custom-case-summary", {
         name: this.caseTitle, 
         description: this.caseDescription
       })
+      this.pedigreeUploadDialog = true;
     },
     closeCaseDescription: function() {
       this.caseDescriptionDialog = false;
@@ -518,29 +525,69 @@ export default {
       this.$emit("on-files-loaded", analyzeAll);
     },
     backToCaseDescription: function(){
-      this.showFiles = false;
+      // this.showFiles = false;
+      this.pedigreeUploadDialog = false; 
       this.pageCounter = 1;
       this.onShowFiles(); 
     },
+    backToPedUpload: function(){
+      this.showFiles = false; 
+      this.pedigreeUploadDialog = true;
+      this.pageCounter = 2;
+    },
     addGeneSet: function(){
-      this.pageCounter = this.pageCounter+1;  
+      // this.pageCounter = this.pageCounter+1;  
+      this.pageCounter = 1;
       this.geneSetDiialog = false;
       this.geneSet = this.genes.split(",").map(gene => gene.trim().toUpperCase()); 
       this.$emit('setGeneSet', this.geneSet)
-      this.pedigreeUploadDialog = true; 
+      // this.pedigreeUploadDialog = true;
+      this.getStarted();
     },
     backToFiles: function(){
       this.geneSetDiialog = false;
-      this.pageCounter = 2;
-      this.showFiles = true; 
+      this.pageCounter = 3;
+      this.showFiles = true;
+      bus.$emit("back-to-files")
     },  
     uploadedPedTxt(ped){
-      this.pedData = ped; 
+      this.pedData = ped;
+      this.buildPedFromTxt(this.pedData);  
+    },
+    buildPedFromTxt(txt) {
+      let pedLines = txt.split('\n');
+      let pedArr = [];
+      for (let i = 0; i < pedLines.length; i++) {
+        let splitLine = pedLines[i].match(/\S+/g);
+        let sexMap = {
+          1: "Male",
+          2: "Female", 
+        }
+        let statusMap = {
+          0: false,
+          1: false,
+          2: true           
+        }
+        
+        if(splitLine && splitLine[0] !== "" && !isNaN(parseInt(splitLine[4]))) {
+          var sample = splitLine[1];
+          var sex = sexMap[parseInt(splitLine[4])]; 
+          var isAffected = statusMap[parseInt(splitLine[5])]
+          if(this.customPedigreeMapData[sample] === undefined){
+            this.customPedigreeMapData[sample] = {
+              sample, sex, isAffected
+            }
+          }
+        }
+      }
+      console.log("this.customPedigreeMapData", this.customPedigreeMapData);
     }, 
     addPedigree(){
       this.pedigreeUploadDialog = false; 
+      this.pageCounter = this.pageCounter+1; 
+      this.showFiles = true;
       this.$emit("set-ped-data", this.pedData); 
-      this.getStarted();
+      // this.getStarted();
     },
     backToGeneSets: function(){
       this.pedigreeUploadDialog = false;
@@ -553,25 +600,59 @@ export default {
     onIsDemo: function(bool){
       this.$emit("isDemo", bool);
     },
-    getModelInfoMap: function(modelInfoMap, vcfUrls, tbiUrls, bamUrls, baiUrls){
-      for(var model in modelInfoMap){
-        var obj = {}; 
-        obj.relationship = model 
-        obj.affectedStatus = modelInfoMap[model].isAffected
-        obj.name = modelInfoMap[model].name 
-        obj.sample = modelInfoMap[model].sample 
-        obj.sex = "" 
-        var vcf = modelInfoMap[model].vcf !== undefined ? modelInfoMap[model].vcf : vcfUrls[model];
-        obj.vcf = vcf 
-        var tbi = modelInfoMap[model].tbi !== undefined ? modelInfoMap[model].tbi : tbiUrls[model];
-        obj.tbi = tbi 
-        obj.bam = bamUrls[model]
-        obj.bai = baiUrls[model]
-        this.customModelInfos.push(obj)
+    isBamUrlValid: function(url, sample){
+      if(url.includes(sample)){
+        console.log("BAM url is valid");
       }
-      console.log("this.customModelInfos", this.customModelInfos)
-      this.$emit("custom-model-info",this.customModelInfos); 
+      else {
+        console.log("bam url is not valid");
+      }
+    },
+    getModelInfoMap: function(customModelInfos){
+        this.$emit("custom-model-info",customModelInfos); 
     }, 
+    // getModelInfoMap: function(modelInfoMap, vcfUrls, tbiUrls, bamUrls, baiUrls){
+    //   console.log("modelInfoMap: ", modelInfoMap);
+    //   for(var model in modelInfoMap){
+    //     if(this.customPedigreeMapData.hasOwnProperty(modelInfoMap[model].sample)){
+    //       console.log("true!", modelInfoMap[model].sample, " is present" )
+    //     }
+    // 
+    //     // //check if sample id is correctly assigned: proband should correspond to proband from the pedTempData
+    //     // console.log("should output relationship:" , this.customPedigreeMapData[modelInfoMap[model].sample]);
+    //     // if(this.customPedigreeMapData[modelInfoMap[model].sample].relationship ===  model){
+    //     //   console.log("true!! sample id is correctly assigned");
+    //     // }
+    //     // else {
+    //     //   console.log("sample id is incorrectly assigned");
+    //     // }
+    // 
+    //     // Validate bam and bai urls 
+    //     if(bamUrls[model].length){
+    //       //does it have the correct sample id? 
+    //       this.isBamUrlValid(bamUrls[model], modelInfoMap[model].sample)
+    //     }
+    // 
+    //     console.log("affected status", this.customPedigreeMapData[modelInfoMap[model].sample].isAffected);
+    //     var obj = {}; 
+    //     obj.relationship = model 
+    //     // obj.affectedStatus = modelInfoMap[model].isAffected
+    //     obj.affectedStatus = this.customPedigreeMapData[modelInfoMap[model].sample].isAffected
+    //     obj.name = modelInfoMap[model].name 
+    //     obj.sample = modelInfoMap[model].sample 
+    //     // obj.sex = ""
+    //     obj.sex = this.customPedigreeMapData[modelInfoMap[model].sample].sex
+    //     var vcf = modelInfoMap[model].vcf !== undefined ? modelInfoMap[model].vcf : vcfUrls[model];
+    //     obj.vcf = vcf 
+    //     var tbi = modelInfoMap[model].tbi !== undefined ? modelInfoMap[model].tbi : tbiUrls[model];
+    //     obj.tbi = tbi 
+    //     obj.bam = bamUrls[model]
+    //     obj.bai = baiUrls[model]
+    //     this.customModelInfos.push(obj)
+    //   }
+    //   console.log("this.customModelInfos", this.customModelInfos); 
+    //   this.$emit("custom-model-info",this.customModelInfos); 
+    // },
     getStarted(){
       bus.$emit("initialize-clin")
     }, 

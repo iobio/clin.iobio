@@ -102,9 +102,27 @@
                 </span>
              </v-card-title>
             <!-- </v-layout> -->
-
+            <v-flex v-if="validationErrors.length">
+              Please correct the following errors:
+              <div v-for="(error, idx) in validationErrors" >
+                <v-alert
+                  border="left"
+                  colored-border
+                  type="error"
+                  icon="error_outline"
+                  dense
+                  elevation="1"
+                  style="font-size:12px"
+                >
+                  {{ error }}
+                </v-alert>
+              </div>
+              <br>
+            </v-flex>
 
             <v-layout row nowrap class="mt-0" style="padding-right:32px">
+              
+
 
               <v-flex class="mt-0" style="max-width: 160px;margin-left: 10px;" >
                   <v-radio-group v-model="mode" @change="onModeChanged"  hide-details column>
@@ -170,6 +188,7 @@
                     @sample-data-changed="validate"
                     @samples-available="onSamplesAvailable"
                     @bam-urls="setBamUrls"
+                    :customPedigreeMapData="customPedigreeMapData"
                   >
                 </sample-data>
                </v-flex>
@@ -255,7 +274,8 @@ export default {
   props: {
     cohortModel: null,
     showDialog: null, 
-    pageCounter: null
+    pageCounter: null,
+    customPedigreeMapData: null,
   },
   data () {
     return {
@@ -309,6 +329,9 @@ export default {
         father: '',
         sibling: ''
       }, 
+      customModelInfos: [],
+      sampleIdDupsCounter: {},
+      validationErrors: [],
     }
   },
   watch: {
@@ -326,14 +349,69 @@ export default {
     }
   },
   methods: {
+    isBamUrlValid: function(url, sample){
+      //does bam url have the correct sample id? 
+      if(url.includes(sample)){
+        return true; 
+      }
+      else {
+        this.validationErrors.push(`The BAM url does not match for the sample ${sample}`)
+        return false; 
+      }
+    }, 
+    getModelInfoMap: function(modelInfoMap, vcfUrls, tbiUrls, bamUrls, baiUrls){
+      for(var model in modelInfoMap){
+        var bam; 
+        if(modelInfoMap[model].bam){
+          bam = modelInfoMap[model].bam
+        }
+        else {
+          bam = bamUrls[model];
+        }
+        // TODO: Add a similar check for bai urls
+        
+        if(this.customPedigreeMapData.hasOwnProperty(modelInfoMap[model].sample)){
+          if(this.sampleIdDupsCounter[modelInfoMap[model].sample] === undefined){ //check if sample ids are duplicated
+            this.sampleIdDupsCounter[modelInfoMap[model].sample] = 1; 
+            // Validate bam  urls 
+            if(this.isBamUrlValid(bam, modelInfoMap[model].sample)){
+              var obj = {}; 
+              obj.relationship = model 
+              // obj.affectedStatus = this.customPedigreeMapData[modelInfoMap[model].sample].isAffected
+              obj.affectedStatus = modelInfoMap[model].isAffected
+              obj.name = modelInfoMap[model].name 
+              obj.sample = modelInfoMap[model].sample 
+              obj.sex = this.customPedigreeMapData[modelInfoMap[model].sample].sex
+              var vcf = modelInfoMap[model].vcf !== undefined ? modelInfoMap[model].vcf : vcfUrls[model];
+              obj.vcf = vcf 
+              var tbi = modelInfoMap[model].tbi !== undefined ? modelInfoMap[model].tbi : tbiUrls[model];
+              obj.tbi = tbi 
+              // obj.bam = bamUrls[model]
+              obj.bam = bam
+              obj.bai = baiUrls[model]
+              this.customModelInfos.push(obj)
+            }
+            else {
+            }
+          }
+          else {
+            this.validationErrors.push(`Sample id ${modelInfoMap[model].sample} is duplicated.`)
+          }
+        }
+        else{
+        }
+      }
+      console.log("this.customModelInfos in files dialog", this.customModelInfos); 
+    },
     onLoad: function() {
       let self = this;
+      self.validationErrors = [];
       self.inProgress = true;
       // console.log("self.modelInfo", self.modelInfo)
       // console.log("this.modelInfoMap on load", this.modelInfoMap)
 
-      self.$emit("get-modeinfo-map", self.modelInfoMap, self.vcfUrls, self.tbiUrls, self.bamUrls, self.baiUrls); 
-      
+      // self.$emit("get-modeinfo-map", self.modelInfoMap, self.vcfUrls, self.tbiUrls, self.bamUrls, self.baiUrls); 
+      // self.getModelInfoMap(self.modelInfoMap, self.vcfUrls, self.tbiUrls, self.bamUrls, self.baiUrls); 
       self.cohortModel.mode = self.mode;
       self.cohortModel.genomeBuildHelper.setCurrentBuild(self.buildName);
       self.cohortModel.genomeBuildHelper.setCurrentSpecies(self.speciesName);
@@ -355,10 +433,25 @@ export default {
       })
       .then(function() {
         let performAnalyzeAll = self.demoAction ? true : false;
-        self.inProgress = false;
-
-        self.$emit("on-files-loaded", performAnalyzeAll);
-        self.showFilesDialog = false;
+        self.getModelInfoMap(self.modelInfoMap, self.vcfUrls, self.tbiUrls, self.bamUrls, self.baiUrls); 
+        if(self.customModelInfos.length === Object.keys(self.modelInfoMap).length){
+        // if(!self.validationErrors.length){ //If there are no validation errors, its a success and go to next page 
+          self.inProgress = false;
+          self.$emit("on-files-loaded", performAnalyzeAll);
+          self.showFilesDialog = false;
+          self.$emit("get-modeinfo-map", self.customModelInfos);
+        }
+        else {
+          self.inProgress = false;
+          self.isValid = false;
+          // self.validationErrors = [];
+          self.customModelInfos = [];
+          self.sampleIdDupsCounter = {};
+        }
+        // self.inProgress = false;
+        // 
+        // self.$emit("on-files-loaded", performAnalyzeAll);
+        // self.showFilesDialog = false;
       })
     },
     onCancel:  function() {
@@ -591,7 +684,11 @@ export default {
     let self = this;
 
   },
-  mounted: function() {    
+  mounted: function() {
+    bus.$on("back-to-files", () => {
+      self.sampleIdDupsCounter = {};
+      self.validationErrors = [];
+    })    
     if (this.cohortModel) {
       this.speciesName =  this.cohortModel.genomeBuildHelper.getCurrentSpeciesName();
       this.buildName   =  this.cohortModel.genomeBuildHelper.getCurrentBuildName();

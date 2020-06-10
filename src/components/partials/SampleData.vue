@@ -44,9 +44,11 @@
 <template>
 
  <v-layout id="sample-data-form" row wrap :class="{'ml-2': true,   'mt-3' : modelInfo.relationship != 'proband', 'mt-1' : modelInfo.relationship == 'proband'}">
-    <v-flex xs12 class="sample-label" >
+    <v-flex xs12 class="sample-label mb-2 mt-1" >
       <span> {{ modelInfo.relationship }} </span>
-      <v-switch  label="Affected" hide-details @change="onIsAffected" v-model="isAffected"></v-switch>
+      <!-- <v-switch  label="Affected" hide-details @change="onIsAffected" v-model="isAffected"></v-switch> -->
+      <!-- Using watch instead of @change to update isAffected state  -->
+      <v-switch  label="Affected" hide-details v-model="isAffected"></v-switch>
     </v-flex>
     <v-flex xs12  class="ml-3" style="margin-top: -15px">
       <sample-data-file
@@ -62,7 +64,7 @@
       </sample-data-file>
     </v-flex>
 
-    <v-flex xs4   id="sample-selection">
+    <v-flex xs4  class="ml-9" id="sample-selection">
       <v-autocomplete
         v-bind:class="samples == null || samples.length == 0 ? 'hide' : ''"
         label="Sample"
@@ -104,7 +106,8 @@ export default {
   },
   props: {
     modelInfo: null,
-    separateUrlForIndex: null
+    separateUrlForIndex: null,
+    customPedigreeMapData: null,
   },
   data () {
     return {
@@ -126,6 +129,11 @@ export default {
   computed: {
   },
   watch: {
+    isAffected: function() {
+      this.modelInfo.isAffected = this.isAffected;
+      this.modelInfo.affectedStatus = this.isAffected ? 'affected' : 'unaffected';
+      this.modelInfo.model.affectedStatus = this.modelInfo.affectedStatus;
+    }
   },
   methods: {
     onVcfUrlEntered: function(vcfUrl, tbiUrl) {
@@ -200,8 +208,10 @@ export default {
       }
     },
     onSampleSelected: function() {
-      // console.log("onSampleSelected", this.sample)
       let self = this;
+      if(self.customPedigreeMapData[self.sample]!==undefined){
+        self.isAffected = self.customPedigreeMapData[self.sample].isAffected
+      }
       self.modelInfo.sample = this.sample;
       if (self.modelInfo.model) {
         self.modelInfo.model.sampleName  = this.modelInfo.sample;
