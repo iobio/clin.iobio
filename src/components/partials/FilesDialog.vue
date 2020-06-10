@@ -188,6 +188,7 @@
                     @sample-data-changed="validate"
                     @samples-available="onSamplesAvailable"
                     @bam-urls="setBamUrls"
+                    :customPedigreeMapData="customPedigreeMapData"
                   >
                 </sample-data>
                </v-flex>
@@ -367,7 +368,8 @@ export default {
             if(this.isBamUrlValid(bamUrls[model], modelInfoMap[model].sample)){
               var obj = {}; 
               obj.relationship = model 
-              obj.affectedStatus = this.customPedigreeMapData[modelInfoMap[model].sample].isAffected
+              // obj.affectedStatus = this.customPedigreeMapData[modelInfoMap[model].sample].isAffected
+              obj.affectedStatus = modelInfoMap[model].isAffected
               obj.name = modelInfoMap[model].name 
               obj.sample = modelInfoMap[model].sample 
               obj.sex = this.customPedigreeMapData[modelInfoMap[model].sample].sex
@@ -429,7 +431,6 @@ export default {
       .then(function() {
         let performAnalyzeAll = self.demoAction ? true : false;
         self.getModelInfoMap(self.modelInfoMap, self.vcfUrls, self.tbiUrls, self.bamUrls, self.baiUrls); 
-        console.log(("object length: ",Object.keys(self.modelInfoMap).length ));
         if(self.customModelInfos.length === Object.keys(self.modelInfoMap).length){
         // if(!self.validationErrors.length){ //If there are no validation errors, its a success and go to next page 
           self.inProgress = false;
