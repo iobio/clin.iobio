@@ -327,8 +327,8 @@ export default {
       readDepthConversionRatio: 0,
 
       bam: {},
-      bed: {},
-
+      // bed: {},
+      bed: null,
       readDepthChartData: [],
       references: [],
 
@@ -374,8 +374,15 @@ export default {
 
     }
     else if(this.customData){
+      fetch('https://raw.githubusercontent.com/chmille4/bam.iobio.io/vue/client/data/20130108.exome.targets.bed')
+          .then(response => response.text())
+          .then(bed => {
+            const defaultBed = bed.replace(/chr/g, '');
+            this.bed = defaultBed;
+            // console.log("defaultBed", this.bed);
+            this.buildCustomPage();
+          });
 
-      this.buildCustomPage();
     }
     else{
       this.overridePropsWithDemoData();
@@ -417,7 +424,8 @@ export default {
     },
     loadBamStats: function(selectedBamURL, selectedBaiURL, sample) {
       return new Promise((resolve, reject) => {
-        let bed = undefined;
+        // let bed = undefined;
+        let bed = this.bed;
         // this.selectedBaiURL = undefined;
         let bam = {}
         if (selectedBamURL && selectedBamURL != '' ) {
