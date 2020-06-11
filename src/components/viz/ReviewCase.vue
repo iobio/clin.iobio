@@ -580,7 +580,6 @@ export default {
       this.populateRelationshipMap();
       this.populateSampleIdsFromCustom(this.pedigree);
       this.populateSampleIdsAndRelationships();
-      this.populateSampleUuidArray();
       this.getVarCountFromCustomData(this.modelInfos);
       this.getBamStatsFromCustomData(this.modelInfos);
       this.populateReviewCaseBadges();
@@ -592,19 +591,20 @@ export default {
       for(let i = 0; i < len; i++){
         this.allPedigreeDataArrays.push(this.pedigreeDataArray)
       }
-      console.log("this.allPedigreeDataArrays: ", this.allPedigreeDataArrays);
     },
 
     populateSampleIdsAndRelationships(){
       this.sampleIdsAndRelationships = [];
 
       let keys = Object.keys(this.sampleIdRelationshipMap);
+      this.sampleUuids = [];
 
       for(let i = 0; i < keys.length; i++){
-        let key = keys[i]
+        let key = keys[i];
+        let uuid = this.getUuidFromId(key);
+        this.sampleUuids.push(uuid);
         this.sampleIdsAndRelationships.push(key + " " + this.sampleIdRelationshipMap[key]);
       }
-      console.log("this.sampleIdsAndRelationships: ", this.sampleIdsAndRelationships);
     },
 
     getUuidFromId(id){
@@ -614,13 +614,6 @@ export default {
       return this.sampleIds.indexOf(id) + 1000;
     },
 
-    populateSampleUuidArray(){
-      this.sampleUuids = [];
-      for(let i = 0; i < this.sampleIds.length; i++){
-        this.sampleUuids.push(i+1000);
-      }
-      console.log("this.sampleUuids: ", this.sampleUuids);
-    },
 
     populateSampleIdsFromCustom(txt){
       this.sampleIds = [];
@@ -632,7 +625,6 @@ export default {
             this.sampleIds.push(splitLine[1]);
           }
         }
-        console.log("this.sampleIds: ", this.sampleIds);
     },
 
     buildPedFromTxt(txt) {
@@ -658,11 +650,8 @@ export default {
           if (sample.id) {
             pedArr.push(sample);
           }
-          console.log("sample: ", sample);
-
         }
       }
-      console.log("pedArr: ", pedArr);
       return pedArr;
     },
 
@@ -941,7 +930,6 @@ export default {
       for(let i = 0; i < this.modelInfosData.length; i++){
         this.sampleIdRelationshipMap[this.modelInfos[i].sample] = this.modelInfos[i].relationship
       }
-      console.log("this.sampleIdRelationshipMap: ", this.sampleIdRelationshipMap);
     },
 
 
@@ -1016,7 +1004,6 @@ export default {
         const coverageArr = self.formatCoverageArray(d.coverage);
         self.coverageDataArray.push(coverageArr);
       });
-      // console.log("coverageDataArray", self.coverageDataArray)
     },
 
     assignProbandToEachSample(){
