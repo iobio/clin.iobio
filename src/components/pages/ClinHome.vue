@@ -6,6 +6,11 @@
 
 @import ../../assets/sass/variables
 
+.configError
+  font-size: 16px
+
+.configTitle
+  font-size: 20px
 
 .v-snack--right
   margin-right: 350px !important
@@ -125,7 +130,7 @@ $horizontal-dashboard-height: 140px
 
 <template>
 <div id="application-content" :class="{'workflow-new': newWorkflow ? true : false}">
-  <landing-page 
+  <landing-page
     v-if="!launchedFromMosaic && showLandingPage"
     :cohortModel="cohortModel"
     @custom-model-info="customModelInfo"
@@ -134,6 +139,22 @@ $horizontal-dashboard-height: 140px
     @set-custom-case-summary="setCustomCaseSummary($event)"
     @load-saved-input-config="loadSavedInputConfig($event)">
   </landing-page>
+
+
+  <v-dialog  width="500"  v-model="showConfigError"  >
+    <v-card class="info-card full-width">
+      <v-card-title style="justify-content:space-between">
+        <span class="configTitle">{{ 'Error parsing config file'}}</span>
+        <v-btn  @click="onClose" text class="close-button">
+          <v-icon>close</v-icon>
+        </v-btn>
+      </v-card-title>
+      <div class="configError">
+        {{configMessage}}
+      </div>
+    </v-card>
+  </v-dialog>
+
   <navigation v-if="!showLandingPage && !showSplash && isAuthenticated  && workflow && analysis"
    :caseSummary="caseSummary"
    :analysis="analysis"
@@ -406,7 +427,7 @@ export default {
       variantsByInterpretation: [],
 
       showFindings: false,
-      
+
       appUrls: {
         'localhost': {
           'gene':      'http://localhost:4026/?launchedFromClin=true&frame_source=' + window.document.URL,
@@ -433,6 +454,8 @@ export default {
       analysis: null,
       caseSummary: null,
       geneSet: null,
+      showConfigError: false,
+      configMessage: "",
 
 
       demoModelInfos:  [
@@ -466,7 +489,7 @@ export default {
       allVarCounts: null,
       coverageHistos: null,
       venn_diag_data: {},
-      geneToDelete: '', 
+      geneToDelete: '',
 
 
       interpretationMap: {
@@ -480,8 +503,8 @@ export default {
       reviewCaseBadges: null,
       generatingReport: false,
       cohortModel: null,
-      customData: false, 
-      customGeneSet: [], 
+      customData: false,
+      customGeneSet: [],
 
     }
 
@@ -506,7 +529,7 @@ export default {
       }, 2000)
     })
     bus.$on("save-input-config", ()=>{
-      this.saveAsInputConfig(); 
+      this.saveAsInputConfig();
     })
   },
 
@@ -635,7 +658,7 @@ export default {
           // TODO - genome build is required
           self.genomeBuildHelper.setCurrentBuild("GRCh37")
         }
-        
+
         let glyph = new Glyph();
         let translator = new Translator(self.globalApp, glyph);
         let genericAnnotation = new GenericAnnotation(glyph);
@@ -720,7 +743,7 @@ export default {
             self.splashMessage = error;
           })
         } else {
-          self.params.source = ""; 
+          self.params.source = "";
           self.showLandingPage = true;
           self.modelInfos = self.demoModelInfos;
           self.user       = self.demoUser;
@@ -898,6 +921,10 @@ export default {
       this.currentStep = stepNumber
     },
 
+    onClose: function(){
+      this.showConfigError = false;
+    },
+
     onTaskChanged: function(stepNumber, task) {
       let self = this;
       for (var appName in self.apps) {
@@ -1026,7 +1053,7 @@ export default {
         if (self.paramGeneBatchSize && (appName == 'gene' || appName == 'genefull')) {
           msgObject.batchSize = +self.paramGeneBatchSize;
         }
-        
+
         console.log("ClinHome.setData  " + appName + " msgObject is: " + msgObject.modelInfo)
 
 
@@ -1398,10 +1425,10 @@ export default {
                 newAnalysis.payload.genes.push(geneName);
               })
             } else if (self.params.genes) {
-              // Otherwise, if a gene set wasn't specified but a gene was, 
+              // Otherwise, if a gene set wasn't specified but a gene was,
               // initialize the genes to this single gene
               self.params.genes.split(",").forEach(function(geneName) {
-                newAnalysis.payload.genes.push(geneName);              
+                newAnalysis.payload.genes.push(geneName);
               })
             }
 
@@ -1845,64 +1872,176 @@ export default {
       this.reviewCaseBadges = badges;
     },
     gene_to_delete(gene){
-      this.geneToDelete = gene; 
+      this.geneToDelete = gene;
     },
 
     updateAverageCoverage(cov){
       this.averageCoverage = cov;
-    }, 
-    
-    customModelInfo(modelInfos){
-      this.modelInfos = modelInfos; 
-      this.customData = true; 
     },
-    
+
+    customModelInfo(modelInfos){
+      this.modelInfos = modelInfos;
+      this.customData = true;
+    },
+
     setGeneSet(geneSet){
-      this.customGeneSet = geneSet      
-    }, 
+      this.customGeneSet = geneSet
+    },
     setPedData(pedigree){
-      this.rawPedigree = pedigree; 
-    }, 
+      this.rawPedigree = pedigree;
+    },
     setCustomCaseSummary(caseSummary){
-      this.caseSummary = {}; 
-      this.caseSummary.name = caseSummary.name; 
-      this.caseSummary.description = caseSummary.description; 
-    }, 
+      this.caseSummary = {};
+      this.caseSummary.name = caseSummary.name;
+      this.caseSummary.description = caseSummary.description;
+    },
     saveAsInputConfig(){
       var configObj = {
         "caseSummary": this.caseSummary,
         "modelInfos": this.modelInfos,
         "customGeneSet": this.customGeneSet,
-        "rawPedigree": this.rawPedigree        
+        "rawPedigree": this.rawPedigree
       }
       console.log("obj", configObj);
       let configData = JSON.stringify(configObj);
-      const jsonBlob = new Blob([configData], { type: "application/json" }); 
+      const jsonBlob = new Blob([configData], { type: "application/json" });
       saveAs(jsonBlob, "clin-input-config.json")
     },
     importSavedInputConfig(ev){
       const file = ev.target.files[0];
       const reader = new FileReader();
       reader.onload = e => {
-        console.log("e.target.result;", e.target.result); 
+        console.log("e.target.result;", e.target.result);
         return e.target.result;
       }
       reader.readAsText(file);
     },
+    validateConfigFile(customData){
+      let bool = true;
+      let message = "";
+
+      if(customData.hasOwnProperty("caseSummary")){
+        if(!customData.caseSummary.hasOwnProperty("name")){
+          bool = false;
+          message = "Could not interpret project name field (\"caseSummary\":{\"name\":\"\",\"description\":\"\"})";
+        }
+        if(!customData.caseSummary.hasOwnProperty("description")) {
+          bool = false;
+          message = "Could not interpret description field (\"caseSummary\":{\"name\":\"\",\"description\":\"\"})" ;
+        }
+      }
+      else{
+        bool = false;
+        message = "Could not interpret case summary field (\"caseSummary\":{\"name\":\"\",\"description\":\"\"})";
+
+      }
+
+      if(!customData.hasOwnProperty("rawPedigree")){
+        bool = false;
+        message = "Could not interpret pedigree field (\"rawPedigree\": \"\")";
+
+      }
+      if(!customData.hasOwnProperty("customGeneSet")){
+        message = "Could not interpret gene list field (\"customGeneSet\":[\"\"],)";
+
+        bool = false;
+      }
+      if(!customData.hasOwnProperty("modelInfos")){
+        message = "Could not interpret files field (\"modelInfos\":[\"\"])";
+        bool = false;
+      }
+      else{
+
+        let idMap = {};
+        let relationshipMap = {}
+
+        for(let i = 0; i < customData.modelInfos.length; i++) {
+          let sample = customData.modelInfos[i];
+
+          if(idMap.hasOwnProperty(sample.sample)){
+            bool = false;
+            message = "Error parsing config file. Duplicate sample ids detected for sample " + sample.sample + '.';
+          }
+          else{
+            idMap[sample.sample] = 1;
+          }
+
+          if(sample.relationship === "mother") {
+            if (relationshipMap.hasOwnProperty(sample.relationship)) {
+              bool = false;
+              message = "Multiple mothers detected";
+            }
+            else{
+              relationshipMap[sample.relationship] = 1;
+            }
+          }
+          if(sample.relationship === "father") {
+            if (relationshipMap.hasOwnProperty(sample.relationship)) {
+              bool = false;
+              message = "Multiple fathers found";
+            }
+            else{
+              relationshipMap[sample.relationship] = 1;
+            }
+          }
+
+
+          if(!this.isUrlValid(sample.bam, sample.sample)){
+            bool = false;
+            message = "sampleId " + sample.sample + " does not match bam url";
+          }
+
+          let bamExt = sample.bam.substr(sample.bam.lastIndexOf('.') + 1);
+          let vcfExt = sample.vcf.substr(sample.vcf.lastIndexOf('.') + 1);
+
+          if(bamExt !== "bam"){
+            message = "Extension for bam file " + sample.bam + " was not recognized";
+            bool = false;
+          }
+          if(vcfExt !== "vcf" && vcfExt !== "gz" ){
+            message = "Extension for vcf file " + sample.vcf + " was not recognized";
+            bool = false;
+          }
+        }
+
+      }
+      let ret = {bool: bool, message: message};
+      return ret;
+
+    },
+
+    isUrlValid: function(url, sample){
+      if(url.includes(sample)){
+        return true;
+      }
+      else {
+        return false;
+      }
+    },
+
     loadSavedInputConfig(customData){
-      this.caseSummary = {};
-      this.caseSummary.name = customData.caseSummary.name; 
-      this.caseSummary.description = customData.caseSummary.description; 
-      this.rawPedigree = customData.rawPedigree; 
-      this.customGeneSet = customData.customGeneSet; 
-      this.modelInfos = customData.modelInfos; 
-      this.customData = true;
-      
-      this.showLandingPage = false;
-      this.showSplash = true;
-      setTimeout(()=>{
-        this.onAuthenticated();
-      }, 2000)
+      let validate = this.validateConfigFile(customData);
+
+      if(validate.bool){
+
+        this.caseSummary = {};
+        this.caseSummary.name = customData.caseSummary.name;
+        this.caseSummary.description = customData.caseSummary.description;
+        this.rawPedigree = customData.rawPedigree;
+        this.customGeneSet = customData.customGeneSet;
+        this.modelInfos = customData.modelInfos;
+        this.customData = true;
+
+        this.showLandingPage = false;
+        this.showSplash = true;
+        setTimeout(()=>{
+          this.onAuthenticated();
+        }, 2000)
+      }
+      else{
+        this.showConfigError = true;
+        this.configMessage = validate.message;
+      }
     }
   }
 }
