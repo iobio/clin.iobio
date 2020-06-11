@@ -715,6 +715,7 @@ export default {
           })
            .then(ped => {
              this.pedData = ped;
+             this.buildPedFromTxt(this.pedData);
            })
            .catch(error => console.log(error))
       }
