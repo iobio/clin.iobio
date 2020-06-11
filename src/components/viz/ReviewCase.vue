@@ -379,10 +379,8 @@ export default {
           .then(bed => {
             const defaultBed = bed.replace(/chr/g, '');
             this.bed = defaultBed;
-            console.log("defaultBed", this.bed);
+            // console.log("defaultBed", this.bed);
             this.buildCustomPage();
-
-            // this.goSampling({sampling: this.sampling, sequenceNames: this.getSelectedSeqIds()});
           });
 
     }
