@@ -285,16 +285,7 @@
               <br>
               <center>OR </center>
               <br>
-              <v-text-field
-                name="pedUrlInput"
-                label="Enter URL for PED file"
-                prepend-icon="link"
-                hide-details
-                v-model="pedUrl"
-                :rules="urlRules"
-                @change="onPedUrlChange"
-                type="url"
-              ></v-text-field>
+              <PedFileUrlInput @on-ped-url-change="onPedUrlChange($event)"></PedFileUrlInput>
             </v-col>
           <v-card-actions>
             <v-spacer></v-spacer>
@@ -385,6 +376,7 @@ import LandingPageSlide from '../partials/LandingPageSlide.vue'
 import MoreMenu         from '../partials/MoreMenu.vue'
 import NavBarDialog     from '../partials/NavBarDialog.vue'
 import PedFileReader    from './PedFileReader.vue'
+import PedFileUrlInput  from  './PedFileUrlInput.vue'
 
 import {
   Hooper,
@@ -417,7 +409,8 @@ export default {
     NavBarDialog,
     FilesDialog,
     PedFileReader,
-    CustomDataStepper
+    CustomDataStepper,
+    PedFileUrlInput
   },
   props: {
     cohortModel: null,
@@ -554,6 +547,12 @@ export default {
       this.pedData = ped;
       this.buildPedFromTxt(this.pedData);
     },
+    onPedUrlChange(ped){
+      this.pedData = ped;
+      if(this.pedData){
+        this.buildPedFromTxt(this.pedData);  
+      }
+    },
     buildPedFromTxt(txt) {
       let pedLines = txt.split('\n');
       let pedArr = [];
@@ -566,7 +565,7 @@ export default {
         let statusMap = {
           0: false,
           1: false,
-          2: true
+          2: true,           
         }
 
         if(splitLine && splitLine[0] !== "" && !isNaN(parseInt(splitLine[4]))) {
@@ -656,31 +655,6 @@ export default {
     loadFromConfigInput(){
         this.$emit("load-saved-input-config", this.configCustomData)
     },
-    isValidUrl(url){
-      var expression = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/;
-      var regex = new RegExp(expression);
-      return url.match(regex);
-    },
-    onPedUrlChange: _.debounce(function (url) {
-      if(url && url.length > 0 && this.isValidUrl(url)){
-        fetch(url)
-          .then(res => {
-            if(!res.ok){
-              alert("Please enter a correct URL or a presigned URL that can be accessed.");
-            }
-            else{
-              return res.text();
-            }
-          })
-           .then(ped => {
-             this.pedData = ped;
-           })
-           .catch(error => console.log(error))
-      }
-      else {
-        this.pedData = null;
-      }
-    }, 100),
   },
   mounted: function() {
     bus.$on("close_dialog", ()=>{
