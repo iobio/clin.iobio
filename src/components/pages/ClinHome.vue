@@ -125,7 +125,7 @@ $horizontal-dashboard-height: 140px
 
 <template>
 <div id="application-content" :class="{'workflow-new': newWorkflow ? true : false}">
-  <landing-page 
+  <landing-page
     v-if="!launchedFromMosaic && showLandingPage"
     :cohortModel="cohortModel"
     @custom-model-info="customModelInfo"
@@ -406,7 +406,7 @@ export default {
       variantsByInterpretation: [],
 
       showFindings: false,
-      
+
       appUrls: {
         'localhost': {
           'gene':      'http://localhost:4026/?launchedFromClin=true&frame_source=' + window.document.URL,
@@ -466,7 +466,7 @@ export default {
       allVarCounts: null,
       coverageHistos: null,
       venn_diag_data: {},
-      geneToDelete: '', 
+      geneToDelete: '',
 
 
       interpretationMap: {
@@ -480,8 +480,8 @@ export default {
       reviewCaseBadges: null,
       generatingReport: false,
       cohortModel: null,
-      customData: false, 
-      customGeneSet: [], 
+      customData: false,
+      customGeneSet: [],
 
     }
 
@@ -506,7 +506,7 @@ export default {
       }, 2000)
     })
     bus.$on("save-input-config", ()=>{
-      this.saveAsInputConfig(); 
+      this.saveAsInputConfig();
     })
   },
 
@@ -635,7 +635,7 @@ export default {
           // TODO - genome build is required
           self.genomeBuildHelper.setCurrentBuild("GRCh37")
         }
-        
+
         let glyph = new Glyph();
         let translator = new Translator(self.globalApp, glyph);
         let genericAnnotation = new GenericAnnotation(glyph);
@@ -720,7 +720,7 @@ export default {
             self.splashMessage = error;
           })
         } else {
-          self.params.source = ""; 
+          self.params.source = "";
           self.showLandingPage = true;
           self.modelInfos = self.demoModelInfos;
           self.user       = self.demoUser;
@@ -1026,7 +1026,7 @@ export default {
         if (self.paramGeneBatchSize && (appName == 'gene' || appName == 'genefull')) {
           msgObject.batchSize = +self.paramGeneBatchSize;
         }
-        
+
         console.log("ClinHome.setData  " + appName + " msgObject is: " + msgObject.modelInfo)
 
 
@@ -1200,11 +1200,14 @@ export default {
                 delete task.badges;
               }
             } else if (task.key == 'review-full') {
-              let fullAnalysisCount = self.analysis.payload.variants.length;
-              if (fullAnalysisCount > 0) {
-                task.badges =  [{count: fullAnalysisCount, label: 'variants'}];
-              } else {
-                delete task.badges;
+                if(JSON.stringify(self.analysis.payload.variants[0]) === '{}'){
+                  self.analysis.payload.variants.shift();
+                }
+                let fullAnalysisCount = self.analysis.payload.variants.length;
+                if (fullAnalysisCount > 0) {
+                  task.badges = [{count: fullAnalysisCount, label: 'variants'}];
+                } else {
+                  delete task.badges;
               }
             } else if (task.key == 'review-results') {
               task.badges = []
@@ -1398,10 +1401,10 @@ export default {
                 newAnalysis.payload.genes.push(geneName);
               })
             } else if (self.params.genes) {
-              // Otherwise, if a gene set wasn't specified but a gene was, 
+              // Otherwise, if a gene set wasn't specified but a gene was,
               // initialize the genes to this single gene
               self.params.genes.split(",").forEach(function(geneName) {
-                newAnalysis.payload.genes.push(geneName);              
+                newAnalysis.payload.genes.push(geneName);
               })
             }
 
@@ -1438,7 +1441,13 @@ export default {
           // These are the platinum variants that we are just grabbing
           // from a json file to mimic what variant sets from genome-wide
           // filters would look like
-          self.analysis.payload.variants = self.importedVariants.variants;
+
+          if(self.customData) {
+            self.analysis.payload.variants = [{}];
+          }
+          else{
+            self.analysis.payload.variants = self.importedVariants.variants;
+          }
 
           self.setGeneTaskBadges();
           resolve();
@@ -1845,59 +1854,59 @@ export default {
       this.reviewCaseBadges = badges;
     },
     gene_to_delete(gene){
-      this.geneToDelete = gene; 
+      this.geneToDelete = gene;
     },
 
     updateAverageCoverage(cov){
       this.averageCoverage = cov;
-    }, 
-    
-    customModelInfo(modelInfos){
-      this.modelInfos = modelInfos; 
-      this.customData = true; 
     },
-    
+
+    customModelInfo(modelInfos){
+      this.modelInfos = modelInfos;
+      this.customData = true;
+    },
+
     setGeneSet(geneSet){
-      this.customGeneSet = geneSet      
-    }, 
+      this.customGeneSet = geneSet
+    },
     setPedData(pedigree){
-      this.rawPedigree = pedigree; 
-    }, 
+      this.rawPedigree = pedigree;
+    },
     setCustomCaseSummary(caseSummary){
-      this.caseSummary = {}; 
-      this.caseSummary.name = caseSummary.name; 
-      this.caseSummary.description = caseSummary.description; 
-    }, 
+      this.caseSummary = {};
+      this.caseSummary.name = caseSummary.name;
+      this.caseSummary.description = caseSummary.description;
+    },
     saveAsInputConfig(){
       var configObj = {
         "caseSummary": this.caseSummary,
         "modelInfos": this.modelInfos,
         "customGeneSet": this.customGeneSet,
-        "rawPedigree": this.rawPedigree        
+        "rawPedigree": this.rawPedigree
       }
       console.log("obj", configObj);
       let configData = JSON.stringify(configObj);
-      const jsonBlob = new Blob([configData], { type: "application/json" }); 
+      const jsonBlob = new Blob([configData], { type: "application/json" });
       saveAs(jsonBlob, "clin-input-config.json")
     },
     importSavedInputConfig(ev){
       const file = ev.target.files[0];
       const reader = new FileReader();
       reader.onload = e => {
-        console.log("e.target.result;", e.target.result); 
+        console.log("e.target.result;", e.target.result);
         return e.target.result;
       }
       reader.readAsText(file);
     },
     loadSavedInputConfig(customData){
       this.caseSummary = {};
-      this.caseSummary.name = customData.caseSummary.name; 
-      this.caseSummary.description = customData.caseSummary.description; 
-      this.rawPedigree = customData.rawPedigree; 
-      this.customGeneSet = customData.customGeneSet; 
-      this.modelInfos = customData.modelInfos; 
+      this.caseSummary.name = customData.caseSummary.name;
+      this.caseSummary.description = customData.caseSummary.description;
+      this.rawPedigree = customData.rawPedigree;
+      this.customGeneSet = customData.customGeneSet;
+      this.modelInfos = customData.modelInfos;
       this.customData = true;
-      
+
       this.showLandingPage = false;
       this.showSplash = true;
       setTimeout(()=>{
