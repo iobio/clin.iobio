@@ -170,6 +170,7 @@
 
 
             <bed-data
+              v-if="buildName==='GRCh37'"
               @set-bed-url="setBedUrl($event)">
             </bed-data>
 
@@ -353,6 +354,12 @@ export default {
         this.$emit("on-cancel");
       }
     },
+    buildName: function(){
+      if(this.buildName==='GRCh38'){
+        this.bedFileUrl = undefined
+      }
+    }
+
   },
   methods: {
     isBamUrlValid: function(url, sample){
