@@ -169,10 +169,11 @@
             </v-layout>
 
 
+            <bed-data>
+            </bed-data>
+
+
             <v-layout row wrap class="mt-3">
-
-
-
                <v-flex xs12
                  v-for="rel in rels[mode]"
                     :key="rel"
@@ -263,13 +264,15 @@
 
 import SampleData          from '../partials/SampleData.vue'
 import CustomDataStepper   from '../partials/CustomDataStepper.vue'
+import BedData             from '../partials/BedData.vue'
 import { bus }             from  '../../main'
 
 export default {
   name: 'files-dialog',
   components: {
     SampleData,
-    CustomDataStepper
+    CustomDataStepper,
+    BedData
   },
   props: {
     cohortModel: null,
@@ -346,6 +349,9 @@ export default {
       if (!this.showFilesDialog) {
         this.$emit("on-cancel");
       }
+    },
+    dataTypeSelectedName: function() {
+      console.log("dataTypeSelectedName", this.dataTypeSelectedName);
     }
   },
   methods: {
