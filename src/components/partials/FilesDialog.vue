@@ -169,7 +169,8 @@
             </v-layout>
 
 
-            <bed-data>
+            <bed-data
+              @set-bed-url="setBedUrl($event)">
             </bed-data>
 
 
@@ -335,6 +336,7 @@ export default {
       customModelInfos: [],
       sampleIdDupsCounter: {},
       validationErrors: [],
+      bedFileUrl: ''
     }
   },
   watch: {
@@ -673,6 +675,10 @@ export default {
     closeFilesDialog: function() {
       this.showFilesDialog = false; 
       bus.$emit("close-files-dialog")
+    },
+    setBedUrl: function(url) {
+      this.bedFileUrl = url;
+      console.log("this.bedFileUrl", this.bedFileUrl);
     }
   },
   computed: {
