@@ -137,7 +137,8 @@ $horizontal-dashboard-height: 140px
     @setGeneSet="setGeneSet($event)"
     @set-ped-data="setPedData($event)"
     @set-custom-case-summary="setCustomCaseSummary($event)"
-    @load-saved-input-config="loadSavedInputConfig($event)">
+    @load-saved-input-config="loadSavedInputConfig($event)"
+    @setBedFileUrl="setBedFileUrl($event)">
   </landing-page>
 
 
@@ -219,7 +220,8 @@ $horizontal-dashboard-height: 140px
         :launchedFromMosaic="launchedFromMosaic"
         @update="updateReviewCaseBadges"
         @updateCoverage="updateAverageCoverage"
-        :customData=customData>
+        :customData=customData
+        :bedFileUrl="bedFileUrl">
         </review-case>
       </v-card>
 
@@ -505,7 +507,7 @@ export default {
       cohortModel: null,
       customData: false,
       customGeneSet: [],
-
+      bedFileUrl: '',
     }
 
   },
@@ -2042,6 +2044,9 @@ export default {
         this.showConfigError = true;
         this.configMessage = validate.message;
       }
+    },
+    setBedFileUrl(bedUrl){
+      this.bedFileUrl = bedUrl;
     }
   }
 }

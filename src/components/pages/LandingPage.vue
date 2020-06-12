@@ -311,6 +311,7 @@
         @on-cancel="backToPedUpload"
         @isDemo="onIsDemo"
         @get-modeinfo-map="getModelInfoMap"
+        @bed-file-url="setBedFileUrl"
         :pageCounter="pageCounter"
         :customPedigreeMapData="customPedigreeMapData"
       >
@@ -608,9 +609,11 @@ export default {
       }
     },
     getModelInfoMap: function(customModelInfos){
-        this.$emit("custom-model-info",customModelInfos);
+      this.$emit("custom-model-info",customModelInfos);
     },
-
+    setBedFileUrl: function(bed){
+      this.$emit("setBedFileUrl", bed)
+    },
     getStarted(){
       bus.$emit("initialize-clin")
     },

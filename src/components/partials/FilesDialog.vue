@@ -353,9 +353,6 @@ export default {
         this.$emit("on-cancel");
       }
     },
-    dataTypeSelectedName: function() {
-      console.log("dataTypeSelectedName", this.dataTypeSelectedName);
-    }
   },
   methods: {
     isBamUrlValid: function(url, sample){
@@ -449,6 +446,7 @@ export default {
           self.$emit("on-files-loaded", performAnalyzeAll);
           self.showFilesDialog = false;
           self.$emit("get-modeinfo-map", self.customModelInfos);
+          self.$emit("bed-file-url", self.bedFileUrl)
         }
         else {
           self.inProgress = false;
@@ -679,7 +677,6 @@ export default {
     },
     setBedUrl: function(url) {
       this.bedFileUrl = url;
-      console.log("this.bedFileUrl", this.bedFileUrl);
     }
   },
   computed: {
