@@ -6,6 +6,11 @@
 
 @import ../../assets/sass/variables
 
+.configError
+  font-size: 16px
+
+.configTitle
+  font-size: 20px
 
 .v-snack--right
   margin-right: 350px !important
@@ -134,6 +139,22 @@ $horizontal-dashboard-height: 140px
     @set-custom-case-summary="setCustomCaseSummary($event)"
     @load-saved-input-config="loadSavedInputConfig($event)">
   </landing-page>
+
+
+  <v-dialog  width="500"  v-model="showConfigError"  >
+    <v-card class="info-card full-width">
+      <v-card-title style="justify-content:space-between">
+        <span class="configTitle">{{ 'Error parsing config file'}}</span>
+        <v-btn  @click="onClose" text class="close-button">
+          <v-icon>close</v-icon>
+        </v-btn>
+      </v-card-title>
+      <div class="configError">
+        {{configMessage}}
+      </div>
+    </v-card>
+  </v-dialog>
+
   <navigation v-if="!showLandingPage && !showSplash && isAuthenticated  && workflow && analysis"
    :caseSummary="caseSummary"
    :analysis="analysis"
@@ -433,6 +454,8 @@ export default {
       analysis: null,
       caseSummary: null,
       geneSet: null,
+      showConfigError: false,
+      configMessage: "",
 
 
       demoModelInfos:  [
@@ -896,6 +919,10 @@ export default {
 
     onStepChanged: function(stepNumber) {
       this.currentStep = stepNumber
+    },
+
+    onClose: function(){
+      this.showConfigError = false;
     },
 
     onTaskChanged: function(stepNumber, task) {
@@ -1898,20 +1925,133 @@ export default {
       }
       reader.readAsText(file);
     },
-    loadSavedInputConfig(customData){
-      this.caseSummary = {};
-      this.caseSummary.name = customData.caseSummary.name;
-      this.caseSummary.description = customData.caseSummary.description;
-      this.rawPedigree = customData.rawPedigree;
-      this.customGeneSet = customData.customGeneSet;
-      this.modelInfos = customData.modelInfos;
-      this.customData = true;
+    validateConfigFile(customData){
+      let bool = true;
+      let message = "";
 
-      this.showLandingPage = false;
-      this.showSplash = true;
-      setTimeout(()=>{
-        this.onAuthenticated();
-      }, 2000)
+      if(customData.hasOwnProperty("caseSummary")){
+        if(!customData.caseSummary.hasOwnProperty("name")){
+          bool = false;
+          message = "Could not interpret project name field (\"caseSummary\":{\"name\":\"\",\"description\":\"\"})";
+        }
+        if(!customData.caseSummary.hasOwnProperty("description")) {
+          bool = false;
+          message = "Could not interpret description field (\"caseSummary\":{\"name\":\"\",\"description\":\"\"})" ;
+        }
+      }
+      else{
+        bool = false;
+        message = "Could not interpret case summary field (\"caseSummary\":{\"name\":\"\",\"description\":\"\"})";
+
+      }
+
+      if(!customData.hasOwnProperty("rawPedigree")){
+        bool = false;
+        message = "Could not interpret pedigree field (\"rawPedigree\": \"\")";
+
+      }
+      if(!customData.hasOwnProperty("customGeneSet")){
+        message = "Could not interpret gene list field (\"customGeneSet\":[\"\"],)";
+
+        bool = false;
+      }
+      if(!customData.hasOwnProperty("modelInfos")){
+        message = "Could not interpret files field (\"modelInfos\":[\"\"])";
+        bool = false;
+      }
+      else{
+
+        let idMap = {};
+        let relationshipMap = {}
+
+        for(let i = 0; i < customData.modelInfos.length; i++) {
+          let sample = customData.modelInfos[i];
+
+          if(idMap.hasOwnProperty(sample.sample)){
+            bool = false;
+            message = "Error parsing config file. Duplicate sample ids detected for sample " + sample.sample + '.';
+          }
+          else{
+            idMap[sample.sample] = 1;
+          }
+
+          if(sample.relationship === "mother") {
+            if (relationshipMap.hasOwnProperty(sample.relationship)) {
+              bool = false;
+              message = "Multiple mothers detected";
+            }
+            else{
+              relationshipMap[sample.relationship] = 1;
+            }
+          }
+          if(sample.relationship === "father") {
+            if (relationshipMap.hasOwnProperty(sample.relationship)) {
+              bool = false;
+              message = "Multiple fathers found";
+            }
+            else{
+              relationshipMap[sample.relationship] = 1;
+            }
+          }
+
+
+          if(!this.isUrlValid(sample.bam, sample.sample)){
+            bool = false;
+            message = "sampleId " + sample.sample + " does not match bam url";
+          }
+
+          let bamExt = sample.bam.substr(sample.bam.lastIndexOf('.') + 1);
+          let vcfExt = sample.vcf.substr(sample.vcf.lastIndexOf('.') + 1);
+
+          if(bamExt !== "bam"){
+            message = "Extension for bam file " + sample.bam + " was not recognized";
+            bool = false;
+          }
+          if(vcfExt !== "vcf" && vcfExt !== "gz" ){
+            message = "Extension for vcf file " + sample.vcf + " was not recognized";
+            bool = false;
+          }
+        }
+
+      }
+      let ret = {bool: bool, message: message};
+      return ret;
+
+    },
+
+    isUrlValid: function(url, sample){
+      if(url.includes(sample)){
+        return true;
+      }
+      else {
+        return false;
+      }
+    },
+
+    loadSavedInputConfig(customData){
+
+      let validate = this.validateConfigFile(customData);
+
+      if(validate.bool){
+
+        this.caseSummary = {};
+        this.caseSummary.name = customData.caseSummary.name;
+        this.caseSummary.description = customData.caseSummary.description;
+        this.rawPedigree = customData.rawPedigree;
+        this.customGeneSet = customData.customGeneSet;
+        this.modelInfos = customData.modelInfos;
+        this.customData = true;
+
+        this.showLandingPage = false;
+        this.showSplash = true;
+        setTimeout(()=>{
+          this.onAuthenticated();
+        }, 2000)
+      }
+      else{
+        this.showConfigError = true;
+        this.configMessage = validate.message;
+      }
     }
   }
 }
