@@ -248,7 +248,7 @@
                  
                  <v-btn class="ml-2" color="primary"
                    @click="onLoad"
-                   :disabled="!isValid">
+                   :disabled="(!isValid) || (bedFileUrl=='')">
                    Next
                  </v-btn>
 
@@ -336,7 +336,8 @@ export default {
       customModelInfos: [],
       sampleIdDupsCounter: {},
       validationErrors: [],
-      bedFileUrl: ''
+      // bedFileUrl: ''
+      bedFileUrl: 'https://raw.githubusercontent.com/chmille4/bam.iobio.io/vue/client/data/20130108.exome.targets.bed'
     }
   },
   watch: {
