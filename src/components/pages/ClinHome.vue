@@ -1902,7 +1902,8 @@ export default {
         "caseSummary": this.caseSummary,
         "modelInfos": this.modelInfos,
         "customGeneSet": this.customGeneSet,
-        "rawPedigree": this.rawPedigree
+        "rawPedigree": this.rawPedigree,
+        "bedFileUrl": this.bedFileUrl
       }
       console.log("obj", configObj);
       let configData = JSON.stringify(configObj);
@@ -1938,6 +1939,11 @@ export default {
 
       }
 
+      if(!customData.hasOwnProperty("bedFileUrl")){
+        bool = false;
+        message = "Could not interpret bed file URL. (\"bedFileUrl\": \"\")";
+
+      }
       if(!customData.hasOwnProperty("rawPedigree")){
         bool = false;
         message = "Could not interpret pedigree field (\"rawPedigree\": \"\")";
@@ -2032,6 +2038,7 @@ export default {
         this.rawPedigree = customData.rawPedigree;
         this.customGeneSet = customData.customGeneSet;
         this.modelInfos = customData.modelInfos;
+        this.bedFileUrl = customData.bedFileUrl;
         this.customData = true;
 
         this.showLandingPage = false;
