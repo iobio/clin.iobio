@@ -137,7 +137,8 @@ $horizontal-dashboard-height: 140px
     @setGeneSet="setGeneSet($event)"
     @set-ped-data="setPedData($event)"
     @set-custom-case-summary="setCustomCaseSummary($event)"
-    @load-saved-input-config="loadSavedInputConfig($event)">
+    @load-saved-input-config="loadSavedInputConfig($event)"
+    @setBedFileUrl="setBedFileUrl($event)">
   </landing-page>
 
 
@@ -219,7 +220,8 @@ $horizontal-dashboard-height: 140px
         :launchedFromMosaic="launchedFromMosaic"
         @update="updateReviewCaseBadges"
         @updateCoverage="updateAverageCoverage"
-        :customData=customData>
+        :customData=customData
+        :bedFileUrl="bedFileUrl">
         </review-case>
       </v-card>
 
@@ -505,7 +507,7 @@ export default {
       cohortModel: null,
       customData: false,
       customGeneSet: [],
-
+      bedFileUrl: '',
     }
 
   },
@@ -1900,7 +1902,8 @@ export default {
         "caseSummary": this.caseSummary,
         "modelInfos": this.modelInfos,
         "customGeneSet": this.customGeneSet,
-        "rawPedigree": this.rawPedigree
+        "rawPedigree": this.rawPedigree,
+        "bedFileUrl": this.bedFileUrl
       }
       console.log("obj", configObj);
       let configData = JSON.stringify(configObj);
@@ -1936,6 +1939,11 @@ export default {
 
       }
 
+      if(!customData.hasOwnProperty("bedFileUrl")){
+        bool = false;
+        message = "Could not interpret bed file URL. (\"bedFileUrl\": \"\")";
+
+      }
       if(!customData.hasOwnProperty("rawPedigree")){
         bool = false;
         message = "Could not interpret pedigree field (\"rawPedigree\": \"\")";
@@ -2030,6 +2038,7 @@ export default {
         this.rawPedigree = customData.rawPedigree;
         this.customGeneSet = customData.customGeneSet;
         this.modelInfos = customData.modelInfos;
+        this.bedFileUrl = customData.bedFileUrl;
         this.customData = true;
 
         this.showLandingPage = false;
@@ -2042,6 +2051,9 @@ export default {
         this.showConfigError = true;
         this.configMessage = validate.message;
       }
+    },
+    setBedFileUrl(bedUrl){
+      this.bedFileUrl = bedUrl;
     }
   }
 }

@@ -169,10 +169,13 @@
             </v-layout>
 
 
+            <bed-data
+              v-if="buildName==='GRCh37'"
+              @set-bed-url="setBedUrl($event)">
+            </bed-data>
+
+
             <v-layout row wrap class="mt-3">
-
-
-
                <v-flex xs12
                  v-for="rel in rels[mode]"
                     :key="rel"
@@ -246,7 +249,7 @@
                  
                  <v-btn class="ml-2" color="primary"
                    @click="onLoad"
-                   :disabled="!isValid">
+                   :disabled="(!isValid) || (bedFileUrl=='')">
                    Next
                  </v-btn>
 
@@ -263,13 +266,15 @@
 
 import SampleData          from '../partials/SampleData.vue'
 import CustomDataStepper   from '../partials/CustomDataStepper.vue'
+import BedData             from '../partials/BedData.vue'
 import { bus }             from  '../../main'
 
 export default {
   name: 'files-dialog',
   components: {
     SampleData,
-    CustomDataStepper
+    CustomDataStepper,
+    BedData
   },
   props: {
     cohortModel: null,
@@ -332,6 +337,8 @@ export default {
       customModelInfos: [],
       sampleIdDupsCounter: {},
       validationErrors: [],
+      // bedFileUrl: ''
+      bedFileUrl: 'https://raw.githubusercontent.com/chmille4/bam.iobio.io/vue/client/data/20130108.exome.targets.bed'
     }
   },
   watch: {
@@ -346,7 +353,13 @@ export default {
       if (!this.showFilesDialog) {
         this.$emit("on-cancel");
       }
+    },
+    buildName: function(){
+      if(this.buildName==='GRCh38'){
+        this.bedFileUrl = undefined
+      }
     }
+
   },
   methods: {
     isBamUrlValid: function(url, sample){
@@ -440,6 +453,7 @@ export default {
           self.$emit("on-files-loaded", performAnalyzeAll);
           self.showFilesDialog = false;
           self.$emit("get-modeinfo-map", self.customModelInfos);
+          self.$emit("bed-file-url", self.bedFileUrl)
         }
         else {
           self.inProgress = false;
@@ -667,6 +681,9 @@ export default {
     closeFilesDialog: function() {
       this.showFilesDialog = false; 
       bus.$emit("close-files-dialog")
+    },
+    setBedUrl: function(url) {
+      this.bedFileUrl = url;
     }
   },
   computed: {

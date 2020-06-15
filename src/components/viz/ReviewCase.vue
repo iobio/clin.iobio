@@ -279,7 +279,8 @@ export default {
     allVarCounts: null,
     coverageHistos: null,
     launchedFromMosaic: null,
-    customData:   null
+    customData:   null,
+    bedFileUrl: null
   },
   data() {
     return {
@@ -374,15 +375,19 @@ export default {
 
     }
     else if(this.customData){
-      fetch('https://raw.githubusercontent.com/chmille4/bam.iobio.io/vue/client/data/20130108.exome.targets.bed')
-          .then(response => response.text())
-          .then(bed => {
-            const defaultBed = bed.replace(/chr/g, '');
-            this.bed = defaultBed;
-            // console.log("defaultBed", this.bed);
-            this.buildCustomPage();
-          });
-
+      if(this.bedFileUrl!==undefined){
+        fetch(this.bedFileUrl)
+            .then(response => response.text())
+            .then(bed => {
+              const defaultBed = bed.replace(/chr/g, '');
+              this.bed = defaultBed;
+              this.buildCustomPage();
+            });
+      }
+      else if(this.bedFileUrl===undefined){
+        this.bed = undefined;
+        this.buildCustomPage();
+      }
     }
     else{
       this.overridePropsWithDemoData();
@@ -410,7 +415,6 @@ export default {
           "id":"3261",
           "coverage": stats
         })
-        // console.log("this.coverageHistosData", this.coverageHistosData)
       }
 
       var toFormatCoverage = () => {
