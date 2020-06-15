@@ -535,6 +535,9 @@ export default {
     bus.$on("save-input-config", ()=>{
       this.saveAsInputConfig();
     })
+    bus.$on("save-analysis-object", () => {
+      this.saveAnalysisJson()
+    })
   },
 
   computed: {
@@ -2058,6 +2061,11 @@ export default {
     },
     setBedFileUrl(bedUrl){
       this.bedFileUrl = bedUrl;
+    }, 
+    saveAnalysisJson(){
+      let analysisObject = JSON.stringify(this.analysis);
+      const jsonBlob = new Blob([analysisObject], { type: "application/json" });
+      saveAs(jsonBlob, "clin-saved-analysis.json")
     }
   }
 }
