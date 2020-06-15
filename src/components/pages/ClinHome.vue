@@ -1245,8 +1245,6 @@ export default {
               let badgeCounts = [];
               let badgeClasses = [];
 
-              console.log("self.variantsByINterpretation", self.variantsByInterpretation);
-
               //Add the count of variant which is not reviewed (but has comments) to unknown-sig
               if(self.variantsByInterpretation.length > 2 && self.variantsByInterpretation[2].key ==  'not-reviewed' && self.variantsByInterpretation[1].key == 'unknown-sig'){
                 if(self.variantsByInterpretation[2].variantCount > 0){
