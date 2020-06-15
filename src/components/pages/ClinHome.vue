@@ -1125,8 +1125,8 @@ export default {
       } else if (messageObject.type == "save-analysis") {
           this.analysis.payload.filters  = messageObject.analysis.payload.filters;
           this.analysis.payload.variants = messageObject.analysis.payload.variants;
-        console.log("this.analysis.payload.variants", this.analysis.payload.variants)
-         this.organizeVariantsByInterpretation();
+          console.log("this.analysis.payload.variants", this.analysis.payload.variants);
+          this.organizeVariantsByInterpretation();
           this.setVariantTaskBadges();
           this.promiseAutosaveAnalysis({notify: true})
           .then(function() {
@@ -1243,6 +1243,8 @@ export default {
               let badgeLabels = [];
               let badgeCounts = [];
               let badgeClasses = [];
+
+              console.log("self.variantsByINterpretation", self.variantsByInterpretation);
 
               //Add the count of variant which is not reviewed (but has comments) to unknown-sig
               if(self.variantsByInterpretation.length > 2 && self.variantsByInterpretation[2].key ==  'not-reviewed' && self.variantsByInterpretation[1].key == 'unknown-sig'){
