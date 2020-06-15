@@ -1125,7 +1125,8 @@ export default {
       } else if (messageObject.type == "save-analysis") {
           this.analysis.payload.filters  = messageObject.analysis.payload.filters;
           this.analysis.payload.variants = messageObject.analysis.payload.variants;
-          this.organizeVariantsByInterpretation();
+        console.log("this.analysis.payload.variants", this.analysis.payload.variants)
+         this.organizeVariantsByInterpretation();
           this.setVariantTaskBadges();
           this.promiseAutosaveAnalysis({notify: true})
           .then(function() {
@@ -1244,7 +1245,7 @@ export default {
               let badgeClasses = [];
 
               //Add the count of variant which is not reviewed (but has comments) to unknown-sig
-              if(self.variantsByInterpretation.length && self.variantsByInterpretation[2].key ==  'not-reviewed' && self.variantsByInterpretation[1].key == 'unknown-sig'){
+              if(self.variantsByInterpretation.length > 2 && self.variantsByInterpretation[2].key ==  'not-reviewed' && self.variantsByInterpretation[1].key == 'unknown-sig'){
                 if(self.variantsByInterpretation[2].variantCount > 0){
                   self.variantsByInterpretation[1].variantCount += self.variantsByInterpretation[2].variantCount;
                 }
@@ -1729,6 +1730,8 @@ export default {
     organizeVariantsByGene: function(filterName, userFlagged, interpretation) {
       let self = this;
       let theVariants = [];
+
+      self.setVariantTaskBadges();
 
 
       this.analysis.payload.variants.forEach(function(variant) {
