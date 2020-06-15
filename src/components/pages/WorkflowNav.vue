@@ -2,6 +2,7 @@
 
     <v-card  class="workflow-card-new">
       <div >
+        <v-btn color="primary" @click="getfetchAnalysis">fetchAnalysis</v-btn>
         <div  class="step-flow-container">
            <div :class="{'step-flow': true, 'current': step.current}" v-for="step in steps" :key="step.number">
              <div class="glyph" >
@@ -54,6 +55,8 @@ import caseIcon      from '../partials/icons/case-icon.vue'
 import findingsIcon  from '../partials/icons/findings-icon.vue'
 import variantsIcon  from '../partials/icons/variants-icon.vue'
 import { bus }       from '../../main'
+import { mapGetters, mapActions } from 'vuex'
+
 
 export default {
   name: 'workflow-new',
@@ -76,7 +79,15 @@ export default {
       currentStepComplete: null
     }
   },
+  computed: {
+    ...mapGetters(['allAnalysis']),
+  },
   methods:  {
+    ...mapActions(['fetchAnalysis']),
+    getfetchAnalysis: function(){
+      this.fetchAnalysis(); //calling action 
+      console.log('allAnalysis', this.allAnalysis); //calling getter
+    },
     refresh: function() {
         let self = this;
         self.steps = []

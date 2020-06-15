@@ -394,6 +394,8 @@ import findings_img           from '../../assets/images/landing_page/findings.pn
 import FilesDialog            from '../partials/FilesDialog.vue'
 import CustomDataStepper      from '../partials/CustomDataStepper.vue'
 
+import { mapGetters, mapActions } from 'vuex'
+
 export default {
   name: 'landing-page',
   components: {
@@ -489,7 +491,12 @@ export default {
       customPedigreeMapData: {},
     }
   },
+  computed: mapGetters(['allAnalysis']),
   methods:  {
+    ...mapActions(['fetchAnalysis']),
+    getfetchAnalysis: function(){
+      this.fetchAnalysis();
+    },
     onShowFiles: function() {
       this.inputOptionsDialog = false;
       this.caseDescriptionDialog = true;
@@ -660,6 +667,7 @@ export default {
     },
   },
   mounted: function() {
+    this.fetchAnalysis();
     bus.$on("close_dialog", ()=>{
       this.showTermsOfService = false;
     })

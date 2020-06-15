@@ -361,6 +361,8 @@ import NewComponents from 'iobio-phenotype-extractor-vue';
 import { Bam } from './bam.iobio.js';
 import Vue from 'vue';
 
+import { mapGetters, mapActions } from 'vuex'
+
 export default {
   name: 'home',
   components: {
@@ -629,7 +631,8 @@ export default {
   },
 
   methods: {
-
+    ...mapActions(['updateAnalysis']),
+    
     init: function() {
       let self = this;
       var appTarget = null;
@@ -1567,6 +1570,7 @@ export default {
       self.analysis.payload.phenotypes = phenotypes;
       self.setGeneTaskBadges();
       self.analysis.payload.datetime_last_modified = self.getCurrentDateTime();
+      self.updateAnalysis(self.analysis); 
       return self.promiseAutosaveAnalysis();
     },
 
