@@ -13,7 +13,11 @@ export default new Vuex.Store({
     review_case_badge: null
   },
   getters: {
-    allAnalysis: state => state.analysis
+    allAnalysis: state => state.analysis,
+    getPedigreeData: state => state.custom_pedigree_data,
+    getVariantsCount: state => state.custom_variants_count,
+    getCustomCoverage: state => state.custom_coverage_data,
+    getReviewCaseBadge: state => state.review_case_badge,
   },
   actions: {
     fetchAnalysis({ commit }){

@@ -541,6 +541,7 @@ export default {
   },
 
   computed: {
+    ...mapGetters(['getPedigreeData', 'getVariantsCount', 'getCustomCoverage', 'getReviewCaseBadge']),
     phenotypeList: function() {
       let self = this;
       let phenotypeList = [];
@@ -2063,7 +2064,10 @@ export default {
       this.bedFileUrl = bedUrl;
     }, 
     saveAnalysisJson(){
-      let analysisObject = JSON.stringify(this.analysis);
+      let analysis_obj = this.analysis; 
+      analysis_obj.pedigree = this.getPedigreeData; 
+      analysis_obj.variantsCount = this.getVariantsCount;
+      let analysisObject = JSON.stringify(analysis_obj);
       const jsonBlob = new Blob([analysisObject], { type: "application/json" });
       saveAs(jsonBlob, "clin-saved-analysis.json")
     }
