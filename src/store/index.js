@@ -19,7 +19,7 @@ export default new Vuex.Store({
     getVariantsCount: state => state.custom_variants_count,
     getCustomCoverage: state => state.custom_coverage_data,
     getReviewCaseBadge: state => state.review_case_badge,
-    setVariantsByInterpretation: state => state.variants_by_interpretation,
+    getVariantsByInterpretation: state => state.variants_by_interpretation,
   },
   actions: {
     fetchAnalysis({ commit }){

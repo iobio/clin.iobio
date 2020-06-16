@@ -173,6 +173,11 @@
                 <v-icon>folder_open</v-icon>
                 <span class="ml-2">UPLOAD CONFIGURATION</span>
               </v-btn>
+              <v-divider></v-divider>
+              <v-btn color="primary" block outlined x-large @click="importSavedAnalysis">
+                <v-icon>folder_open</v-icon>
+                <span class="ml-2">IMPORT SAVED ANALYSIS</span>
+              </v-btn>
             </div>
           </v-card-text>
         </v-card>
@@ -220,6 +225,49 @@
         </v-card>
       </v-dialog>
       <!-- end input configuration dialog -->
+      
+      <!-- import saved analysis dialog -->
+      <v-dialog
+        v-model="importSavedAnalysisDialog"
+        scrollable
+        :overlay="false"
+        max-width="890"
+      >
+        <v-card class="full-width" style="height: auto;overflow-y:scroll">
+          <v-card-title primary-title>
+            <v-spacer></v-spacer>
+            <span>
+              <v-btn text icon @click="importSavedAnalysisDialog=false"><v-icon>close</v-icon></v-btn>
+            </span>
+          </v-card-title>
+          <v-card-text>
+            <div class="container">
+              <v-file-input
+                @change="importSavedAnalysisConfig"
+                accept=".json,"
+                label="Saved input configuration"
+                v-model="savedAnalysisConfig"
+                show-size counter>
+                <template v-slot:selection="{ text }">
+                  <v-chip
+                    label
+                    color="primary"
+                  >
+                    {{ text }}
+                  </v-chip>
+                </template>
+              </v-file-input>
+            </div>
+          </v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="primary" @click="importSavedAnalysisDialog=false" text>close</v-btn>
+            <v-btn color="primary" @click="loadFromSavedAnalysis" :disabled="!validateSavedAnalysisData && savedAnalysisConfig==null">Load</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+      <!-- end import saved analysis dialog -->
+
 
       <!-- caseDescriptionDialog -->
       <v-dialog v-model="caseDescriptionDialog" v-if="pageCounter===1" persistent max-width="890">
@@ -489,6 +537,10 @@ export default {
   			v => /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/.test(v) || 'URL must be valid',
   		],
       customPedigreeMapData: {},
+      importSavedAnalysisDialog: false,
+      savedAnalysisConfig: null,
+      validateSavedAnalysisData: false,
+      configSavedAnalysisData: {},
     }
   },
   computed: mapGetters(['allAnalysis']),
@@ -504,6 +556,10 @@ export default {
     importConfiguration: function(){
       this.inputOptionsDialog = false;
       this.importConfigurationDialog = true;
+    },
+    importSavedAnalysis: function(){
+      this.inputOptionsDialog = false;
+      this.importSavedAnalysisDialog = true;
     },
     addCaseDescription: function() {
       this.caseDescriptionDialog = false;
@@ -662,8 +718,27 @@ export default {
         this.validateSavedConfig = false;
       }
     },
+    importSavedAnalysisConfig(ev) {
+      var reader = new FileReader();
+      if(this.savedAnalysisConfig){
+        reader.readAsText(this.savedAnalysisConfig);
+        reader.onload = () => {
+          let data = reader.result;
+          this.configSavedAnalysisData = JSON.parse(data);
+          if(typeof this.configSavedAnalysisData === "object"){
+            this.validateSavedAnalysisData = true;
+          }
+        }
+      }
+      else {
+        this.validateSavedAnalysisData = false;
+      }
+    },
     loadFromConfigInput(){
         this.$emit("load-saved-input-config", this.configCustomData)
+    },
+    loadFromSavedAnalysis(){
+      this.$emit("load-saved-analysis-custom-data", this.configSavedAnalysisData)
     },
   },
   mounted: function() {

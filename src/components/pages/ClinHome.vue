@@ -138,6 +138,7 @@ $horizontal-dashboard-height: 140px
     @set-ped-data="setPedData($event)"
     @set-custom-case-summary="setCustomCaseSummary($event)"
     @load-saved-input-config="loadSavedInputConfig($event)"
+    @load-saved-analysis-custom-data="loadSavedAnalysisCustomData($event)"
     @setBedFileUrl="setBedFileUrl($event)">
   </landing-page>
 
@@ -541,7 +542,7 @@ export default {
   },
 
   computed: {
-    ...mapGetters(['getPedigreeData', 'getVariantsCount', 'getCustomCoverage', 'getReviewCaseBadge']),
+    ...mapGetters(['getPedigreeData', 'getVariantsCount', 'getCustomCoverage', 'getReviewCaseBadge', 'getVariantsByInterpretation']),
     phenotypeList: function() {
       let self = this;
       let phenotypeList = [];
@@ -2060,6 +2061,8 @@ export default {
         this.configMessage = validate.message;
       }
     },
+    loadSavedAnalysisCustomData(analysis){
+    },
     setBedFileUrl(bedUrl){
       this.bedFileUrl = bedUrl;
     }, 
@@ -2069,7 +2072,8 @@ export default {
       analysis_obj.custom_variants_count = this.getVariantsCount;
       analysis_obj.custom_coverage_data = this.getCustomCoverage;
       analysis_obj.review_case_badge = this.getReviewCaseBadge;
-      analysis_obj.variants_by_interpretation = this.setVariantsByInterpretation;
+      console.log("getVariantsByInterpretation", this.getVariantsByInterpretation);
+      analysis_obj.variants_by_interpretation = this.getVariantsByInterpretation;
       let analysisObject = JSON.stringify(analysis_obj);
       const jsonBlob = new Blob([analysisObject], { type: "application/json" });
       saveAs(jsonBlob, "clin-saved-analysis.json")
