@@ -260,6 +260,8 @@ var vcfiobio = new Vcfiobio();
 
 import analysisData  from '../../data/analysis.json'
 
+import { mapGetters, mapActions } from 'vuex'
+
 export default {
   name: 'review-case',
   components: {
@@ -397,6 +399,8 @@ export default {
   },
 
   methods: {
+    ...mapActions(['setPedigreeData', 'setVariantsCount', 'setCoverageData']),
+
     getBamStatsFromCustomData: function(modelInfos){
       let promises = [];
       for(let i=0; i<modelInfos.length; i++){
@@ -415,6 +419,8 @@ export default {
           "id":"3261",
           "coverage": stats
         })
+        this.setCoverageData(this.coverageHistosData); 
+        //When coverageData is read from analysis object, it will still need to call the format functions
       }
 
       var toFormatCoverage = () => {
@@ -595,6 +601,7 @@ export default {
       for(let i = 0; i < len; i++){
         this.allPedigreeDataArrays.push(this.pedigreeDataArray)
       }
+      this.setPedigreeData(this.allPedigreeDataArrays)
     },
 
     populateSampleIdsAndRelationships(){
@@ -703,6 +710,7 @@ export default {
             "DEL": stats.DEL
           }
         })
+        this.setVariantsCount(this.varCountsArray)
       }
     },
     populateBadCoverageCount(){
