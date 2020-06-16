@@ -28,7 +28,6 @@ export default new Vuex.Store({
       commit('ADD_VARIANTS_COUNT', variantsCount)
     },
     setCoverageData({commit}, coverageData){
-      console.log("coverageData in store", coverageData);
       commit('ADD_COVERAGE_DATA', coverageData)
     }
   },
