@@ -1227,9 +1227,8 @@ export default {
                 delete task.badges;
               }
             } else if (task.key == 'review-full') {
-                if(JSON.stringify(self.analysis.payload.variants[0]) === '{}'){
-                  self.analysis.payload.variants.shift();
-                }
+                  self.analysis.payload.variants = self.analysis.payload.variants.filter(v => JSON.stringify(v) !== '{}');
+
                 let fullAnalysisCount = self.analysis.payload.variants.length;
                 if (fullAnalysisCount > 0) {
                   task.badges = [{count: fullAnalysisCount, label: 'variants'}];
@@ -1242,8 +1241,6 @@ export default {
               let badgeLabels = [];
               let badgeCounts = [];
               let badgeClasses = [];
-
-              console.log("self.variantsByINterpretation", self.variantsByInterpretation);
 
               //Add the count of variant which is not reviewed (but has comments) to unknown-sig
               if(self.variantsByInterpretation.length > 2 && self.variantsByInterpretation[2].key ==  'not-reviewed' && self.variantsByInterpretation[1].key == 'unknown-sig'){
