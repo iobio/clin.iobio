@@ -32,7 +32,6 @@ export default new Vuex.Store({
       commit('ADD_COVERAGE_DATA', coverageData)
     },
     setReviewCaseBadge({commit}, reviewCaseBadge){
-      console.log("reviewCaseBadge", reviewCaseBadge);
       commit('SET_REVIEW_CASE_BADGE', reviewCaseBadge)
     }
   },
