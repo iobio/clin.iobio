@@ -2065,8 +2065,11 @@ export default {
     }, 
     saveAnalysisJson(){
       let analysis_obj = this.analysis; 
-      analysis_obj.pedigree = this.getPedigreeData; 
-      analysis_obj.variantsCount = this.getVariantsCount;
+      analysis_obj.custom_pedigree_data = this.getPedigreeData; 
+      analysis_obj.custom_variants_count = this.getVariantsCount;
+      analysis_obj.custom_coverage_data = this.getCustomCoverage;
+      analysis_obj.review_case_badge = this.getReviewCaseBadge;
+      analysis_obj.variants_by_interpretation = this.setVariantsByInterpretation;
       let analysisObject = JSON.stringify(analysis_obj);
       const jsonBlob = new Blob([analysisObject], { type: "application/json" });
       saveAs(jsonBlob, "clin-saved-analysis.json")
