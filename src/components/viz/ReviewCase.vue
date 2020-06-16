@@ -399,7 +399,7 @@ export default {
   },
 
   methods: {
-    ...mapActions(['setPedigreeData', 'setVariantsCount', 'setCoverageData']),
+    ...mapActions(['setPedigreeData', 'setVariantsCount', 'setCoverageData', 'setReviewCaseBadge']),
 
     getBamStatsFromCustomData: function(modelInfos){
       let promises = [];
@@ -745,6 +745,7 @@ export default {
           this.reviewCaseBadges.push({label:  "failed QC", count: this.badCoverageCount, class: 'failed'})
         }
         this.$emit('update', this.reviewCaseBadges);
+        this.setReviewCaseBadge(this.reviewCaseBadges)
       }
       else {
         if(this.sampleIds.length === 1){

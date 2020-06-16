@@ -10,6 +10,7 @@ export default new Vuex.Store({
     custom_pedigree_data: [],
     custom_variants_count: [],
     custom_coverage_data: [],
+    review_case_badge: null
   },
   getters: {
     allAnalysis: state => state.analysis
@@ -29,6 +30,10 @@ export default new Vuex.Store({
     },
     setCoverageData({commit}, coverageData){
       commit('ADD_COVERAGE_DATA', coverageData)
+    },
+    setReviewCaseBadge({commit}, reviewCaseBadge){
+      console.log("reviewCaseBadge", reviewCaseBadge);
+      commit('SET_REVIEW_CASE_BADGE', reviewCaseBadge)
     }
   },
   mutations: {
@@ -39,7 +44,7 @@ export default new Vuex.Store({
     ADD_PEDIGREE: (state, pedigreeData) => state.custom_pedigree_data = pedigreeData,
     ADD_VARIANTS_COUNT: (state, variantsCount) => state.custom_variants_count = variantsCount,
     ADD_COVERAGE_DATA: (state, coverageData) => state.custom_coverage_data = coverageData,
-
+    SET_REVIEW_CASE_BADGE: (state, reviewCaseBadge) => state.review_case_badge = reviewCaseBadge,
   },
   modules: {
   }
