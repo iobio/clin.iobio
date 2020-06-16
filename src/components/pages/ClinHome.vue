@@ -1228,7 +1228,6 @@ export default {
               }
             } else if (task.key == 'review-full') {
                   self.analysis.payload.variants = self.analysis.payload.variants.filter(v => JSON.stringify(v) !== '{}');
-
                 let fullAnalysisCount = self.analysis.payload.variants.length;
                 if (fullAnalysisCount > 0) {
                   task.badges = [{count: fullAnalysisCount, label: 'variants'}];
