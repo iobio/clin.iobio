@@ -174,7 +174,7 @@ header.theme--dark.v-sheet
         Report
       </v-btn>
       
-      <v-btn color="primary" id="save-button" v-if="!launchedFromMosaic" @click="saveAnalysis">
+      <v-btn color="primary" id="save-button" @click="saveAnalysis">
         <v-icon>save</v-icon>
         Save Analysis
       </v-btn>
