@@ -1241,11 +1241,14 @@ export default {
                 delete task.badges;
               }
             } else if (task.key == 'review-full') {
-              let fullAnalysisCount = self.analysis.payload.variants.length;
-              if (fullAnalysisCount > 0) {
-                task.badges =  [{count: fullAnalysisCount, label: 'variants'}];
-              } else {
-                delete task.badges;
+                if(JSON.stringify(self.analysis.payload.variants[0]) === '{}'){
+                  self.analysis.payload.variants.shift();
+                }
+                let fullAnalysisCount = self.analysis.payload.variants.length;
+                if (fullAnalysisCount > 0) {
+                  task.badges = [{count: fullAnalysisCount, label: 'variants'}];
+                } else {
+                  delete task.badges;
               }
             } else if (task.key == 'review-results') {
               task.badges = []
@@ -1255,7 +1258,7 @@ export default {
               let badgeClasses = [];
 
               //Add the count of variant which is not reviewed (but has comments) to unknown-sig
-              if(self.variantsByInterpretation.length && self.variantsByInterpretation[2].key ==  'not-reviewed' && self.variantsByInterpretation[1].key == 'unknown-sig'){
+              if(self.variantsByInterpretation.length > 2 && self.variantsByInterpretation[2].key ==  'not-reviewed' && self.variantsByInterpretation[1].key == 'unknown-sig'){
                 if(self.variantsByInterpretation[2].variantCount > 0){
                   self.variantsByInterpretation[1].variantCount += self.variantsByInterpretation[2].variantCount;
                 }
@@ -1479,7 +1482,13 @@ export default {
           // These are the platinum variants that we are just grabbing
           // from a json file to mimic what variant sets from genome-wide
           // filters would look like
-          self.analysis.payload.variants = self.importedVariants.variants;
+
+          if(self.customData) {
+            self.analysis.payload.variants = [{}];
+          }
+          else{
+            self.analysis.payload.variants = self.importedVariants.variants;
+          }
 
           self.setGeneTaskBadges();
           resolve();
@@ -1742,6 +1751,8 @@ export default {
     organizeVariantsByGene: function(filterName, userFlagged, interpretation) {
       let self = this;
       let theVariants = [];
+
+      self.setVariantTaskBadges();
 
 
       this.analysis.payload.variants.forEach(function(variant) {
@@ -2048,6 +2059,7 @@ export default {
     },
 
     loadSavedInputConfig(customData){
+
       let validate = this.validateConfigFile(customData);
 
       if(validate.bool){
