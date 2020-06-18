@@ -14,6 +14,7 @@ export default new Vuex.Store({
     variants_by_interpretation: [],
     custom_model_infos: [],
     custom_gene_set: [],
+    custom_case_Summary: {},
   },
   getters: {
     allAnalysis: state => state.analysis,
@@ -24,6 +25,7 @@ export default new Vuex.Store({
     getVariantsByInterpretation: state => state.variants_by_interpretation,
     getModelInfos: state => state.custom_model_infos,
     getGeneSet: state => state.custom_gene_set,
+    getCaseSummary: state => state.custom_case_Summary,
   },
   actions: {
     fetchAnalysis({ commit }){
@@ -52,7 +54,10 @@ export default new Vuex.Store({
     },
     setCustomGeneSet({commit}, geneSet){
       commit('SET_GENE_SET', geneSet)
-    }
+    },
+    setCaseSummary({commit}, caseSummary){
+      commit('SET_CASE_SUMMARY', caseSummary)
+    },
   },
   mutations: {
     GET_ANALYSIS: (state) => state.analysis,
@@ -64,6 +69,7 @@ export default new Vuex.Store({
     SET_VARIANTS_BY_INTERPRETATION: (state, data) => state.variants_by_interpretation = data,
     SET_MODEL_INFOS: (state, modelInfos) => state.custom_model_infos = modelInfos,
     SET_GENE_SET: (state, geneSet) => state.custom_gene_set = geneSet,
+    SET_CASE_SUMMARY: (state, caseSummary) => state.custom_case_Summary = caseSummary,
 
   },
   modules: {

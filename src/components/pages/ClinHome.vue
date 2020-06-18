@@ -545,7 +545,7 @@ export default {
   },
 
   computed: {
-    ...mapGetters(['getPedigreeData', 'getVariantsCount', 'getCustomCoverage', 'getReviewCaseBadge', 'getVariantsByInterpretation', 'getModelInfos', 'getGeneSet']),
+    ...mapGetters(['getPedigreeData', 'getVariantsCount', 'getCustomCoverage', 'getReviewCaseBadge', 'getVariantsByInterpretation', 'getModelInfos', 'getGeneSet', 'getCaseSummary']),
     phenotypeList: function() {
       let self = this;
       let phenotypeList = [];
@@ -639,7 +639,7 @@ export default {
   },
 
   methods: {
-    ...mapActions(['updateAnalysis', 'setModelInfos', 'setCustomGeneSet']),
+    ...mapActions(['updateAnalysis', 'setModelInfos', 'setCustomGeneSet', 'setCaseSummary']),
     
     init: function() {
       let self = this;
@@ -1960,6 +1960,7 @@ export default {
       this.caseSummary = {};
       this.caseSummary.name = caseSummary.name;
       this.caseSummary.description = caseSummary.description;
+      this.setCaseSummary(this.caseSummary);
     },
     saveAsInputConfig(){
       var configObj = {
@@ -2121,6 +2122,7 @@ export default {
       this.analysis = analysis;
       this.modelInfos = analysis.custom_model_infos;
       this.customGeneSet = analysis.custom_gene_set;
+      this.caseSummary = analysis.custom_case_Summary;
       this.customSavedAnalysis = true;
       this.customData = true;
       // this.variantsByInterpretation = analysis.variants_by_interpretation;
@@ -2145,6 +2147,7 @@ export default {
       analysis_obj.custom_model_infos = this.getModelInfos;
       analysis_obj.variants_by_interpretation = this.getVariantsByInterpretation;
       analysis_obj.custom_gene_set = this.getGeneSet;
+      analysis_obj.custom_case_Summary = this.getCaseSummary
       let analysisObject = JSON.stringify(analysis_obj);
       const jsonBlob = new Blob([analysisObject], { type: "application/json" });
       saveAs(jsonBlob, "clin-saved-analysis.json")
