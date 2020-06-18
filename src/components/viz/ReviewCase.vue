@@ -386,6 +386,7 @@ export default {
       //Set variant counts
       this.varCountsArray = analysis.custom_variants_count;
       this.statsReceived = true;
+      this.setVariantsCount(this.varCountsArray)
       
       //Set coverage data
       this.coverageHistosData = analysis.custom_coverage_data;
@@ -394,9 +395,11 @@ export default {
       this.populateCoverageMedians();
       this.populateBadCoverageCount();
       this.coverageStatsReceived = true;
-      
+      this.setCoverageData(this.coverageHistosData);
+
       //Build pedigree
       this.allPedigreeDataArrays = [];
+      this.setPedigree(this.pedigree)
       this.populateRelationshipMap();
       this.populateSampleIdsFromCustom(this.pedigree);
       this.populateSampleIdsAndRelationships();
@@ -408,6 +411,7 @@ export default {
       for(let i = 0; i < len; i++){
         this.allPedigreeDataArrays.push(this.pedigreeDataArray)
       }
+      this.setPedigreeData(this.allPedigreeDataArrays)
       
     }
     else if(this.customData){

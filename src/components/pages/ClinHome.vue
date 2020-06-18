@@ -2123,8 +2123,11 @@ export default {
       this.analysis = analysis;
       this.updateAnalysis(this.analysis);
       this.modelInfos = analysis.custom_model_infos;
+      this.setModelInfos(this.modelInfos);
       this.customGeneSet = analysis.custom_gene_set;
+      this.setCustomGeneSet(this.customGeneSet);
       this.caseSummary = analysis.custom_case_Summary;
+      this.setCaseSummary(this.caseSummary);
       this.rawPedigree = analysis.custom_pedigree; 
       this.customSavedAnalysis = true;
       this.customData = true;
@@ -2151,7 +2154,7 @@ export default {
       analysis_obj.custom_model_infos = this.getModelInfos;
       analysis_obj.variants_by_interpretation = this.getVariantsByInterpretation;
       analysis_obj.custom_gene_set = this.getGeneSet;
-      analysis_obj.custom_case_Summary = this.getCaseSummary
+      analysis_obj.custom_case_Summary = this.getCaseSummary;
       let analysisObject = JSON.stringify(analysis_obj);
       const jsonBlob = new Blob([analysisObject], { type: "application/json" });
       saveAs(jsonBlob, "clin-saved-analysis.json")
