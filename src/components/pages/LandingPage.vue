@@ -189,7 +189,7 @@
         v-model="importConfigurationDialog"
         scrollable
         :overlay="false"
-        max-width="890"
+        max-width="650"
       >
         <v-card class="full-width" style="height: auto;overflow-y:scroll">
           <v-card-title primary-title>
@@ -231,7 +231,7 @@
         v-model="importSavedAnalysisDialog"
         scrollable
         :overlay="false"
-        max-width="890"
+        max-width="650"
       >
         <v-card class="full-width" style="height: auto;overflow-y:scroll">
           <v-card-title primary-title>
@@ -247,6 +247,7 @@
                 accept=".json,"
                 label="Saved analysis"
                 v-model="savedAnalysisConfig"
+                prepend-icon="publish"
                 show-size counter>
                 <template v-slot:selection="{ text }">
                   <v-chip
@@ -257,6 +258,18 @@
                   </v-chip>
                 </template>
               </v-file-input>
+              
+              <v-divider></v-divider>
+              <label>Enter 6 digit passcode </label>
+              <!-- Make it disabled till the file is attached -->
+              <v-text-field
+                solo
+                prepend-icon="vpn_key"
+                placeholder="Ex. 793402"
+                counter="6"
+                :disabled="this.savedAnalysisConfig===null"
+              ></v-text-field>
+
             </div>
           </v-card-text>
           <v-card-actions>

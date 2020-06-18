@@ -2155,6 +2155,7 @@ export default {
       analysis_obj.variants_by_interpretation = this.getVariantsByInterpretation;
       analysis_obj.custom_gene_set = this.getGeneSet;
       analysis_obj.custom_case_Summary = this.getCaseSummary;
+      analysis_obj.pass_code = Math.floor(100000 + Math.random() * 900000);
       let analysisObject = JSON.stringify(analysis_obj);
       const jsonBlob = new Blob([analysisObject], { type: "application/json" });
       saveAs(jsonBlob, "clin-saved-analysis.json")
