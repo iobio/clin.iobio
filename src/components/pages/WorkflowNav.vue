@@ -2,7 +2,6 @@
 
     <v-card  class="workflow-card-new">
       <div >
-        <v-btn color="primary" @click="getfetchAnalysis">fetchAnalysis</v-btn>
         <div  class="step-flow-container">
            <div :class="{'step-flow': true, 'current': step.current}" v-for="step in steps" :key="step.number">
              <div class="glyph" >
