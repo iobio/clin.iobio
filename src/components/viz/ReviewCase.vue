@@ -136,10 +136,10 @@
       </div>
       <div v-for="(d, i) in varCountsArray" >
         <div style=" width: 100%; display: inline-flex; flex-direction: row; justify-content: space-around;">
-            <!-- <div style="text-align: center; width: 150px" class="capitalize">
+            <div style="text-align: center; width: 150px" class="capitalize">
               {{sampleIdsAndRelationships[i]}}
               <PedigreeGraph :data="allPedigreeDataArrays[i]" :id="sampleUuids[i]" :width="100" :height="75" :pedigree="pedigree"></PedigreeGraph>
-            </div> -->
+            </div>
 
           <div style="display: inline-flex;">
             <BarChart :data="coverageDataArray[i]" :width="400" :height="150" :x-domain="xDomain" :y-domain="yDomain" :median-coverage="medianCoverages[i]" :minCutoff="minCutoff"></BarChart>
@@ -378,15 +378,16 @@ export default {
 
     }
     else if(this.customSavedAnalysis){
-      console.log("here in customSavedAnalysis");
-      console.log("customData after saved analysis", this.customData);
       let analysis = this.allAnalysis; //gets analysis from Vuex store. 
-      
-      // this.allPedigreeDataArrays = analysis.custom_pedigree_data; 
+            
+      this.modelInfosData = analysis.custom_model_infos; 
+      this.reviewCaseBadges = this.getReviewCaseBadge;
+
+      //Set variant counts
       this.varCountsArray = analysis.custom_variants_count;
-      console.log("allPedigreeDataArrays", this.allPedigreeDataArrays);
       this.statsReceived = true;
       
+      //Set coverage data
       this.coverageHistosData = analysis.custom_coverage_data;
       this.formatCoverageData();
       this.populateDomains();
@@ -394,7 +395,20 @@ export default {
       this.populateBadCoverageCount();
       this.coverageStatsReceived = true;
       
-      this.reviewCaseBadges = this.getReviewCaseBadge;
+      //Build pedigree
+      this.allPedigreeDataArrays = [];
+      this.populateRelationshipMap();
+      this.populateSampleIdsFromCustom(this.pedigree);
+      this.populateSampleIdsAndRelationships();
+      this.populateReviewCaseBadges();
+      this.pedigreeDataArray = this.buildPedFromTxt(this.pedigree);
+
+      let len = Object.keys(this.sampleIdRelationshipMap).length;
+
+      for(let i = 0; i < len; i++){
+        this.allPedigreeDataArrays.push(this.pedigreeDataArray)
+      }
+      
     }
     else if(this.customData){
       if(this.bedFileUrl!==undefined){
@@ -419,7 +433,7 @@ export default {
   },
 
   methods: {
-    ...mapActions(['setPedigreeData', 'setVariantsCount', 'setCoverageData', 'setReviewCaseBadge']),
+    ...mapActions(['setPedigreeData', 'setPedigree', 'setVariantsCount', 'setCoverageData', 'setReviewCaseBadge']),
 
     getBamStatsFromCustomData: function(modelInfos){
       let promises = [];
@@ -607,6 +621,8 @@ export default {
 
       this.modelInfosData = this.modelInfos;
 
+      this.setPedigree(this.pedigree); //Set state in Vuex store
+      
       this.populateRelationshipMap();
       this.populateSampleIdsFromCustom(this.pedigree);
       this.populateSampleIdsAndRelationships();

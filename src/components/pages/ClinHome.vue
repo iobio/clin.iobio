@@ -546,7 +546,7 @@ export default {
   },
 
   computed: {
-    ...mapGetters(['getPedigreeData', 'getVariantsCount', 'getCustomCoverage', 'getReviewCaseBadge', 'getVariantsByInterpretation', 'getModelInfos', 'getGeneSet', 'getCaseSummary']),
+    ...mapGetters(['getPedigreeData', 'getPedigree', 'getVariantsCount', 'getCustomCoverage', 'getReviewCaseBadge', 'getVariantsByInterpretation', 'getModelInfos', 'getGeneSet', 'getCaseSummary']),
     phenotypeList: function() {
       let self = this;
       let phenotypeList = [];
@@ -2125,6 +2125,7 @@ export default {
       this.modelInfos = analysis.custom_model_infos;
       this.customGeneSet = analysis.custom_gene_set;
       this.caseSummary = analysis.custom_case_Summary;
+      this.rawPedigree = analysis.custom_pedigree; 
       this.customSavedAnalysis = true;
       this.customData = true;
       // this.variantsByInterpretation = analysis.variants_by_interpretation;
@@ -2142,7 +2143,8 @@ export default {
     }, 
     saveAnalysisJson(){
       let analysis_obj = this.analysis; 
-      analysis_obj.custom_pedigree_data = this.getPedigreeData; 
+      analysis_obj.custom_pedigree_data = this.getPedigreeData;
+      analysis_obj.custom_pedigree = this.getPedigree; 
       analysis_obj.custom_variants_count = this.getVariantsCount;
       analysis_obj.custom_coverage_data = this.getCustomCoverage;
       analysis_obj.review_case_badge = this.getReviewCaseBadge;

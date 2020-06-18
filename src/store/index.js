@@ -8,6 +8,7 @@ export default new Vuex.Store({
   state: {
     analysis: analysisData,
     custom_pedigree_data: [],
+    custom_pedigree: null,
     custom_variants_count: [],
     custom_coverage_data: [],
     review_case_badge: null,
@@ -19,6 +20,7 @@ export default new Vuex.Store({
   getters: {
     allAnalysis: state => state.analysis,
     getPedigreeData: state => state.custom_pedigree_data,
+    getPedigree: state => state.custom_pedigree,
     getVariantsCount: state => state.custom_variants_count,
     getCustomCoverage: state => state.custom_coverage_data,
     getReviewCaseBadge: state => state.review_case_badge,
@@ -36,6 +38,9 @@ export default new Vuex.Store({
     },
     setPedigreeData({commit}, pedigreeData){
       commit('ADD_PEDIGREE', pedigreeData)
+    },
+    setPedigree({commit}, pedigree){
+      commit('ADD_PED', pedigree)
     },
     setVariantsCount({commit}, variantsCount){
       commit('ADD_VARIANTS_COUNT', variantsCount)
@@ -63,6 +68,7 @@ export default new Vuex.Store({
     GET_ANALYSIS: (state) => state.analysis,
     SET_ANALYSIS: (state, analysis) => state.analysis = analysis,
     ADD_PEDIGREE: (state, pedigreeData) => state.custom_pedigree_data = pedigreeData,
+    ADD_PED: (state, pedigree) => state.custom_pedigree = pedigree,
     ADD_VARIANTS_COUNT: (state, variantsCount) => state.custom_variants_count = variantsCount,
     ADD_COVERAGE_DATA: (state, coverageData) => state.custom_coverage_data = coverageData,
     SET_REVIEW_CASE_BADGE: (state, reviewCaseBadge) => state.review_case_badge = reviewCaseBadge,
