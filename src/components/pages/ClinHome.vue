@@ -817,45 +817,8 @@ export default {
       }
 
       self.showSplash = false;
-
-      self.promiseGetAnalysis(
-        self.params.project_id,
-        self.params.analysis_id,
-        self.workflow)
-      .then(function() {
-          if ((self.analysis.payload.variants == null || self.analysis.payload.variants.length == 0) && self.mosaicSession.hasVariantSets(self.modelInfos)) {
-            return self.mosaicSession.promiseParseVariantSets(self.modelInfos)
-          } else {
-            return Promise.resolve({});
-          }
-      })
-      .then(function(variantSets) {
-        if (variantSets && Object.keys(variantSets).length > 0) {
-          self.variantSetCounts = { total: 0 }
-          for (var key in variantSets) {
-            self.variantSetCounts[key]   = variantSets[key] ? variantSets[key].length : 0;
-            self.variantSetCounts.total += variantSets[key] ? variantSets[key].length : 0;
-            variantSets[key].forEach(function(importedVariant) {
-              let theFilterName = null;
-              if (self.mosaicSession.variantSetToFilterName[key]) {
-                theFilterName = self.mosaicSession.variantSetToFilterName[key];
-              } else {
-                theFilterName = key;
-              }
-              importedVariant.variantSet = theFilterName;
-              self.analysis.payload.variants.push(importedVariant);
-              if (self.analysis.payload.genes.indexOf(importedVariant.gene) < 0) {
-                self.analysis.payload.genes.push(importedVariant.gene);
-              }
-            })
-          }
-          return Promise.resolve();
-        } else {
-          return Promise.resolve();
-        }
-      })
-      .then(function() {
-
+      
+      if(self.customSavedAnalysis){
         // Send message to set the data in the iobio apps
         for (var appName in self.apps) {
           let app = self.apps[appName];
@@ -869,16 +832,90 @@ export default {
         if (callback) {
           callback();
         }
+      }
+      else if(self.customData){
+        self.analysis = analysisData;
+        self.idAnalysis = self.analysis.id;
 
+        self.analysis.payload.variants = [];
+        // Send message to set the data in the iobio apps
+        for (var appName in self.apps) {
+          let app = self.apps[appName];
+          if (!app.isLoaded) {
+            self.setData(appName, 500);
+          } else {
 
+          }
+        }
 
-      })
-      .catch(function(error) {
-        console.log("Error occurred in onAuthenticated " + error);
         if (callback) {
           callback();
         }
-      })
+      }
+      else {
+        self.promiseGetAnalysis(
+          self.params.project_id,
+          self.params.analysis_id,
+          self.workflow)
+        .then(function() {
+            if ((self.analysis.payload.variants == null || self.analysis.payload.variants.length == 0) && self.mosaicSession.hasVariantSets(self.modelInfos)) {
+              return self.mosaicSession.promiseParseVariantSets(self.modelInfos)
+            } else {
+              return Promise.resolve({});
+            }
+        })
+        .then(function(variantSets) {
+          if (variantSets && Object.keys(variantSets).length > 0) {
+            self.variantSetCounts = { total: 0 }
+            for (var key in variantSets) {
+              self.variantSetCounts[key]   = variantSets[key] ? variantSets[key].length : 0;
+              self.variantSetCounts.total += variantSets[key] ? variantSets[key].length : 0;
+              variantSets[key].forEach(function(importedVariant) {
+                let theFilterName = null;
+                if (self.mosaicSession.variantSetToFilterName[key]) {
+                  theFilterName = self.mosaicSession.variantSetToFilterName[key];
+                } else {
+                  theFilterName = key;
+                }
+                importedVariant.variantSet = theFilterName;
+                self.analysis.payload.variants.push(importedVariant);
+                if (self.analysis.payload.genes.indexOf(importedVariant.gene) < 0) {
+                  self.analysis.payload.genes.push(importedVariant.gene);
+                }
+              })
+            }
+            return Promise.resolve();
+          } else {
+            return Promise.resolve();
+          }
+        })
+        .then(function() {
+
+          // Send message to set the data in the iobio apps
+          for (var appName in self.apps) {
+            let app = self.apps[appName];
+            if (!app.isLoaded) {
+              self.setData(appName, 500);
+            } else {
+
+            }
+          }
+
+          if (callback) {
+            callback();
+          }
+
+
+
+        })
+        .catch(function(error) {
+          console.log("Error occurred in onAuthenticated " + error);
+          if (callback) {
+            callback();
+          }
+        })
+      }
+
     },
 
 
@@ -1043,7 +1080,7 @@ export default {
 
         let app = self.apps[appName];
         console.log("ClinHome.setData  sending data to " + appName)
-
+        console.log("variants in setData", self.analysis.payload.variants);
         var msgObject = {
             type:                  'set-data',
             sender:                'clin.iobio',
@@ -2089,11 +2126,11 @@ export default {
       // this.variantsByInterpretation = analysis.variants_by_interpretation;
       console.log("analysis set", this.analysis);
       // bus.$emit("initialize-clin")
-      // this.showLandingPage = false;
-      // this.showSplash = true;
-      // setTimeout(()=>{
-      //   this.onAuthenticated();
-      // }, 2000)
+      this.showLandingPage = false;
+      this.showSplash = true;
+      setTimeout(()=>{
+        this.onAuthenticated();
+      }, 2000)
 
     },
     setBedFileUrl(bedUrl){
