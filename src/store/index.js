@@ -13,6 +13,7 @@ export default new Vuex.Store({
     review_case_badge: null,
     variants_by_interpretation: [],
     custom_model_infos: [],
+    custom_gene_set: [],
   },
   getters: {
     allAnalysis: state => state.analysis,
@@ -22,6 +23,7 @@ export default new Vuex.Store({
     getReviewCaseBadge: state => state.review_case_badge,
     getVariantsByInterpretation: state => state.variants_by_interpretation,
     getModelInfos: state => state.custom_model_infos,
+    getGeneSet: state => state.custom_gene_set,
   },
   actions: {
     fetchAnalysis({ commit }){
@@ -48,6 +50,9 @@ export default new Vuex.Store({
     setModelInfos({commit}, modelInfos){
       commit('SET_MODEL_INFOS', modelInfos)
     },
+    setCustomGeneSet({commit}, geneSet){
+      commit('SET_GENE_SET', geneSet)
+    }
   },
   mutations: {
     GET_ANALYSIS: (state) => state.analysis,
@@ -58,6 +63,7 @@ export default new Vuex.Store({
     SET_REVIEW_CASE_BADGE: (state, reviewCaseBadge) => state.review_case_badge = reviewCaseBadge,
     SET_VARIANTS_BY_INTERPRETATION: (state, data) => state.variants_by_interpretation = data,
     SET_MODEL_INFOS: (state, modelInfos) => state.custom_model_infos = modelInfos,
+    SET_GENE_SET: (state, geneSet) => state.custom_gene_set = geneSet,
 
   },
   modules: {

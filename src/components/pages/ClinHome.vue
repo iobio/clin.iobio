@@ -512,7 +512,7 @@ export default {
       customGeneSet: [],
       bedFileUrl: '',
       variantsAnalyzedCounted: 0,
-      
+      customSavedAnalysis: false,
     }
 
   },
@@ -545,7 +545,7 @@ export default {
   },
 
   computed: {
-    ...mapGetters(['getPedigreeData', 'getVariantsCount', 'getCustomCoverage', 'getReviewCaseBadge', 'getVariantsByInterpretation', 'getModelInfos']),
+    ...mapGetters(['getPedigreeData', 'getVariantsCount', 'getCustomCoverage', 'getReviewCaseBadge', 'getVariantsByInterpretation', 'getModelInfos', 'getGeneSet']),
     phenotypeList: function() {
       let self = this;
       let phenotypeList = [];
@@ -639,7 +639,7 @@ export default {
   },
 
   methods: {
-    ...mapActions(['updateAnalysis', 'setModelInfos']),
+    ...mapActions(['updateAnalysis', 'setModelInfos', 'setCustomGeneSet']),
     
     init: function() {
       let self = this;
@@ -1913,7 +1913,8 @@ export default {
     },
 
     setGeneSet(geneSet){
-      this.customGeneSet = geneSet
+      this.customGeneSet = geneSet;
+      this.setCustomGeneSet(this.customGeneSet);
     },
     setPedData(pedigree){
       this.rawPedigree = pedigree;
@@ -2081,7 +2082,10 @@ export default {
     },
     loadSavedAnalysisCustomData(analysis){
       this.analysis = analysis;
-      this.modelInfos = analysis.custom_model_infos; 
+      this.modelInfos = analysis.custom_model_infos;
+      this.customGeneSet = analysis.custom_gene_set;
+      this.customSavedAnalysis = true;
+      this.customData = true;
       // this.variantsByInterpretation = analysis.variants_by_interpretation;
       console.log("analysis set", this.analysis);
       // bus.$emit("initialize-clin")
@@ -2103,6 +2107,7 @@ export default {
       analysis_obj.review_case_badge = this.getReviewCaseBadge;
       analysis_obj.custom_model_infos = this.getModelInfos;
       analysis_obj.variants_by_interpretation = this.getVariantsByInterpretation;
+      analysis_obj.custom_gene_set = this.getGeneSet;
       let analysisObject = JSON.stringify(analysis_obj);
       const jsonBlob = new Blob([analysisObject], { type: "application/json" });
       saveAs(jsonBlob, "clin-saved-analysis.json")
