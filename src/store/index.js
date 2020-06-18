@@ -12,6 +12,7 @@ export default new Vuex.Store({
     custom_coverage_data: [],
     review_case_badge: null,
     variants_by_interpretation: [],
+    custom_model_infos: [],
   },
   getters: {
     allAnalysis: state => state.analysis,
@@ -20,6 +21,7 @@ export default new Vuex.Store({
     getCustomCoverage: state => state.custom_coverage_data,
     getReviewCaseBadge: state => state.review_case_badge,
     getVariantsByInterpretation: state => state.variants_by_interpretation,
+    getModelInfos: state => state.custom_model_infos,
   },
   actions: {
     fetchAnalysis({ commit }){
@@ -42,7 +44,10 @@ export default new Vuex.Store({
     },
     setVariantsByInterpretation({commit}, data){
       commit('SET_VARIANTS_BY_INTERPRETATION', data)
-    }
+    },
+    setModelInfos({commit}, modelInfos){
+      commit('SET_MODEL_INFOS', modelInfos)
+    },
   },
   mutations: {
     GET_ANALYSIS: (state) => state.analysis,
@@ -52,6 +57,8 @@ export default new Vuex.Store({
     ADD_COVERAGE_DATA: (state, coverageData) => state.custom_coverage_data = coverageData,
     SET_REVIEW_CASE_BADGE: (state, reviewCaseBadge) => state.review_case_badge = reviewCaseBadge,
     SET_VARIANTS_BY_INTERPRETATION: (state, data) => state.variants_by_interpretation = data,
+    SET_MODEL_INFOS: (state, modelInfos) => state.custom_model_infos = modelInfos,
+
   },
   modules: {
   }

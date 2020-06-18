@@ -545,7 +545,7 @@ export default {
   },
 
   computed: {
-    ...mapGetters(['getPedigreeData', 'getVariantsCount', 'getCustomCoverage', 'getReviewCaseBadge', 'getVariantsByInterpretation']),
+    ...mapGetters(['getPedigreeData', 'getVariantsCount', 'getCustomCoverage', 'getReviewCaseBadge', 'getVariantsByInterpretation', 'getModelInfos']),
     phenotypeList: function() {
       let self = this;
       let phenotypeList = [];
@@ -639,7 +639,7 @@ export default {
   },
 
   methods: {
-    ...mapActions(['updateAnalysis']),
+    ...mapActions(['updateAnalysis', 'setModelInfos']),
     
     init: function() {
       let self = this;
@@ -1138,7 +1138,6 @@ export default {
       } else if (messageObject.type == "save-analysis") {
           this.analysis.payload.filters  = messageObject.analysis.payload.filters;
           this.analysis.payload.variants = messageObject.analysis.payload.variants;
-          console.log("calling from here.");
           this.organizeVariantsByInterpretation();
           this.setVariantTaskBadges();
           this.promiseAutosaveAnalysis({notify: true})
@@ -1675,22 +1674,17 @@ export default {
 
     organizeVariantsByInterpretation: function() {
       let self = this;
-      self.variantsAnalyzedCounted = self.variantsAnalyzedCounted + 1; 
-      console.log("self.variantsAnalyzedCounted", self.variantsAnalyzedCounted);
-      console.log("self.analysis.payload.variants.length", self.analysis.payload.variants.length);
-      if(self.analysis.payload.variants.length < self.variantsAnalyzedCounted){
-        self.variantsByInterpretation = [];
+      // self.variantsAnalyzedCounted = self.variantsAnalyzedCounted + 1; 
 
-        self.variantsByInterpretationTemplate.forEach(function(interpretationTemplate) {
-          let interpretation = $.extend({}, interpretationTemplate)
-          interpretation.organizedVariants = self.organizeVariantsByFilter(interpretation.key);
-          interpretation.variantCount      = self.getVariantCount(interpretation.organizedVariants);
-          interpretation.genes             = self.getUniqueGenes(interpretation.organizedVariants);
-          console.log("this is updatin");
-          self.variantsByInterpretation.push(interpretation)
-        })
+      self.variantsByInterpretation = [];
 
-      }
+      self.variantsByInterpretationTemplate.forEach(function(interpretationTemplate) {
+        let interpretation = $.extend({}, interpretationTemplate)
+        interpretation.organizedVariants = self.organizeVariantsByFilter(interpretation.key);
+        interpretation.variantCount      = self.getVariantCount(interpretation.organizedVariants);
+        interpretation.genes             = self.getUniqueGenes(interpretation.organizedVariants);
+        self.variantsByInterpretation.push(interpretation)
+      })
     },
     organizeVariantsByFilter: function(interpretation) {
       let self = this;
@@ -1914,6 +1908,7 @@ export default {
 
     customModelInfo(modelInfos){
       this.modelInfos = modelInfos;
+      this.setModelInfos(this.modelInfos);
       this.customData = true;
     },
 
@@ -2085,8 +2080,9 @@ export default {
       }
     },
     loadSavedAnalysisCustomData(analysis){
-      this.analysis = analysis; 
-      this.variantsByInterpretation = analysis.variants_by_interpretation;
+      this.analysis = analysis;
+      this.modelInfos = analysis.custom_model_infos; 
+      // this.variantsByInterpretation = analysis.variants_by_interpretation;
       console.log("analysis set", this.analysis);
       // bus.$emit("initialize-clin")
       // this.showLandingPage = false;
@@ -2105,7 +2101,7 @@ export default {
       analysis_obj.custom_variants_count = this.getVariantsCount;
       analysis_obj.custom_coverage_data = this.getCustomCoverage;
       analysis_obj.review_case_badge = this.getReviewCaseBadge;
-      console.log("getVariantsByInterpretation", this.getVariantsByInterpretation);
+      analysis_obj.custom_model_infos = this.getModelInfos;
       analysis_obj.variants_by_interpretation = this.getVariantsByInterpretation;
       let analysisObject = JSON.stringify(analysis_obj);
       const jsonBlob = new Blob([analysisObject], { type: "application/json" });
