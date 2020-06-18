@@ -175,7 +175,7 @@
               </v-btn>
               <v-divider></v-divider>
               <v-btn color="primary" block outlined x-large @click="importSavedAnalysis">
-                <v-icon>folder_open</v-icon>
+                <v-icon>publish</v-icon>
                 <span class="ml-2">IMPORT SAVED ANALYSIS</span>
               </v-btn>
             </div>
@@ -245,7 +245,7 @@
               <v-file-input
                 @change="importSavedAnalysisConfig"
                 accept=".json,"
-                label="Saved input configuration"
+                label="Saved analysis"
                 v-model="savedAnalysisConfig"
                 show-size counter>
                 <template v-slot:selection="{ text }">
