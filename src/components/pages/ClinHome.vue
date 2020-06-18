@@ -222,7 +222,8 @@ $horizontal-dashboard-height: 140px
         @update="updateReviewCaseBadges"
         @updateCoverage="updateAverageCoverage"
         :customData=customData
-        :bedFileUrl="bedFileUrl">
+        :bedFileUrl="bedFileUrl"
+        :customSavedAnalysis="customSavedAnalysis">
         </review-case>
       </v-card>
 
@@ -2120,6 +2121,7 @@ export default {
     },
     loadSavedAnalysisCustomData(analysis){
       this.analysis = analysis;
+      this.updateAnalysis(this.analysis);
       this.modelInfos = analysis.custom_model_infos;
       this.customGeneSet = analysis.custom_gene_set;
       this.caseSummary = analysis.custom_case_Summary;

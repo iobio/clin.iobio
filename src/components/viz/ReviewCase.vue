@@ -101,12 +101,12 @@
         <div class="review-section">
 
           <div style="display:flex;flex-direction:row;justify-content:flex-start">
-              <div style="width:80%">
+              <!-- <div style="width:80%">
                 <span class="heading">Case Summary </span>
                 <div class="reviewCase">
                 {{ caseSummary.description }}
                 </div>
-              </div>
+              </div> -->
 
             <div v-if="false" class="subsection">
               <div class="card-subheading">Condition / Phenotype Search Terms</div>
@@ -136,10 +136,10 @@
       </div>
       <div v-for="(d, i) in varCountsArray" >
         <div style=" width: 100%; display: inline-flex; flex-direction: row; justify-content: space-around;">
-            <div style="text-align: center; width: 150px" class="capitalize">
+            <!-- <div style="text-align: center; width: 150px" class="capitalize">
               {{sampleIdsAndRelationships[i]}}
               <PedigreeGraph :data="allPedigreeDataArrays[i]" :id="sampleUuids[i]" :width="100" :height="75" :pedigree="pedigree"></PedigreeGraph>
-            </div>
+            </div> -->
 
           <div style="display: inline-flex;">
             <BarChart :data="coverageDataArray[i]" :width="400" :height="150" :x-domain="xDomain" :y-domain="yDomain" :median-coverage="medianCoverages[i]" :minCutoff="minCutoff"></BarChart>
@@ -282,7 +282,8 @@ export default {
     coverageHistos: null,
     launchedFromMosaic: null,
     customData:   null,
-    bedFileUrl: null
+    bedFileUrl: null,
+    customSavedAnalysis: null
   },
   data() {
     return {
@@ -375,6 +376,25 @@ export default {
       this.convertPropsToData();
       this.buildPage();
 
+    }
+    else if(this.customSavedAnalysis){
+      console.log("here in customSavedAnalysis");
+      console.log("customData after saved analysis", this.customData);
+      let analysis = this.allAnalysis; //gets analysis from Vuex store. 
+      
+      // this.allPedigreeDataArrays = analysis.custom_pedigree_data; 
+      this.varCountsArray = analysis.custom_variants_count;
+      console.log("allPedigreeDataArrays", this.allPedigreeDataArrays);
+      this.statsReceived = true;
+      
+      this.coverageHistosData = analysis.custom_coverage_data;
+      this.formatCoverageData();
+      this.populateDomains();
+      this.populateCoverageMedians();
+      this.populateBadCoverageCount();
+      this.coverageStatsReceived = true;
+      
+      this.reviewCaseBadges = this.getReviewCaseBadge;
     }
     else if(this.customData){
       if(this.bedFileUrl!==undefined){
@@ -1027,7 +1047,7 @@ export default {
     }
   },
   computed: {
-
+    ...mapGetters(['getPedigreeData', 'getVariantsCount', 'getCustomCoverage', 'getReviewCaseBadge', 'getVariantsByInterpretation', 'getModelInfos', 'getGeneSet', 'getCaseSummary', 'allAnalysis']),
   },
   watch: {
     minCutoff: function(){
