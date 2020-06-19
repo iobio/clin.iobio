@@ -229,7 +229,7 @@
       <!-- import saved analysis dialog -->
       <v-dialog
         v-model="importSavedAnalysisDialog"
-        scrollable
+        scrollable persistent
         :overlay="false"
         max-width="650"
       >
@@ -268,7 +268,18 @@
                 placeholder="Ex. 793402"
                 counter="6"
                 :disabled="this.savedAnalysisConfig===null"
+                v-model="passCode"
               ></v-text-field>
+              <br>              
+              <v-alert
+                border="left" colored-border type="error"
+                icon="error_outline" dense elevation="1"
+                style="font-size:12px" v-model="passcodeIncorrectAlert"
+                dismissible
+              >
+                The entered passcode is incorrect.
+              </v-alert>
+
 
             </div>
           </v-card-text>
@@ -554,6 +565,8 @@ export default {
       savedAnalysisConfig: null,
       validateSavedAnalysisData: false,
       configSavedAnalysisData: {},
+      passCode: '',
+      passcodeIncorrectAlert: false,
     }
   },
   computed: mapGetters(['allAnalysis']),
@@ -751,7 +764,12 @@ export default {
         this.$emit("load-saved-input-config", this.configCustomData)
     },
     loadFromSavedAnalysis(){
-      this.$emit("load-saved-analysis-custom-data", this.configSavedAnalysisData)
+      if(this.configSavedAnalysisData.pass_code == this.passCode){
+        this.$emit("load-saved-analysis-custom-data", this.configSavedAnalysisData)
+      }
+      else {
+        this.passcodeIncorrectAlert = true;
+      }
     },
   },
   mounted: function() {
@@ -772,6 +790,9 @@ export default {
 
     },
     step_number(){
+    },
+    passCode(){
+      this.passcodeIncorrectAlert = false;
     }
   }
 }
