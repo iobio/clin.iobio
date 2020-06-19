@@ -764,6 +764,7 @@ export default {
         this.$emit("load-saved-input-config", this.configCustomData)
     },
     loadFromSavedAnalysis(){
+      console.log(this.configSavedAnalysisData.pass_code);
       if(this.configSavedAnalysisData.pass_code == this.passCode){
         this.$emit("load-saved-analysis-custom-data", this.configSavedAnalysisData)
       }

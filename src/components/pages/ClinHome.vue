@@ -122,7 +122,9 @@ $horizontal-dashboard-height: 140px
   .container
     max-width: 1635px !important
 
-
+.i-passcode
+  letter-spacing: 4px
+  font-size: 42px
 
 </style>
 
@@ -311,6 +313,36 @@ $horizontal-dashboard-height: 140px
         text="Generating report..."
       >
       </LoadingDialog>
+      
+      <!-- Pass code dialog -->
+      <v-dialog
+        v-model="showPassCode"
+        :overlay="false"
+        max-width="450px" persistent
+      >
+        <v-card class="full-width" style="height: auto;overflow-y:scroll">
+          <v-card-title primary-title>
+            <v-spacer></v-spacer>
+            <span>
+              <v-btn text icon @click="showPassCode=false"><v-icon>close</v-icon></v-btn>
+            </span>
+          </v-card-title>
+          <v-card-text>
+            <div class="container">
+              The passcode for this saved analysis is: 
+              <br>
+              <center>
+                <span><h1 class="i-passcode">{{ passcode }}</h1></span>
+              </center>
+              <br>
+              This passcode will be required when uploading the saved analysis config file to resume this analysis.
+              Please make sure to write it down or <a @click="savePasscode">download </a> as it won't be show again.
+            </div>
+          </v-card-text>
+        </v-card>
+      </v-dialog>
+
+      <!-- end pass code dialog -->
 
 
     </div>
@@ -514,6 +546,8 @@ export default {
       bedFileUrl: '',
       variantsAnalyzedCounted: 0,
       customSavedAnalysis: false,
+      passcode: '',
+      showPassCode: false
     }
 
   },
@@ -2145,7 +2179,7 @@ export default {
       this.bedFileUrl = bedUrl;
     }, 
     saveAnalysisJson(){
-      let analysis_obj = this.analysis; 
+      let analysis_obj = this.analysis;
       analysis_obj.custom_pedigree_data = this.getPedigreeData;
       analysis_obj.custom_pedigree = this.getPedigree; 
       analysis_obj.custom_variants_count = this.getVariantsCount;
@@ -2158,7 +2192,17 @@ export default {
       analysis_obj.pass_code = Math.floor(100000 + Math.random() * 900000);
       let analysisObject = JSON.stringify(analysis_obj);
       const jsonBlob = new Blob([analysisObject], { type: "application/json" });
-      saveAs(jsonBlob, "clin-saved-analysis.json")
+      saveAs(jsonBlob, "clin-saved-analysis.json");
+      this.showPassCodeDialog(analysis_obj.pass_code);
+    }, 
+    showPassCodeDialog(pass_code){
+      this.showPassCode = true;
+      this.passcode = pass_code;
+    },
+    savePasscode(){
+      const txtBlob = new Blob([this.passcode], { type: "text/plain" });
+      saveAs(txtBlob, "passcode-clin.txt");
+
     }
   }
 }
