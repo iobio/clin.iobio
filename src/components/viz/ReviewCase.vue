@@ -372,6 +372,8 @@ export default {
 
   mounted: function(){
     if(this.launchedFromMosaic) {
+      this.varCountsArray = this.allVarCounts;
+
       this.formatVarCountsArray();
       this.convertPropsToData();
       this.buildPage();
