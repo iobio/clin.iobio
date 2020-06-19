@@ -163,7 +163,8 @@ $horizontal-dashboard-height: 140px
    :caseSummary="caseSummary"
    :analysis="analysis"
    :launchedFromMosaic="launchedFromMosaic"
-   @show-save-analysis="toggleSaveModal(true)">
+   @show-save-analysis="toggleSaveModal(true)"
+   :customData="customData">
   </navigation>
 
 

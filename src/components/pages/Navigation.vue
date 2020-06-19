@@ -174,7 +174,7 @@ header.theme--dark.v-sheet
         Report
       </v-btn>
       
-      <v-btn color="primary" id="save-button" @click="saveAnalysis">
+      <v-btn color="primary" id="save-button" @click="saveAnalysis" v-if="customData">
         <v-icon>save</v-icon>
         Save Analysis
       </v-btn>
@@ -214,7 +214,7 @@ export default {
     caseSummary: null,
     analysis: null,
     launchedFromMosaic: null,
-
+    customData: null
   },
   data () {
     let self = this;
