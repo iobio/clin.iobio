@@ -71,6 +71,9 @@
 <script>
   export default {
     name: 'bed-data',
+    props: {
+      buildName: null
+    },
     data(){
       return {
         dataTypesList: ['Exome', 'Genome'],
@@ -82,7 +85,10 @@
         showUrlField: false,
         bed_url_exome: '', 
         bed_url_genome: '',
-        bedFileUrl: 'https://raw.githubusercontent.com/chmille4/bam.iobio.io/vue/client/data/20130108.exome.targets.bed'
+        bedFileUrl: 'https://raw.githubusercontent.com/chmille4/bam.iobio.io/vue/client/data/20130108.exome.targets.bed',
+        bedFile37: 'https://raw.githubusercontent.com/chmille4/bam.iobio.io/vue/client/data/20130108.exome.targets.bed',
+        bedFile38: 'https://raw.githubusercontent.com/adityaekawade/bam.iobio.io/vue/client/data/20130108.exome.targets.grch38.bed'
+
       }
     }, 
     methods: {
@@ -98,6 +104,9 @@
           this.$emit('set-bed-url', this.bedFileUrl);
         }
       }, 100),
+      setField: function(){
+        
+      }
     }, 
     watch: {
       toggle_bed_selection_genome: function(){
@@ -154,6 +163,28 @@
             this.$emit('set-bed-url', this.bedFileUrl); 
           }
         }
+      },
+      buildName: function(){
+        if(this.buildName === 'GRCh38'){
+          this.bedFile_type_exome = []; 
+          this.bedFile_type_exome = ['Standard (GRCh38 Exonic Regions)', 'Custom Bed'];
+
+          this.bedFile_type_genome = [];
+          this.bedFile_type_genome = ['No bed file', 'Standard (GRCh38 Exonic Regions)', 'Custom Bed',];
+
+          this.bedFileUrl = 'https://raw.githubusercontent.com/adityaekawade/bam.iobio.io/vue/client/data/20130108.exome.targets.grch38.bed';
+        }
+        else if(this.buildName === 'GRCh37'){
+          this.bedFile_type_exome = []; 
+          this.bedFile_type_exome = ['Standard (GRCh37 Exonic Regions)', 'Custom Bed'];
+          
+          this.bedFile_type_genome = [];
+          this.bedFile_type_genome = ['No bed file', 'Standard (GRCh37 Exonic Regions)', 'Custom Bed',];
+
+          this.bedFileUrl = 'https://raw.githubusercontent.com/chmille4/bam.iobio.io/vue/client/data/20130108.exome.targets.bed';
+        }
+        console.log("bedfile url", this.buildName , " and  --- ", this.bedFileUrl);
+        console.log("bedFile_type_exome", this.bedFile_type_exome);
       }
     }
   };

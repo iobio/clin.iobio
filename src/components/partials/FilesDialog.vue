@@ -170,7 +170,7 @@
 
 
             <bed-data
-              v-if="buildName==='GRCh37'"
+              :buildName="buildName"
               @set-bed-url="setBedUrl($event)">
             </bed-data>
 
@@ -355,9 +355,10 @@ export default {
       }
     },
     buildName: function(){
-      if(this.buildName==='GRCh38'){
-        this.bedFileUrl = undefined
-      }
+      // console.log("buildName", this.buildName);
+      // if(this.buildName==='GRCh38'){
+      //   this.bedFileUrl = undefined
+      // }
     }
 
   },
