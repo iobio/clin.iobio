@@ -685,6 +685,7 @@ export default {
     },
     setBedUrl: function(url) {
       this.bedFileUrl = url;
+        console.log("this.bedFileUrl in filesdialog",this.bedFileUrl);
     }
   },
   computed: {
