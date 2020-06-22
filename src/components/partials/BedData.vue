@@ -120,10 +120,7 @@
           
           else if(this.toggle_bed_selection_exome === 1){ //this is going to be custom, so buildName won't affect the bed file selection. 
             this.showUrlField = true;
-            console.log("here!!");
-            console.log("bed_url_exome", this.bed_url_exome);
             this.bed_url_exome === '' ? this.bedFileUrl = '' : this.bedFileUrl = this.bed_url_exome; 
-            // this.bedFileUrl = '';
             this.$emit('set-bed-url', this.bedFileUrl); 
           }
           
@@ -148,7 +145,6 @@
             this.showUrlField = true;
             this.bed_url_genome === '' ? this.bedFileUrl = '' : this.bedFileUrl = this.bed_url_genome; 
 
-            // this.bedFileUrl = '';
             this.$emit('set-bed-url', this.bedFileUrl); 
           }
         }
@@ -157,84 +153,27 @@
     watch: {
       toggle_bed_selection_genome: function(){
         this.setField();
-        // if(this.toggle_bed_selection_genome === 2){
-        //   this.showUrlField = true;
-        //   this.bedFileUrl = '';
-        //   this.$emit('set-bed-url', this.bedFileUrl); 
-        // }
-        // else if(this.toggle_bed_selection_genome === 1){
-        //   this.showUrlField = false;
-        //   this.bedFileUrl = 'https://raw.githubusercontent.com/chmille4/bam.iobio.io/vue/client/data/20130108.exome.targets.bed';
-        //   this.$emit('set-bed-url', this.bedFileUrl); 
-        // }
-        // else {
-        //   this.showUrlField = false;
-        //   this.bedFileUrl = undefined;
-        //   this.$emit('set-bed-url', this.bedFileUrl);
-        // }
       },
       toggle_bed_selection_exome: function(){
         this.setField()
-        // if(this.toggle_bed_selection_exome === 1){
-        //   this.showUrlField = true;
-        //   this.bedFileUrl = '';
-        //   this.$emit('set-bed-url', this.bedFileUrl); 
-        // }
-        // else {
-        //   this.showUrlField = false; 
-        //   this.bedFileUrl = 'https://raw.githubusercontent.com/chmille4/bam.iobio.io/vue/client/data/20130108.exome.targets.bed';
-        //   this.$emit('set-bed-url', this.bedFileUrl); 
-        // }
       },
       dataTypeSelectedName: function(){ //User changes the data type selection
         this.setField();
-        // if(this.dataTypeSelectedName === 'Exome'){
-        //   if(this.toggle_bed_selection_exome === 0){
-        //     this.bedFileUrl = 'https://raw.githubusercontent.com/chmille4/bam.iobio.io/vue/client/data/20130108.exome.targets.bed';
-        //     this.$emit('set-bed-url', this.bedFileUrl); 
-        //   }
-        //   else if(this.toggle_bed_selection_exome === 1){
-        //     this.bedFileUrl = '';
-        //     this.$emit('set-bed-url', this.bedFileUrl); 
-        //   }
-        // }
-        // else{
-        //   if(this.toggle_bed_selection_genome === 0){
-        //     this.bedFileUrl = undefined;
-        //     this.$emit('set-bed-url', this.bedFileUrl); 
-        //   }
-        //   else if(this.toggle_bed_selection_genome === 1){
-        //     this.bedFileUrl = 'https://raw.githubusercontent.com/chmille4/bam.iobio.io/vue/client/data/20130108.exome.targets.bed';
-        //     this.$emit('set-bed-url', this.bedFileUrl); 
-        //   }
-        //   else if(this.toggle_bed_selection_genome === 2){
-        //     this.bedFileUrl = '';
-        //     this.$emit('set-bed-url', this.bedFileUrl); 
-        //   }
-        // }
       },
       buildName: function(){
         if(this.buildName === 'GRCh38'){
           this.bedFile_type_exome = []; 
           this.bedFile_type_exome = ['Standard (GRCh38 Exonic Regions)', 'Custom Bed'];
-
           this.bedFile_type_genome = [];
           this.bedFile_type_genome = ['No bed file', 'Standard (GRCh38 Exonic Regions)', 'Custom Bed',];
-
-          // this.bedFileUrl = 'https://raw.githubusercontent.com/adityaekawade/bam.iobio.io/vue/client/data/20130108.exome.targets.grch38.bed';
         }
         else if(this.buildName === 'GRCh37'){
           this.bedFile_type_exome = []; 
           this.bedFile_type_exome = ['Standard (GRCh37 Exonic Regions)', 'Custom Bed'];
-          
           this.bedFile_type_genome = [];
           this.bedFile_type_genome = ['No bed file', 'Standard (GRCh37 Exonic Regions)', 'Custom Bed',];
-
-          // this.bedFileUrl = 'https://raw.githubusercontent.com/chmille4/bam.iobio.io/vue/client/data/20130108.exome.targets.bed';
         }
         this.setField();
-        console.log("bedfile url", this.buildName , " and  --- ", this.bedFileUrl);
-        console.log("bedFile_type_exome", this.bedFile_type_exome);
       }
     }
   };

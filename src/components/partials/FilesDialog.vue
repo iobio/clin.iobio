@@ -355,10 +355,6 @@ export default {
       }
     },
     buildName: function(){
-      // console.log("buildName", this.buildName);
-      // if(this.buildName==='GRCh38'){
-      //   this.bedFileUrl = undefined
-      // }
     }
 
   },
@@ -685,7 +681,6 @@ export default {
     },
     setBedUrl: function(url) {
       this.bedFileUrl = url;
-        console.log("this.bedFileUrl in filesdialog",this.bedFileUrl);
     }
   },
   computed: {
