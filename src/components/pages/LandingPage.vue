@@ -773,27 +773,58 @@ export default {
         reader.onload = () => {
           let data = reader.result;
           console.log("data in input config", data);
-          this.formatToPedData(data);
+          // this.formatToPedData(data);
           let newLine = data.split('\n');
           let pedData = [];
           let modelInfoData = [];
+          let sexMap = {
+            "1": "Male",
+            "2": "Female",
+          }
+          let statusMap = {
+            "0": false,
+            "1": false,
+            "2": true,           
+          }
           
           for (var i = 0; i < newLine.length; i++) {
             var pedLines = newLine[i].split(',').slice(0,6);
             pedData.push(pedLines.join(' '));
-            var modelInfoLines = newLine[i].split(',').slice(6);
+            
+            var modelInfoLines = newLine[i].split(',').slice();
+            if(i!==0){
+              modelInfoLines[4] = sexMap[modelInfoLines[4]]; 
+              modelInfoLines[5] = statusMap[modelInfoLines[5]];
+            }
             console.log("modelInfoLines", modelInfoLines);
             modelInfoData.push(modelInfoLines);
           }
           modelInfoData.shift()
           let pedFile = pedData.join('\n');
           console.log("modelInfoData", modelInfoData);
-          this.buildPedFromTxt(pedFile); 
+          this.buildPedFromTxt(pedFile);
+          this.formatCustomModelInfo(modelInfoData)
         }
       }
     },
-    formatToPedData(data){
-      
+    formatCustomModelInfo(modelInfoData){
+      var modelInfo = [];
+      modelInfoData.map(model => {
+        var obj = {}; 
+        obj.sample = model[1];
+        obj.relationship = model[6]; 
+        obj.affectedStatus = model[5];
+        obj.name = null; 
+        obj.sex = model[4];
+        obj.vcf = model[7]; 
+        obj.tbi = model[8] !== '' ? model[8] : null; 
+        obj.bam = model[9]; 
+        obj.bai = model[10] !== '' ? model[10] : null;
+        modelInfo.push(obj);
+      })
+      console.log("modelInfo", modelInfo);
+      // this.$emit("custom-model-info",modelInfo);
+
     },
     importSavedAnalysisConfig(ev) {
       var reader = new FileReader();
