@@ -773,21 +773,22 @@ export default {
         reader.onload = () => {
           let data = reader.result;
           console.log("data in input config", data);
-          this.formatToPedData(data); 
+          this.formatToPedData(data);
           let newLine = data.split('\n');
-          // console.log("newLine", newLine);
-          // this.configCustomData = JSON.parse(data);
-          // if(typeof this.configCustomData === "object"){
-          //   this.validateSavedConfig = true;
-          // }
-          let pedData = []; 
+          let pedData = [];
+          let modelInfoData = [];
+          
           for (var i = 0; i < newLine.length; i++) {
-            var splitLine = newLine[i].split(',').slice(0,6);
-            // console.log("splitLine: ", splitLine);
-            pedData.push(splitLine.join(' '));
+            var pedLines = newLine[i].split(',').slice(0,6);
+            pedData.push(pedLines.join(' '));
+            var modelInfoLines = newLine[i].split(',').slice(6);
+            console.log("modelInfoLines", modelInfoLines);
+            modelInfoData.push(modelInfoLines);
           }
-          console.log("pedData", pedData);
-          console.log("pedigreee", pedData.join('\n'));
+          modelInfoData.shift()
+          let pedFile = pedData.join('\n');
+          console.log("modelInfoData", modelInfoData);
+          this.buildPedFromTxt(pedFile); 
         }
       }
     },
