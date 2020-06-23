@@ -216,7 +216,7 @@
                   </v-chip>
                 </template>
               </v-file-input>
-              
+              <v-btn color="primary" @click="inputconfigtest">text</v-btn>
               <v-divider></v-divider>
               
               
@@ -648,6 +648,10 @@ export default {
       // this.pedigreeUploadDialog = true;
       this.getStarted();
     },
+    inputconfigtest: function(){
+      this.importConfigurationDialog = false;
+      this.getStarted();
+    },
     backToFiles: function(){
       this.geneSetDiialog = false;
       this.pageCounter = 3;
@@ -801,9 +805,14 @@ export default {
           }
           modelInfoData.shift()
           let pedFile = pedData.join('\n');
+          console.log("pedFile", pedFile);
           console.log("modelInfoData", modelInfoData);
-          this.buildPedFromTxt(pedFile);
-          this.formatCustomModelInfo(modelInfoData)
+          // this.buildPedFromTxt(pedFile);
+          this.formatCustomModelInfo(modelInfoData);
+          this.geneSet = ['PRX'];
+          this.$emit('setGeneSet', this.geneSet)
+          this.$emit("setBedFileUrl", undefined);
+          this.$emit("set-ped-data", pedFile);
         }
       }
     },
@@ -823,7 +832,7 @@ export default {
         modelInfo.push(obj);
       })
       console.log("modelInfo", modelInfo);
-      // this.$emit("custom-model-info",modelInfo);
+      this.$emit("custom-model-info",modelInfo);
 
     },
     importSavedAnalysisConfig(ev) {
