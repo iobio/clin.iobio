@@ -200,6 +200,26 @@
           </v-card-title>
           <v-card-text>
             <div class="container">
+              
+              <v-file-input
+                @change="onInputConfig"
+                accept=".csv"
+                label="Data input configuration"
+                v-model="dataInputConfig"
+                show-size counter>
+                <template v-slot:selection="{ text }">
+                  <v-chip
+                    label
+                    color="primary"
+                  >
+                    {{ text }}
+                  </v-chip>
+                </template>
+              </v-file-input>
+              
+              <v-divider></v-divider>
+              
+              
               <v-file-input
                 @change="importSavedInputConfig"
                 accept=".json,"
@@ -567,6 +587,7 @@ export default {
       configSavedAnalysisData: {},
       passCode: '',
       passcodeIncorrectAlert: false,
+      dataInputConfig: null,
     }
   },
   computed: mapGetters(['allAnalysis']),
@@ -634,6 +655,7 @@ export default {
       bus.$emit("back-to-files")
     },
     uploadedPedTxt(ped){
+      console.log("peed", ped);
       this.pedData = ped;
       this.buildPedFromTxt(this.pedData);
     },
@@ -743,6 +765,34 @@ export default {
       else {
         this.validateSavedConfig = false;
       }
+    },
+    onInputConfig(ev) {
+      var reader = new FileReader();
+      if(this.dataInputConfig){
+        reader.readAsText(this.dataInputConfig);
+        reader.onload = () => {
+          let data = reader.result;
+          console.log("data in input config", data);
+          this.formatToPedData(data); 
+          let newLine = data.split('\n');
+          // console.log("newLine", newLine);
+          // this.configCustomData = JSON.parse(data);
+          // if(typeof this.configCustomData === "object"){
+          //   this.validateSavedConfig = true;
+          // }
+          let pedData = []; 
+          for (var i = 0; i < newLine.length; i++) {
+            var splitLine = newLine[i].split(',').slice(0,6);
+            // console.log("splitLine: ", splitLine);
+            pedData.push(splitLine.join(' '));
+          }
+          console.log("pedData", pedData);
+          console.log("pedigreee", pedData.join('\n'));
+        }
+      }
+    },
+    formatToPedData(data){
+      
     },
     importSavedAnalysisConfig(ev) {
       var reader = new FileReader();
