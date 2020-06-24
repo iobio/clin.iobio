@@ -200,11 +200,43 @@
           </v-card-title>
           <v-card-text>
             <div class="container">
+              
+              <v-file-input
+                @change="onInputConfig"
+                accept=".csv"
+                label="Data input configuration"
+                v-model="dataInputConfig"
+                :disabled="savedInputConfig!==null"
+                show-size counter>
+                <template v-slot:selection="{ text }">
+                  <v-chip
+                    label
+                    color="primary"
+                  >
+                    {{ text }}
+                  </v-chip>
+                </template>
+              </v-file-input>
+              
+                <v-textarea
+                  solo
+                  auto-grow rows="1"
+                  name="input-7-4"
+                  class="mt-2"
+                  label="Enter Genes"
+                  v-model="genes"
+                  :disabled="savedInputConfig!==null"
+                ></v-textarea>
+
+              <v-divider></v-divider>
+              <br>
+              
               <v-file-input
                 @change="importSavedInputConfig"
                 accept=".json,"
                 label="Saved input configuration"
                 v-model="savedInputConfig"
+                :disabled="dataInputConfig!==null"
                 show-size counter>
                 <template v-slot:selection="{ text }">
                   <v-chip
@@ -220,7 +252,9 @@
           <v-card-actions>
             <v-spacer></v-spacer>
             <v-btn color="primary" @click="importConfigurationDialog=false" text>close</v-btn>
-            <v-btn color="primary" @click="loadFromConfigInput" :disabled="!validateSavedConfig && savedInputConfig==null">Load</v-btn>
+            <v-btn color="primary" v-if="savedInputConfig" @click="loadFromSavedConfigInput" :disabled="!validateSavedConfig && savedInputConfig==null">Load</v-btn>
+            <v-btn color="primary" v-if="savedInputConfig===null" @click="onLoadInputConfig" :disabled="dataInputConfig==null || genes.length<3">Load</v-btn>
+
           </v-card-actions>
         </v-card>
       </v-dialog>
@@ -412,7 +446,7 @@
                 label="Enter Genes"
                 v-model="genes"
               ></v-textarea>
-          </v-col>
+            </v-col>
           <v-card-actions>
             <v-tooltip top>
               <template v-slot:activator="{ on }">
@@ -567,6 +601,7 @@ export default {
       configSavedAnalysisData: {},
       passCode: '',
       passcodeIncorrectAlert: false,
+      dataInputConfig: null,
     }
   },
   computed: mapGetters(['allAnalysis']),
@@ -619,12 +654,16 @@ export default {
       this.pageCounter = 2;
     },
     addGeneSet: function(){
-      // this.pageCounter = this.pageCounter+1;
       this.pageCounter = 1;
       this.geneSetDiialog = false;
       this.geneSet = this.genes.split(",").map(gene => gene.trim().toUpperCase());
       this.$emit('setGeneSet', this.geneSet)
-      // this.pedigreeUploadDialog = true;
+      this.getStarted();
+    },
+    onLoadInputConfig: function(){
+      this.importConfigurationDialog = false;
+      this.geneSet = this.genes.split(",").map(gene => gene.trim().toUpperCase());
+      this.$emit('setGeneSet', this.geneSet)
       this.getStarted();
     },
     backToFiles: function(){
@@ -634,6 +673,7 @@ export default {
       bus.$emit("back-to-files")
     },
     uploadedPedTxt(ped){
+      console.log("peed", ped);
       this.pedData = ped;
       this.buildPedFromTxt(this.pedData);
     },
@@ -731,6 +771,7 @@ export default {
     importSavedInputConfig(ev) {
       var reader = new FileReader();
       if(this.savedInputConfig){
+        this.dataInputConfig = null;
         reader.readAsText(this.savedInputConfig);
         reader.onload = () => {
           let data = reader.result;
@@ -743,6 +784,70 @@ export default {
       else {
         this.validateSavedConfig = false;
       }
+    },
+    onInputConfig(ev) {
+      var reader = new FileReader();
+      if(this.dataInputConfig){
+        this.savedInputConfig = null;
+        reader.readAsText(this.dataInputConfig);
+        reader.onload = () => {
+          let data = reader.result;
+          console.log("data in input config", data);
+          let newLine = data.split('\n');
+          let pedData = [];
+          let modelInfoData = [];
+          let bedFileUrl = 'https://raw.githubusercontent.com/chmille4/bam.iobio.io/vue/client/data/20130108.exome.targets.bed';
+          let sexMap = {
+            "1": "Male",
+            "2": "Female",
+          }
+          let statusMap = {
+            "0": false,
+            "1": false,
+            "2": true,           
+          }
+          
+          for (var i = 0; i < newLine.length; i++) {
+            var pedLines = newLine[i].split(',').slice(0,6);
+            pedData.push(pedLines.join(' '));
+            
+            var modelInfoLines = newLine[i].split(',').slice();
+            if(i!==0){
+              modelInfoLines[4] = sexMap[modelInfoLines[4]]; 
+              modelInfoLines[5] = statusMap[modelInfoLines[5]];
+            }
+            modelInfoData.push(modelInfoLines);
+          }
+          modelInfoData.shift();
+          let pedFile = pedData.join('\n');
+          let bedFile = modelInfoData[0][11]; 
+          if(bedFile !== ''){
+            bedFileUrl = bedFile;
+          }
+          this.formatCustomModelInfo(modelInfoData);
+          this.$emit("setBedFileUrl", bedFileUrl);
+          this.$emit("set-ped-data", pedFile);
+        }
+      }
+    },
+    formatCustomModelInfo(modelInfoData){
+      var modelInfo = [];
+      modelInfoData.map(model => {
+        var obj = {}; 
+        obj.sample = model[1];
+        obj.relationship = model[6]; 
+        obj.affectedStatus = model[5];
+        obj.name = null; 
+        obj.sex = model[4];
+        obj.vcf = model[7]; 
+        obj.tbi = model[8] !== '' ? model[8] : null; 
+        obj.bam = model[9]; 
+        obj.bai = model[10] !== '' ? model[10] : null;
+        modelInfo.push(obj);
+      })
+      console.log("modelInfo", modelInfo);
+      this.$emit("custom-model-info",modelInfo);
+
     },
     importSavedAnalysisConfig(ev) {
       var reader = new FileReader();
@@ -760,7 +865,7 @@ export default {
         this.validateSavedAnalysisData = false;
       }
     },
-    loadFromConfigInput(){
+    loadFromSavedConfigInput(){
         this.$emit("load-saved-input-config", this.configCustomData)
     },
     loadFromSavedAnalysis(){
