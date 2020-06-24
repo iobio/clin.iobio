@@ -137,6 +137,7 @@ export default {
   },
   methods: {
     onVcfUrlEntered: function(vcfUrl, tbiUrl) {
+      console.log("onVcfUrlEntered");
       let self = this;
       // console.log("onVcfUrlEntered", vcfUrl);
 
@@ -145,6 +146,7 @@ export default {
 
       if (self.modelInfo && self.modelInfo.model) {
         self.modelInfo.model.onVcfUrlEntered(vcfUrl, tbiUrl, function(success, sampleNames) {
+          console.log("success",success);
           if (success) {
             self.samples = sampleNames;
             if (self.modelInfo.sample && self.samples.indexOf(self.modelInfo.sample) >= 0 ) {
