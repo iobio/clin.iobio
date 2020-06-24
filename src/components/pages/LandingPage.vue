@@ -206,6 +206,7 @@
                 accept=".csv"
                 label="Data input configuration"
                 v-model="dataInputConfig"
+                :disabled="savedInputConfig"
                 show-size counter>
                 <template v-slot:selection="{ text }">
                   <v-chip
@@ -216,15 +217,27 @@
                   </v-chip>
                 </template>
               </v-file-input>
-              <v-btn color="primary" @click="inputconfigtest">text</v-btn>
-              <v-divider></v-divider>
               
+                <v-textarea
+                  solo
+                  auto-grow rows="1"
+                  name="input-7-4"
+                  class="mt-2"
+                  label="Enter Genes"
+                  v-model="genes"
+                  :disabled="savedInputConfig"
+                ></v-textarea>
+
+              <!-- <v-btn color="primary" @click="inputconfigtest">text</v-btn> -->
+              <v-divider></v-divider>
+              <br>
               
               <v-file-input
                 @change="importSavedInputConfig"
                 accept=".json,"
                 label="Saved input configuration"
                 v-model="savedInputConfig"
+                :disabled="dataInputConfig"
                 show-size counter>
                 <template v-slot:selection="{ text }">
                   <v-chip
@@ -240,7 +253,9 @@
           <v-card-actions>
             <v-spacer></v-spacer>
             <v-btn color="primary" @click="importConfigurationDialog=false" text>close</v-btn>
-            <v-btn color="primary" @click="loadFromConfigInput" :disabled="!validateSavedConfig && savedInputConfig==null">Load</v-btn>
+            <v-btn color="primary" v-if="savedInputConfig" @click="loadFromConfigInput" :disabled="!validateSavedConfig && savedInputConfig==null">Load</v-btn>
+            <v-btn color="primary" v-if="savedInputConfig===null" @click="inputconfigtest" :disabled="dataInputConfig==null">Load</v-btn>
+
           </v-card-actions>
         </v-card>
       </v-dialog>
@@ -432,7 +447,7 @@
                 label="Enter Genes"
                 v-model="genes"
               ></v-textarea>
-          </v-col>
+            </v-col>
           <v-card-actions>
             <v-tooltip top>
               <template v-slot:activator="{ on }">
@@ -757,6 +772,7 @@ export default {
     importSavedInputConfig(ev) {
       var reader = new FileReader();
       if(this.savedInputConfig){
+        this.dataInputConfig = null;
         reader.readAsText(this.savedInputConfig);
         reader.onload = () => {
           let data = reader.result;
@@ -773,14 +789,15 @@ export default {
     onInputConfig(ev) {
       var reader = new FileReader();
       if(this.dataInputConfig){
+        this.savedInputConfig = null;
         reader.readAsText(this.dataInputConfig);
         reader.onload = () => {
           let data = reader.result;
           console.log("data in input config", data);
-          // this.formatToPedData(data);
           let newLine = data.split('\n');
           let pedData = [];
           let modelInfoData = [];
+          let bedFileUrl = 'https://raw.githubusercontent.com/chmille4/bam.iobio.io/vue/client/data/20130108.exome.targets.bed';
           let sexMap = {
             "1": "Male",
             "2": "Female",
@@ -800,18 +817,18 @@ export default {
               modelInfoLines[4] = sexMap[modelInfoLines[4]]; 
               modelInfoLines[5] = statusMap[modelInfoLines[5]];
             }
-            console.log("modelInfoLines", modelInfoLines);
             modelInfoData.push(modelInfoLines);
           }
-          modelInfoData.shift()
+          modelInfoData.shift();
           let pedFile = pedData.join('\n');
-          console.log("pedFile", pedFile);
-          console.log("modelInfoData", modelInfoData);
-          // this.buildPedFromTxt(pedFile);
+          let bedFile = modelInfoData[0][11]; 
+          if(bedFile !== ''){
+            bedFileUrl = bedFile;
+          }
           this.formatCustomModelInfo(modelInfoData);
           this.geneSet = ['PRX'];
           this.$emit('setGeneSet', this.geneSet)
-          this.$emit("setBedFileUrl", undefined);
+          this.$emit("setBedFileUrl", bedFileUrl);
           this.$emit("set-ped-data", pedFile);
         }
       }
