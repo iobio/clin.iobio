@@ -313,12 +313,10 @@ export default function vcfiobio(theGlobalApp) {
     });
 
     cmd.on('error', function(error) {
-      console.log("error", error);
       if (me.ignoreErrorMessage(error)) {
       } else { //error message cannot be ignored
         if (success == null) {
           success = false;
-          console.log(error);
           callback(success, me.translateErrorMessage(error));
         }
       }
@@ -332,14 +330,10 @@ export default function vcfiobio(theGlobalApp) {
     var me = this;
     var ignore = false;
     ignoreMessages.forEach( function(regExp) {
-      console.log("regExp", regExp);
-      console.log("An indexed file is required for this data")
-      console.log("error", error);
       if (error.text.match(regExp)) {
         ignore = true;
       }
     });
-    console.log("ingone status", ignore);
     return ignore;
 
   }
@@ -349,7 +343,6 @@ export default function vcfiobio(theGlobalApp) {
     var message = null;
     for (var key in errorMessageMap) {
       var errMsg = errorMessageMap[key];
-      console.log("errMsg", errMsg);
       if (message == null && error.text.match(errMsg.regExp)) {
         message = errMsg.message;
       }

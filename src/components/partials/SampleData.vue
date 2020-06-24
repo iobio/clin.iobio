@@ -122,8 +122,8 @@ export default {
         },
         samples: [],
         sample: null,
-        isAffected: true
-
+        isAffected: true,
+        failedSamplesWarning: false,
     }
   },
   computed: {
@@ -146,8 +146,12 @@ export default {
 
       if (self.modelInfo && self.modelInfo.model) {
         self.modelInfo.model.onVcfUrlEntered(vcfUrl, tbiUrl, function(success, sampleNames) {
-          console.log("success",success);
           if (success) {
+            if(self.failedSamplesWarning){
+              clearTimeout(self.failedSamplesWarning)
+              self.failedSamplesWarning = null;
+            }
+            
             self.samples = sampleNames;
             if (self.modelInfo.sample && self.samples.indexOf(self.modelInfo.sample) >= 0 ) {
               self.sample = self.modelInfo.sample;
@@ -164,6 +168,12 @@ export default {
             // self.$emit("vcfUrl-emit", self.modelInfo.relationship, vcfUrl)
             self.$emit("samples-available", self.modelInfo.relationship, self.samples, vcfUrl, tbiUrl);
 
+          }
+          else {
+            self.failedSamplesWarning = setTimeout(()=>{
+              alert("An index file (.tbi, .bai) is required for this data.")
+            }, 15000)
+            
           }
           self.$emit("sample-data-changed");
         })
