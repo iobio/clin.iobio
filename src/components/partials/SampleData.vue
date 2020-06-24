@@ -137,7 +137,6 @@ export default {
   },
   methods: {
     onVcfUrlEntered: function(vcfUrl, tbiUrl) {
-      console.log("onVcfUrlEntered");
       let self = this;
       // console.log("onVcfUrlEntered", vcfUrl);
 
