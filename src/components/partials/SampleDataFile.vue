@@ -44,6 +44,7 @@
         v-model="url"
         @change="onUrlChange"
         prepend-icon="link"
+        :rules="urlRules"
       ></v-text-field>
       <v-text-field
         v-if="fileType == 'url' && (separateUrlForIndex || indexUrl)"
@@ -52,6 +53,7 @@
         v-model="indexUrl"
         @change="onUrlChange"
         prepend-icon="link"
+        :rules="urlRules"
       ></v-text-field>
     </v-flex>
 
@@ -104,7 +106,11 @@ export default {
         fileType: 'url',
         url: null,
         indexUrl: null,
-        fileName: null
+        fileName: null,
+        urlRules: [
+          v => /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/.test(v) || 'URL must be valid',
+        ],
+
     }
   },
   watch: {
@@ -114,6 +120,11 @@ export default {
     }
   },
   methods: {
+    isValidUrl: function(url) {
+      var expression = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/; 
+      var regex = new RegExp(expression);
+      return url.match(regex); 
+    },
     onFileSelected: function(event) {
       if (event.target.files.length > 0) {
         this.fileName = event.target.files[0].name;
@@ -123,10 +134,11 @@ export default {
       this.$emit("file-selected", event.target);
     },
     onUrlChange: _.debounce(function (newUrl) {
-      if (newUrl && newUrl.length > 0) {
+      if (newUrl && newUrl.length > 0 && this.isValidUrl(newUrl)) {
         this.fileName = '';
+        this.$emit('url-entered', this.url, this.indexUrl);
       }
-      this.$emit('url-entered', this.url, this.indexUrl);
+      // this.$emit('url-entered', this.url, this.indexUrl);
     }, 100),
     clearFile: function() {
       this.fileName = '';
