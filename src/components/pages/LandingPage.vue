@@ -206,7 +206,7 @@
                 accept=".csv"
                 label="Data input configuration"
                 v-model="dataInputConfig"
-                :disabled="savedInputConfig"
+                :disabled="savedInputConfig!==null"
                 show-size counter>
                 <template v-slot:selection="{ text }">
                   <v-chip
@@ -225,10 +225,9 @@
                   class="mt-2"
                   label="Enter Genes"
                   v-model="genes"
-                  :disabled="savedInputConfig"
+                  :disabled="savedInputConfig!==null"
                 ></v-textarea>
 
-              <!-- <v-btn color="primary" @click="inputconfigtest">text</v-btn> -->
               <v-divider></v-divider>
               <br>
               
@@ -237,7 +236,7 @@
                 accept=".json,"
                 label="Saved input configuration"
                 v-model="savedInputConfig"
-                :disabled="dataInputConfig"
+                :disabled="dataInputConfig!==null"
                 show-size counter>
                 <template v-slot:selection="{ text }">
                   <v-chip
@@ -253,8 +252,8 @@
           <v-card-actions>
             <v-spacer></v-spacer>
             <v-btn color="primary" @click="importConfigurationDialog=false" text>close</v-btn>
-            <v-btn color="primary" v-if="savedInputConfig" @click="loadFromConfigInput" :disabled="!validateSavedConfig && savedInputConfig==null">Load</v-btn>
-            <v-btn color="primary" v-if="savedInputConfig===null" @click="inputconfigtest" :disabled="dataInputConfig==null">Load</v-btn>
+            <v-btn color="primary" v-if="savedInputConfig" @click="loadFromSavedConfigInput" :disabled="!validateSavedConfig && savedInputConfig==null">Load</v-btn>
+            <v-btn color="primary" v-if="savedInputConfig===null" @click="onLoadInputConfig" :disabled="dataInputConfig==null || genes.length<3">Load</v-btn>
 
           </v-card-actions>
         </v-card>
@@ -655,16 +654,16 @@ export default {
       this.pageCounter = 2;
     },
     addGeneSet: function(){
-      // this.pageCounter = this.pageCounter+1;
       this.pageCounter = 1;
       this.geneSetDiialog = false;
       this.geneSet = this.genes.split(",").map(gene => gene.trim().toUpperCase());
       this.$emit('setGeneSet', this.geneSet)
-      // this.pedigreeUploadDialog = true;
       this.getStarted();
     },
-    inputconfigtest: function(){
+    onLoadInputConfig: function(){
       this.importConfigurationDialog = false;
+      this.geneSet = this.genes.split(",").map(gene => gene.trim().toUpperCase());
+      this.$emit('setGeneSet', this.geneSet)
       this.getStarted();
     },
     backToFiles: function(){
@@ -826,8 +825,6 @@ export default {
             bedFileUrl = bedFile;
           }
           this.formatCustomModelInfo(modelInfoData);
-          this.geneSet = ['PRX'];
-          this.$emit('setGeneSet', this.geneSet)
           this.$emit("setBedFileUrl", bedFileUrl);
           this.$emit("set-ped-data", pedFile);
         }
@@ -868,7 +865,7 @@ export default {
         this.validateSavedAnalysisData = false;
       }
     },
-    loadFromConfigInput(){
+    loadFromSavedConfigInput(){
         this.$emit("load-saved-input-config", this.configCustomData)
     },
     loadFromSavedAnalysis(){
