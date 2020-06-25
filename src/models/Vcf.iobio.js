@@ -314,10 +314,9 @@ export default function vcfiobio(theGlobalApp) {
 
     cmd.on('error', function(error) {
       if (me.ignoreErrorMessage(error)) {
-      } else {
+      } else { //error message cannot be ignored
         if (success == null) {
           success = false;
-          console.log(error);
           callback(success, me.translateErrorMessage(error));
         }
       }
@@ -331,7 +330,7 @@ export default function vcfiobio(theGlobalApp) {
     var me = this;
     var ignore = false;
     ignoreMessages.forEach( function(regExp) {
-      if (error.match(regExp)) {
+      if (error.text.match(regExp)) {
         ignore = true;
       }
     });
@@ -344,7 +343,7 @@ export default function vcfiobio(theGlobalApp) {
     var message = null;
     for (var key in errorMessageMap) {
       var errMsg = errorMessageMap[key];
-      if (message == null && error.match(errMsg.regExp)) {
+      if (message == null && error.text.match(errMsg.regExp)) {
         message = errMsg.message;
       }
     }

@@ -49,6 +49,7 @@
           label="Enter bed URL"
           hide-details
           v-model="bed_url_exome"
+          :rules="urlRules"
           prepend-icon="link"
           @change="onExomeBedUrlChange"
         ></v-text-field>
@@ -58,6 +59,7 @@
           label="Enter bed URL"
           hide-details
           v-model="bed_url_genome"
+          :rules="urlRules"
           @change="onGenomeBedUrlChange"
           prepend-icon="link"
         ></v-text-field>
@@ -87,19 +89,26 @@
         bed_url_genome: '',
         bedFileUrl: 'https://raw.githubusercontent.com/chmille4/bam.iobio.io/vue/client/data/20130108.exome.targets.bed',
         bedFile37: 'https://raw.githubusercontent.com/chmille4/bam.iobio.io/vue/client/data/20130108.exome.targets.bed',
-        bedFile38: 'https://raw.githubusercontent.com/adityaekawade/bam.iobio.io/vue/client/data/20130108.exome.targets.grch38.bed'
-
+        bedFile38: 'https://raw.githubusercontent.com/adityaekawade/bam.iobio.io/vue/client/data/20130108.exome.targets.grch38.bed',
+        urlRules: [
+          v => /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/.test(v) || 'URL must be valid',
+        ],
       }
     }, 
     methods: {
+      isValidUrl: function(url) {
+        var expression = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/; 
+        var regex = new RegExp(expression);
+        return url.match(regex); 
+      },
       onExomeBedUrlChange: _.debounce(function (newUrl) {
-        if (newUrl && newUrl.length > 0) {
+        if (newUrl && newUrl.length > 0 && this.isValidUrl(newUrl)) {
           this.bedFileUrl = newUrl;
           this.$emit('set-bed-url', this.bedFileUrl);
         }
       }, 100),
       onGenomeBedUrlChange: _.debounce(function (newUrl) {
-        if (newUrl && newUrl.length > 0) {
+        if (newUrl && newUrl.length > 0 && this.isValidUrl(newUrl)) {
           this.bedFileUrl = newUrl;
           this.$emit('set-bed-url', this.bedFileUrl);
         }
