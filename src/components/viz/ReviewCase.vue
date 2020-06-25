@@ -924,27 +924,33 @@ export default {
 
     sortData(){
 
-      let tempPed = [null,null,null,null];
-      let tempCoverage = [null,null,null,null];
-      let tempVarCounts = [null,null,null,null];
-      let tempSampleRelationship = [null,null,null,null];
-      let tempSamples = [null,null,null,null];
-      let tempUuids = [null,null,null,null];
-      let tempMedianCoverages = [null,null,null,null];
+      let tempPed = [];
+      let tempCoverage = [];
+      let tempVarCounts = [];
+      let tempSampleRelationship = [];
+      let tempSamples = [];
+      let tempUuids = [];
+      let tempMedianCoverages = [];
 
-      console.log("sorted indices in sortDat", this.sortedIndices);
-
-      console.log("this.sampleIdsAndRelationships before sort", this.sampleIdsAndRelationships);
+      for(let i = 0; i < this.siblingCount+3; i++){
+        tempPed.push(null);
+        tempCoverage.push(null);
+        tempVarCounts.push(null);
+        tempSampleRelationship.push(null);
+        tempSamples.push(null);
+        tempUuids.push(null);
+        tempMedianCoverages.push(null);
+      }
 
       for(let i = 0; i < this.sortedIndices.length; i++){
         let index = this.sortedIndices[i];
-        tempPed[index] = this.pedigreeDataArray[i];
-        tempCoverage[index] = this.coverageDataArray[i];
-        tempVarCounts[index] = this.varCountsArray[i];
-        tempSampleRelationship[index] = this.sampleIdsAndRelationships[i];
-        tempSamples[index] = this.sampleIds[i];
-        tempUuids[index] = this.sampleUuids[i];
-        tempMedianCoverages[index] = this.medianCoverages[i]
+        tempPed[i] = this.pedigreeDataArray[index];
+        tempCoverage[i] = this.coverageDataArray[index];
+        tempVarCounts[i] = this.varCountsArray[index];
+        tempSampleRelationship[i] = this.sampleIdsAndRelationships[index];
+        tempSamples[i] = this.sampleIds[index];
+        tempUuids[i] = this.sampleUuids[index];
+        tempMedianCoverages[i] = this.medianCoverages[index];
       }
 
       this.pedigreeDataArray = tempPed.filter(function(el) { return el; });
@@ -954,34 +960,19 @@ export default {
       this.sampleIds = tempSamples.filter(function(el) { return el; });
       this.sampleUuids = tempUuids.filter(function(el) { return el; });
       this.medianCoverages = tempMedianCoverages.filter(function(el) { return el; });
-
-      console.log("this.sampleIdsAndRelationships after sort", this.sampleIdsAndRelationships);
-
-      console.log("this.pedigreeDataArray after sort",this.pedigreeDataArray);
-
-
       this.isSorted = true;
     },
 
 
 
     sortIndicesByRelationship(){
-      let self = this;
       this.siblingCount = 0;
       this.sortedIndices = [null, null, null, null];
 
-      console.log("self.sampleIdRelationshipMap", self.sampleIdRelationshipMap);
+      for(let i = 0; i < this.sampleIdsAndRelationships.length; i++){
 
-      let keys = Object.keys(self.sampleIdRelationshipMap);
-
-
-      for(let i = 0; i < keys.length; i++){
-        let id = keys[i];
-        let relationship = this.sampleIdRelationshipMap[id];
-        console.log("id", id);
-        console.log("relationship", relationship);
-
-
+        let arr = this.sampleIdsAndRelationships[i].split("\t")
+        let relationship = arr[0];
 
         if(relationship === "proband"){
            this.sortedIndices[0] = i;
@@ -998,14 +989,7 @@ export default {
            this.sortedIndices.push(null);
          }
         }
-
-      console.log("Sorted indices", this.sortedIndices);
-
       this.sortedIndices = this.sortedIndices.filter(function(el) { return el !== null; });
-
-      console.log("Sorted indices", this.sortedIndices);
-
-
     },
 
     getRelationshipFromId(id){
@@ -1085,9 +1069,6 @@ export default {
         const pedDict = this.formatPedDict(this.pedigreeData[k]);
         this.pedigreeDataArray.push(pedDict);
       }
-
-      console.log("this.pedigreeData", this.pedigreeData);
-      console.log("this.pedigreeDataArray.length", this.pedigreeDataArray.length);
     },
 
     formatCoverageData(){
