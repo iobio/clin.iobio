@@ -315,6 +315,7 @@ export default {
       selectedBamURL: "http://s3.amazonaws.com/iobio/NA12878/NA12878.autsome.bam",
       backendSource: "backend.iobio.io",
       showFullURL: false,
+      siblingCount: 0,
 
       // default sampling values
       binNumber: 20,
@@ -380,16 +381,16 @@ export default {
 
     }
     else if(this.customSavedAnalysis){
-      let analysis = this.allAnalysis; //gets analysis from Vuex store. 
-            
-      this.modelInfosData = analysis.custom_model_infos; 
+      let analysis = this.allAnalysis; //gets analysis from Vuex store.
+
+      this.modelInfosData = analysis.custom_model_infos;
       this.reviewCaseBadges = this.getReviewCaseBadge;
 
       //Set variant counts
       this.varCountsArray = analysis.custom_variants_count;
       this.statsReceived = true;
       this.setVariantsCount(this.varCountsArray)
-      
+
       //Set coverage data
       this.coverageHistosData = analysis.custom_coverage_data;
       this.formatCoverageData();
@@ -414,7 +415,7 @@ export default {
         this.allPedigreeDataArrays.push(this.pedigreeDataArray)
       }
       this.setPedigreeData(this.allPedigreeDataArrays)
-      
+
     }
     else if(this.customData){
       if(this.bedFileUrl!==undefined){
@@ -459,7 +460,7 @@ export default {
           "id":"3261",
           "coverage": stats
         })
-        this.setCoverageData(this.coverageHistosData); 
+        this.setCoverageData(this.coverageHistosData);
         //When coverageData is read from analysis object, it will still need to call the format functions
       }
 
@@ -628,10 +629,9 @@ export default {
       this.modelInfosData = this.modelInfos;
 
       this.setPedigree(this.pedigree); //Set state in Vuex store
-      
+
       this.populateRelationshipMap();
       this.populateSampleIdsFromCustom(this.pedigree);
-      this.populateSampleIdsAndRelationships();
       this.getVarCountFromCustomData(this.modelInfos);
       this.getBamStatsFromCustomData(this.modelInfos);
       this.populateReviewCaseBadges();
@@ -639,6 +639,8 @@ export default {
       this.pedigreeDataArray = this.buildPedFromTxt(this.pedigree);
 
       let len = Object.keys(self.sampleIdRelationshipMap).length;
+
+
 
       for(let i = 0; i < len; i++){
         this.allPedigreeDataArrays.push(this.pedigreeDataArray)
@@ -928,7 +930,11 @@ export default {
       let tempSampleRelationship = [null,null,null,null];
       let tempSamples = [null,null,null,null];
       let tempUuids = [null,null,null,null];
-      let tempMedianCoverages = [null,null,null,null]
+      let tempMedianCoverages = [null,null,null,null];
+
+      console.log("sorted indices in sortDat", this.sortedIndices);
+
+      console.log("this.sampleIdsAndRelationships before sort", this.sampleIdsAndRelationships);
 
       for(let i = 0; i < this.sortedIndices.length; i++){
         let index = this.sortedIndices[i];
@@ -949,14 +955,35 @@ export default {
       this.sampleUuids = tempUuids.filter(function(el) { return el; });
       this.medianCoverages = tempMedianCoverages.filter(function(el) { return el; });
 
+      console.log("this.sampleIdsAndRelationships after sort", this.sampleIdsAndRelationships);
+
+      console.log("this.pedigreeDataArray after sort",this.pedigreeDataArray);
+
+
       this.isSorted = true;
     },
 
+
+
     sortIndicesByRelationship(){
+      let self = this;
+      this.siblingCount = 0;
       this.sortedIndices = [null, null, null, null];
-      for(let i = 0; i < this.sampleIds.length; i++){
-        let relationship = this.getRelationshipFromId(this.sampleIds[i]);
-         if(relationship === "proband"){
+
+      console.log("self.sampleIdRelationshipMap", self.sampleIdRelationshipMap);
+
+      let keys = Object.keys(self.sampleIdRelationshipMap);
+
+
+      for(let i = 0; i < keys.length; i++){
+        let id = keys[i];
+        let relationship = this.sampleIdRelationshipMap[id];
+        console.log("id", id);
+        console.log("relationship", relationship);
+
+
+
+        if(relationship === "proband"){
            this.sortedIndices[0] = i;
          }
          else if(relationship === "mother"){
@@ -966,11 +993,18 @@ export default {
            this.sortedIndices[2] = i;
          }
          else if(relationship === "sibling"){
-           this.sortedIndices[3] = i;
+           this.sortedIndices[3+this.siblingCount] = i;
+           this.siblingCount++;
+           this.sortedIndices.push(null);
          }
         }
 
+      console.log("Sorted indices", this.sortedIndices);
+
       this.sortedIndices = this.sortedIndices.filter(function(el) { return el !== null; });
+
+      console.log("Sorted indices", this.sortedIndices);
+
 
     },
 
@@ -1051,6 +1085,9 @@ export default {
         const pedDict = this.formatPedDict(this.pedigreeData[k]);
         this.pedigreeDataArray.push(pedDict);
       }
+
+      console.log("this.pedigreeData", this.pedigreeData);
+      console.log("this.pedigreeDataArray.length", this.pedigreeDataArray.length);
     },
 
     formatCoverageData(){
@@ -1064,7 +1101,9 @@ export default {
 
     assignProbandToEachSample(){
       this.allPedigreeDataArrays = [];
-      for(let i = 0; i < 4; i++){
+
+      let len = Object.keys(this.sampleIdRelationshipMap).length;
+      for(let i = 0; i < len; i++){
         this.allPedigreeDataArrays.push(this.pedigreeDataArray);
       }
     }
