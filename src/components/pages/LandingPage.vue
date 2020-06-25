@@ -218,6 +218,11 @@
                 </template>
               </v-file-input>
               
+              <center>
+                <span> <a href="https://drive.google.com/file/d/1bKaY-TzNTOSbW6MDWJyEnurPbpHc80VA/view?usp=sharing" target="_blank"> Example </a> </span> | 
+                <span> <a href="https://drive.google.com/file/d/1m0wRDNrqBGHeSLYmYrQknS6XIKpw6Cry/view?usp=sharing" target="_blank"> Template </a> </span>
+              </center>
+              
                 <v-textarea
                   solo
                   auto-grow rows="1"
