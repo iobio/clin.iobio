@@ -694,13 +694,15 @@ export default {
       for (let i = 0; i < pedLines.length; i++) {
         let splitLine = pedLines[i].match(/\S+/g);
         let sexMap = {
-          1: "Male",
-          2: "Female",
+          "1": "male",
+          "2": "female",
+          "other": "unknown"
         }
         let statusMap = {
           0: false,
           1: false,
-          2: true,           
+          2: true,
+          "-9": false
         }
 
         if(splitLine && splitLine[0] !== "" && !isNaN(parseInt(splitLine[4]))) {
@@ -803,13 +805,15 @@ export default {
           let modelInfoData = [];
           let bedFileUrl = 'https://raw.githubusercontent.com/chmille4/bam.iobio.io/vue/client/data/20130108.exome.targets.bed';
           let sexMap = {
-            "1": "Male",
-            "2": "Female",
+            "1": "male",
+            "2": "female",
+            "other": "unknown"
           }
           let statusMap = {
             "0": false,
             "1": false,
-            "2": true,           
+            "2": true,
+            "-9": false
           }
           
           for (var i = 0; i < newLine.length; i++) {
