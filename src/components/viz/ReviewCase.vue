@@ -315,6 +315,7 @@ export default {
       selectedBamURL: "http://s3.amazonaws.com/iobio/NA12878/NA12878.autsome.bam",
       backendSource: "backend.iobio.io",
       showFullURL: false,
+      siblingCount: 0,
 
       // default sampling values
       binNumber: 20,
@@ -380,16 +381,16 @@ export default {
 
     }
     else if(this.customSavedAnalysis){
-      let analysis = this.allAnalysis; //gets analysis from Vuex store. 
-            
-      this.modelInfosData = analysis.custom_model_infos; 
+      let analysis = this.allAnalysis; //gets analysis from Vuex store.
+
+      this.modelInfosData = analysis.custom_model_infos;
       this.reviewCaseBadges = this.getReviewCaseBadge;
 
       //Set variant counts
       this.varCountsArray = analysis.custom_variants_count;
       this.statsReceived = true;
       this.setVariantsCount(this.varCountsArray)
-      
+
       //Set coverage data
       this.coverageHistosData = analysis.custom_coverage_data;
       this.formatCoverageData();
@@ -414,7 +415,7 @@ export default {
         this.allPedigreeDataArrays.push(this.pedigreeDataArray)
       }
       this.setPedigreeData(this.allPedigreeDataArrays)
-      
+
     }
     else if(this.customData){
       if(this.bedFileUrl!==undefined){
@@ -459,7 +460,7 @@ export default {
           "id":"3261",
           "coverage": stats
         })
-        this.setCoverageData(this.coverageHistosData); 
+        this.setCoverageData(this.coverageHistosData);
         //When coverageData is read from analysis object, it will still need to call the format functions
       }
 
@@ -628,10 +629,9 @@ export default {
       this.modelInfosData = this.modelInfos;
 
       this.setPedigree(this.pedigree); //Set state in Vuex store
-      
+
       this.populateRelationshipMap();
       this.populateSampleIdsFromCustom(this.pedigree);
-      this.populateSampleIdsAndRelationships();
       this.getVarCountFromCustomData(this.modelInfos);
       this.getBamStatsFromCustomData(this.modelInfos);
       this.populateReviewCaseBadges();
@@ -639,6 +639,8 @@ export default {
       this.pedigreeDataArray = this.buildPedFromTxt(this.pedigree);
 
       let len = Object.keys(self.sampleIdRelationshipMap).length;
+
+
 
       for(let i = 0; i < len; i++){
         this.allPedigreeDataArrays.push(this.pedigreeDataArray)
@@ -922,23 +924,33 @@ export default {
 
     sortData(){
 
-      let tempPed = [null,null,null,null];
-      let tempCoverage = [null,null,null,null];
-      let tempVarCounts = [null,null,null,null];
-      let tempSampleRelationship = [null,null,null,null];
-      let tempSamples = [null,null,null,null];
-      let tempUuids = [null,null,null,null];
-      let tempMedianCoverages = [null,null,null,null]
+      let tempPed = [];
+      let tempCoverage = [];
+      let tempVarCounts = [];
+      let tempSampleRelationship = [];
+      let tempSamples = [];
+      let tempUuids = [];
+      let tempMedianCoverages = [];
+
+      for(let i = 0; i < this.siblingCount+3; i++){
+        tempPed.push(null);
+        tempCoverage.push(null);
+        tempVarCounts.push(null);
+        tempSampleRelationship.push(null);
+        tempSamples.push(null);
+        tempUuids.push(null);
+        tempMedianCoverages.push(null);
+      }
 
       for(let i = 0; i < this.sortedIndices.length; i++){
         let index = this.sortedIndices[i];
-        tempPed[index] = this.pedigreeDataArray[i];
-        tempCoverage[index] = this.coverageDataArray[i];
-        tempVarCounts[index] = this.varCountsArray[i];
-        tempSampleRelationship[index] = this.sampleIdsAndRelationships[i];
-        tempSamples[index] = this.sampleIds[i];
-        tempUuids[index] = this.sampleUuids[i];
-        tempMedianCoverages[index] = this.medianCoverages[i]
+        tempPed[i] = this.pedigreeDataArray[index];
+        tempCoverage[i] = this.coverageDataArray[index];
+        tempVarCounts[i] = this.varCountsArray[index];
+        tempSampleRelationship[i] = this.sampleIdsAndRelationships[index];
+        tempSamples[i] = this.sampleIds[index];
+        tempUuids[i] = this.sampleUuids[index];
+        tempMedianCoverages[i] = this.medianCoverages[index];
       }
 
       this.pedigreeDataArray = tempPed.filter(function(el) { return el; });
@@ -948,15 +960,21 @@ export default {
       this.sampleIds = tempSamples.filter(function(el) { return el; });
       this.sampleUuids = tempUuids.filter(function(el) { return el; });
       this.medianCoverages = tempMedianCoverages.filter(function(el) { return el; });
-
       this.isSorted = true;
     },
 
+
+
     sortIndicesByRelationship(){
+      this.siblingCount = 0;
       this.sortedIndices = [null, null, null, null];
-      for(let i = 0; i < this.sampleIds.length; i++){
-        let relationship = this.getRelationshipFromId(this.sampleIds[i]);
-         if(relationship === "proband"){
+
+      for(let i = 0; i < this.sampleIdsAndRelationships.length; i++){
+
+        let arr = this.sampleIdsAndRelationships[i].split("\t")
+        let relationship = arr[0];
+
+        if(relationship === "proband"){
            this.sortedIndices[0] = i;
          }
          else if(relationship === "mother"){
@@ -966,12 +984,12 @@ export default {
            this.sortedIndices[2] = i;
          }
          else if(relationship === "sibling"){
-           this.sortedIndices[3] = i;
+           this.sortedIndices[3+this.siblingCount] = i;
+           this.siblingCount++;
+           this.sortedIndices.push(null);
          }
         }
-
       this.sortedIndices = this.sortedIndices.filter(function(el) { return el !== null; });
-
     },
 
     getRelationshipFromId(id){
@@ -1064,7 +1082,9 @@ export default {
 
     assignProbandToEachSample(){
       this.allPedigreeDataArrays = [];
-      for(let i = 0; i < 4; i++){
+
+      let len = Object.keys(this.sampleIdRelationshipMap).length;
+      for(let i = 0; i < len; i++){
         this.allPedigreeDataArrays.push(this.pedigreeDataArray);
       }
     }
