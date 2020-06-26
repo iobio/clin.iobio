@@ -632,6 +632,7 @@ export default {
 
       this.populateRelationshipMap();
       this.populateSampleIdsFromCustom(this.pedigree);
+      this.populateSampleIdsAndRelationships();
       this.getVarCountFromCustomData(this.modelInfos);
       this.getBamStatsFromCustomData(this.modelInfos);
       this.populateReviewCaseBadges();
