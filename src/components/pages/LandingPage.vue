@@ -425,6 +425,7 @@
         @bed-file-url="setBedFileUrl"
         :pageCounter="pageCounter"
         :customPedigreeMapData="customPedigreeMapData"
+        @set-build-custom-data="setBuildForCustomData"
       >
       </files-dialog>
       <!-- End VCF and BAM files dialog -->
@@ -885,6 +886,9 @@ export default {
         this.passcodeIncorrectAlert = true;
       }
     },
+    setBuildForCustomData(buildName){
+      this.$emit("setBuildForCustomData", buildName)
+    }
   },
   mounted: function() {
     this.fetchAnalysis();

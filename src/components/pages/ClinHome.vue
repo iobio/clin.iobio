@@ -141,7 +141,8 @@ $horizontal-dashboard-height: 140px
     @set-custom-case-summary="setCustomCaseSummary($event)"
     @load-saved-input-config="loadSavedInputConfig($event)"
     @load-saved-analysis-custom-data="loadSavedAnalysisCustomData($event)"
-    @setBedFileUrl="setBedFileUrl($event)">
+    @setBedFileUrl="setBedFileUrl($event)"
+    @setBuildForCustomData="setBuildForCustomData($event)">
   </landing-page>
 
 
@@ -548,7 +549,8 @@ export default {
       variantsAnalyzedCounted: 0,
       customSavedAnalysis: false,
       passcode: '',
-      showPassCode: false
+      showPassCode: false,
+      buildName: 'GRCh37'
     }
 
   },
@@ -1113,7 +1115,7 @@ export default {
         if(self.customData){
           self.analysis.payload.genes = self.customGeneSet;
         }
-
+        alert("self.genomeBuildHelper.getCurrentBuildName while setting data", self.buildName);
         let app = self.apps[appName];
         console.log("ClinHome.setData  sending data to " + appName)
         console.log("variants in setData", self.analysis.payload.variants);
@@ -1135,6 +1137,7 @@ export default {
             'genesManual':          self.analysis.payload.genesManual,
             'gtrFullList':          self.analysis.payload.gtrFullList,
             'phenolyzerFullList':   self.analysis.payload.phenolyzerFullList,
+            'buildName':            self.buildName,
         };
         if (self.paramGeneBatchSize && (appName == 'gene' || appName == 'genefull')) {
           msgObject.batchSize = +self.paramGeneBatchSize;
@@ -2178,7 +2181,11 @@ export default {
     },
     setBedFileUrl(bedUrl){
       this.bedFileUrl = bedUrl;
-    }, 
+    },
+    setBuildForCustomData(buildName){
+      this.buildName = buildName;
+      this.genomeBuildHelper.setCurrentBuild(buildName);
+    },
     saveAnalysisJson(){
       let analysis_obj = this.analysis;
       analysis_obj.custom_pedigree_data = this.getPedigreeData;

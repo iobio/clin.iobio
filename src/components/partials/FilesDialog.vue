@@ -355,6 +355,7 @@ export default {
       }
     },
     buildName: function(){
+      console.log("buildName changing", this.buildName);
     }
 
   },
@@ -450,7 +451,8 @@ export default {
           self.$emit("on-files-loaded", performAnalyzeAll);
           self.showFilesDialog = false;
           self.$emit("get-modeinfo-map", self.customModelInfos);
-          self.$emit("bed-file-url", self.bedFileUrl)
+          self.$emit("bed-file-url", self.bedFileUrl);
+          self.$emit("set-build-custom-data", self.buildName);
         }
         else {
           self.inProgress = false;
