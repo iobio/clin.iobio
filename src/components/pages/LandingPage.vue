@@ -171,7 +171,7 @@
               <v-divider></v-divider>
               <v-btn color="primary" block outlined x-large @click="importConfiguration">
                 <v-icon>folder_open</v-icon>
-                <span class="ml-2">UPLOAD CONFIGURATION</span>
+                <span class="ml-2">UPLOAD CONFIGURATION FILE</span>
               </v-btn>
               <v-divider></v-divider>
               <v-btn color="primary" block outlined x-large @click="importSavedAnalysis">
@@ -256,7 +256,7 @@
           </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn color="primary" @click="importConfigurationDialog=false" text>close</v-btn>
+            <v-btn color="primary" @click="importConfigurationDialog=false" text>Close</v-btn>
             <v-btn color="primary" v-if="savedInputConfig" @click="loadFromSavedConfigInput" :disabled="!validateSavedConfig && savedInputConfig==null">Load</v-btn>
             <v-btn color="primary" v-if="savedInputConfig===null" @click="onLoadInputConfig" :disabled="dataInputConfig==null || genes.length<3">Load</v-btn>
 
@@ -324,7 +324,7 @@
           </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn color="primary" @click="importSavedAnalysisDialog=false" text>close</v-btn>
+            <v-btn color="primary" @click="importSavedAnalysisDialog=false" text>Close</v-btn>
             <v-btn color="primary" @click="loadFromSavedAnalysis" :disabled="!validateSavedAnalysisData && savedAnalysisConfig==null">Load</v-btn>
           </v-card-actions>
         </v-card>
@@ -368,7 +368,7 @@
           </v-col>
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn color="primary" @click="closeCaseDescription" text>close</v-btn>
+            <v-btn color="primary" @click="closeCaseDescription" text>Close</v-btn>
             <v-btn color="primary" @click="addCaseDescription">Next</v-btn>
           </v-card-actions>
 
@@ -437,7 +437,7 @@
             :pageCounter="pageCounter">
           </CustomDataStepper>
           <v-card-title class="headline">
-            Gene Sets
+            Gene sets
             <v-spacer></v-spacer>
             <span>
               <v-btn text icon @click="closeUploadDataDialogs"><v-icon>close</v-icon></v-btn>

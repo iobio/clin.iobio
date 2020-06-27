@@ -2,7 +2,7 @@
   <div>
     <v-text-field
       name="pedUrlInput"
-      label="Enter URL for PED file"
+      label="Enter URL for ped file"
       prepend-icon="link"
       hide-details
       v-model="pedUrl"

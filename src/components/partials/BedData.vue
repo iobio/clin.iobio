@@ -81,9 +81,9 @@
         dataTypesList: ['Exome', 'Genome'],
         dataTypeSelectedName: 'Exome',
         toggle_bed_selection_genome: 0,
-        bedFile_type_genome: ['No bed file', 'Standard (GRCh37 Exonic Regions)', 'Custom Bed'],
+        bedFile_type_genome: ['No bed', 'Standard (GRCh37 Exonic Regions)', 'Custom bed'],
         toggle_bed_selection_exome: 0,
-        bedFile_type_exome: ['Standard (GRCh37 Exonic Regions)', 'Custom Bed',],
+        bedFile_type_exome: ['Standard (GRCh37 Exonic Regions)', 'Custom bed',],
         showUrlField: false,
         bed_url_exome: '', 
         bed_url_genome: '',
@@ -172,15 +172,15 @@
       buildName: function(){
         if(this.buildName === 'GRCh38'){
           this.bedFile_type_exome = []; 
-          this.bedFile_type_exome = ['Standard (GRCh38 Exonic Regions)', 'Custom Bed'];
+          this.bedFile_type_exome = ['Standard (GRCh38 Exonic Regions)', 'Custom bed'];
           this.bedFile_type_genome = [];
-          this.bedFile_type_genome = ['No bed file', 'Standard (GRCh38 Exonic Regions)', 'Custom Bed',];
+          this.bedFile_type_genome = ['No bed', 'Standard (GRCh38 Exonic Regions)', 'Custom bed',];
         }
         else if(this.buildName === 'GRCh37'){
           this.bedFile_type_exome = []; 
-          this.bedFile_type_exome = ['Standard (GRCh37 Exonic Regions)', 'Custom Bed'];
+          this.bedFile_type_exome = ['Standard (GRCh37 Exonic Regions)', 'Custom bed'];
           this.bedFile_type_genome = [];
-          this.bedFile_type_genome = ['No bed file', 'Standard (GRCh37 Exonic Regions)', 'Custom Bed',];
+          this.bedFile_type_genome = ['No bed', 'Standard (GRCh37 Exonic Regions)', 'Custom bed',];
         }
         this.setField();
       }
