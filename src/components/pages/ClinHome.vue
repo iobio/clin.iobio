@@ -565,7 +565,7 @@ export default {
       this.generatePDF()
     })
     bus.$on("initialize-clin", ()=>{
-      console.log(this.analysis);
+      // console.log(this.analysis);
       this.showLandingPage = false;
       this.showSplash = true;
       setTimeout(()=>{
@@ -888,7 +888,7 @@ export default {
           callback();
         }
       }
-      else {
+      else if(self.launchedFromMosaic) {
         self.promiseGetAnalysis(
           self.params.project_id,
           self.params.analysis_id,
@@ -950,6 +950,26 @@ export default {
             callback();
           }
         })
+      }
+      else {
+        //Load with demo data
+        self.analysis = analysisData;
+        self.idAnalysis = self.analysis.id;
+        self.analysis.payload.genes = ['PRX', 'LMNA', 'SCN8A', 'DLL4', 'ABCA3', 'MROH8', 'DVL3', 'NOTCH4']
+        self.analysis.payload.variants = [];
+        // Send message to set the data in the iobio apps
+        for (var appName in self.apps) {
+          let app = self.apps[appName];
+          if (!app.isLoaded) {
+            self.setData(appName, 500);
+          } else {
+
+          }
+        }
+
+        if (callback) {
+          callback();
+        }
       }
 
     },
@@ -1554,7 +1574,7 @@ export default {
           // These are the platinum variants that we are just grabbing
           // from a json file to mimic what variant sets from genome-wide
           // filters would look like
-
+          self.analysis.payload.variants = [];
           if(self.customData) {
             self.analysis.payload.variants = [{}];
           }
