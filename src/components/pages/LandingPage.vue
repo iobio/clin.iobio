@@ -299,9 +299,9 @@
               </v-file-input>
               
               <v-divider></v-divider>
-              <label>Enter 6 digit passcode </label>
+              <!-- <label>Enter 6 digit passcode </label> -->
               <!-- Make it disabled till the file is attached -->
-              <v-text-field
+              <!-- <v-text-field
                 solo
                 prepend-icon="vpn_key"
                 placeholder="Ex. 793402"
@@ -317,7 +317,7 @@
                 dismissible
               >
                 The entered passcode is incorrect.
-              </v-alert>
+              </v-alert> -->
 
 
             </div>
@@ -878,12 +878,14 @@ export default {
         this.$emit("load-saved-input-config", this.configCustomData)
     },
     loadFromSavedAnalysis(){
-      if(this.configSavedAnalysisData.pass_code == this.passCode){
-        this.$emit("load-saved-analysis-custom-data", this.configSavedAnalysisData)
-      }
-      else {
-        this.passcodeIncorrectAlert = true;
-      }
+      this.$emit("load-saved-analysis-custom-data", this.configSavedAnalysisData)
+    
+      // if(this.configSavedAnalysisData.pass_code == this.passCode){
+      //   this.$emit("load-saved-analysis-custom-data", this.configSavedAnalysisData)
+      // }
+      // else {
+      //   this.passcodeIncorrectAlert = true;
+      // }
     },
   },
   mounted: function() {

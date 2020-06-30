@@ -2214,7 +2214,7 @@ export default {
       let analysisObject = JSON.stringify(analysis_obj);
       const jsonBlob = new Blob([analysisObject], { type: "application/json" });
       saveAs(jsonBlob, "clin-saved-analysis.json");
-      this.showPassCodeDialog(analysis_obj.pass_code);
+      // this.showPassCodeDialog(analysis_obj.pass_code);
     }, 
     showPassCodeDialog(pass_code){
       this.showPassCode = true;
