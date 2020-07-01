@@ -171,7 +171,7 @@
               <v-divider></v-divider>
               <v-btn color="primary" block outlined x-large @click="importConfiguration">
                 <v-icon>folder_open</v-icon>
-                <span class="ml-2">UPLOAD CONFIGURATION</span>
+                <span class="ml-2">UPLOAD CONFIGURATION FILE</span>
               </v-btn>
               <v-divider></v-divider>
               <v-btn color="primary" block outlined x-large @click="importSavedAnalysis">
@@ -200,63 +200,105 @@
           </v-card-title>
           <v-card-text>
             <div class="container">
-              
-              <v-file-input
-                @change="onInputConfig"
-                accept=".csv"
-                label="Data input configuration"
-                v-model="dataInputConfig"
-                :disabled="savedInputConfig!==null"
-                show-size counter>
-                <template v-slot:selection="{ text }">
-                  <v-chip
-                    label
-                    color="primary"
-                  >
-                    {{ text }}
-                  </v-chip>
-                </template>
-              </v-file-input>
-              
-              <center>
-                <span> <a href="https://drive.google.com/file/d/1bKaY-TzNTOSbW6MDWJyEnurPbpHc80VA/view?usp=sharing" target="_blank"> Example </a> </span> | 
-                <span> <a href="https://drive.google.com/file/d/1m0wRDNrqBGHeSLYmYrQknS6XIKpw6Cry/view?usp=sharing" target="_blank"> Template </a> </span>
-              </center>
-              
-                <v-textarea
-                  solo
-                  auto-grow rows="1"
-                  name="input-7-4"
-                  class="mt-2"
-                  label="Enter Genes"
-                  v-model="genes"
-                  :disabled="savedInputConfig!==null"
-                ></v-textarea>
+              <strong>
+                Input configuration
+                <span>
+                  <v-tooltip top>
+                    <template v-slot:activator="{ on, attrs }">
+                      <v-icon
+                        color="grey"
+                        dark
+                        v-bind="attrs"
+                        v-on="on"
+                      >help</v-icon>
+                    </template>
+                    <span>Import a configuration file</span>
+                  </v-tooltip>
 
+                </span>
+
+              </strong><br><br>
+              <v-card>
+                <v-card-text>
+                  <v-file-input
+                    @change="onInputConfig"
+                    accept=".csv"
+                    label="Data input configuration"
+                    v-model="dataInputConfig"
+                    :disabled="savedInputConfig!==null"
+                    show-size counter>
+                    <template v-slot:selection="{ text }">
+                      <v-chip
+                        label
+                        color="primary"
+                      >
+                        {{ text }}
+                      </v-chip>
+                    </template>
+                  </v-file-input>
+                  
+                  <center>
+                    <span> <a href="https://drive.google.com/file/d/1bKaY-TzNTOSbW6MDWJyEnurPbpHc80VA/view?usp=sharing" target="_blank"> Example </a> </span> | 
+                    <span> <a href="https://drive.google.com/file/d/1m0wRDNrqBGHeSLYmYrQknS6XIKpw6Cry/view?usp=sharing" target="_blank"> Template </a> </span>
+                  </center>
+                  
+                    <v-textarea
+                      solo
+                      auto-grow rows="1"
+                      name="input-7-4"
+                      class="mt-2"
+                      label="Enter Genes"
+                      v-model="genes"
+                      :disabled="savedInputConfig!==null"
+                    ></v-textarea>
+                </v-card-text>
+              </v-card>
+              <br>
               <v-divider></v-divider>
               <br>
+              <strong> 
+                Saved input
+                <span>
+                  <v-tooltip top>
+                    <template v-slot:activator="{ on, attrs }">
+                      <v-icon
+                        color="grey"
+                        dark
+                        v-bind="attrs"
+                        v-on="on"
+                      >help</v-icon>
+                    </template>
+                    <span>Import a configuration file of the saved input</span>
+                  </v-tooltip>
+
+                </span>
+               </strong> <br><br>
               
-              <v-file-input
-                @change="importSavedInputConfig"
-                accept=".json,"
-                label="Saved input configuration"
-                v-model="savedInputConfig"
-                :disabled="dataInputConfig!==null"
-                show-size counter>
-                <template v-slot:selection="{ text }">
-                  <v-chip
-                    label
-                    color="primary"
-                  >
-                    {{ text }}
-                  </v-chip>
-                </template>
-              </v-file-input>
+              <v-card>
+                <v-card-text>
+                  <v-file-input
+                    @change="importSavedInputConfig"
+                    accept=".json,"
+                    label="Saved input configuration"
+                    v-model="savedInputConfig"
+                    :disabled="dataInputConfig!==null"
+                    show-size counter>
+                    <template v-slot:selection="{ text }">
+                      <v-chip
+                        label
+                        color="primary"
+                      >
+                        {{ text }}
+                      </v-chip>
+                    </template>
+                  </v-file-input>
+                </v-card-text>
+              </v-card>
             </div>
           </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn color="primary" @click="importConfigurationDialog=false" text>close</v-btn>
+            <v-btn color="primary" @click="importConfigurationDialog=false" text>Close</v-btn>
             <v-btn color="primary" v-if="savedInputConfig" @click="loadFromSavedConfigInput" :disabled="!validateSavedConfig && savedInputConfig==null">Load</v-btn>
             <v-btn color="primary" v-if="savedInputConfig===null" @click="onLoadInputConfig" :disabled="dataInputConfig==null || genes.length<3">Load</v-btn>
 
@@ -299,9 +341,9 @@
               </v-file-input>
               
               <v-divider></v-divider>
-              <label>Enter 6 digit passcode </label>
+              <!-- <label>Enter 6 digit passcode </label> -->
               <!-- Make it disabled till the file is attached -->
-              <v-text-field
+              <!-- <v-text-field
                 solo
                 prepend-icon="vpn_key"
                 placeholder="Ex. 793402"
@@ -317,14 +359,14 @@
                 dismissible
               >
                 The entered passcode is incorrect.
-              </v-alert>
+              </v-alert> -->
 
 
             </div>
           </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn color="primary" @click="importSavedAnalysisDialog=false" text>close</v-btn>
+            <v-btn color="primary" @click="importSavedAnalysisDialog=false" text>Close</v-btn>
             <v-btn color="primary" @click="loadFromSavedAnalysis" :disabled="!validateSavedAnalysisData && savedAnalysisConfig==null">Load</v-btn>
           </v-card-actions>
         </v-card>
@@ -368,7 +410,7 @@
           </v-col>
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn color="primary" @click="closeCaseDescription" text>close</v-btn>
+            <v-btn color="primary" @click="closeCaseDescription" text>Close</v-btn>
             <v-btn color="primary" @click="addCaseDescription">Next</v-btn>
           </v-card-actions>
 
@@ -438,7 +480,7 @@
             :pageCounter="pageCounter">
           </CustomDataStepper>
           <v-card-title class="headline">
-            Gene Sets
+            Gene sets
             <v-spacer></v-spacer>
             <span>
               <v-btn text icon @click="closeUploadDataDialogs"><v-icon>close</v-icon></v-btn>
@@ -886,12 +928,14 @@ export default {
         this.$emit("load-saved-input-config", this.configCustomData)
     },
     loadFromSavedAnalysis(){
-      if(this.configSavedAnalysisData.pass_code == this.passCode){
-        this.$emit("load-saved-analysis-custom-data", this.configSavedAnalysisData)
-      }
-      else {
-        this.passcodeIncorrectAlert = true;
-      }
+      this.$emit("load-saved-analysis-custom-data", this.configSavedAnalysisData)
+    
+      // if(this.configSavedAnalysisData.pass_code == this.passCode){
+      //   this.$emit("load-saved-analysis-custom-data", this.configSavedAnalysisData)
+      // }
+      // else {
+      //   this.passcodeIncorrectAlert = true;
+      // }
     },
     setBuildForCustomData(buildName){
       this.$emit("setBuildForCustomData", buildName)
