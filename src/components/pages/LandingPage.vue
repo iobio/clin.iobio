@@ -467,6 +467,7 @@
         @bed-file-url="setBedFileUrl"
         :pageCounter="pageCounter"
         :customPedigreeMapData="customPedigreeMapData"
+        @set-build-custom-data="setBuildForCustomData"
       >
       </files-dialog>
       <!-- End VCF and BAM files dialog -->
@@ -846,6 +847,8 @@ export default {
           let pedData = [];
           let modelInfoData = [];
           let bedFileUrl = 'https://raw.githubusercontent.com/chmille4/bam.iobio.io/vue/client/data/20130108.exome.targets.bed';
+          let buildName = 'GRCh37';
+          
           let sexMap = {
             "1": "male",
             "2": "female",
@@ -875,9 +878,14 @@ export default {
           if(bedFile !== ''){
             bedFileUrl = bedFile;
           }
+          let build = modelInfoData[0][12].trim();;
+          if(build !== ''){
+            buildName = build;
+          }
           this.formatCustomModelInfo(modelInfoData);
           this.$emit("setBedFileUrl", bedFileUrl);
           this.$emit("set-ped-data", pedFile);
+          this.$emit('setBuildForCustomData', buildName);
         }
       }
     },
@@ -929,6 +937,9 @@ export default {
       //   this.passcodeIncorrectAlert = true;
       // }
     },
+    setBuildForCustomData(buildName){
+      this.$emit("setBuildForCustomData", buildName)
+    }
   },
   mounted: function() {
     this.fetchAnalysis();

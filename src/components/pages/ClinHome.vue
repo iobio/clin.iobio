@@ -141,7 +141,8 @@ $horizontal-dashboard-height: 140px
     @set-custom-case-summary="setCustomCaseSummary($event)"
     @load-saved-input-config="loadSavedInputConfig($event)"
     @load-saved-analysis-custom-data="loadSavedAnalysisCustomData($event)"
-    @setBedFileUrl="setBedFileUrl($event)">
+    @setBedFileUrl="setBedFileUrl($event)"
+    @setBuildForCustomData="setBuildForCustomData($event)">
   </landing-page>
 
 
@@ -548,7 +549,8 @@ export default {
       variantsAnalyzedCounted: 0,
       customSavedAnalysis: false,
       passcode: '',
-      showPassCode: false
+      showPassCode: false,
+      buildName: 'GRCh37'
     }
 
   },
@@ -581,7 +583,7 @@ export default {
   },
 
   computed: {
-    ...mapGetters(['getPedigreeData', 'getPedigree', 'getVariantsCount', 'getCustomCoverage', 'getReviewCaseBadge', 'getVariantsByInterpretation', 'getModelInfos', 'getGeneSet', 'getCaseSummary']),
+    ...mapGetters(['getPedigreeData', 'getPedigree', 'getVariantsCount', 'getCustomCoverage', 'getReviewCaseBadge', 'getVariantsByInterpretation', 'getModelInfos', 'getGeneSet', 'getCaseSummary', 'getBuildName']),
     phenotypeList: function() {
       let self = this;
       let phenotypeList = [];
@@ -675,7 +677,7 @@ export default {
   },
 
   methods: {
-    ...mapActions(['updateAnalysis', 'setModelInfos', 'setCustomGeneSet', 'setCaseSummary']),
+    ...mapActions(['updateAnalysis', 'setModelInfos', 'setCustomGeneSet', 'setCaseSummary', 'setBuildName']),
     
     init: function() {
       let self = this;
@@ -1133,10 +1135,8 @@ export default {
         if(self.customData){
           self.analysis.payload.genes = self.customGeneSet;
         }
-
         let app = self.apps[appName];
-        console.log("ClinHome.setData  sending data to " + appName)
-        console.log("variants in setData", self.analysis.payload.variants);
+        let currentBuildName = self.genomeBuildHelper.getCurrentBuildName();
         var msgObject = {
             type:                  'set-data',
             sender:                'clin.iobio',
@@ -1155,6 +1155,8 @@ export default {
             'genesManual':          self.analysis.payload.genesManual,
             'gtrFullList':          self.analysis.payload.gtrFullList,
             'phenolyzerFullList':   self.analysis.payload.phenolyzerFullList,
+            'buildName':            currentBuildName,
+            // 'buildName':            self.buildName,
         };
         if (self.paramGeneBatchSize && (appName == 'gene' || appName == 'genefull')) {
           msgObject.batchSize = +self.paramGeneBatchSize;
@@ -2183,6 +2185,9 @@ export default {
       this.setCustomGeneSet(this.customGeneSet);
       this.caseSummary = analysis.custom_case_Summary;
       this.setCaseSummary(this.caseSummary);
+      this.buildName = analysis.build_name;
+      this.setBuildName(this.buildName);
+      this.genomeBuildHelper.setCurrentBuild(analysis.build_name);
       this.rawPedigree = analysis.custom_pedigree; 
       this.customSavedAnalysis = true;
       this.customData = true;
@@ -2198,7 +2203,12 @@ export default {
     },
     setBedFileUrl(bedUrl){
       this.bedFileUrl = bedUrl;
-    }, 
+    },
+    setBuildForCustomData(buildName){
+      this.buildName = buildName;
+      this.genomeBuildHelper.setCurrentBuild(buildName);
+      this.setBuildName(this.buildName);
+    },
     saveAnalysisJson(){
       let analysis_obj = this.analysis;
       analysis_obj.custom_pedigree_data = this.getPedigreeData;
@@ -2210,6 +2220,7 @@ export default {
       analysis_obj.variants_by_interpretation = this.getVariantsByInterpretation;
       analysis_obj.custom_gene_set = this.getGeneSet;
       analysis_obj.custom_case_Summary = this.getCaseSummary;
+      analysis_obj.build_name = this.getBuildName;
       analysis_obj.pass_code = Math.floor(100000 + Math.random() * 900000);
       let analysisObject = JSON.stringify(analysis_obj);
       const jsonBlob = new Blob([analysisObject], { type: "application/json" });
