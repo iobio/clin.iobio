@@ -583,7 +583,7 @@ export default {
   },
 
   computed: {
-    ...mapGetters(['getPedigreeData', 'getPedigree', 'getVariantsCount', 'getCustomCoverage', 'getReviewCaseBadge', 'getVariantsByInterpretation', 'getModelInfos', 'getGeneSet', 'getCaseSummary']),
+    ...mapGetters(['getPedigreeData', 'getPedigree', 'getVariantsCount', 'getCustomCoverage', 'getReviewCaseBadge', 'getVariantsByInterpretation', 'getModelInfos', 'getGeneSet', 'getCaseSummary', 'getBuildName']),
     phenotypeList: function() {
       let self = this;
       let phenotypeList = [];
@@ -677,7 +677,7 @@ export default {
   },
 
   methods: {
-    ...mapActions(['updateAnalysis', 'setModelInfos', 'setCustomGeneSet', 'setCaseSummary']),
+    ...mapActions(['updateAnalysis', 'setModelInfos', 'setCustomGeneSet', 'setCaseSummary', 'setBuildName']),
     
     init: function() {
       let self = this;
@@ -2185,6 +2185,9 @@ export default {
       this.setCustomGeneSet(this.customGeneSet);
       this.caseSummary = analysis.custom_case_Summary;
       this.setCaseSummary(this.caseSummary);
+      this.buildName = analysis.build_name;
+      this.setBuildName(this.buildName);
+      this.genomeBuildHelper.setCurrentBuild(analysis.build_name);
       this.rawPedigree = analysis.custom_pedigree; 
       this.customSavedAnalysis = true;
       this.customData = true;
@@ -2204,6 +2207,7 @@ export default {
     setBuildForCustomData(buildName){
       this.buildName = buildName;
       this.genomeBuildHelper.setCurrentBuild(buildName);
+      this.setBuildName(this.buildName);
     },
     saveAnalysisJson(){
       let analysis_obj = this.analysis;
@@ -2216,6 +2220,7 @@ export default {
       analysis_obj.variants_by_interpretation = this.getVariantsByInterpretation;
       analysis_obj.custom_gene_set = this.getGeneSet;
       analysis_obj.custom_case_Summary = this.getCaseSummary;
+      analysis_obj.build_name = this.getBuildName;
       analysis_obj.pass_code = Math.floor(100000 + Math.random() * 900000);
       let analysisObject = JSON.stringify(analysis_obj);
       const jsonBlob = new Blob([analysisObject], { type: "application/json" });
