@@ -1115,13 +1115,8 @@ export default {
         if(self.customData){
           self.analysis.payload.genes = self.customGeneSet;
         }
-        alert("self.genomeBuildHelper.getCurrentBuildName while setting data", self.buildName);
         let app = self.apps[appName];
-        console.log("ClinHome.setData  sending data to " + appName)
-        console.log("variants in setData", self.analysis.payload.variants);
-        console.log("self.buildName in set data", self.buildName);
-        console.log("self.buildName check", self.buildName == 'GRCh38');
-        let build = self.buildName;
+        let currentBuildName = self.genomeBuildHelper.getCurrentBuildName();
         var msgObject = {
             type:                  'set-data',
             sender:                'clin.iobio',
@@ -1140,7 +1135,7 @@ export default {
             'genesManual':          self.analysis.payload.genesManual,
             'gtrFullList':          self.analysis.payload.gtrFullList,
             'phenolyzerFullList':   self.analysis.payload.phenolyzerFullList,
-            'buildName':            self.buildName,
+            'buildName':            currentBuildName,
             // 'buildName':            self.buildName,
         };
         if (self.paramGeneBatchSize && (appName == 'gene' || appName == 'genefull')) {
@@ -2187,7 +2182,6 @@ export default {
       this.bedFileUrl = bedUrl;
     },
     setBuildForCustomData(buildName){
-      console.log("buildName in the event:", buildName);
       this.buildName = buildName;
       this.genomeBuildHelper.setCurrentBuild(buildName);
     },

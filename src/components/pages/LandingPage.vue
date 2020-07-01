@@ -840,7 +840,6 @@ export default {
           if(build !== ''){
             buildName = build;
           }
-          console.log("buildName in input config", buildName);
           this.formatCustomModelInfo(modelInfoData);
           this.$emit("setBedFileUrl", bedFileUrl);
           this.$emit("set-ped-data", pedFile);
