@@ -805,6 +805,8 @@ export default {
           let pedData = [];
           let modelInfoData = [];
           let bedFileUrl = 'https://raw.githubusercontent.com/chmille4/bam.iobio.io/vue/client/data/20130108.exome.targets.bed';
+          let buildName = 'GRCh37';
+          
           let sexMap = {
             "1": "male",
             "2": "female",
@@ -834,9 +836,15 @@ export default {
           if(bedFile !== ''){
             bedFileUrl = bedFile;
           }
+          let build = modelInfoData[0][12].trim();;
+          if(build !== ''){
+            buildName = build;
+          }
+          console.log("buildName in input config", buildName);
           this.formatCustomModelInfo(modelInfoData);
           this.$emit("setBedFileUrl", bedFileUrl);
           this.$emit("set-ped-data", pedFile);
+          this.$emit('setBuildForCustomData', buildName);
         }
       }
     },
