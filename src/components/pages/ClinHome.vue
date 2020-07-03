@@ -345,6 +345,24 @@ $horizontal-dashboard-height: 140px
       </v-dialog>
 
       <!-- end pass code dialog -->
+      
+      <!-- Bypassed genes dialog -->
+      <v-dialog v-model="byPassedGenesDialog" persistent max-width="450">
+        <v-card>
+          <v-card-title class="headline">Warning</v-card-title>
+          <v-card-text>
+            Bypassing unknown gene: 
+            <span v-for="gene in byPassedGenes" :key="gene"> {{ gene }}  </span>
+          </v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn style="float:right" @click.native="closeByPassedGenesDialog">
+              OK
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+      <!--End Bypassed genes dialog -->
 
 
     </div>
@@ -531,6 +549,7 @@ export default {
       coverageHistos: null,
       venn_diag_data: {},
       geneToDelete: '',
+      
 
 
       interpretationMap: {
@@ -553,6 +572,8 @@ export default {
       showPassCode: false,
       buildName: 'GRCh37',
       knownGenesData: null,
+      byPassedGenes: [],
+      byPassedGenesDialog: false,
     }
 
   },
@@ -638,6 +659,10 @@ export default {
           var appName = "genefull";
           var iframeSelector = self.apps[appName].iframeSelector;
 
+          if(self.byPassedGenes.length){
+            self.byPassedGenesDialog = true;
+          }
+          
           console.log("Sending genesReport to gene.iobio")
 
           var theObject = {
@@ -818,6 +843,12 @@ export default {
       })
 
     },
+    
+    closeByPassedGenesDialog: function(){
+      this.byPassedGenesDialog = false;
+      this.byPassedGenes = [];
+    },
+
 
     getDemoVcf: function() {
 
@@ -1143,19 +1174,16 @@ export default {
         
         let genes = self.analysis.payload.genes;
         let gene_set = [];
-        let byPassedGenesArr = [];
-        console.log("does it include", self.knownGenesData.includes("SEPT6"));
+        self.byPassedGenes = [];
+        
         genes.map( gene => {
           if(self.knownGenesData.includes(gene.toUpperCase()) && !gene_set.includes(gene.toUpperCase()) ){
             gene_set.push(gene.toUpperCase());
           }
           else {
-            byPassedGenesArr.push(gene.toUpperCase());
+            self.byPassedGenes.push(gene.toUpperCase());
           }
         })
-        
-        console.log("gene_set", gene_set);
-        console.log("byPassedGenesArr", byPassedGenesArr);
         
         var msgObject = {
             type:                  'set-data',
@@ -1176,7 +1204,6 @@ export default {
             'gtrFullList':          self.analysis.payload.gtrFullList,
             'phenolyzerFullList':   self.analysis.payload.phenolyzerFullList,
             'buildName':            currentBuildName,
-            // 'buildName':            self.buildName,
         };
         if (self.paramGeneBatchSize && (appName == 'gene' || appName == 'genefull')) {
           msgObject.batchSize = +self.paramGeneBatchSize;
