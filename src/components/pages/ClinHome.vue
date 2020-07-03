@@ -345,6 +345,24 @@ $horizontal-dashboard-height: 140px
       </v-dialog>
 
       <!-- end pass code dialog -->
+      
+      <!-- Bypassed genes dialog -->
+      <v-dialog v-model="byPassedGenesDialog" persistent max-width="450">
+        <v-card>
+          <v-card-title class="headline">Warning</v-card-title>
+          <v-card-text>
+            Bypassing unknown gene: 
+            <span v-for="gene in byPassedGenes" :key="gene"> {{ gene }}  </span>
+          </v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn style="float:right" @click.native="closeByPassedGenesDialog">
+              OK
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+      <!--End Bypassed genes dialog -->
 
 
     </div>
@@ -387,6 +405,7 @@ import SaveAnalysisPopup  from '../partials/SaveAnalysisPopup.vue'
 import workflowData  from '../../data/workflows.json'
 import variantData   from '../../data/variants_mosaic_platinum.json'
 import analysisData  from '../../data/analysis.json'
+import knownGenes    from '../../data/knownGenes'
 
 import axios from 'axios'
 import { saveAs } from 'file-saver'
@@ -530,6 +549,7 @@ export default {
       coverageHistos: null,
       venn_diag_data: {},
       geneToDelete: '',
+      
 
 
       interpretationMap: {
@@ -550,7 +570,10 @@ export default {
       customSavedAnalysis: false,
       passcode: '',
       showPassCode: false,
-      buildName: 'GRCh37'
+      buildName: 'GRCh37',
+      knownGenesData: null,
+      byPassedGenes: [],
+      byPassedGenesDialog: false,
     }
 
   },
@@ -563,6 +586,7 @@ export default {
 
   mounted: function() {
     this.init();
+    this.knownGenesData = knownGenes;
     bus.$on("getAnalysisObject", ()=>{
       this.generatePDF()
     })
@@ -635,6 +659,10 @@ export default {
           var appName = "genefull";
           var iframeSelector = self.apps[appName].iframeSelector;
 
+          if(self.byPassedGenes.length){
+            self.byPassedGenesDialog = true;
+          }
+          
           console.log("Sending genesReport to gene.iobio")
 
           var theObject = {
@@ -815,6 +843,12 @@ export default {
       })
 
     },
+    
+    closeByPassedGenesDialog: function(){
+      this.byPassedGenesDialog = false;
+      this.byPassedGenes = [];
+    },
+
 
     getDemoVcf: function() {
 
@@ -1137,6 +1171,20 @@ export default {
         }
         let app = self.apps[appName];
         let currentBuildName = self.genomeBuildHelper.getCurrentBuildName();
+        
+        let genes = self.analysis.payload.genes;
+        let gene_set = [];
+        self.byPassedGenes = [];
+        
+        genes.map( gene => {
+          if(self.knownGenesData.includes(gene.toUpperCase()) && !gene_set.includes(gene.toUpperCase()) ){
+            gene_set.push(gene.toUpperCase());
+          }
+          else {
+            self.byPassedGenes.push(gene.toUpperCase());
+          }
+        })
+        
         var msgObject = {
             type:                  'set-data',
             sender:                'clin.iobio',
@@ -1148,7 +1196,7 @@ export default {
             'modelInfos':           self.modelInfos,
             'analysis':             self.analysis,
             'phenotypes':           self.analysis.payload.phenotypes,
-            'genes':                self.analysis.payload.genes,
+            'genes':                gene_set,
             'genesReport':          self.analysis.payload.genesReport,
             'genesGtr':             self.analysis.payload.genesGtr,
             'genesPhenolyzer':      self.analysis.payload.genesPhenolyzer,
@@ -1156,7 +1204,6 @@ export default {
             'gtrFullList':          self.analysis.payload.gtrFullList,
             'phenolyzerFullList':   self.analysis.payload.phenolyzerFullList,
             'buildName':            currentBuildName,
-            // 'buildName':            self.buildName,
         };
         if (self.paramGeneBatchSize && (appName == 'gene' || appName == 'genefull')) {
           msgObject.batchSize = +self.paramGeneBatchSize;
