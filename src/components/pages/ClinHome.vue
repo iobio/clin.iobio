@@ -387,6 +387,7 @@ import SaveAnalysisPopup  from '../partials/SaveAnalysisPopup.vue'
 import workflowData  from '../../data/workflows.json'
 import variantData   from '../../data/variants_mosaic_platinum.json'
 import analysisData  from '../../data/analysis.json'
+import knownGenes    from '../../data/knownGenes'
 
 import axios from 'axios'
 import { saveAs } from 'file-saver'
@@ -550,7 +551,8 @@ export default {
       customSavedAnalysis: false,
       passcode: '',
       showPassCode: false,
-      buildName: 'GRCh37'
+      buildName: 'GRCh37',
+      knownGenesData: null,
     }
 
   },
@@ -563,6 +565,7 @@ export default {
 
   mounted: function() {
     this.init();
+    this.knownGenesData = knownGenes;
     bus.$on("getAnalysisObject", ()=>{
       this.generatePDF()
     })
@@ -1137,6 +1140,23 @@ export default {
         }
         let app = self.apps[appName];
         let currentBuildName = self.genomeBuildHelper.getCurrentBuildName();
+        
+        let genes = self.analysis.payload.genes;
+        let gene_set = [];
+        let byPassedGenesArr = [];
+        console.log("does it include", self.knownGenesData.includes("SEPT6"));
+        genes.map( gene => {
+          if(self.knownGenesData.includes(gene.toUpperCase()) && !gene_set.includes(gene.toUpperCase()) ){
+            gene_set.push(gene.toUpperCase());
+          }
+          else {
+            byPassedGenesArr.push(gene.toUpperCase());
+          }
+        })
+        
+        console.log("gene_set", gene_set);
+        console.log("byPassedGenesArr", byPassedGenesArr);
+        
         var msgObject = {
             type:                  'set-data',
             sender:                'clin.iobio',
@@ -1148,7 +1168,7 @@ export default {
             'modelInfos':           self.modelInfos,
             'analysis':             self.analysis,
             'phenotypes':           self.analysis.payload.phenotypes,
-            'genes':                self.analysis.payload.genes,
+            'genes':                gene_set,
             'genesReport':          self.analysis.payload.genesReport,
             'genesGtr':             self.analysis.payload.genesGtr,
             'genesPhenolyzer':      self.analysis.payload.genesPhenolyzer,
