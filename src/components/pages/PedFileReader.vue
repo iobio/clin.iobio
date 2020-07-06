@@ -32,7 +32,9 @@
         var reader = new FileReader();
         if(this.pedData){
           reader.readAsText(this.pedData);
-          reader.onload = () => this.$emit("load-ped-file", reader.result)
+          reader.onload = () => {
+            this.$emit("load-ped-file", reader.result)
+          }
         }
         else {
           this.$emit("load-ped-file", this.pedData);
