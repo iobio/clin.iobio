@@ -410,6 +410,7 @@ export default {
           }
         }
         else{
+          this.validationErrors.push(`Sample ids do not match with the pedigree data. Please check the ped file`)
         }
       }
       console.log("this.customModelInfos in files dialog", this.customModelInfos); 
