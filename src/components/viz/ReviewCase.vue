@@ -677,7 +677,7 @@ export default {
       let txtCopy  = txt.slice();
         let pedLines = txtCopy.split('\n');
         for (let i = 0; i < pedLines.length; i++) {
-          let splitLine = pedLines[i].match(/\S+/g)
+          let splitLine = pedLines[i].split(/\s+|\,/g)
           if(splitLine && splitLine[0] !== "" && !isNaN(parseInt(splitLine[4]))) {
             this.sampleIds.push(splitLine[1]);
           }
@@ -688,7 +688,7 @@ export default {
       let pedLines = txt.split('\n');
       let pedArr = [];
       for (let i = 0; i < pedLines.length; i++) {
-        let splitLine = pedLines[i].match(/\S+/g);
+        let splitLine = pedLines[i].split(/\s+|\,/g)
 
         if(splitLine && splitLine[0] !== "" && !isNaN(parseInt(splitLine[4]))) {
 

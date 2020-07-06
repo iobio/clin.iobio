@@ -46,10 +46,10 @@
                         <v-icon>explore</v-icon>
                         <span class="ml-2">RUN WITH DEMO DATA</span>
                       </v-btn>
-                      <!-- <v-btn color="white" outlined x-large @click="inputOptionsDialog=true" class="mt-8 ml-4">
+                      <v-btn color="white" outlined x-large @click="inputOptionsDialog=true" class="mt-8 ml-4">
                         <v-icon>fas fa-upload</v-icon>
                         <span class="ml-2">LOAD YOUR DATA</span>
-                      </v-btn> -->
+                      </v-btn>
                     </v-flex>
                   </v-flex>
                   <v-flex xs12 md12 sm12 lg1 xl1 ></v-flex>
@@ -735,7 +735,7 @@ export default {
       let pedLines = txt.split('\n');
       let pedArr = [];
       for (let i = 0; i < pedLines.length; i++) {
-        let splitLine = pedLines[i].match(/\S+/g);
+        let splitLine = pedLines[i].split(/\s+|\,/g);
         let sexMap = {
           "1": "male",
           "2": "female",
@@ -747,7 +747,7 @@ export default {
           2: true,
           "-9": false
         }
-
+        console.log("splitLine[0]", splitLine[0]);
         if(splitLine && splitLine[0] !== "" && !isNaN(parseInt(splitLine[4]))) {
           var sample = splitLine[1];
           var sex = sexMap[parseInt(splitLine[4])];
