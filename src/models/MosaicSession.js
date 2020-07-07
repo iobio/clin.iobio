@@ -1,10 +1,15 @@
 export default class MosaicSession {
-  constructor() {
+  constructor(clientApplicationId) {
     this.vcf = null;
     this.samples = null;
     this.url = null;
+    this.isMother = false;
+    this.isFather = false;
     this.apiVersion =  '/api/v1';
-    this.client_application_id = null;
+    this.apiDepricated = null;
+    this.apiVersionDeprecated = '/apiv1';
+
+    this.client_application_id = clientApplicationId;
     this.variantSetTxtCols = [
       "chrom",
       "start",
@@ -24,13 +29,15 @@ export default class MosaicSession {
     };
 
     this.geneSet = null;
+    this.variantSet = null;
   }
 
-  promiseInit(sampleId, source, isPedigree, projectId, clientAppId, geneSetId ) {
+  promiseInit(sampleId, source, isPedigree, projectId, clientAppId, geneSetId, variantSetId ) {
     let self = this;
     self.api = source + self.apiVersion;
     self.client_application_id = clientAppId;
-
+    self.apiDepricated = source + self.apiVersionDeprecated;
+    
     return new Promise((resolve, reject) => {
       let modelInfos = [];
       let coverageHistos = [];
@@ -48,6 +55,17 @@ export default class MosaicSession {
       .then(function(data) {
 
         self.geneSet = data;
+        
+        if (variantSetId) {
+          return self.promiseGetVariantSet(projectId, variantSetId)
+        } else {
+          return Promise.resolve(null);
+        }
+        
+      })
+      .then(function(data) {
+          
+        self.variantSet = data;
 
         self.promiseGetSampleInfo(projectId, sampleId, isPedigree)
         .then(data => {
@@ -144,7 +162,7 @@ export default class MosaicSession {
                 alertify.alert("Error", buf)
               }
 
-              resolve({'modelInfos': modelInfos, 'rawPedigree': rawPedigree, 'coverageHistos': coverageHistos, 'allVarCounts': allVarCounts, 'user' : self.user, 'geneSet': self.geneSet });
+              resolve({'modelInfos': modelInfos, 'rawPedigree': rawPedigree, 'coverageHistos': coverageHistos, 'allVarCounts': allVarCounts, 'user' : self.user, 'geneSet': self.geneSet, 'variantSet': self.variantSet, });
             })
             .catch(error => {
               reject(error);
@@ -576,6 +594,21 @@ export default class MosaicSession {
     })
 
   }
+  
+  promiseGetVariantSet(projectId, variantSetId) {
+  let self = this;
+  return new Promise(function(resolve, reject) {
+    self.getVariantSet(projectId, variantSetId)
+    .done(response => {
+      console.log("resp", response);
+      resolve(response)
+    })
+    .fail(error => {
+      reject("Error getting variant set " + variantSetId + ": " + error);
+    })
+  })
+
+}
 
   promiseGetAnalysis(projectId, analysisId) {
     let self = this;
@@ -723,6 +756,20 @@ export default class MosaicSession {
 
     return $.ajax({
       url: self.api + '/projects/' + projectId + '/genes/sets/' + geneSetId,
+      type: 'GET',
+      contentType: 'application/json',
+      headers: {
+        Authorization: localStorage.getItem('hub-iobio-tkn'),
+      },
+    });
+  }
+  
+  getVariantSet(projectId, variantSetId) {
+    let self = this;
+
+    return $.ajax({
+      url: self.apiDepricated + '/projects/' + projectId + '/variants?variant_set_id=' + variantSetId + "&include_variant_data=true",
+
       type: 'GET',
       contentType: 'application/json',
       headers: {

@@ -447,7 +447,8 @@ export default {
     paramClientApplicationId: null,
     paramBuild: null,
     paramGeneSetId:       null,
-    paramGenes:           null
+    paramGenes:           null,
+    paramVariantSetId:    null,
   },
   data() {
     let self = this;
@@ -514,6 +515,7 @@ export default {
       analysis: null,
       caseSummary: null,
       geneSet: null,
+      variantSet: null,
       showConfigError: false,
       configMessage: "",
 
@@ -799,7 +801,7 @@ export default {
           self.mosaicSession = new MosaicSession();
           // For now, just hardcode is_pedgree = true
           self.mosaicSession.promiseInit(self.params.sample_id, self.params.source,
-            true, self.params.project_id, self.params.client_application_id, self.params.gene_set_id)
+            true, self.params.project_id, self.params.client_application_id, self.params.gene_set_id, self.params.variant_set_id)
           .then(data => {
             self.modelInfos = data.modelInfos;
             self.user       = data.user;
@@ -807,6 +809,9 @@ export default {
             self.coverageHistos = data.coverageHistos;
             self.rawPedigree = data.rawPedigree;
             self.allVarCounts = data.allVarCounts;
+            self.variantSet = data.variantSet;
+            
+            console.log("data.variantSet:", data.variantSet);
 
             self.mosaicSession.promiseGetProject(self.params.project_id)
             .then(function(project) {
