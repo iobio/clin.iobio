@@ -383,9 +383,6 @@
           <v-card-title class="headline">
             Case summary
             <v-spacer></v-spacer>
-            <ImportVariants
-              @load-variants="loadImportedVariants($event)">
-            </ImportVariants>
             <span>
               <v-btn text icon @click="closeUploadDataDialogs"><v-icon>close</v-icon></v-btn>
             </span>
@@ -497,6 +494,10 @@
                 label="Enter Genes"
                 v-model="genes"
               ></v-textarea>
+              <v-spacer></v-spacer>
+              <ImportVariants
+                @load-variants="loadImportedVariants($event)">
+              </ImportVariants>
             </v-col>
           <v-card-actions>
             <v-tooltip top>

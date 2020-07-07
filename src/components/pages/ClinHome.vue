@@ -406,7 +406,6 @@ import SaveAnalysisPopup  from '../partials/SaveAnalysisPopup.vue'
 import workflowData  from '../../data/workflows.json'
 import variantData   from '../../data/variants_mosaic_platinum.json'
 import analysisData  from '../../data/analysis.json'
-import knownGenes    from '../../data/knownGenes'
 
 import axios from 'axios'
 import { saveAs } from 'file-saver'
@@ -578,6 +577,7 @@ export default {
       byPassedGenes: [],
       byPassedGenesDialog: false,
       importedCustomVariants: [],
+      sampleId: null,
     }
 
   },
@@ -590,7 +590,12 @@ export default {
 
   mounted: function() {
     this.init();
-    this.knownGenesData = knownGenes;
+    fetch('https://s3.amazonaws.com/ped.test.files/known_genes.txt')
+      .then( res => res.text())
+        .then( data => {
+          let lines = data.split('\n');
+          this.knownGenesData = data;
+        })
     bus.$on("getAnalysisObject", ()=>{
       this.generatePDF()
     })
@@ -942,38 +947,84 @@ export default {
           self.params.project_id,
           self.params.analysis_id,
           self.workflow)
-        .then(function() {
-            if ((self.analysis.payload.variants == null || self.analysis.payload.variants.length == 0) && self.mosaicSession.hasVariantSets(self.modelInfos)) {
-              return self.mosaicSession.promiseParseVariantSets(self.modelInfos)
-            } else {
-              return Promise.resolve({});
-            }
-        })
-        .then(function(variantSets) {
-          if (variantSets && Object.keys(variantSets).length > 0) {
-            self.variantSetCounts = { total: 0 }
-            for (var key in variantSets) {
-              self.variantSetCounts[key]   = variantSets[key] ? variantSets[key].length : 0;
-              self.variantSetCounts.total += variantSets[key] ? variantSets[key].length : 0;
-              variantSets[key].forEach(function(importedVariant) {
-                let theFilterName = null;
-                if (self.mosaicSession.variantSetToFilterName[key]) {
-                  theFilterName = self.mosaicSession.variantSetToFilterName[key];
+          .then(function() {
+            console.log("self.variantSet in if ", self.variantSet);
+            // Now import the variants from the variant set provided
+            // when launching clin.iobio from Mosaic
+            if (self.variantSet && self.variantSet.variants) {
+              let bypassedCount = 0;
+              self.variantSet.variants.filter(function(variant) {
+                return variant.sample_ids.indexOf(parseInt(self.paramSampleId)) >= 0;
+              })
+              .forEach(function(variant) {
+                let importedVariant = {};
+                if (variant.gene_symbol && variant.gene_symbol.length > 0) {
+                  importedVariant.gene  = variant.gene_symbol;
+                  importedVariant.chrom = variant.chr;
+                  importedVariant.start = variant.pos;
+                  importedVariant.end   = variant.pos;
+                  importedVariant.ref   = variant.ref;
+                  importedVariant.alt   = variant.alt;
+                  importedVariant.filtersPassed    = "notCategorized";
+                  importedVariant.inheritance      = null;
+                  importedVariant.afgnomAD         = variant.gnomad_allele_frequency;
+                  importedVariant.highestImpact    = variant.gene_impact;
+                  importedVariant.consequence      = variant.gene_consequence;
+                  importedVariant.isImported       = true;
+                  importedVariant.variantSet       = "notCategorized";
+                  console.log("importedVariant", importedVariant);
+                  self.analysis.payload.variants.push(importedVariant);
+                  if (self.analysis.payload.genes.indexOf(importedVariant.gene) < 0) {
+                    self.analysis.payload.genes.push(importedVariant.gene);
+                  }
                 } else {
-                  theFilterName = key;
-                }
-                importedVariant.variantSet = theFilterName;
-                self.analysis.payload.variants.push(importedVariant);
-                if (self.analysis.payload.genes.indexOf(importedVariant.gene) < 0) {
-                  self.analysis.payload.genes.push(importedVariant.gene);
+                  console.log("Bypassing variant " + variant.chr + " " + variant.pos + " because gene not provided")
+                  bypassedCount++;
                 }
               })
+              if (bypassedCount > 0) {
+                if (bypassedCount == self.variantSet.variants.length) {
+                  alert("Error", "None of the " + bypassedCount + " variants were loaded because the variants were missing gene name.", )
+
+                } else {
+                  alert("Warning", bypassedCount + " variants bypassed due to missing gene name")
+
+                }
+              }
             }
-            return Promise.resolve();
-          } else {
-            return Promise.resolve();
-          }
-        })
+          })
+        // .then(function() {
+        //     if ((self.analysis.payload.variants == null || self.analysis.payload.variants.length == 0) && self.mosaicSession.hasVariantSets(self.modelInfos)) {
+        //       return self.mosaicSession.promiseParseVariantSets(self.modelInfos)
+        //     } else {
+        //       return Promise.resolve({});
+        //     }
+        // })
+        // .then(function(variantSets) {
+        //   if (variantSets && Object.keys(variantSets).length > 0) {
+        //     self.variantSetCounts = { total: 0 }
+        //     for (var key in variantSets) {
+        //       self.variantSetCounts[key]   = variantSets[key] ? variantSets[key].length : 0;
+        //       self.variantSetCounts.total += variantSets[key] ? variantSets[key].length : 0;
+        //       variantSets[key].forEach(function(importedVariant) {
+        //         let theFilterName = null;
+        //         if (self.mosaicSession.variantSetToFilterName[key]) {
+        //           theFilterName = self.mosaicSession.variantSetToFilterName[key];
+        //         } else {
+        //           theFilterName = key;
+        //         }
+        //         importedVariant.variantSet = theFilterName;
+        //         self.analysis.payload.variants.push(importedVariant);
+        //         if (self.analysis.payload.genes.indexOf(importedVariant.gene) < 0) {
+        //           self.analysis.payload.genes.push(importedVariant.gene);
+        //         }
+        //       })
+        //     }
+        //     return Promise.resolve();
+        //   } else {
+        //     return Promise.resolve();
+        //   }
+        // })
         .then(function() {
 
           // Send message to set the data in the iobio apps
