@@ -383,6 +383,9 @@
           <v-card-title class="headline">
             Case summary
             <v-spacer></v-spacer>
+            <ImportVariants
+              @load-variants="loadImportedVariants($event)">
+            </ImportVariants>
             <span>
               <v-btn text icon @click="closeUploadDataDialogs"><v-icon>close</v-icon></v-btn>
             </span>
@@ -507,7 +510,9 @@
             </v-tooltip>
             <v-spacer></v-spacer>
             <v-btn color="primary" @click="backToFiles" text>Back</v-btn>
-            <v-btn color="primary" @click="addGeneSet" :disabled="genes.length<3">Next</v-btn>
+            <!-- <v-btn color="primary" @click="addGeneSet" :disabled="genes.length<3">Next</v-btn> -->
+            <v-btn color="primary" @click="addGeneSet" >Next</v-btn>
+
           </v-card-actions>
 
           </v-card-text>
@@ -532,7 +537,7 @@ import MoreMenu         from '../partials/MoreMenu.vue'
 import NavBarDialog     from '../partials/NavBarDialog.vue'
 import PedFileReader    from './PedFileReader.vue'
 import PedFileUrlInput  from  './PedFileUrlInput.vue'
-
+import ImportVariants   from  './ImportVariants.vue'
 import {
   Hooper,
   Slide,
@@ -567,7 +572,8 @@ export default {
     FilesDialog,
     PedFileReader,
     CustomDataStepper,
-    PedFileUrlInput
+    PedFileUrlInput,
+    ImportVariants
   },
   props: {
     cohortModel: null,
@@ -650,6 +656,7 @@ export default {
       passCode: '',
       passcodeIncorrectAlert: false,
       dataInputConfig: null,
+      importedVariants: []
     }
   },
   computed: mapGetters(['allAnalysis']),
@@ -704,7 +711,10 @@ export default {
     addGeneSet: function(){
       this.pageCounter = 1;
       this.geneSetDiialog = false;
-      this.geneSet = this.genes.split(",").map(gene => gene.trim().toUpperCase());
+      if(this.genes.length){ //temp, if variant sets are selected
+        this.geneSet = this.genes.split(",").map(gene => gene.trim().toUpperCase());
+      }
+      // this.geneSet = this.genes.split(",").map(gene => gene.trim().toUpperCase());
       this.$emit('setGeneSet', this.geneSet)
       this.getStarted();
     },
@@ -939,6 +949,14 @@ export default {
     },
     setBuildForCustomData(buildName){
       this.$emit("setBuildForCustomData", buildName)
+    },
+    loadImportedVariants(variants){
+      this.$emit("set-imported-variants", variants);
+      this.importedVariants = variants;
+      this.geneSet = [];
+      variants.map( variant => {
+        // this.geneSet.push(variant.gene)
+      })
     }
   },
   mounted: function() {

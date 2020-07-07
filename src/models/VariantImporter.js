@@ -93,6 +93,7 @@ VariantImporter.parseRecordsCSV = function(data) {
       importRec.notes = VariantImporter.unflattenNotes(importRec.notes)
     }
   })
+  console.log("importRecords", importRecords);
   return importRecords;
 }
 

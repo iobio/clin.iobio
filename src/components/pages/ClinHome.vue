@@ -142,7 +142,8 @@ $horizontal-dashboard-height: 140px
     @load-saved-input-config="loadSavedInputConfig($event)"
     @load-saved-analysis-custom-data="loadSavedAnalysisCustomData($event)"
     @setBedFileUrl="setBedFileUrl($event)"
-    @setBuildForCustomData="setBuildForCustomData($event)">
+    @setBuildForCustomData="setBuildForCustomData($event)"
+    @set-imported-variants="setImportedVariants($event)">
   </landing-page>
 
 
@@ -574,6 +575,7 @@ export default {
       knownGenesData: null,
       byPassedGenes: [],
       byPassedGenesDialog: false,
+      importedCustomVariants: [],
     }
 
   },
@@ -784,6 +786,7 @@ export default {
           self.params.client_application_id = self.paramClientApplicationId
           self.params.gene_set_id           = self.paramGeneSetId
           self.params.genes                 = self.paramGenes
+          self.params.variant_set_id        = self.paramVariantSetId
 
           if (self.params.analysis_id == 'undefined') {
             self.params.analysis_id = null;
@@ -908,8 +911,13 @@ export default {
       else if(self.customData){
         self.analysis = analysisData;
         self.idAnalysis = self.analysis.id;
-
-        self.analysis.payload.variants = [];
+        if(!self.importedCustomVariants){
+          self.analysis.payload.variants = [];
+        }
+        else {
+          self.analysis.payload.variants = self.importedCustomVariants;
+        }
+        // self.analysis.payload.variants = [];
         // Send message to set the data in the iobio apps
         for (var appName in self.apps) {
           let app = self.apps[appName];
@@ -2282,6 +2290,10 @@ export default {
       const txtBlob = new Blob([this.passcode], { type: "text/plain" });
       saveAs(txtBlob, "passcode-clin.txt");
 
+    },
+    setImportedVariants(variants){
+      this.importedCustomVariants = variants;
+      console.log("this.importedCustomVariants", this.importedCustomVariants);
     }
   }
 }
