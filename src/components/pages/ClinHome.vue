@@ -948,7 +948,7 @@ export default {
           self.params.analysis_id,
           self.workflow)
           .then(function() {
-            console.log("self.variantSet in if ", self.variantSet);
+            // console.log("self.variantSet in if ", self.variantSet);
             // Now import the variants from the variant set provided
             // when launching clin.iobio from Mosaic
             if (self.variantSet && self.variantSet.variants) {
@@ -1248,7 +1248,7 @@ export default {
             self.byPassedGenes.push(gene.toUpperCase());
           }
         })
-        
+        console.log("self.analysis", self.analysis);
         var msgObject = {
             type:                  'set-data',
             sender:                'clin.iobio',
@@ -1268,6 +1268,7 @@ export default {
             'gtrFullList':          self.analysis.payload.gtrFullList,
             'phenolyzerFullList':   self.analysis.payload.phenolyzerFullList,
             'buildName':            currentBuildName,
+            'variantSet':           self.variantSet  
         };
         if (self.paramGeneBatchSize && (appName == 'gene' || appName == 'genefull')) {
           msgObject.batchSize = +self.paramGeneBatchSize;
@@ -2348,8 +2349,37 @@ export default {
 
     },
     setImportedVariants(variants){
-      this.importedCustomVariants = variants;
-      console.log("this.importedCustomVariants", this.importedCustomVariants);
+      let self = this;
+      
+      let bypassedCount = 0;
+      // self.analysis.payload.variants = []; 
+      // self.analysis.payload.genes = [];
+      variants.forEach(function(variant) {
+        let importedVariant = {};
+        if (variant.gene && variant.gene.length > 0) {
+          importedVariant.gene  = variant.gene;
+          importedVariant.chrom = variant.chrom;
+          importedVariant.start = variant.start;
+          importedVariant.end   = variant.end;
+          importedVariant.ref   = variant.ref;
+          importedVariant.alt   = variant.alt;
+          importedVariant.filtersPassed    = variant.filtersPassed;
+          importedVariant.inheritance      = variant.inheritance;
+          importedVariant.afgnomAD         = variant.afgnomAD;
+          importedVariant.highestImpact    = variant.highestImpact;
+          importedVariant.consequence      = variant.consequence;
+          importedVariant.isImported       = true;
+          importedVariant.variantSet       = variant.filtersPassed;
+          console.log("importedVariant", importedVariant);
+          self.importedCustomVariants.push(importedVariant);
+          if (self.customGeneSet.indexOf(importedVariant.gene) < 0) {
+            self.customGeneSet.push(importedVariant.gene);
+          }
+        } 
+      })
+      // self.importedCustomVariants = variants;
+      console.log("self.customGeneSet", self.customGeneSet);
+      console.log("this.importedCustomVariants", self.importedCustomVariants);
     }
   }
 }
