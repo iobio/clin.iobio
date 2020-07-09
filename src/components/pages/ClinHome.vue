@@ -578,6 +578,7 @@ export default {
       byPassedGenesDialog: false,
       importedCustomVariants: [],
       sampleId: null,
+      variantsCount: 0
     }
 
   },
@@ -1345,6 +1346,7 @@ export default {
       } else if (messageObject.type == "save-analysis") {
           this.analysis.payload.filters  = messageObject.analysis.payload.filters;
           this.analysis.payload.variants = messageObject.analysis.payload.variants;
+          this.variantsCount = messageObject.analysis.payload.variantCount
           this.organizeVariantsByInterpretation();
           this.setVariantTaskBadges();
           this.promiseAutosaveAnalysis({notify: true})
@@ -1450,7 +1452,9 @@ export default {
                 if(JSON.stringify(self.analysis.payload.variants[0]) === '{}'){
                   self.analysis.payload.variants.shift();
                 }
-                let fullAnalysisCount = self.analysis.payload.variants.length;
+                // let fullAnalysisCount = self.analysis.payload.variants.length;
+                let fullAnalysisCount = self.variantsCount;
+
                 if (fullAnalysisCount > 0) {
                   task.badges = [{count: fullAnalysisCount, label: 'variants'}];
                 } else {
@@ -2370,16 +2374,12 @@ export default {
           importedVariant.consequence      = variant.consequence;
           importedVariant.isImported       = true;
           importedVariant.variantSet       = variant.filtersPassed;
-          console.log("importedVariant", importedVariant);
           self.importedCustomVariants.push(importedVariant);
           if (self.customGeneSet.indexOf(importedVariant.gene) < 0) {
             self.customGeneSet.push(importedVariant.gene);
           }
         } 
       })
-      // self.importedCustomVariants = variants;
-      console.log("self.customGeneSet", self.customGeneSet);
-      console.log("this.importedCustomVariants", self.importedCustomVariants);
     }
   }
 }
