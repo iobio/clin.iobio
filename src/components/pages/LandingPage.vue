@@ -512,7 +512,8 @@
             <v-spacer></v-spacer>
             <v-btn color="primary" @click="backToFiles" text>Back</v-btn>
             <!-- <v-btn color="primary" @click="addGeneSet" :disabled="genes.length<3">Next</v-btn> -->
-            <v-btn color="primary" @click="addGeneSet" >Next</v-btn>
+            <v-btn color="primary" v-if="!importedVariants.length" :disabled="genes.length<3" @click="addGeneSet" >Next</v-btn>
+            <v-btn color="primary" v-if="importedVariants.length" @click="addVariantSet" >Next</v-btn>
 
           </v-card-actions>
 
@@ -717,6 +718,11 @@ export default {
       }
       // this.geneSet = this.genes.split(",").map(gene => gene.trim().toUpperCase());
       this.$emit('setGeneSet', this.geneSet)
+      this.getStarted();
+    },
+    addVariantSet: function(){
+      this.pageCounter = 1;
+      this.geneSetDiialog = false;
       this.getStarted();
     },
     onLoadInputConfig: function(){
