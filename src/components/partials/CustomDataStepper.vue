@@ -14,7 +14,7 @@
 
         <v-divider></v-divider>
 
-        <v-stepper-step step="4" :complete="pageCounter > 4"  >Gene/ Variant sets</v-stepper-step>
+        <v-stepper-step step="4" :complete="pageCounter > 4"  >Gene sets / Variants</v-stepper-step>
       </v-stepper-header>
     </v-stepper>
   </div>

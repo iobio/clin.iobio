@@ -2,7 +2,7 @@
   <div>
     <v-file-input 
       accept=".csv" 
-      label="Import variants" 
+      label="Import variants (.csv)" 
       v-model="variantsData" 
       @change="loadVariants"
       show-size counter
