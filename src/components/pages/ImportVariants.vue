@@ -5,7 +5,8 @@
       label="Import variants" 
       v-model="variantsData" 
       @change="loadVariants"
-      show-size counter>
+      show-size counter
+      :disabled="genes.length>2">
       <template v-slot:selection="{ text }">
         <v-chip
           label
@@ -23,6 +24,9 @@ import VariantImporter from '../../models/VariantImporter'
 
   export default {
     name: 'import-variants',
+    props: {
+      genes: null,
+    },
     data(){
       return {
         variantsData: null,

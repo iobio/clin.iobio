@@ -480,7 +480,7 @@
             :pageCounter="pageCounter">
           </CustomDataStepper>
           <v-card-title class="headline">
-            Gene sets
+            Gene/ Variant sets
             <v-spacer></v-spacer>
             <span>
               <v-btn text icon @click="closeUploadDataDialogs"><v-icon>close</v-icon></v-btn>
@@ -493,10 +493,12 @@
                 name="input-7-4"
                 label="Enter Genes"
                 v-model="genes"
+                :disabled="importedVariants.length>0"
               ></v-textarea>
               <v-spacer></v-spacer>
               <ImportVariants
-                @load-variants="loadImportedVariants($event)">
+                @load-variants="loadImportedVariants($event)"
+                :genes="genes">
               </ImportVariants>
             </v-col>
           <v-card-actions>
