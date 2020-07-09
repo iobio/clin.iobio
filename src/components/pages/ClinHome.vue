@@ -1346,7 +1346,7 @@ export default {
       } else if (messageObject.type == "save-analysis") {
           this.analysis.payload.filters  = messageObject.analysis.payload.filters;
           this.analysis.payload.variants = messageObject.analysis.payload.variants;
-          this.variantsCount = messageObject.analysis.payload.variantCount
+          // this.variantsCount = messageObject.analysis.payload.variantCount
           this.organizeVariantsByInterpretation();
           this.setVariantTaskBadges();
           this.promiseAutosaveAnalysis({notify: true})
@@ -1356,6 +1356,9 @@ export default {
           .catch(function(error) {
 
           })
+      } else if (messageObject.type == "update-variant-count"){
+        this.variantsCount = messageObject.variantCount;
+        this.setVariantTaskBadges();
       }
 
 
