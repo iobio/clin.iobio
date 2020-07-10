@@ -240,7 +240,9 @@
                     <span> <a href="https://drive.google.com/file/d/1bKaY-TzNTOSbW6MDWJyEnurPbpHc80VA/view?usp=sharing" target="_blank"> Example </a> </span> | 
                     <span> <a href="https://drive.google.com/file/d/1m0wRDNrqBGHeSLYmYrQknS6XIKpw6Cry/view?usp=sharing" target="_blank"> Template </a> </span>
                   </center>
+                  <br>
                   <v-divider></v-divider>
+                  <br>
                     <v-textarea
                       auto-grow rows="1"
                       name="input-7-4"
@@ -248,7 +250,7 @@
                       label="Enter genes"
                       prepend-icon="fas fa-dna"
                       v-model="genes"
-                      :disabled="savedInputConfig!==null"
+                      :disabled="savedInputConfig!==null || importedVariants.length>0"
                     ></v-textarea>
                     
                     <v-spacer></v-spacer>
@@ -514,7 +516,7 @@
               </ImportVariants>
             </v-col>
           <v-card-actions>
-            <v-tooltip top>
+            <!-- <v-tooltip top>
               <template v-slot:activator="{ on }">
                 <v-btn :disabled="genes.length<3" v-on="on" color="primary" @click="saveAsConfig" outlined>
                   <v-icon>save</v-icon>
@@ -522,7 +524,7 @@
                 </v-btn>
               </template>
               <span>Download the entered information in a config file for easier accees in future</span>
-            </v-tooltip>
+            </v-tooltip> -->
             <v-spacer></v-spacer>
             <v-btn color="primary" @click="backToFiles" text>Back</v-btn>
             <!-- <v-btn color="primary" @click="addGeneSet" :disabled="genes.length<3">Next</v-btn> -->
