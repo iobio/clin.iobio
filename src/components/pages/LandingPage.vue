@@ -193,6 +193,22 @@
       >
         <v-card class="full-width" style="height: auto;overflow-y:scroll">
           <v-card-title primary-title>
+            <strong>
+              Input configuration
+              <span>
+                <v-tooltip top>
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-icon
+                      color="grey"
+                      dark
+                      v-bind="attrs"
+                      v-on="on"
+                    >help</v-icon>
+                  </template>
+                  <span>Import a configuration file</span>
+                </v-tooltip>
+              </span>
+            </strong>
             <v-spacer></v-spacer>
             <span>
               <v-btn text icon @click="importConfigurationDialog=false"><v-icon>close</v-icon></v-btn>
@@ -200,32 +216,15 @@
           </v-card-title>
           <v-card-text>
             <div class="container">
-              <strong>
-                Input configuration
-                <span>
-                  <v-tooltip top>
-                    <template v-slot:activator="{ on, attrs }">
-                      <v-icon
-                        color="grey"
-                        dark
-                        v-bind="attrs"
-                        v-on="on"
-                      >help</v-icon>
-                    </template>
-                    <span>Import a configuration file</span>
-                  </v-tooltip>
-
-                </span>
-
-              </strong><br><br>
-              <v-card>
+              <!-- <v-card> -->
                 <v-card-text>
                   <v-file-input
                     @change="onInputConfig"
                     accept=".csv"
-                    label="Data input configuration"
+                    label="Data input configuration (.csv)"
                     v-model="dataInputConfig"
                     :disabled="savedInputConfig!==null"
+                    prepend-icon="fas fa-file-upload"
                     show-size counter>
                     <template v-slot:selection="{ text }">
                       <v-chip
@@ -241,20 +240,29 @@
                     <span> <a href="https://drive.google.com/file/d/1bKaY-TzNTOSbW6MDWJyEnurPbpHc80VA/view?usp=sharing" target="_blank"> Example </a> </span> | 
                     <span> <a href="https://drive.google.com/file/d/1m0wRDNrqBGHeSLYmYrQknS6XIKpw6Cry/view?usp=sharing" target="_blank"> Template </a> </span>
                   </center>
-                  
+                  <v-divider></v-divider>
                     <v-textarea
-                      solo
                       auto-grow rows="1"
                       name="input-7-4"
                       class="mt-2"
-                      label="Enter Genes"
+                      label="Enter genes"
+                      prepend-icon="fas fa-dna"
                       v-model="genes"
                       :disabled="savedInputConfig!==null"
                     ></v-textarea>
+                    
+                    <v-spacer></v-spacer>
+                    <center>OR </center>
+                    <v-spacer></v-spacer>
+
+                    <ImportVariants
+                      @load-variants="loadImportedVariants($event)"
+                      :genes="genes">
+                    </ImportVariants>
                 </v-card-text>
-              </v-card>
+              <!-- </v-card> -->
               <br>
-              <v-divider></v-divider>
+              <!-- <v-divider></v-divider>
               <br>
               <strong> 
                 Saved input
@@ -293,14 +301,14 @@
                     </template>
                   </v-file-input>
                 </v-card-text>
-              </v-card>
+              </v-card> -->
             </div>
           </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
             <v-btn color="primary" @click="importConfigurationDialog=false" text>Close</v-btn>
             <v-btn color="primary" v-if="savedInputConfig" @click="loadFromSavedConfigInput" :disabled="!validateSavedConfig && savedInputConfig==null">Load</v-btn>
-            <v-btn color="primary" v-if="savedInputConfig===null" @click="onLoadInputConfig" :disabled="dataInputConfig==null || genes.length<3">Load</v-btn>
+            <v-btn color="primary" v-if="savedInputConfig===null" @click="onLoadInputConfig" :disabled="dataInputConfig==null || (genes.length<3 && importedVariants.length==0)">Load</v-btn>
 
           </v-card-actions>
         </v-card>
@@ -489,11 +497,12 @@
           <v-card-text>
             <v-col cols="12" md="12">
               <v-textarea
-                solo auto-grow
+                auto-grow
                 rows="1"
                 name="input-7-4"
-                label="Enter genes"
+                label=" Enter genes"
                 v-model="genes"
+                prepend-icon="fas fa-dna"
                 :disabled="importedVariants.length>0"
               ></v-textarea>
               <br>
@@ -732,8 +741,10 @@ export default {
     },
     onLoadInputConfig: function(){
       this.importConfigurationDialog = false;
-      this.geneSet = this.genes.split(",").map(gene => gene.trim().toUpperCase());
-      this.$emit('setGeneSet', this.geneSet)
+      if(this.genes.length){
+        this.geneSet = this.genes.split(",").map(gene => gene.trim().toUpperCase());
+        this.$emit('setGeneSet', this.geneSet)
+      }
       this.getStarted();
     },
     backToFiles: function(){
@@ -965,6 +976,8 @@ export default {
     loadImportedVariants(variants){
       this.$emit("set-imported-variants", variants);
       this.importedVariants = variants;
+      console.log("importedVariants", this.importedVariants);
+
       this.geneSet = [];
       variants.map( variant => {
         // this.geneSet.push(variant.gene)

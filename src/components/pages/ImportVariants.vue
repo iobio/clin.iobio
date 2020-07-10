@@ -2,10 +2,11 @@
   <div>
     <v-file-input 
       accept=".csv" 
-      label="Import variants (.csv)" 
+      label="  Import variants (.csv)" 
       v-model="variantsData" 
       @change="loadVariants"
       show-size counter
+      prepend-icon="fas fa-upload"
       :disabled="genes.length>2">
       <template v-slot:selection="{ text }">
         <v-chip
