@@ -430,7 +430,7 @@
       <!-- End caseDescriptionDialog -->
 
       <!-- Pedigree upload dialog -->
-      <v-dialog v-model="pedigreeUploadDialog" v-if="pageCounter===2" persistent max-width="890">
+      <v-dialog v-model="pedigreeUploadDialog" v-show="pageCounter===2" persistent max-width="890">
         <v-card class="full-width" style="height: auto;overflow-y:scroll">
           <CustomDataStepper
             :pageCounter="pageCounter">
