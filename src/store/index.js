@@ -16,7 +16,8 @@ export default new Vuex.Store({
     custom_model_infos: [],
     custom_gene_set: [],
     custom_case_Summary: {},
-    build_name: 'GRCh37'
+    build_name: 'GRCh37',
+    imported_variants: [],
   },
   getters: {
     allAnalysis: state => state.analysis,
@@ -30,6 +31,7 @@ export default new Vuex.Store({
     getGeneSet: state => state.custom_gene_set,
     getCaseSummary: state => state.custom_case_Summary,
     getBuildName: state => state.build_name,
+    getImportedVariants: state => state.imported_variants,
   },
   actions: {
     fetchAnalysis({ commit }){
@@ -67,7 +69,10 @@ export default new Vuex.Store({
     },
     setBuildName({commit}, build){
       commit('SET_BUILD_NAME', build)
-    }
+    },
+    setImportedVariantSets({commit}, variants){
+      commit('SET_IMPORTED_VARIANTS', variants)
+    },
   },
   mutations: {
     GET_ANALYSIS: (state) => state.analysis,
@@ -82,6 +87,7 @@ export default new Vuex.Store({
     SET_GENE_SET: (state, geneSet) => state.custom_gene_set = geneSet,
     SET_CASE_SUMMARY: (state, caseSummary) => state.custom_case_Summary = caseSummary,
     SET_BUILD_NAME: (state, build) => state.build_name = build,
+    SET_IMPORTED_VARIANTS: (state, variants) => state.imported_variants = variants,
 
   },
   modules: {

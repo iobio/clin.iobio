@@ -715,7 +715,7 @@ export default {
   },
 
   methods: {
-    ...mapActions(['updateAnalysis', 'setModelInfos', 'setCustomGeneSet', 'setCaseSummary', 'setBuildName']),
+    ...mapActions(['updateAnalysis', 'setModelInfos', 'setCustomGeneSet', 'setCaseSummary', 'setBuildName', 'setImportedVariantSets']),
     
     init: function() {
       let self = this;
@@ -2383,6 +2383,8 @@ export default {
           }
         } 
       })
+      self.setImportedVariantSets(self.importedCustomVariants);
+      self.setCustomGeneSet(self.customGeneSet);
     }
   }
 }

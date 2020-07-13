@@ -40,6 +40,7 @@ import VariantImporter from '../../models/VariantImporter'
         if(this.variantsData){
           reader.readAsText(this.variantsData);
           reader.onload = () => {
+            console.log("reader.result", reader.result);
             this.importRecords = VariantImporter.parseRecordsCSV(reader.result);
             this.$emit("load-variants", this.importRecords);
           }
