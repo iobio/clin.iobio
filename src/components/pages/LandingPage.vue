@@ -44,11 +44,11 @@
                       <br>
                       <v-btn color="white" outlined x-large @click="getStarted" class="mt-8">
                         <v-icon>explore</v-icon>
-                        <span class="ml-2">RUN WITH DEMO DATA</span>
+                        <span class="ml-2">Run with demo data</span>
                       </v-btn>
                       <v-btn color="white" outlined x-large @click="inputOptionsDialog=true" class="mt-8 ml-4">
                         <v-icon>fas fa-upload</v-icon>
-                        <span class="ml-2">LOAD YOUR DATA</span>
+                        <span class="ml-2">Load your data</span>
                       </v-btn>
                     </v-flex>
                   </v-flex>
@@ -166,17 +166,17 @@
             <div class="container">
               <v-btn color="primary" block outlined x-large @click="onShowFiles">
                 <v-icon>input</v-icon>
-                <span class="ml-2">ENTER YOUR DATA</span>
+                <span class="ml-2">Enter your data</span>
               </v-btn>
               <v-divider></v-divider>
               <v-btn color="primary" block outlined x-large @click="importConfiguration">
                 <v-icon>folder_open</v-icon>
-                <span class="ml-2">UPLOAD CONFIGURATION FILE</span>
+                <span class="ml-2">Upload configuration file</span>
               </v-btn>
               <v-divider></v-divider>
               <v-btn color="primary" block outlined x-large @click="importSavedAnalysis">
                 <v-icon>publish</v-icon>
-                <span class="ml-2">IMPORT SAVED ANALYSIS</span>
+                <span class="ml-2">Import saved analysis</span>
               </v-btn>
             </div>
           </v-card-text>
@@ -402,7 +402,7 @@
               <label>Project Name </label>
               <v-text-field
                 label="Solo"
-                placeholder="WGS analysis"
+                placeholder="Provide project name here..."
                 solo
                 v-model="caseTitle"
               ></v-text-field>
@@ -411,7 +411,7 @@
               <v-textarea
                 solo auto-grow
                 name="input-7-4"
-                label="The data set (NA12878) is high quality exome sequencing data from three individuals"
+                label="Provide project description here.."
                 v-model="caseDescription"
               ></v-textarea>
               <!-- <br>
