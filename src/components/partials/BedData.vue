@@ -21,11 +21,10 @@
           v-if="dataTypeSelectedName==='Genome'"
           v-model="toggle_bed_selection_genome"
           mandatory
-          dense
-          color="primary"
-          group
+          dense rounded
+          color="primary" light
         >
-          <v-btn  v-for="(bed, idx) in bedFile_type_genome">
+          <v-btn color="white" v-for="(bed, idx) in bedFile_type_genome">
             {{ bed }}
           </v-btn>
         </v-btn-toggle>
@@ -34,11 +33,10 @@
           v-if="dataTypeSelectedName==='Exome'"
           v-model="toggle_bed_selection_exome"
           mandatory
-          dense
-          color="primary"
-          group
+          dense rounded
+          color="primary" light
         >
-          <v-btn v-for="(bed, idx) in bedFile_type_exome">
+          <v-btn color="white" v-for="(bed, idx) in bedFile_type_exome">
             {{ bed }}
           </v-btn>
         </v-btn-toggle>
