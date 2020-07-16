@@ -218,6 +218,12 @@
             <div class="container">
               <!-- <v-card> -->
                 <v-card-text>
+                  <div class="mb-3" v-if="validationErrors.length">
+                    <ValidationErrors
+                      :validationErrors="validationErrors">
+                    </ValidationErrors>
+                    <br>
+                  </div>
                   <v-file-input
                     @change="onInputConfig"
                     accept=".csv"
@@ -570,6 +576,7 @@ import review_variants_img    from '../../assets/images/landing_page/review_case
 import findings_img           from '../../assets/images/landing_page/findings.png'
 import FilesDialog            from '../partials/FilesDialog.vue'
 import CustomDataStepper      from '../partials/CustomDataStepper.vue'
+import ValidationErrors       from '../partials/ValidationErrors.vue'
 
 import { mapGetters, mapActions } from 'vuex'
 
@@ -591,7 +598,8 @@ export default {
     PedFileReader,
     CustomDataStepper,
     PedFileUrlInput,
-    ImportVariants
+    ImportVariants,
+    ValidationErrors
   },
   props: {
     cohortModel: null,
@@ -674,7 +682,8 @@ export default {
       passCode: '',
       passcodeIncorrectAlert: false,
       dataInputConfig: null,
-      importedVariants: []
+      importedVariants: [],
+      validationErrors: [],
     }
   },
   computed: mapGetters(['allAnalysis']),
@@ -872,7 +881,7 @@ export default {
     },
     validateInputConfig(data){
       let obj = {
-        ID: true, SAMPLE_ID: true, PATERNAL_ID: true,  MATERNAL_ID:true, SEX:true,
+        ID:true, SAMPLE_ID: true, PATERNAL_ID: true,  MATERNAL_ID:true, SEX:true,
         AFFECTED_STATUS:true, RELATION: true, VCF_URL: true, TBI_URL: true, 
         BAM_URL:true, BAI_URL:true, BED_URL: true, BUILD: true
       }
@@ -890,6 +899,7 @@ export default {
     onInputConfig(ev) {
       var reader = new FileReader();
       if(this.dataInputConfig){
+        this.validationErrors = [];
         this.savedInputConfig = null;
         reader.readAsText(this.dataInputConfig);
         reader.onload = () => {
@@ -941,7 +951,8 @@ export default {
             this.$emit('setBuildForCustomData', buildName);
           }
           else {
-            alert("Headers do not match with the specified file format.");
+            this.validationErrors.push("Headers do not match with the specified file format. Please check the configuration file and try again.")
+            // alert("Headers do not match with the specified file format.");
             this.dataInputConfig = null;
           }
 
