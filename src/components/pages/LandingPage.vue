@@ -265,6 +265,7 @@
 
                     <ImportVariants
                       @load-variants="loadImportedVariants($event)"
+                      @imported-variants-validation-errors="importedVariantsValidationErrors"
                       :genes="genes">
                     </ImportVariants>
                 </v-card-text>
@@ -504,6 +505,12 @@
           </v-card-title>
           <v-card-text>
             <v-col cols="12" md="12">
+              <div class="mb-3" v-if="validationErrors.length">
+                <ValidationErrors
+                  :validationErrors="validationErrors">
+                </ValidationErrors>
+                <br>
+              </div>
               <v-textarea
                 auto-grow
                 rows="1"
@@ -518,6 +525,7 @@
               <br>
               <ImportVariants
                 @load-variants="loadImportedVariants($event)"
+                @imported-variants-validation-errors="importedVariantsValidationErrors"
                 :genes="genes">
               </ImportVariants>
             </v-col>
@@ -1011,6 +1019,9 @@ export default {
       this.$emit("setBuildForCustomData", buildName)
     },
     loadImportedVariants(variants){
+      if (variants.length) {
+        this.validationErrors = [];
+      }
       this.$emit("set-imported-variants", variants);
       this.importedVariants = variants;
       console.log("importedVariants", this.importedVariants);
@@ -1019,6 +1030,10 @@ export default {
       variants.map( variant => {
         // this.geneSet.push(variant.gene)
       })
+    },
+    importedVariantsValidationErrors(){
+      this.validationErrors = [];
+      this.validationErrors.push("Headers do not match for the imported variants. Please check the input file and try again")
     }
   },
   mounted: function() {
