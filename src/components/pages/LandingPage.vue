@@ -870,6 +870,23 @@ export default {
         this.validateSavedConfig = false;
       }
     },
+    validateInputConfig(data){
+      let obj = {
+        ID: true, SAMPLE_ID: true, PATERNAL_ID: true,  MATERNAL_ID:true, SEX:true,
+        AFFECTED_STATUS:true, RELATION: true, VCF_URL: true, TBI_URL: true, 
+        BAM_URL:true, BAI_URL:true, BED_URL: true, BUILD: true
+      }
+      let bool = true;
+      let lines = data.split('\n');
+      let firstLine = lines[0].trim().split(/\s+|\,/g);
+      for(let i=0; i<firstLine.length; i++){
+        if(!obj.hasOwnProperty(firstLine[i])){
+          bool = false; 
+          break;
+        }
+      }
+      return bool;
+    },
     onInputConfig(ev) {
       var reader = new FileReader();
       if(this.dataInputConfig){
@@ -896,31 +913,38 @@ export default {
             "-9": false
           }
           
-          for (var i = 0; i < newLine.length; i++) {
-            var pedLines = newLine[i].split(/\s+|\,/g).slice(0,6);
-            pedData.push(pedLines.join(' '));
-            
-            var modelInfoLines = newLine[i].split(/\s+|\,/g).slice();
-            if(i!==0){
-              modelInfoLines[4] = sexMap[modelInfoLines[4]]; 
-              modelInfoLines[5] = statusMap[modelInfoLines[5]];
+          if(this.validateInputConfig(data)){
+            for (var i = 0; i < newLine.length; i++) {
+              var pedLines = newLine[i].split(/\s+|\,/g).slice(0,6);
+              pedData.push(pedLines.join(' '));
+              
+              var modelInfoLines = newLine[i].split(/\s+|\,/g).slice();
+              if(i!==0){
+                modelInfoLines[4] = sexMap[modelInfoLines[4]]; 
+                modelInfoLines[5] = statusMap[modelInfoLines[5]];
+              }
+              modelInfoData.push(modelInfoLines);
             }
-            modelInfoData.push(modelInfoLines);
+            modelInfoData.shift();
+            let pedFile = pedData.join('\n');
+            let bedFile = modelInfoData[0][11]; 
+            if(bedFile !== ''){
+              bedFileUrl = bedFile;
+            }
+            let build = modelInfoData[0][12].trim();;
+            if(build !== ''){
+              buildName = build;
+            }
+            this.formatCustomModelInfo(modelInfoData);
+            this.$emit("setBedFileUrl", bedFileUrl);
+            this.$emit("set-ped-data", pedFile);
+            this.$emit('setBuildForCustomData', buildName);
           }
-          modelInfoData.shift();
-          let pedFile = pedData.join('\n');
-          let bedFile = modelInfoData[0][11]; 
-          if(bedFile !== ''){
-            bedFileUrl = bedFile;
+          else {
+            alert("Headers do not match with the specified file format.");
+            this.dataInputConfig = null;
           }
-          let build = modelInfoData[0][12].trim();;
-          if(build !== ''){
-            buildName = build;
-          }
-          this.formatCustomModelInfo(modelInfoData);
-          this.$emit("setBedFileUrl", bedFileUrl);
-          this.$emit("set-ped-data", pedFile);
-          this.$emit('setBuildForCustomData', buildName);
+
         }
       }
     },
