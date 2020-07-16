@@ -104,7 +104,10 @@
             <!-- </v-layout> -->
             <v-flex v-if="validationErrors.length">
               Please correct the following errors:
-              <div v-for="(error, idx) in validationErrors" >
+              <ValidationErrors
+                :validationErrors="validationErrors">
+              </ValidationErrors>
+              <!-- <div v-for="(error, idx) in validationErrors" >
                 <v-alert
                   border="left"
                   colored-border
@@ -116,7 +119,7 @@
                 >
                   {{ error }}
                 </v-alert>
-              </div>
+              </div> -->
               <br>
             </v-flex>
 
@@ -267,6 +270,8 @@
 import SampleData          from '../partials/SampleData.vue'
 import CustomDataStepper   from '../partials/CustomDataStepper.vue'
 import BedData             from '../partials/BedData.vue'
+import ValidationErrors    from '../partials/ValidationErrors.vue'
+
 import { bus }             from  '../../main'
 
 export default {
@@ -274,7 +279,8 @@ export default {
   components: {
     SampleData,
     CustomDataStepper,
-    BedData
+    BedData,
+    ValidationErrors
   },
   props: {
     cohortModel: null,
