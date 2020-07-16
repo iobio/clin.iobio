@@ -876,7 +876,7 @@ export default {
         this.savedInputConfig = null;
         reader.readAsText(this.dataInputConfig);
         reader.onload = () => {
-          let data = reader.result;
+          let data = reader.result.trim();
           console.log("data in input config", data);
           let newLine = data.split('\n');
           let pedData = [];
@@ -897,10 +897,10 @@ export default {
           }
           
           for (var i = 0; i < newLine.length; i++) {
-            var pedLines = newLine[i].split(',').slice(0,6);
+            var pedLines = newLine[i].split(/\s+|\,/g).slice(0,6);
             pedData.push(pedLines.join(' '));
             
-            var modelInfoLines = newLine[i].split(',').slice();
+            var modelInfoLines = newLine[i].split(/\s+|\,/g).slice();
             if(i!==0){
               modelInfoLines[4] = sexMap[modelInfoLines[4]]; 
               modelInfoLines[5] = statusMap[modelInfoLines[5]];
