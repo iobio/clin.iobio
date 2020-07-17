@@ -172,15 +172,9 @@
     </div>
     <div v-if="customData && !coverageStatsReceived">
       <center>
-        <br>
-        <v-progress-linear
-          color="primary"
-          indeterminate
-          rounded
-          height="6"
-        ></v-progress-linear>
-        <br>
-        <i> Loading stats ... </i>
+        <SkeletonLoadersReview :rowsLength="modelInfos.length">
+        </SkeletonLoadersReview>
+
 
       </center>
     </div>
@@ -251,6 +245,7 @@ import BoxPlot from './BoxPlot'
 import AppIcon       from '../partials/AppIcon.vue';
 import QualitativeBarChart from './QualitativeBarChart.vue'
 import BarChart from './BarChart.vue'
+import SkeletonLoadersReview from '../partials/SkeletonLoadersReview.vue'
 
 import { Bam } from './bam.iobio.js';
 import Vue from 'vue';
@@ -269,7 +264,8 @@ export default {
     BarChart,
     PedigreeGraph,
     AppIcon,
-    BoxPlot
+    BoxPlot,
+    SkeletonLoadersReview
   },
   props: {
     workflow:    null,

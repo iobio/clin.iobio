@@ -585,6 +585,7 @@ import findings_img           from '../../assets/images/landing_page/findings.pn
 import FilesDialog            from '../partials/FilesDialog.vue'
 import CustomDataStepper      from '../partials/CustomDataStepper.vue'
 import ValidationErrors       from '../partials/ValidationErrors.vue'
+import SkeletonLoadersReview  from '../partials/SkeletonLoadersReview.vue'
 
 import { mapGetters, mapActions } from 'vuex'
 
@@ -607,7 +608,8 @@ export default {
     CustomDataStepper,
     PedFileUrlInput,
     ImportVariants,
-    ValidationErrors
+    ValidationErrors,
+    SkeletonLoadersReview
   },
   props: {
     cohortModel: null,
