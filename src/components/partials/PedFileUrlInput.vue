@@ -31,6 +31,11 @@
         var regex = new RegExp(expression);
         return url.match(regex); 
       },
+      validatePedInput(data){
+        let lines = data.split('\n');
+        let firstLine = lines[0].trim().split(/\s+|\,/g);
+        return firstLine.length >= 6; 
+      },
       onPedUrlChange: _.debounce(function (url) {
         if(url && url.length > 0 && this.isValidUrl(url)){
           fetch(url)
@@ -44,7 +49,14 @@
             })
              .then(ped => {
                this.pedData = ped;
-               this.$emit("on-ped-url-change", this.pedData);
+               if(this.validatePedInput(this.pedData)){
+                 this.$emit("on-ped-url-change", this.pedData);
+               }
+               else{
+                 this.$emit("ped-input-validation-errors");
+                 this.pedData = null;
+                 this.pedUrl = '';
+               }
                // this.buildPedFromTxt(this.pedData);
              })
              .catch(error => console.log(error))

@@ -465,7 +465,10 @@
               <br>
               <center>OR </center>
               <br>
-              <PedFileUrlInput @on-ped-url-change="onPedUrlChange($event)"></PedFileUrlInput>
+              <PedFileUrlInput 
+                @on-ped-url-change="onPedUrlChange($event)"
+                @ped-input-validation-errors="pedInputValidationErrors">
+              </PedFileUrlInput>
             </v-col>
           <v-card-actions>
             <v-spacer></v-spacer>
@@ -797,6 +800,7 @@ export default {
     onPedUrlChange(ped){
       this.pedData = ped;
       if(this.pedData){
+        this.validationErrors = [];
         this.buildPedFromTxt(this.pedData);  
       }
     },
