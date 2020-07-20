@@ -764,7 +764,8 @@ export default {
       this.pageCounter = 1;
       this.geneSetDiialog = false;
       if(this.genes.length){ //temp, if variant sets are selected
-        this.geneSet = this.genes.split(",").map(gene => gene.trim().toUpperCase());
+        this.geneSet = this.genes.trim().split(",").filter(gene => gene.length > 0)
+          .map(gene => gene.trim().toUpperCase());
       }
       // this.geneSet = this.genes.split(",").map(gene => gene.trim().toUpperCase());
       this.$emit('setGeneSet', this.geneSet)
@@ -778,9 +779,14 @@ export default {
     onLoadInputConfig: function(){
       this.importConfigurationDialog = false;
       if(this.genes.length){
-        this.geneSet = this.genes.split(",").map(gene => gene.trim().toUpperCase());
+        this.geneSet = this.genes.trim().split(",").filter(gene => gene.length > 0)
+          .map(gene => gene.trim().toUpperCase());
         this.$emit('setGeneSet', this.geneSet)
       }
+      this.$emit("set-custom-case-summary", {
+        name: this.caseTitle,
+        description: this.caseDescription
+      })
       this.getStarted();
     },
     backToFiles: function(){
@@ -790,7 +796,6 @@ export default {
       bus.$emit("back-to-files")
     },
     uploadedPedTxt(ped){
-      console.log("peed", ped);
       this.pedData = ped;
       if(ped!==null){
         this.validationErrors = [];
