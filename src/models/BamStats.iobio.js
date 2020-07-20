@@ -51,7 +51,7 @@ class LineReader extends EventEmitter {
 }
 
 var outputObject = ""
-var Bam = Class.extend({
+var BamStats = Class.extend({
 
    init: function(backendSource, bamUri, options) {
       this.bamUri = bamUri;
@@ -438,4 +438,4 @@ var Bam = Class.extend({
    },
 });
 
-export { Bam };
+export { BamStats };

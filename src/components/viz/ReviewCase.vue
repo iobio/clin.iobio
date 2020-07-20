@@ -247,11 +247,12 @@ import QualitativeBarChart from './QualitativeBarChart.vue'
 import BarChart from './BarChart.vue'
 import SkeletonLoadersReview from '../partials/SkeletonLoadersReview.vue'
 
-import { Bam } from './bam.iobio.js';
 import Vue from 'vue';
 
 import Vcfiobio           from '../../models/Vcf.iobio'
 var vcfiobio = new Vcfiobio();
+
+import { BamStats } from '../../models/BamStats.iobio.js';
 
 import analysisData  from '../../data/analysis.json'
 
@@ -476,7 +477,7 @@ export default {
         // this.selectedBaiURL = undefined;
         let bam = {}
         if (selectedBamURL && selectedBamURL != '' ) {
-          bam = new Bam(this.backendSource, selectedBamURL, {
+          bam = new BamStats(this.backendSource, selectedBamURL, {
             bai: selectedBaiURL
           });
 

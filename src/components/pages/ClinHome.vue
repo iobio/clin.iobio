@@ -413,7 +413,6 @@ import { bus } from '../../main'
 
 import NewComponents from 'iobio-phenotype-extractor-vue';
 
-import { Bam } from './bam.iobio.js';
 import Vue from 'vue';
 
 import { mapGetters, mapActions } from 'vuex'

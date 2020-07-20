@@ -559,17 +559,23 @@
 
 <script>
 
-import phenotypeIcon    from '../partials/icons/phenotype-icon.vue'
-import caseIcon         from '../partials/icons/case-icon.vue'
-import findingsIcon     from '../partials/icons/findings-icon.vue'
-import variantsIcon     from '../partials/icons/variants-icon.vue'
-import { bus }          from '../../main'
-import LandingPageSlide from '../partials/LandingPageSlide.vue'
-import MoreMenu         from '../partials/MoreMenu.vue'
-import NavBarDialog     from '../partials/NavBarDialog.vue'
-import PedFileReader    from './PedFileReader.vue'
-import PedFileUrlInput  from  './PedFileUrlInput.vue'
-import ImportVariants   from  './ImportVariants.vue'
+import phenotypeIcon          from '../partials/icons/phenotype-icon.vue'
+import caseIcon               from '../partials/icons/case-icon.vue'
+import findingsIcon           from '../partials/icons/findings-icon.vue'
+import variantsIcon           from '../partials/icons/variants-icon.vue'
+import LandingPageSlide       from '../partials/LandingPageSlide.vue'
+import MoreMenu               from '../partials/MoreMenu.vue'
+import NavBarDialog           from '../partials/NavBarDialog.vue'
+import PedFileReader          from '../partials/PedFileReader.vue'
+import PedFileUrlInput        from  '../partials/PedFileUrlInput.vue'
+import FilesDialog            from '../partials/FilesDialog.vue'
+import CustomDataStepper      from '../partials/CustomDataStepper.vue'
+import ValidationErrors       from '../partials/ValidationErrors.vue'
+import SkeletonLoadersReview  from '../partials/SkeletonLoadersReview.vue'
+import ImportVariants         from  '../partials/ImportVariants.vue'
+
+import { bus }                from '../../main'
+
 import {
   Hooper,
   Slide,
@@ -582,10 +588,6 @@ import review_case_img        from '../../assets/images/landing_page/review_case
 import review_phenotypes_img  from '../../assets/images/landing_page/review_phenotypes.png'
 import review_variants_img    from '../../assets/images/landing_page/review_case.png'
 import findings_img           from '../../assets/images/landing_page/findings.png'
-import FilesDialog            from '../partials/FilesDialog.vue'
-import CustomDataStepper      from '../partials/CustomDataStepper.vue'
-import ValidationErrors       from '../partials/ValidationErrors.vue'
-import SkeletonLoadersReview  from '../partials/SkeletonLoadersReview.vue'
 
 import { mapGetters, mapActions } from 'vuex'
 
