@@ -451,7 +451,17 @@
           </v-card-title>
           <v-card-text>
             <v-col cols="12" md="12">
-              <PedFileReader class="uploader" @load-ped-file="uploadedPedTxt($event)"></PedFileReader>
+              <div class="mb-3" v-if="validationErrors.length">
+                <ValidationErrors
+                  :validationErrors="validationErrors">
+                </ValidationErrors>
+                <br>
+              </div>
+              <PedFileReader 
+                class="uploader" 
+                @load-ped-file="uploadedPedTxt($event)"
+                @ped-input-validation-errors="pedInputValidationErrors">
+              </PedFileReader>
               <br>
               <center>OR </center>
               <br>
@@ -779,7 +789,10 @@ export default {
     uploadedPedTxt(ped){
       console.log("peed", ped);
       this.pedData = ped;
-      this.buildPedFromTxt(this.pedData);
+      if(ped!==null){
+        this.validationErrors = [];
+        this.buildPedFromTxt(this.pedData);
+      }
     },
     onPedUrlChange(ped){
       this.pedData = ped;
@@ -1038,6 +1051,10 @@ export default {
     importedVariantsValidationErrors(){
       this.validationErrors = [];
       this.validationErrors.push("Headers do not match for the imported variants. Please check the input file and try again")
+    },
+    pedInputValidationErrors(){
+      this.validationErrors = [];
+      this.validationErrors.push("The file does not contain the number of mandatory columns. Please check the input file and try again")
     }
   },
   mounted: function() {

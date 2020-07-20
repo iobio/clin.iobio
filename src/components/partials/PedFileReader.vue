@@ -33,12 +33,23 @@
         if(this.pedData){
           reader.readAsText(this.pedData);
           reader.onload = () => {
-            this.$emit("load-ped-file", reader.result)
+            if(this.validatePedInput(reader.result)){
+              this.$emit("load-ped-file", reader.result)
+            }
+            else{
+              this.$emit("ped-input-validation-errors");
+              this.pedData = null;
+            }
           }
         }
         else {
           this.$emit("load-ped-file", this.pedData);
         }
+      },
+      validatePedInput(data){
+        let lines = data.split('\n');
+        let firstLine = lines[0].trim().split(/\s+|\,/g);
+        return firstLine.length >= 6; 
       }
     }
   };
