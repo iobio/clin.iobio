@@ -6,6 +6,11 @@
 
 @import ../../assets/sass/variables
 
+.configError
+  font-size: 16px
+
+.configTitle
+  font-size: 20px
 
 .v-snack--right
   margin-right: 350px !important
@@ -117,7 +122,9 @@ $horizontal-dashboard-height: 140px
   .container
     max-width: 1635px !important
 
-
+.i-passcode
+  letter-spacing: 4px
+  font-size: 42px
 
 </style>
 
@@ -125,12 +132,41 @@ $horizontal-dashboard-height: 140px
 
 <template>
 <div id="application-content" :class="{'workflow-new': newWorkflow ? true : false}">
-  <landing-page v-if="!launchedFromMosaic && showLandingPage"></landing-page>
+  <landing-page
+    v-if="!launchedFromMosaic && showLandingPage"
+    :cohortModel="cohortModel"
+    @custom-model-info="customModelInfo"
+    @setGeneSet="setGeneSet($event)"
+    @set-ped-data="setPedData($event)"
+    @set-custom-case-summary="setCustomCaseSummary($event)"
+    @load-saved-input-config="loadSavedInputConfig($event)"
+    @load-saved-analysis-custom-data="loadSavedAnalysisCustomData($event)"
+    @setBedFileUrl="setBedFileUrl($event)"
+    @setBuildForCustomData="setBuildForCustomData($event)"
+    @set-imported-variants="setImportedVariants($event)">
+  </landing-page>
+
+
+  <v-dialog  width="500"  v-model="showConfigError"  >
+    <v-card class="info-card full-width">
+      <v-card-title style="justify-content:space-between">
+        <span class="configTitle">{{ 'Error parsing config file'}}</span>
+        <v-btn  @click="onClose" text class="close-button">
+          <v-icon>close</v-icon>
+        </v-btn>
+      </v-card-title>
+      <div class="configError">
+        {{configMessage}}
+      </div>
+    </v-card>
+  </v-dialog>
+
   <navigation v-if="!showLandingPage && !showSplash && isAuthenticated  && workflow && analysis"
    :caseSummary="caseSummary"
    :analysis="analysis"
    :launchedFromMosaic="launchedFromMosaic"
-   @show-save-analysis="toggleSaveModal(true)">
+   @show-save-analysis="toggleSaveModal(true)"
+   :customData="customData">
   </navigation>
 
 
@@ -189,7 +225,10 @@ $horizontal-dashboard-height: 140px
         :coverageHistos="coverageHistos"
         :launchedFromMosaic="launchedFromMosaic"
         @update="updateReviewCaseBadges"
-        @updateCoverage="updateAverageCoverage">
+        @updateCoverage="updateAverageCoverage"
+        :customData=customData
+        :bedFileUrl="bedFileUrl"
+        :customSavedAnalysis="customSavedAnalysis">
         </review-case>
       </v-card>
 
@@ -277,6 +316,54 @@ $horizontal-dashboard-height: 140px
         text="Generating report..."
       >
       </LoadingDialog>
+      
+      <!-- Pass code dialog -->
+      <v-dialog
+        v-model="showPassCode"
+        :overlay="false"
+        max-width="450px" persistent
+      >
+        <v-card class="full-width" style="height: auto;overflow-y:scroll">
+          <v-card-title primary-title>
+            <v-spacer></v-spacer>
+            <span>
+              <v-btn text icon @click="showPassCode=false"><v-icon>close</v-icon></v-btn>
+            </span>
+          </v-card-title>
+          <v-card-text>
+            <div class="container">
+              The passcode for this saved analysis is: 
+              <br>
+              <center>
+                <span><h1 class="i-passcode">{{ passcode }}</h1></span>
+              </center>
+              <br>
+              This passcode will be required when uploading the saved analysis config file to resume this analysis.
+              Please make sure to write it down or <a @click="savePasscode">download </a> as it won't be show again.
+            </div>
+          </v-card-text>
+        </v-card>
+      </v-dialog>
+
+      <!-- end pass code dialog -->
+      
+      <!-- Bypassed genes dialog -->
+      <v-dialog v-model="byPassedGenesDialog" persistent max-width="450">
+        <v-card>
+          <v-card-title class="headline">Warning</v-card-title>
+          <v-card-text>
+            Bypassing unknown gene: 
+            <span v-for="gene in byPassedGenes" :key="gene"> {{ gene }}  </span>
+          </v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn style="float:right" @click.native="closeByPassedGenesDialog">
+              OK
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+      <!--End Bypassed genes dialog -->
 
 
     </div>
@@ -305,7 +392,14 @@ import LandingPage   from '../pages/LandingPage.vue'
 
 import MosaicSession from  '../../models/MosaicSession.js'
 import GenomeBuildHelper from '../../models/GenomeBuildHelper.js'
-
+import CohortModel       from '../../models/CohortModel'
+import FreebayesSettings from '../../models/FreebayesSettings'
+import Glyph              from '../../partials/Glyph.js'
+// import Bam                from  '../../models/Bam.iobio.js'
+import vcfiobio           from  '../../models/Vcf.iobio.js'
+import Translator         from  '../../models/Translator.js'
+import GenericAnnotation  from  '../../models/GenericAnnotation.js'
+import EndpointCmd        from  '../../models/EndpointCmd.js'
 
 import SaveAnalysisPopup  from '../partials/SaveAnalysisPopup.vue'
 
@@ -319,6 +413,9 @@ import { bus } from '../../main'
 
 import NewComponents from 'iobio-phenotype-extractor-vue';
 
+import Vue from 'vue';
+
+import { mapGetters, mapActions } from 'vuex'
 
 export default {
   name: 'home',
@@ -348,7 +445,8 @@ export default {
     paramClientApplicationId: null,
     paramBuild: null,
     paramGeneSetId:       null,
-    paramGenes:           null
+    paramGenes:           null,
+    paramVariantSetId:    null,
   },
   data() {
     let self = this;
@@ -388,7 +486,7 @@ export default {
       variantsByInterpretation: [],
 
       showFindings: false,
-      
+
       appUrls: {
         'localhost': {
           'gene':      'http://localhost:4026/?launchedFromClin=true&frame_source=' + window.document.URL,
@@ -415,6 +513,9 @@ export default {
       analysis: null,
       caseSummary: null,
       geneSet: null,
+      variantSet: null,
+      showConfigError: false,
+      configMessage: "",
 
 
       demoModelInfos:  [
@@ -448,7 +549,8 @@ export default {
       allVarCounts: null,
       coverageHistos: null,
       venn_diag_data: {},
-      geneToDelete: '', 
+      geneToDelete: '',
+      
 
 
       interpretationMap: {
@@ -461,6 +563,21 @@ export default {
       },
       reviewCaseBadges: null,
       generatingReport: false,
+      cohortModel: null,
+      customData: false,
+      customGeneSet: [],
+      bedFileUrl: '',
+      variantsAnalyzedCounted: 0,
+      customSavedAnalysis: false,
+      passcode: '',
+      showPassCode: false,
+      buildName: 'GRCh37',
+      knownGenesData: null,
+      byPassedGenes: [],
+      byPassedGenesDialog: false,
+      importedCustomVariants: [],
+      sampleId: null,
+      variantsCount: 0
     }
 
   },
@@ -473,19 +590,33 @@ export default {
 
   mounted: function() {
     this.init();
+    fetch('https://s3.amazonaws.com/ped.test.files/known_genes.txt')
+      .then( res => res.text())
+        .then( data => {
+          let lines = data.split('\n');
+          this.knownGenesData = data;
+        })
     bus.$on("getAnalysisObject", ()=>{
       this.generatePDF()
     })
     bus.$on("initialize-clin", ()=>{
+      // console.log(this.analysis);
       this.showLandingPage = false;
       this.showSplash = true;
       setTimeout(()=>{
         this.onAuthenticated();
       }, 2000)
     })
+    bus.$on("save-input-config", ()=>{
+      this.saveAsInputConfig();
+    })
+    bus.$on("save-analysis-object", () => {
+      this.saveAnalysisJson()
+    })
   },
 
   computed: {
+    ...mapGetters(['getPedigreeData', 'getPedigree', 'getVariantsCount', 'getCustomCoverage', 'getReviewCaseBadge', 'getVariantsByInterpretation', 'getModelInfos', 'getGeneSet', 'getCaseSummary', 'getBuildName']),
     phenotypeList: function() {
       let self = this;
       let phenotypeList = [];
@@ -537,6 +668,10 @@ export default {
           var appName = "genefull";
           var iframeSelector = self.apps[appName].iframeSelector;
 
+          if(self.byPassedGenes.length){
+            self.byPassedGenesDialog = true;
+          }
+          
           console.log("Sending genesReport to gene.iobio")
 
           var theObject = {
@@ -579,7 +714,8 @@ export default {
   },
 
   methods: {
-
+    ...mapActions(['updateAnalysis', 'setModelInfos', 'setCustomGeneSet', 'setCaseSummary', 'setBuildName', 'setImportedVariantSets']),
+    
     init: function() {
       let self = this;
       var appTarget = null;
@@ -611,6 +747,39 @@ export default {
           self.genomeBuildHelper.setCurrentBuild("GRCh37")
         }
 
+        let glyph = new Glyph();
+        let translator = new Translator(self.globalApp, glyph);
+        let genericAnnotation = new GenericAnnotation(glyph);
+
+        // self.geneModel = new GeneModel(self.globalApp, self.forceLocalStorage, self.launchedFromHub);
+        // self.geneModel.geneSource = self.forMyGene2 ? "refseq" : "gencode";
+        // self.geneModel.genomeBuildHelper = self.genomeBuildHelper;
+        // self.geneModel.setAllKnownGenes(self.allGenes);
+        // self.geneModel.translator = translator;
+
+
+        // Instantiate helper class than encapsulates IOBIO commands
+
+        // self.variantExporter = new VariantExporter(self.globalApp);
+        let endpoint = new EndpointCmd(self.globalApp,
+          1588141188430,
+          self.genomeBuildHelper,
+          self.globalApp.utility.getHumanRefNames);
+
+        self.cohortModel = new CohortModel(
+          self.globalApp,
+          null,
+          null,
+          endpoint,
+          genericAnnotation,
+          translator,
+          self.geneModel,
+          self.variantExporter,
+          self.cacheHelper,
+          self.genomeBuildHelper,
+          new FreebayesSettings());
+
+
         if (localStorage.getItem('hub-iobio-tkn') && localStorage.getItem('hub-iobio-tkn').length > 0 && self.paramSampleId && self.paramSource) {
           self.showLandingPage = false;
           self.showSplash = true;
@@ -624,6 +793,7 @@ export default {
           self.params.client_application_id = self.paramClientApplicationId
           self.params.gene_set_id           = self.paramGeneSetId
           self.params.genes                 = self.paramGenes
+          self.params.variant_set_id        = self.paramVariantSetId
 
           if (self.params.analysis_id == 'undefined') {
             self.params.analysis_id = null;
@@ -636,15 +806,17 @@ export default {
           self.mosaicSession = new MosaicSession();
           // For now, just hardcode is_pedgree = true
           self.mosaicSession.promiseInit(self.params.sample_id, self.params.source,
-            true, self.params.project_id, self.params.client_application_id, self.params.gene_set_id)
+            true, self.params.project_id, self.params.client_application_id, self.params.gene_set_id, self.params.variant_set_id)
           .then(data => {
             self.modelInfos = data.modelInfos;
             self.user       = data.user;
             self.geneSet    = data.geneSet;
-
             self.coverageHistos = data.coverageHistos;
             self.rawPedigree = data.rawPedigree;
             self.allVarCounts = data.allVarCounts;
+            self.variantSet = data.variantSet;
+            
+            console.log("data.variantSet:", data.variantSet);
 
             self.mosaicSession.promiseGetProject(self.params.project_id)
             .then(function(project) {
@@ -663,7 +835,7 @@ export default {
             self.splashMessage = error;
           })
         } else {
-          self.params.source = ""; 
+          self.params.source = "";
           self.showLandingPage = true;
           self.modelInfos = self.demoModelInfos;
           self.user       = self.demoUser;
@@ -684,6 +856,12 @@ export default {
       })
 
     },
+    
+    closeByPassedGenesDialog: function(){
+      this.byPassedGenesDialog = false;
+      this.byPassedGenes = [];
+    },
+
 
     getDemoVcf: function() {
 
@@ -724,45 +902,8 @@ export default {
       }
 
       self.showSplash = false;
-
-      self.promiseGetAnalysis(
-        self.params.project_id,
-        self.params.analysis_id,
-        self.workflow)
-      .then(function() {
-          if ((self.analysis.payload.variants == null || self.analysis.payload.variants.length == 0) && self.mosaicSession.hasVariantSets(self.modelInfos)) {
-            return self.mosaicSession.promiseParseVariantSets(self.modelInfos)
-          } else {
-            return Promise.resolve({});
-          }
-      })
-      .then(function(variantSets) {
-        if (variantSets && Object.keys(variantSets).length > 0) {
-          self.variantSetCounts = { total: 0 }
-          for (var key in variantSets) {
-            self.variantSetCounts[key]   = variantSets[key] ? variantSets[key].length : 0;
-            self.variantSetCounts.total += variantSets[key] ? variantSets[key].length : 0;
-            variantSets[key].forEach(function(importedVariant) {
-              let theFilterName = null;
-              if (self.mosaicSession.variantSetToFilterName[key]) {
-                theFilterName = self.mosaicSession.variantSetToFilterName[key];
-              } else {
-                theFilterName = key;
-              }
-              importedVariant.variantSet = theFilterName;
-              self.analysis.payload.variants.push(importedVariant);
-              if (self.analysis.payload.genes.indexOf(importedVariant.gene) < 0) {
-                self.analysis.payload.genes.push(importedVariant.gene);
-              }
-            })
-          }
-          return Promise.resolve();
-        } else {
-          return Promise.resolve();
-        }
-      })
-      .then(function() {
-
+      
+      if(self.customSavedAnalysis){
         // Send message to set the data in the iobio apps
         for (var appName in self.apps) {
           let app = self.apps[appName];
@@ -776,16 +917,127 @@ export default {
         if (callback) {
           callback();
         }
+      }
+      else if(self.customData){
+        self.analysis = analysisData;
+        self.idAnalysis = self.analysis.id;
+        if(!self.importedCustomVariants){
+          self.analysis.payload.variants = [];
+        }
+        else {
+          self.analysis.payload.variants = self.importedCustomVariants;
+        }
+        // self.analysis.payload.variants = [];
+        // Send message to set the data in the iobio apps
+        for (var appName in self.apps) {
+          let app = self.apps[appName];
+          if (!app.isLoaded) {
+            self.setData(appName, 500);
+          } else {
 
+          }
+        }
 
-
-      })
-      .catch(function(error) {
-        console.log("Error occurred in onAuthenticated " + error);
         if (callback) {
           callback();
         }
-      })
+      }
+      else if(self.launchedFromMosaic) {
+        self.promiseGetAnalysis(
+          self.params.project_id,
+          self.params.analysis_id,
+          self.workflow)
+          .then(function() {
+            // Now import the variants from the variant set provided
+            // when launching clin.iobio from Mosaic
+            if (self.variantSet && self.variantSet.variants) {
+              let bypassedCount = 0;
+              self.variantSet.variants.filter(function(variant) {
+                return variant.sample_ids.indexOf(parseInt(self.paramSampleId)) >= 0;
+              })
+              .forEach(function(variant) {
+                let importedVariant = {};
+                if (variant.gene_symbol && variant.gene_symbol.length > 0) {
+                  importedVariant.gene  = variant.gene_symbol;
+                  importedVariant.chrom = variant.chr;
+                  importedVariant.start = variant.pos;
+                  importedVariant.end   = variant.pos;
+                  importedVariant.ref   = variant.ref;
+                  importedVariant.alt   = variant.alt;
+                  importedVariant.filtersPassed    = "notCategorized";
+                  importedVariant.inheritance      = null;
+                  importedVariant.afgnomAD         = variant.gnomad_allele_frequency;
+                  importedVariant.highestImpact    = variant.gene_impact;
+                  importedVariant.consequence      = variant.gene_consequence;
+                  importedVariant.isImported       = true;
+                  importedVariant.variantSet       = "notCategorized";
+                  self.analysis.payload.variants.push(importedVariant);
+                  if (self.analysis.payload.genes.indexOf(importedVariant.gene) < 0) {
+                    self.analysis.payload.genes.push(importedVariant.gene);
+                  }
+                } else {
+                  console.log("Bypassing variant " + variant.chr + " " + variant.pos + " because gene not provided")
+                  bypassedCount++;
+                }
+              })
+              if (bypassedCount > 0) {
+                if (bypassedCount == self.variantSet.variants.length) {
+                  alert("Error", "None of the " + bypassedCount + " variants were loaded because the variants were missing gene name.", )
+
+                } else {
+                  alert("Warning", bypassedCount + " variants bypassed due to missing gene name")
+
+                }
+              }
+            }
+          })
+        .then(function() {
+
+          // Send message to set the data in the iobio apps
+          for (var appName in self.apps) {
+            let app = self.apps[appName];
+            if (!app.isLoaded) {
+              self.setData(appName, 500);
+            } else {
+
+            }
+          }
+
+          if (callback) {
+            callback();
+          }
+
+
+
+        })
+        .catch(function(error) {
+          console.log("Error occurred in onAuthenticated " + error);
+          if (callback) {
+            callback();
+          }
+        })
+      }
+      else {
+        //Load with demo data
+        self.analysis = analysisData;
+        self.idAnalysis = self.analysis.id;
+        self.analysis.payload.genes = ['PRX', 'LMNA', 'SCN8A', 'DLL4', 'ABCA3', 'MROH8', 'DVL3', 'NOTCH4']
+        self.analysis.payload.variants = [];
+        // Send message to set the data in the iobio apps
+        for (var appName in self.apps) {
+          let app = self.apps[appName];
+          if (!app.isLoaded) {
+            self.setData(appName, 500);
+          } else {
+
+          }
+        }
+
+        if (callback) {
+          callback();
+        }
+      }
+
     },
 
 
@@ -839,6 +1091,10 @@ export default {
 
     onStepChanged: function(stepNumber) {
       this.currentStep = stepNumber
+    },
+
+    onClose: function(){
+      this.showConfigError = false;
     },
 
     onTaskChanged: function(stepNumber, task) {
@@ -940,12 +1196,25 @@ export default {
           console.log("Unable to locate proband model info");
           return;
         }
-
-
+        if(self.customData){
+          self.analysis.payload.genes = self.customGeneSet;
+        }
         let app = self.apps[appName];
-
-        console.log("ClinHome.setData  sending data to " + appName)
-
+        let currentBuildName = self.genomeBuildHelper.getCurrentBuildName();
+        
+        let genes = self.analysis.payload.genes;
+        let gene_set = [];
+        self.byPassedGenes = [];
+        
+        genes.map( gene => {
+          if(self.knownGenesData.includes(gene.toUpperCase()) && !gene_set.includes(gene.toUpperCase()) ){
+            gene_set.push(gene.toUpperCase());
+          }
+          else {
+            self.byPassedGenes.push(gene.toUpperCase());
+          }
+        })
+        console.log("self.analysis", self.analysis);
         var msgObject = {
             type:                  'set-data',
             sender:                'clin.iobio',
@@ -957,17 +1226,22 @@ export default {
             'modelInfos':           self.modelInfos,
             'analysis':             self.analysis,
             'phenotypes':           self.analysis.payload.phenotypes,
-            'genes':                self.analysis.payload.genes,
+            'genes':                gene_set,
             'genesReport':          self.analysis.payload.genesReport,
             'genesGtr':             self.analysis.payload.genesGtr,
             'genesPhenolyzer':      self.analysis.payload.genesPhenolyzer,
             'genesManual':          self.analysis.payload.genesManual,
             'gtrFullList':          self.analysis.payload.gtrFullList,
             'phenolyzerFullList':   self.analysis.payload.phenolyzerFullList,
+            'buildName':            currentBuildName,
+            'variantSet':           self.variantSet  
         };
         if (self.paramGeneBatchSize && (appName == 'gene' || appName == 'genefull')) {
           msgObject.batchSize = +self.paramGeneBatchSize;
         }
+
+        console.log("ClinHome.setData  " + appName + " msgObject is: " + msgObject.modelInfo)
+
 
 
 
@@ -1037,6 +1311,7 @@ export default {
       } else if (messageObject.type == "save-analysis") {
           this.analysis.payload.filters  = messageObject.analysis.payload.filters;
           this.analysis.payload.variants = messageObject.analysis.payload.variants;
+          // this.variantsCount = messageObject.analysis.payload.variantCount
           this.organizeVariantsByInterpretation();
           this.setVariantTaskBadges();
           this.promiseAutosaveAnalysis({notify: true})
@@ -1046,6 +1321,9 @@ export default {
           .catch(function(error) {
 
           })
+      } else if (messageObject.type == "update-variant-count"){
+        this.variantsCount = messageObject.variantCount;
+        this.setVariantTaskBadges();
       }
 
 
@@ -1139,11 +1417,16 @@ export default {
                 delete task.badges;
               }
             } else if (task.key == 'review-full') {
-              let fullAnalysisCount = self.analysis.payload.variants.length;
-              if (fullAnalysisCount > 0) {
-                task.badges =  [{count: fullAnalysisCount, label: 'variants'}];
-              } else {
-                delete task.badges;
+                if(JSON.stringify(self.analysis.payload.variants[0]) === '{}'){
+                  self.analysis.payload.variants.shift();
+                }
+                // let fullAnalysisCount = self.analysis.payload.variants.length;
+                let fullAnalysisCount = self.variantsCount;
+
+                if (fullAnalysisCount > 0) {
+                  task.badges = [{count: fullAnalysisCount, label: 'variants'}];
+                } else {
+                  delete task.badges;
               }
             } else if (task.key == 'review-results') {
               task.badges = []
@@ -1153,7 +1436,7 @@ export default {
               let badgeClasses = [];
 
               //Add the count of variant which is not reviewed (but has comments) to unknown-sig
-              if(self.variantsByInterpretation.length && self.variantsByInterpretation[2].key ==  'not-reviewed' && self.variantsByInterpretation[1].key == 'unknown-sig'){
+              if(self.variantsByInterpretation.length > 2 && self.variantsByInterpretation[2].key ==  'not-reviewed' && self.variantsByInterpretation[1].key == 'unknown-sig'){
                 if(self.variantsByInterpretation[2].variantCount > 0){
                   self.variantsByInterpretation[1].variantCount += self.variantsByInterpretation[2].variantCount;
                 }
@@ -1337,10 +1620,10 @@ export default {
                 newAnalysis.payload.genes.push(geneName);
               })
             } else if (self.params.genes) {
-              // Otherwise, if a gene set wasn't specified but a gene was, 
+              // Otherwise, if a gene set wasn't specified but a gene was,
               // initialize the genes to this single gene
               self.params.genes.split(",").forEach(function(geneName) {
-                newAnalysis.payload.genes.push(geneName);              
+                newAnalysis.payload.genes.push(geneName);
               })
             }
 
@@ -1377,7 +1660,13 @@ export default {
           // These are the platinum variants that we are just grabbing
           // from a json file to mimic what variant sets from genome-wide
           // filters would look like
-          self.analysis.payload.variants = self.importedVariants.variants;
+          self.analysis.payload.variants = [];
+          if(self.customData) {
+            self.analysis.payload.variants = [{}];
+          }
+          else{
+            self.analysis.payload.variants = self.importedVariants.variants;
+          }
 
           self.setGeneTaskBadges();
           resolve();
@@ -1477,6 +1766,7 @@ export default {
       self.analysis.payload.phenotypes = phenotypes;
       self.setGeneTaskBadges();
       self.analysis.payload.datetime_last_modified = self.getCurrentDateTime();
+      self.updateAnalysis(self.analysis); 
       return self.promiseAutosaveAnalysis();
     },
 
@@ -1563,6 +1853,8 @@ export default {
 
     organizeVariantsByInterpretation: function() {
       let self = this;
+      // self.variantsAnalyzedCounted = self.variantsAnalyzedCounted + 1; 
+
       self.variantsByInterpretation = [];
 
       self.variantsByInterpretationTemplate.forEach(function(interpretationTemplate) {
@@ -1632,6 +1924,8 @@ export default {
     organizeVariantsByGene: function(filterName, userFlagged, interpretation) {
       let self = this;
       let theVariants = [];
+
+      self.setVariantTaskBadges();
 
 
       this.analysis.payload.variants.forEach(function(variant) {
@@ -1784,13 +2078,279 @@ export default {
       this.reviewCaseBadges = badges;
     },
     gene_to_delete(gene){
-      this.geneToDelete = gene; 
+      this.geneToDelete = gene;
     },
 
     updateAverageCoverage(cov){
       this.averageCoverage = cov;
-    }
+    },
 
+    customModelInfo(modelInfos){
+      this.modelInfos = modelInfos;
+      this.setModelInfos(this.modelInfos);
+      this.customData = true;
+    },
+
+    setGeneSet(geneSet){
+      this.customGeneSet = geneSet;
+      this.setCustomGeneSet(this.customGeneSet);
+    },
+    setPedData(pedigree){
+      this.rawPedigree = pedigree;
+    },
+    setCustomCaseSummary(caseSummary){
+      this.caseSummary = {};
+      this.caseSummary.name = caseSummary.name;
+      this.caseSummary.description = caseSummary.description;
+      this.setCaseSummary(this.caseSummary);
+    },
+    saveAsInputConfig(){
+      var configObj = {
+        "caseSummary": this.caseSummary,
+        "modelInfos": this.modelInfos,
+        "customGeneSet": this.customGeneSet,
+        "rawPedigree": this.rawPedigree,
+        "bedFileUrl": this.bedFileUrl
+      }
+      console.log("obj", configObj);
+      let configData = JSON.stringify(configObj);
+      const jsonBlob = new Blob([configData], { type: "application/json" });
+      saveAs(jsonBlob, "clin-input-config.json")
+    },
+    importSavedInputConfig(ev){
+      const file = ev.target.files[0];
+      const reader = new FileReader();
+      reader.onload = e => {
+        console.log("e.target.result;", e.target.result);
+        return e.target.result;
+      }
+      reader.readAsText(file);
+    },
+    validateConfigFile(customData){
+      let bool = true;
+      let message = "";
+
+      if(customData.hasOwnProperty("caseSummary")){
+        if(!customData.caseSummary.hasOwnProperty("name")){
+          bool = false;
+          message = "Could not interpret project name field (\"caseSummary\":{\"name\":\"\",\"description\":\"\"})";
+        }
+        if(!customData.caseSummary.hasOwnProperty("description")) {
+          bool = false;
+          message = "Could not interpret description field (\"caseSummary\":{\"name\":\"\",\"description\":\"\"})" ;
+        }
+      }
+      else{
+        bool = false;
+        message = "Could not interpret case summary field (\"caseSummary\":{\"name\":\"\",\"description\":\"\"})";
+
+      }
+
+      if(!customData.hasOwnProperty("bedFileUrl")){
+        bool = false;
+        message = "Could not interpret bed file URL. (\"bedFileUrl\": \"\")";
+
+      }
+      if(!customData.hasOwnProperty("rawPedigree")){
+        bool = false;
+        message = "Could not interpret pedigree field (\"rawPedigree\": \"\")";
+
+      }
+      if(!customData.hasOwnProperty("customGeneSet")){
+        message = "Could not interpret gene list field (\"customGeneSet\":[\"\"],)";
+
+        bool = false;
+      }
+      if(!customData.hasOwnProperty("modelInfos")){
+        message = "Could not interpret files field (\"modelInfos\":[\"\"])";
+        bool = false;
+      }
+      else{
+
+        let idMap = {};
+        let relationshipMap = {}
+
+        for(let i = 0; i < customData.modelInfos.length; i++) {
+          let sample = customData.modelInfos[i];
+
+          if(idMap.hasOwnProperty(sample.sample)){
+            bool = false;
+            message = "Error parsing config file. Duplicate sample ids detected for sample " + sample.sample + '.';
+          }
+          else{
+            idMap[sample.sample] = 1;
+          }
+
+          if(sample.relationship === "mother") {
+            if (relationshipMap.hasOwnProperty(sample.relationship)) {
+              bool = false;
+              message = "Multiple mothers detected";
+            }
+            else{
+              relationshipMap[sample.relationship] = 1;
+            }
+          }
+          if(sample.relationship === "father") {
+            if (relationshipMap.hasOwnProperty(sample.relationship)) {
+              bool = false;
+              message = "Multiple fathers found";
+            }
+            else{
+              relationshipMap[sample.relationship] = 1;
+            }
+          }
+
+
+          if(!this.isUrlValid(sample.bam, sample.sample)){
+            bool = false;
+            message = "sampleId " + sample.sample + " does not match bam url";
+          }
+
+          let bamExt = sample.bam.substr(sample.bam.lastIndexOf('.') + 1);
+          let vcfExt = sample.vcf.substr(sample.vcf.lastIndexOf('.') + 1);
+
+          if(bamExt !== "bam"){
+            message = "Extension for bam file " + sample.bam + " was not recognized";
+            bool = false;
+          }
+          if(vcfExt !== "vcf" && vcfExt !== "gz" ){
+            message = "Extension for vcf file " + sample.vcf + " was not recognized";
+            bool = false;
+          }
+        }
+
+      }
+      let ret = {bool: bool, message: message};
+      return ret;
+
+    },
+
+    isUrlValid: function(url, sample){
+      if(url.includes(sample)){
+        return true;
+      }
+      else {
+        return false;
+      }
+    },
+
+    loadSavedInputConfig(customData){
+
+      let validate = this.validateConfigFile(customData);
+
+      if(validate.bool){
+
+        this.caseSummary = {};
+        this.caseSummary.name = customData.caseSummary.name;
+        this.caseSummary.description = customData.caseSummary.description;
+        this.rawPedigree = customData.rawPedigree;
+        this.customGeneSet = customData.customGeneSet;
+        this.modelInfos = customData.modelInfos;
+        this.bedFileUrl = customData.bedFileUrl;
+        this.customData = true;
+
+        this.showLandingPage = false;
+        this.showSplash = true;
+        setTimeout(()=>{
+          this.onAuthenticated();
+        }, 2000)
+      }
+      else{
+        this.showConfigError = true;
+        this.configMessage = validate.message;
+      }
+    },
+    loadSavedAnalysisCustomData(analysis){
+      this.analysis = analysis;
+      this.updateAnalysis(this.analysis);
+      this.modelInfos = analysis.custom_model_infos;
+      this.setModelInfos(this.modelInfos);
+      this.customGeneSet = analysis.custom_gene_set;
+      this.setCustomGeneSet(this.customGeneSet);
+      this.caseSummary = analysis.custom_case_Summary;
+      this.setCaseSummary(this.caseSummary);
+      this.buildName = analysis.build_name;
+      this.setBuildName(this.buildName);
+      this.genomeBuildHelper.setCurrentBuild(analysis.build_name);
+      this.rawPedigree = analysis.custom_pedigree; 
+      this.customSavedAnalysis = true;
+      this.customData = true;
+      // this.variantsByInterpretation = analysis.variants_by_interpretation;
+      // bus.$emit("initialize-clin")
+      this.showLandingPage = false;
+      this.showSplash = true;
+      setTimeout(()=>{
+        this.onAuthenticated();
+      }, 2000)
+
+    },
+    setBedFileUrl(bedUrl){
+      this.bedFileUrl = bedUrl;
+    },
+    setBuildForCustomData(buildName){
+      this.buildName = buildName;
+      this.genomeBuildHelper.setCurrentBuild(buildName);
+      this.setBuildName(this.buildName);
+    },
+    saveAnalysisJson(){
+      let analysis_obj = this.analysis;
+      analysis_obj.custom_pedigree_data = this.getPedigreeData;
+      analysis_obj.custom_pedigree = this.getPedigree; 
+      analysis_obj.custom_variants_count = this.getVariantsCount;
+      analysis_obj.custom_coverage_data = this.getCustomCoverage;
+      analysis_obj.review_case_badge = this.getReviewCaseBadge;
+      analysis_obj.custom_model_infos = this.getModelInfos;
+      analysis_obj.variants_by_interpretation = this.getVariantsByInterpretation;
+      analysis_obj.custom_gene_set = this.getGeneSet;
+      analysis_obj.custom_case_Summary = this.getCaseSummary;
+      analysis_obj.build_name = this.getBuildName;
+      analysis_obj.pass_code = Math.floor(100000 + Math.random() * 900000);
+      let analysisObject = JSON.stringify(analysis_obj);
+      const jsonBlob = new Blob([analysisObject], { type: "application/json" });
+      saveAs(jsonBlob, "clin-saved-analysis.json");
+      // this.showPassCodeDialog(analysis_obj.pass_code);
+    }, 
+    showPassCodeDialog(pass_code){
+      this.showPassCode = true;
+      this.passcode = pass_code;
+    },
+    savePasscode(){
+      const txtBlob = new Blob([this.passcode], { type: "text/plain" });
+      saveAs(txtBlob, "passcode-clin.txt");
+
+    },
+    setImportedVariants(variants){
+      let self = this;
+      
+      let bypassedCount = 0;
+      // self.analysis.payload.variants = []; 
+      // self.analysis.payload.genes = [];
+      variants.forEach(function(variant) {
+        let importedVariant = {};
+        if (variant.gene && variant.gene.length > 0) {
+          importedVariant.gene  = variant.gene;
+          importedVariant.chrom = variant.chrom;
+          importedVariant.start = variant.start;
+          importedVariant.end   = variant.end;
+          importedVariant.ref   = variant.ref;
+          importedVariant.alt   = variant.alt;
+          importedVariant.filtersPassed    = variant.filtersPassed;
+          importedVariant.inheritance      = variant.inheritance;
+          importedVariant.afgnomAD         = variant.afgnomAD;
+          importedVariant.highestImpact    = variant.highestImpact;
+          importedVariant.consequence      = variant.consequence;
+          importedVariant.isImported       = true;
+          importedVariant.variantSet       = variant.filtersPassed;
+          self.importedCustomVariants.push(importedVariant);
+          if (self.customGeneSet.indexOf(importedVariant.gene) < 0) {
+            self.customGeneSet.push(importedVariant.gene);
+          }
+        } 
+      })
+      self.setImportedVariantSets(self.importedCustomVariants);
+      self.setCustomGeneSet(self.customGeneSet);
+    }
   }
 }
+
 </script>

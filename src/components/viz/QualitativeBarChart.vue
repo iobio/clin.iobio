@@ -67,6 +67,7 @@
                 type: Function,
                 default: d3.scaleOrdinal().range(['#0080A8', '#2EB0CE', '#37D4EF', '#97E9F2']),
             },
+            customData: null
         },
         data() {
             return {
@@ -146,6 +147,8 @@
                 let indel = parseInt(this.data.indel);
                 let other = parseInt(this.data.other);
                 let snp = parseInt(this.data.SNP);
+                let ins = parseInt(this.data.INS);
+                let del = parseInt(this.data.DEL);
 
                 if(isNaN(indel)){
                     indel = 0;
@@ -156,8 +159,19 @@
                 if(isNaN(other)){
                     other = 0;
                 }
+                if(isNaN(ins)){
+                    ins = 0;
+                }
+                if(isNaN(del)){
+                    del = 0;
+                }
 
-                this.totalVarCount = snp + other + indel;
+                if(this.customData){
+                  this.totalVarCount = snp + ins + del;
+                }
+                else{
+                  this.totalVarCount = snp + other + indel;
+                }
                 d3.select(this.$el).select('svg')
                     .append("text")
                     .attr('y', 10)

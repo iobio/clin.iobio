@@ -81,7 +81,6 @@ export default {
 
 
     init() {
-
       const self = this;
       const pedigraph = self.$refs.pedigreeGraph;
       const pedigree = this.data;

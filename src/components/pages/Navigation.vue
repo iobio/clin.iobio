@@ -61,7 +61,7 @@ header.theme--dark.v-sheet
         font-family: $iobio-font
 
 
-    #report-button
+    #report-button, #save-button
       height: 30px
       margin-left: 20px
       margin-bottom: 4px
@@ -173,6 +173,11 @@ header.theme--dark.v-sheet
         <v-icon>assignment</v-icon>
         Report
       </v-btn>
+      
+      <v-btn color="primary" id="save-button" @click="saveAnalysis" v-if="customData">
+        <v-icon>save</v-icon>
+        Save Analysis
+      </v-btn>
 
       <save-button
       v-if="launchedFromMosaic"
@@ -209,7 +214,7 @@ export default {
     caseSummary: null,
     analysis: null,
     launchedFromMosaic: null,
-
+    customData: null
   },
   data () {
     let self = this;
@@ -233,6 +238,9 @@ export default {
     },
     createAnalysisPDF(){
       bus.$emit("getAnalysisObject");
+    },
+    saveAnalysis(){
+      bus.$emit("save-analysis-object")
     },
 
     toggleSaveModal(bool) {

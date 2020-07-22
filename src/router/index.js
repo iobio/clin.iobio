@@ -41,7 +41,8 @@ const routes = [
 
         paramBuild:                 route.query.build,
 
-        paramTheme:                 route.query.theme
+        paramTheme:                 route.query.theme,
+        paramVariantSetId:          route.query.variant_set_id
     })
   },
    {

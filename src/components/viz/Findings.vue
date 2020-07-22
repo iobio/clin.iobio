@@ -165,6 +165,7 @@
 import AppIcon       from '../partials/AppIcon.vue';
 import VariantInspectCard   from '../viz/findings/VariantInspectCard.vue';
 import { bus }      from '../../main'
+import { mapGetters, mapActions } from 'vuex'
 
 export default {
   name: 'findings',
@@ -190,6 +191,8 @@ export default {
 
   },
   methods: {
+    ...mapActions(['setVariantsByInterpretation']),
+
     vepConsequence: function(variant) {
       return variant.consequence;
     },
@@ -279,11 +282,14 @@ export default {
 
 
   },
+  mounted() {
+  },
   watch: {
     analysis: function() {
       this.initClinicalNotes();
     },
     variantsByInterpretation: function() {
+      this.setVariantsByInterpretation(this.variantsByInterpretation); //Updates the global state in vuex store. 
       this.initClinicalNotes();
       this.checkIfVariantsinterpreted(); 
     }, 
