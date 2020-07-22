@@ -948,7 +948,6 @@ export default {
           self.params.analysis_id,
           self.workflow)
           .then(function() {
-            // console.log("self.variantSet in if ", self.variantSet);
             // Now import the variants from the variant set provided
             // when launching clin.iobio from Mosaic
             if (self.variantSet && self.variantSet.variants) {
@@ -972,7 +971,6 @@ export default {
                   importedVariant.consequence      = variant.gene_consequence;
                   importedVariant.isImported       = true;
                   importedVariant.variantSet       = "notCategorized";
-                  console.log("importedVariant", importedVariant);
                   self.analysis.payload.variants.push(importedVariant);
                   if (self.analysis.payload.genes.indexOf(importedVariant.gene) < 0) {
                     self.analysis.payload.genes.push(importedVariant.gene);
@@ -993,38 +991,6 @@ export default {
               }
             }
           })
-        // .then(function() {
-        //     if ((self.analysis.payload.variants == null || self.analysis.payload.variants.length == 0) && self.mosaicSession.hasVariantSets(self.modelInfos)) {
-        //       return self.mosaicSession.promiseParseVariantSets(self.modelInfos)
-        //     } else {
-        //       return Promise.resolve({});
-        //     }
-        // })
-        // .then(function(variantSets) {
-        //   if (variantSets && Object.keys(variantSets).length > 0) {
-        //     self.variantSetCounts = { total: 0 }
-        //     for (var key in variantSets) {
-        //       self.variantSetCounts[key]   = variantSets[key] ? variantSets[key].length : 0;
-        //       self.variantSetCounts.total += variantSets[key] ? variantSets[key].length : 0;
-        //       variantSets[key].forEach(function(importedVariant) {
-        //         let theFilterName = null;
-        //         if (self.mosaicSession.variantSetToFilterName[key]) {
-        //           theFilterName = self.mosaicSession.variantSetToFilterName[key];
-        //         } else {
-        //           theFilterName = key;
-        //         }
-        //         importedVariant.variantSet = theFilterName;
-        //         self.analysis.payload.variants.push(importedVariant);
-        //         if (self.analysis.payload.genes.indexOf(importedVariant.gene) < 0) {
-        //           self.analysis.payload.genes.push(importedVariant.gene);
-        //         }
-        //       })
-        //     }
-        //     return Promise.resolve();
-        //   } else {
-        //     return Promise.resolve();
-        //   }
-        // })
         .then(function() {
 
           // Send message to set the data in the iobio apps
@@ -2310,7 +2276,6 @@ export default {
       this.customSavedAnalysis = true;
       this.customData = true;
       // this.variantsByInterpretation = analysis.variants_by_interpretation;
-      console.log("analysis set", this.analysis);
       // bus.$emit("initialize-clin")
       this.showLandingPage = false;
       this.showSplash = true;

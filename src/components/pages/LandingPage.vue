@@ -358,27 +358,6 @@
               </v-file-input>
               
               <v-divider></v-divider>
-              <!-- <label>Enter 6 digit passcode </label> -->
-              <!-- Make it disabled till the file is attached -->
-              <!-- <v-text-field
-                solo
-                prepend-icon="vpn_key"
-                placeholder="Ex. 793402"
-                counter="6"
-                :disabled="this.savedAnalysisConfig===null"
-                v-model="passCode"
-              ></v-text-field>
-              <br>              
-              <v-alert
-                border="left" colored-border type="error"
-                icon="error_outline" dense elevation="1"
-                style="font-size:12px" v-model="passcodeIncorrectAlert"
-                dismissible
-              >
-                The entered passcode is incorrect.
-              </v-alert> -->
-
-
             </div>
           </v-card-text>
           <v-card-actions>
@@ -767,7 +746,6 @@ export default {
         this.geneSet = this.genes.trim().split(",").filter(gene => gene.length > 0)
           .map(gene => gene.trim().toUpperCase());
       }
-      // this.geneSet = this.genes.split(",").map(gene => gene.trim().toUpperCase());
       this.$emit('setGeneSet', this.geneSet)
       this.getStarted();
     },
@@ -825,7 +803,6 @@ export default {
           2: true,
           "-9": false
         }
-        console.log("splitLine[0]", splitLine[0]);
         if(splitLine && splitLine[0] !== "" && !isNaN(parseInt(splitLine[4]))) {
           var sample = splitLine[1];
           var sex = sexMap[parseInt(splitLine[4])];
@@ -837,7 +814,6 @@ export default {
           }
         }
       }
-      console.log("this.customPedigreeMapData", this.customPedigreeMapData);
     },
     addPedigree(){
       this.pedigreeUploadDialog = false;
@@ -938,7 +914,6 @@ export default {
         reader.readAsText(this.dataInputConfig);
         reader.onload = () => {
           let data = reader.result.trim();
-          console.log("data in input config", data);
           let newLine = data.split('\n');
           let pedData = [];
           let modelInfoData = [];
@@ -986,7 +961,6 @@ export default {
           }
           else {
             this.validationErrors.push("Headers do not match with the specified file format. Please check the configuration file and try again.")
-            // alert("Headers do not match with the specified file format.");
             this.dataInputConfig = null;
           }
 
@@ -1008,7 +982,6 @@ export default {
         obj.bai = model[10] !== '' ? model[10] : null;
         modelInfo.push(obj);
       })
-      console.log("modelInfo", modelInfo);
       this.$emit("custom-model-info",modelInfo);
 
     },
@@ -1032,14 +1005,7 @@ export default {
         this.$emit("load-saved-input-config", this.configCustomData)
     },
     loadFromSavedAnalysis(){
-      this.$emit("load-saved-analysis-custom-data", this.configSavedAnalysisData)
-    
-      // if(this.configSavedAnalysisData.pass_code == this.passCode){
-      //   this.$emit("load-saved-analysis-custom-data", this.configSavedAnalysisData)
-      // }
-      // else {
-      //   this.passcodeIncorrectAlert = true;
-      // }
+      this.$emit("load-saved-analysis-custom-data", this.configSavedAnalysisData)    
     },
     setBuildForCustomData(buildName){
       this.$emit("setBuildForCustomData", buildName)
@@ -1050,7 +1016,6 @@ export default {
       }
       this.$emit("set-imported-variants", variants);
       this.importedVariants = variants;
-      console.log("importedVariants", this.importedVariants);
 
       this.geneSet = [];
       variants.map( variant => {

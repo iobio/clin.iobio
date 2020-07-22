@@ -669,7 +669,6 @@ export default {
 
 
     populateSampleIdsFromCustom(txt){
-      console.log("text", txt)
       this.sampleIds = [];
       let txtCopy  = txt.slice();
         let pedLines = txtCopy.split('\n');

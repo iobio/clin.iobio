@@ -107,19 +107,6 @@
               <ValidationErrors
                 :validationErrors="validationErrors">
               </ValidationErrors>
-              <!-- <div v-for="(error, idx) in validationErrors" >
-                <v-alert
-                  border="left"
-                  colored-border
-                  type="error"
-                  icon="error_outline"
-                  dense
-                  elevation="1"
-                  style="font-size:12px"
-                >
-                  {{ error }}
-                </v-alert>
-              </div> -->
               <br>
             </v-flex>
 
@@ -157,17 +144,6 @@
                   :items="buildList"
                 ></v-select>
                </v-flex>
-
-              <!-- <v-flex style="max-width:160px" class="ml-2">
-                  <v-select
-                    :items="demoActions"
-                    item-value="value"
-                    item-text="display"
-                    @input="onLoadDemoData"
-                    v-model="demoAction"
-                    hide-details
-                    label="Demo data"></v-select>
-              </v-flex> -->
 
             </v-layout>
 

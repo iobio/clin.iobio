@@ -260,7 +260,6 @@ export default {
 
   },
   mounted: function() {
-    // console.log("modelinfo moounted", this.modelInfo);
     this.samples = this.modelInfo.samples;
     this.isAffected = this.modelInfo.isAffected;
     if (this.modelInfo.vcf) {
