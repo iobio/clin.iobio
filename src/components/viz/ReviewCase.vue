@@ -101,7 +101,7 @@
         <div class="review-section">
 
           <div style="display:flex;flex-direction:row;justify-content:flex-start">
-              <div style="width:80%">
+              <div class="container">
                 <span class="heading">Case Summary </span>
                 <div class="reviewCase">
                 {{ caseSummary.description }}
