@@ -262,6 +262,7 @@ $horizontal-dashboard-height: 140px
             @importedGenes="importedGenes($event)"
             @UpdateListOnDelete="UpdateListOnDelete($event)"
             :venn_diag_data="venn_diag_data"
+            @bus_delete_gene="bus_delete_gene"
             @gene_to_delete=gene_to_delete($event)>
           </GeneList>
         </keep-alive>
@@ -577,7 +578,8 @@ export default {
       byPassedGenesDialog: false,
       importedCustomVariants: [],
       sampleId: null,
-      variantsCount: 0
+      variantsCount: 0,
+      deletedGenesList: [],
     }
 
   },
@@ -2037,6 +2039,48 @@ export default {
     UpdateListOnDelete(genes){
       this.summaryGeneList = genes;
       this.analysis.payload.genesReport = genes;
+    },
+    
+    bus_delete_gene(gene){
+      this.deletedGenesList.push(gene);
+      // this.geneToDelete = gene;
+      this.updateGeneListsOfEachTool();
+    },
+
+    
+    updateGeneListsOfEachTool(){
+      
+      //GTR
+      let gtrCompleteList = this.analysis.payload.gtrFullList;
+      let gtr_res = []; 
+      gtrCompleteList.map(gene => {
+        if(!this.deletedGenesList.includes(gene.name)){
+          gtr_res.push(gene);
+        }
+      })
+      this.analysis.payload.gtrFullList = gtr_res;
+
+
+      //Phenolyzer
+      let phenolyzerCompleteList = this.analysis.payload.phenolyzerFullList;
+      let phenolyzer_res = []; 
+      phenolyzerCompleteList.map(gene => {
+        if(!this.deletedGenesList.includes(gene.name)){
+          phenolyzer_res.push(gene);
+        }
+      })
+      this.analysis.payload.phenolyzerFullList = phenolyzer_res;
+      
+      //HPO
+      let hpoCompleteList = this.analysis.payload.hpoFullList;
+      let hpo_res = []; 
+      hpoCompleteList.map(gene => {
+        if(!this.deletedGenesList.includes(gene.name)){
+          hpo_res.push(gene);
+        }
+      })
+      this.analysis.payload.hpoFullList = hpo_res;
+
     },
 
     onShowSnackbar: function(snackbar) {
