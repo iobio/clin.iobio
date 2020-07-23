@@ -165,7 +165,7 @@
             </div>
 
           </div>
-          <QualitativeBarChart :data="varCountsArray[i].counts" :customData="customData" :width="300" :height="150" style="padding-top: 20px"></QualitativeBarChart>
+          <QualitativeBarChart :data="varCountsArray[i].counts" :customData="customData" :width="300" :height="150" style="padding-top: 0"></QualitativeBarChart>
 
         </div>
      </div>
@@ -229,7 +229,7 @@
 
           </div>
           <!--<BoxPlot :width="250" :height="150" :data="exomeMedianCoverageData"></BoxPlot>-->
-          <QualitativeBarChart :data="varCountsArray[i].counts" :customData="customData" :width="300" :height="150" style="padding-top: 20px"></QualitativeBarChart>
+          <QualitativeBarChart :data="varCountsArray[i].counts" :customData="customData" :width="300" :height="150" style="padding-top: 0"></QualitativeBarChart>
 
         </div>
      </div>
