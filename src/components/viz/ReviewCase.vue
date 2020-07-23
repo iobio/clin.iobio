@@ -1141,7 +1141,7 @@ function filterRef(ref) {
   .reviewCase
     color: $text-color
     line-height: 16px
-    font-size: 15px
+    font-size: 14px
     font-weight: normal
     font-family: $iobio-font
 
