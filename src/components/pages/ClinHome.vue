@@ -2008,11 +2008,13 @@ export default {
     GtrGeneList(genes){
       var gtrCompleteLsit = [];
       genes.map(gene=>{
-        gtrCompleteLsit.push({
-          name: gene.name,
-          gtrRank: gene.indexVal,
-          gtrAssociated: gene.isAssociatedGene
-        })
+        if(!this.deletedGenesList.includes(gene.name)){
+          gtrCompleteLsit.push({
+            name: gene.name,
+            gtrRank: gene.indexVal,
+            gtrAssociated: gene.isAssociatedGene
+          })
+        }
       })
       this.analysis.payload.gtrFullList = gtrCompleteLsit;
     },
@@ -2033,15 +2035,23 @@ export default {
     HpoGeneList(genes){
       var hpoCompleteList = [];
       genes.map(gene=>{
-        hpoCompleteList.push({
-          name: gene.gene,
-          hpoRank: gene.index
-        })
+        if(!this.deletedGenesList.includes(gene.gene)){
+          hpoCompleteList.push({
+            name: gene.gene,
+            hpoRank: gene.index
+          })
+        }
       })
       this.analysis.payload.hpoFullList = hpoCompleteList;
     },
 
     importedGenes(genes){
+      genes.map(gene => {
+        let idx = this.deletedGenesList.indexOf(gene);
+        if(idx > -1){
+          this.deletedGenesList.splice(idx, 1);
+        }
+      })
       this.AddedGenes = genes;
     },
 
