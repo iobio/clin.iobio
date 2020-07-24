@@ -1988,9 +1988,16 @@ export default {
     },
 
     summaryGenes(genes){
-      this.summaryGeneList = genes;
+      let res = [];
+      genes.map(gene => {
+        if(!this.deletedGenesList.includes(gene.name)){
+          res.push(gene);
+        }
+      })
+
+      this.summaryGeneList = res;
       this.analysis.payload.genesReport = this.summaryGeneList;
-      this.promiseUpdateGenesReport(genes);
+      this.promiseUpdateGenesReport(res);
     },
 
     saveSearchedPhenotypes(phenotypes){
@@ -2013,10 +2020,12 @@ export default {
     PhenolyzerGeneList(genes){
       var phenolyzerCompleteList = [];
       genes.map(gene=>{
-        phenolyzerCompleteList.push({
-          name: gene.geneName,
-          phenolyzerRank: gene.indexVal
-        })
+        if(!this.deletedGenesList.includes(gene.geneName)){
+          phenolyzerCompleteList.push({
+            name: gene.geneName,
+            phenolyzerRank: gene.indexVal
+          })
+        }
       })
       this.analysis.payload.phenolyzerFullList = phenolyzerCompleteList;
     },
