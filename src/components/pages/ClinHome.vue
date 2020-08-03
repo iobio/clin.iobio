@@ -262,6 +262,7 @@ $horizontal-dashboard-height: 140px
             @importedGenes="importedGenes($event)"
             @UpdateListOnDelete="UpdateListOnDelete($event)"
             :venn_diag_data="venn_diag_data"
+            @bus_delete_gene="bus_delete_gene"
             @gene_to_delete=gene_to_delete($event)>
           </GeneList>
         </keep-alive>
@@ -577,7 +578,8 @@ export default {
       byPassedGenesDialog: false,
       importedCustomVariants: [],
       sampleId: null,
-      variantsCount: 0
+      variantsCount: 0,
+      deletedGenesList: [],
     }
 
   },
@@ -1986,9 +1988,16 @@ export default {
     },
 
     summaryGenes(genes){
-      this.summaryGeneList = genes;
+      let res = [];
+      genes.map(gene => {
+        if(!this.deletedGenesList.includes(gene.name)){
+          res.push(gene);
+        }
+      })
+
+      this.summaryGeneList = res;
       this.analysis.payload.genesReport = this.summaryGeneList;
-      this.promiseUpdateGenesReport(genes);
+      this.promiseUpdateGenesReport(res);
     },
 
     saveSearchedPhenotypes(phenotypes){
@@ -1999,11 +2008,13 @@ export default {
     GtrGeneList(genes){
       var gtrCompleteLsit = [];
       genes.map(gene=>{
-        gtrCompleteLsit.push({
-          name: gene.name,
-          gtrRank: gene.indexVal,
-          gtrAssociated: gene.isAssociatedGene
-        })
+        if(!this.deletedGenesList.includes(gene.name)){
+          gtrCompleteLsit.push({
+            name: gene.name,
+            gtrRank: gene.indexVal,
+            gtrAssociated: gene.isAssociatedGene
+          })
+        }
       })
       this.analysis.payload.gtrFullList = gtrCompleteLsit;
     },
@@ -2011,10 +2022,12 @@ export default {
     PhenolyzerGeneList(genes){
       var phenolyzerCompleteList = [];
       genes.map(gene=>{
-        phenolyzerCompleteList.push({
-          name: gene.geneName,
-          phenolyzerRank: gene.indexVal
-        })
+        if(!this.deletedGenesList.includes(gene.geneName)){
+          phenolyzerCompleteList.push({
+            name: gene.geneName,
+            phenolyzerRank: gene.indexVal
+          })
+        }
       })
       this.analysis.payload.phenolyzerFullList = phenolyzerCompleteList;
     },
@@ -2022,21 +2035,71 @@ export default {
     HpoGeneList(genes){
       var hpoCompleteList = [];
       genes.map(gene=>{
-        hpoCompleteList.push({
-          name: gene.gene,
-          hpoRank: gene.index
-        })
+        if(!this.deletedGenesList.includes(gene.gene)){
+          hpoCompleteList.push({
+            name: gene.gene,
+            hpoRank: gene.index
+          })
+        }
       })
       this.analysis.payload.hpoFullList = hpoCompleteList;
     },
 
     importedGenes(genes){
+      genes.map(gene => {
+        let idx = this.deletedGenesList.indexOf(gene);
+        if(idx > -1){
+          this.deletedGenesList.splice(idx, 1);
+        }
+      })
       this.AddedGenes = genes;
     },
 
     UpdateListOnDelete(genes){
       this.summaryGeneList = genes;
       this.analysis.payload.genesReport = genes;
+    },
+    
+    bus_delete_gene(gene){
+      this.deletedGenesList.push(gene);
+      // this.geneToDelete = gene;
+      this.updateGeneListsOfEachTool();
+    },
+
+    
+    updateGeneListsOfEachTool(){
+      
+      //GTR
+      let gtrCompleteList = this.analysis.payload.gtrFullList;
+      let gtr_res = []; 
+      gtrCompleteList.map(gene => {
+        if(!this.deletedGenesList.includes(gene.name)){
+          gtr_res.push(gene);
+        }
+      })
+      this.analysis.payload.gtrFullList = gtr_res;
+
+
+      //Phenolyzer
+      let phenolyzerCompleteList = this.analysis.payload.phenolyzerFullList;
+      let phenolyzer_res = []; 
+      phenolyzerCompleteList.map(gene => {
+        if(!this.deletedGenesList.includes(gene.name)){
+          phenolyzer_res.push(gene);
+        }
+      })
+      this.analysis.payload.phenolyzerFullList = phenolyzer_res;
+      
+      //HPO
+      let hpoCompleteList = this.analysis.payload.hpoFullList;
+      let hpo_res = []; 
+      hpoCompleteList.map(gene => {
+        if(!this.deletedGenesList.includes(gene.name)){
+          hpo_res.push(gene);
+        }
+      })
+      this.analysis.payload.hpoFullList = hpo_res;
+
     },
 
     onShowSnackbar: function(snackbar) {

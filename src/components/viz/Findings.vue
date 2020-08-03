@@ -34,7 +34,7 @@
     padding-top: 5px
 
   .case-summary
-    width: 80%
+    // width: 80%
 
   .clinical-note
     display: flex
@@ -78,7 +78,7 @@
 
       </div>
 
-      <div v-if="clinicalNotes && clinicalNotes.length > 0" style="width:80%;margin-top:40px;margin-bottom:20px">
+      <div v-if="clinicalNotes && clinicalNotes.length > 0" style="width:97%;margin-top:40px;margin-bottom:20px">
         <hr style="border-top:transparent">
         <span class="sub-heading">Phenotypes</span>
         <div class="clinical-note" style="margin-bottom:5px">

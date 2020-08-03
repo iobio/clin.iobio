@@ -15,7 +15,7 @@
         <div v-else>
             <svg class="variant-types-bar-chart">
                 <g
-                        :transform="`translate(${margin.left},${margin.top})`"
+                        :transform="`translate(${margin.left},${margin.top + 10})`"
                         class="g-main"
                 >
                     <g class="axis axis__y"/>
@@ -174,7 +174,7 @@
                 }
                 d3.select(this.$el).select('svg')
                     .append("text")
-                    .attr('y', 10)
+                    .attr('y', 12)
                     .attr('x', this.width / 2)
                     .attr("fill", "black")
                     .attr("text-anchor", "middle")

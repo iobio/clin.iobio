@@ -101,7 +101,7 @@
         <div class="review-section">
 
           <div style="display:flex;flex-direction:row;justify-content:flex-start">
-              <div style="width:80%">
+              <div class="container">
                 <span class="heading">Case Summary </span>
                 <div class="reviewCase">
                 {{ caseSummary.description }}
@@ -165,7 +165,7 @@
             </div>
 
           </div>
-          <QualitativeBarChart :data="varCountsArray[i].counts" :customData="customData" :width="300" :height="150" style="padding-top: 20px"></QualitativeBarChart>
+          <QualitativeBarChart :data="varCountsArray[i].counts" :customData="customData" :width="300" :height="150" style="padding-top: 0"></QualitativeBarChart>
 
         </div>
      </div>
@@ -229,7 +229,7 @@
 
           </div>
           <!--<BoxPlot :width="250" :height="150" :data="exomeMedianCoverageData"></BoxPlot>-->
-          <QualitativeBarChart :data="varCountsArray[i].counts" :customData="customData" :width="300" :height="150" style="padding-top: 20px"></QualitativeBarChart>
+          <QualitativeBarChart :data="varCountsArray[i].counts" :customData="customData" :width="300" :height="150" style="padding-top: 0"></QualitativeBarChart>
 
         </div>
      </div>
@@ -1141,7 +1141,7 @@ function filterRef(ref) {
   .reviewCase
     color: $text-color
     line-height: 16px
-    font-size: 15px
+    font-size: 14px
     font-weight: normal
     font-family: $iobio-font
 
