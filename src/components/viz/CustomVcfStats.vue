@@ -1,12 +1,7 @@
 <template>
   <div>
-    {{ totalReads }}
-    <br>
-    <!-- with array: <br>
-    <QualitativeBarChart :data="varCountsArray[0].counts" :customData="customData" :width="300" :height="150" style="padding-top: 0"></QualitativeBarChart>
-    <br><br> -->
-    <br>
-    <QualitativeBarChart :data="justVarCounts.counts" :customData="customData" :width="300" :height="150" style="padding-top: 0"></QualitativeBarChart>
+    {{ totalReads }} Variants sampled
+    <QualitativeBarChart v-if="totalReads>0" :data="justVarCounts.counts" :customData="customData" :width="300" :height="150" style="padding-top: 0"></QualitativeBarChart>
   </div>
 </template>
 
@@ -59,6 +54,7 @@ var vcfiobio = new Vcfiobio();
       justGetVcfStats(refs, options, vcf, tbi, sample, idx){
 
         vcfiobio.getStats(refs, options, vcf, tbi, sample, function(data) {
+          console.log("data", data);
           var stats = data.var_type; 
           var indels = stats.INS + stats.DEL;
           var justVarCounts = {};
@@ -78,7 +74,10 @@ var vcfiobio = new Vcfiobio();
             counts: justVarCounts, 
             sample: sample,
           }
-
+          this.$emit("variants-count", {
+            counts: this.justVarCounts,
+            idx: idx
+          })
           // this.justVarCounts.counts = justVarCounts;
 
         })

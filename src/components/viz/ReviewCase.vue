@@ -119,7 +119,8 @@
 
     <div v-if="customData && modelInfos.length">
       <div v-for="(modelInfo,idx) in modelInfos" :key="idx">
-        <CustomVcfStats :modelInfos="modelInfo" :idx="idx" :customData="customData">
+        <CustomVcfStats :modelInfos="modelInfo" :idx="idx" :customData="customData"
+          @variants-count="setCustomVariantCounts($event)">
         </CustomVcfStats>
       </div>
     </div>
@@ -370,8 +371,8 @@ export default {
       }),
 
       coverageMean: 0,
-      bamCounter: 0
-
+      bamCounter: 0,
+      variantsArrayForSamples: null,
     }
 
   },
@@ -638,7 +639,9 @@ export default {
       this.populateRelationshipMap();
       this.populateSampleIdsFromCustom(this.pedigree);
       this.populateSampleIdsAndRelationships();
-      this.getVarCountFromCustomData(this.modelInfos);
+      this.variantsArrayForSamples = new Array(this.modelInfos.length); 
+      // console.log("this.variantsArrayForSamples", this.variantsArrayForSamples);
+      // this.getVarCountFromCustomData(this.modelInfos);
       this.getBamStatsFromCustomData(this.modelInfos);
       this.populateReviewCaseBadges();
 
@@ -1092,6 +1095,13 @@ export default {
       for(let i = 0; i < len; i++){
         this.allPedigreeDataArrays.push(this.pedigreeDataArray);
       }
+    },
+    
+    setCustomVariantCounts(data){
+      const { counts, idx } = data; 
+      this.variantsArrayForSamples[idx] = counts;
+      this.setVariantsCount(this.variantsArrayForSamples);
+      // console.log("getVariantsCount", this.getVariantsCount);
     }
   },
   computed: {

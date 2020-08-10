@@ -177,14 +177,15 @@
                 }
                 else{
                   this.totalVarCount = snp + other + indel;
+                  d3.select(this.$el).select('svg')
+                      .append("text")
+                      .attr('y', 12)
+                      .attr('x', this.width / 2)
+                      .attr("fill", "black")
+                      .attr("text-anchor", "middle")
+                      .text("Total: " + this.nFormatter(this.totalVarCount, 1));
+
                 }
-                d3.select(this.$el).select('svg')
-                    .append("text")
-                    .attr('y', 12)
-                    .attr('x', this.width / 2)
-                    .attr("fill", "black")
-                    .attr("text-anchor", "middle")
-                    .text("Total: " + this.nFormatter(this.totalVarCount, 1));
             },
 
             formatLabel(count){
@@ -272,8 +273,8 @@
                     .attr('fill', (d) => this.colorScale(d[xColumn]));
 
                 var labels = this.gMain
-                    .selectAll(".textLables")
-                    .data(this.dataArray);
+                    .selectAll(".type-label")
+                    .data(this.dataArray)
                 
                 labels.exit().remove();
                 
