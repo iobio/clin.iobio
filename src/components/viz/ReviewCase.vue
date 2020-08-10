@@ -117,6 +117,12 @@
           </div>
       </div>
 
+    <div v-if="customData && modelInfos.length">
+      <div v-for="(modelInfo,idx) in modelInfos" :key="idx">
+        <CustomVcfStats :modelInfos="modelInfo" :idx="idx" :customData="customData">
+        </CustomVcfStats>
+      </div>
+    </div>
 
     <div v-if="customData && statsReceived && coverageStatsReceived">
       <div style=" width: 100%; display: inline-flex; flex-direction: row; justify-content: space-around; padding-bottom: 10px">
@@ -165,7 +171,7 @@
             </div>
 
           </div>
-          <QualitativeBarChart :data="varCountsArray[i].counts" :customData="customData" :width="300" :height="150" style="padding-top: 0"></QualitativeBarChart>
+          <!-- <QualitativeBarChart :data="varCountsArray[i].counts" :customData="customData" :width="300" :height="150" style="padding-top: 0"></QualitativeBarChart> -->
 
         </div>
      </div>
@@ -246,6 +252,7 @@ import AppIcon       from '../partials/AppIcon.vue';
 import QualitativeBarChart from './QualitativeBarChart.vue'
 import BarChart from './BarChart.vue'
 import SkeletonLoadersReview from '../partials/SkeletonLoadersReview.vue'
+import CustomVcfStats from './CustomVcfStats.vue'
 
 import Vue from 'vue';
 
@@ -266,7 +273,8 @@ export default {
     PedigreeGraph,
     AppIcon,
     BoxPlot,
-    SkeletonLoadersReview
+    SkeletonLoadersReview,
+    CustomVcfStats,
   },
   props: {
     workflow:    null,

@@ -106,12 +106,18 @@
             },
             showChart() {
                 // check if null was passed in
+                console.log("data in chart", this.data);
                 return this.data ? Object.keys(this.data).length > 0 : false;
             },
         },
         watch: {
             data() {
+              console.log("data is changing");
+                // this.drawChart();
+                this.populateMaxCount();
                 this.drawChart();
+                this.drawTotalVarCount();
+
             },
             width() {
                 this.drawChart();
@@ -265,12 +271,13 @@
                     .attr('height', (d) => this.innerHeight - this.yScale(d[yColumn]))
                     .attr('fill', (d) => this.colorScale(d[xColumn]));
 
-                let labels = this.gMain
+                var labels = this.gMain
                     .selectAll(".textLables")
                     .data(this.dataArray);
-
-                labels
-                    .enter()
+                
+                labels.exit().remove();
+                
+                labels.enter()
                     .append('text')
                     .merge(labels)
                     .attr('class', 'type-label')
@@ -278,6 +285,8 @@
                     .attr('x', (d) => this.xScale(d[xColumn]) + (this.xScale.bandwidth() / 2))
                     .attr('y', (d) => this.yScale(d[yColumn]))
                     .text(d => this.formatLabel(d.count));
+                    
+                    
             },
         },
     };
