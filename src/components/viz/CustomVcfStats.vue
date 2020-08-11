@@ -1,7 +1,7 @@
 <template>
   <div>
     {{ totalReads }} Variants sampled
-    <QualitativeBarChart v-if="totalReads>0" :data="justVarCounts.counts" :customData="customData" :width="300" :height="150" style="padding-top: 0"></QualitativeBarChart>
+    <QualitativeBarChart v-if="totalReads>0" :data="varCounts.counts" :customData="customData" :width="300" :height="150" style="padding-top: 0"></QualitativeBarChart>
   </div>
 </template>
 
@@ -27,9 +27,8 @@ var vcfiobio = new Vcfiobio();
       return {
         varCountsArray: [],
         statsReceived: false,
-        justVarCounts: {},
         totalReads: 0,
-        justVarCounts: {
+        varCounts: {
           counts: {
             "SNP": 0,
             "INS": 0,
@@ -51,35 +50,32 @@ var vcfiobio = new Vcfiobio();
         })
       },
       
-      justGetVcfStats(refs, options, vcf, tbi, sample, idx){
+      getVcfStats(refs, options, vcf, tbi, sample, idx){
 
         vcfiobio.getStats(refs, options, vcf, tbi, sample, function(data) {
-          console.log("data", data);
           var stats = data.var_type; 
           var indels = stats.INS + stats.DEL;
-          var justVarCounts = {};
+          var varCounts = {};
           var reads = data.TotalRecords
 
-          justVarCounts.counts = {
+          varCounts.counts = {
             "SNP": stats.SNP,
             "INS": stats.INS,
             "DEL": stats.DEL
           }
-          addToVarCounts(justVarCounts.counts, idx, reads, sample);
+          addToVarCounts(varCounts.counts, idx, reads, sample);
         });
-        var addToVarCounts = ((justVarCounts, idx, reads, sample) => {
-          // this.justVarCounts.counts = justVarCounts;
+        
+        var addToVarCounts = ((varCounts, idx, reads, sample) => {
           this.totalReads = reads;
-          this.justVarCounts = {
-            counts: justVarCounts, 
+          this.varCounts = {
+            counts: varCounts, 
             sample: sample,
           }
           this.$emit("variants-count", {
-            counts: this.justVarCounts,
+            counts: this.varCounts,
             idx: idx
           })
-          // this.justVarCounts.counts = justVarCounts;
-
         })
 
       },
@@ -95,28 +91,7 @@ var vcfiobio = new Vcfiobio();
 
         var refs = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23];
         let promises = [];
-        this.justGetVcfStats(refs, options, modelInfos.vcf, modelInfos.tbi, modelInfos.sample, idx)
-        promises.push(this.getVcfStats(refs, options, modelInfos.vcf, modelInfos.tbi, modelInfos.sample))
-        Promise.all(promises).then((results)=>{
-          results.forEach(stats => {
-            addToVarCountsArray(stats.data, stats.sample)
-          })
-        })
-        
-        var addToVarCountsArray = (stats, sample)=>{
-          var indels = stats.INS + stats.DEL
-          this.statsReceived = true;
-          this.varCountsArray.push({
-            "id":"3261",
-            "sample": sample,
-            "counts": {
-              "SNP": stats.SNP,
-              "INS": stats.INS,
-              "DEL": stats.DEL
-            }
-          })
-          // this.setVariantsCount(this.varCountsArray)
-        }
+        this.getVcfStats(refs, options, modelInfos.vcf, modelInfos.tbi, modelInfos.sample, idx);
       },
     }, 
     mounted(){

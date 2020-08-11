@@ -106,18 +106,14 @@
             },
             showChart() {
                 // check if null was passed in
-                console.log("data in chart", this.data);
                 return this.data ? Object.keys(this.data).length > 0 : false;
             },
         },
         watch: {
             data() {
-              console.log("data is changing");
-                // this.drawChart();
                 this.populateMaxCount();
                 this.drawChart();
                 this.drawTotalVarCount();
-
             },
             width() {
                 this.drawChart();
