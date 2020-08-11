@@ -123,7 +123,7 @@
           @variants-count="setCustomVariantCounts($event)">
         </CustomVcfStats>
         
-        <CustomBamStats :modelInfos="modelInfo" :idx="idx" :customData="customData" :bed="bed"
+        <CustomBamStats v-if="bedDataLoaded" :modelInfos="modelInfo" :idx="idx" :customData="customData" :bedFileData="bed"
           @coverage-reads-count="setCustomReadsCount($event)">
         </CustomBamStats>
         <!-- Total reads: {{ bam_total_reads[idx] }}
@@ -395,6 +395,7 @@ export default {
       bamCounter: 0,
       variantsArrayForSamples: null,
       bam_total_reads: [],
+      bedDataLoaded: false,
     }
 
   },
@@ -651,7 +652,8 @@ export default {
     buildCustomPage: function(){
 
       let self = this;
-
+      this.bedDataLoaded = true;
+      
       this.allPedigreeDataArrays = [];
 
       this.modelInfosData = this.modelInfos;

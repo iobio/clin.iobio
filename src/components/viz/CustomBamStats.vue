@@ -21,7 +21,7 @@ import Vue from 'vue';
       modelInfos: null,
       idx: null,
       customData: null,
-      bed: null,
+      bedFileData: null,
     },
     data() {
       return {
@@ -47,7 +47,7 @@ import Vue from 'vue';
 
         bam: {},
         // bed: {},
-        // bed: null,
+        bed: null,
         readDepthChartData: [],
         references: [],
 
@@ -337,6 +337,8 @@ import Vue from 'vue';
       },
     }, 
     mounted(){
+      this.bed = this.bedFileData;
+      console.log("this bed", this.bed);
       this.getBamStatsFromCustomData(this.modelInfos, this.idx);
     },
   }

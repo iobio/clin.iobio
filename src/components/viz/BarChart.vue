@@ -232,6 +232,9 @@
 
                 let max = Math.max.apply(Math, this.data.map(function(a) { return a[1]; }))
                 max = max + 0.1*max;
+                
+                svg.select('#medianLine').remove();
+                svg.select('#medianText').remove();
 
                 svg.append("line")
                     .attr("id", "medianLine")
