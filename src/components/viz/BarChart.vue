@@ -160,6 +160,15 @@
             minCutoff(){
                 this.plotMin();
             },
+            
+            data(){
+              this.checkForData(this.drawChart);
+              this.calculateWidthNorm();
+              this.plotMedian();
+              this.plotMin();
+              this.update();
+
+            }
         },
         mounted() {
             this.checkForData(this.drawChart);

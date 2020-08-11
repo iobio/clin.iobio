@@ -122,6 +122,25 @@
         <CustomVcfStats :modelInfos="modelInfo" :idx="idx" :customData="customData"
           @variants-count="setCustomVariantCounts($event)">
         </CustomVcfStats>
+        
+        <CustomBamStats :modelInfos="modelInfo" :idx="idx" :customData="customData" :bed="bed"
+          @coverage-reads-count="setCustomReadsCount($event)">
+        </CustomBamStats>
+        <!-- Total reads: {{ bam_total_reads[idx] }}
+        <BarChart :data="coverageDataArray[idx]" :width="400" :height="150" :x-domain="xDomain" :y-domain="yDomain" :median-coverage="medianCoverages[idx]" :minCutoff="minCutoff"></BarChart> -->
+
+      </div>
+    </div>
+    
+    <div v-if="customData && modelInfos.length && coverageStatsReceived">
+      <div v-for="(modelInfo,idx) in modelInfos" :key="idx">
+        
+        <!-- <CustomBamStats :modelInfos="modelInfo" :idx="idx" :customData="customData"
+          @coverage-reads-count="setCustomReadsCount($event)">
+        </CustomBamStats> -->
+        Total reads: {{ bam_total_reads[idx] }}
+        <BarChart :data="coverageDataArray[idx]" :width="400" :height="150" :x-domain="xDomain" :y-domain="yDomain" :median-coverage="medianCoverages[idx]" :minCutoff="minCutoff"></BarChart>
+
       </div>
     </div>
 
@@ -254,6 +273,7 @@ import QualitativeBarChart from './QualitativeBarChart.vue'
 import BarChart from './BarChart.vue'
 import SkeletonLoadersReview from '../partials/SkeletonLoadersReview.vue'
 import CustomVcfStats from './CustomVcfStats.vue'
+import CustomBamStats from './CustomBamStats.vue'
 
 import Vue from 'vue';
 
@@ -276,6 +296,7 @@ export default {
     BoxPlot,
     SkeletonLoadersReview,
     CustomVcfStats,
+    CustomBamStats,
   },
   props: {
     workflow:    null,
@@ -373,6 +394,7 @@ export default {
       coverageMean: 0,
       bamCounter: 0,
       variantsArrayForSamples: null,
+      bam_total_reads: [],
     }
 
   },
@@ -642,7 +664,8 @@ export default {
       this.variantsArrayForSamples = new Array(this.modelInfos.length); 
       // console.log("this.variantsArrayForSamples", this.variantsArrayForSamples);
       // this.getVarCountFromCustomData(this.modelInfos);
-      this.getBamStatsFromCustomData(this.modelInfos);
+      this.coverageDataArray = new Array(this.modelInfos.length);
+      // this.getBamStatsFromCustomData(this.modelInfos);
       this.populateReviewCaseBadges();
 
       this.pedigreeDataArray = this.buildPedFromTxt(this.pedigree);
@@ -1083,9 +1106,11 @@ export default {
       let self = this;
       self.coverageDataArray = [];
       this.coverageHistosData.forEach(function(d){
+        console.log("d.coverage", d.coverage);
         const coverageArr = self.formatCoverageArray(d.coverage);
         self.coverageDataArray.push(coverageArr);
       });
+      console.log("self.coverageDataArray", self.coverageDataArray);
     },
 
     assignProbandToEachSample(){
@@ -1102,6 +1127,33 @@ export default {
       this.variantsArrayForSamples[idx] = counts;
       this.setVariantsCount(this.variantsArrayForSamples);
       // console.log("getVariantsCount", this.getVariantsCount);
+    },
+    
+    setCustomReadsCount(data){
+      const { coverageArr, idx, total_reads } = data
+      // console.log("total_reads received back", total_reads);
+      // this.coverageHistosData[idx] = coverageHistosData;
+      this.bam_total_reads[idx] = total_reads;
+      // this.formatCoverageData();
+      this.coverageDataArray[idx] = coverageArr; 
+      console.log("coverageArr", this.coverageDataArray);
+      if(this.checkifNoEmptyIndex(this.coverageDataArray)){
+        this.coverageStatsReceived = true;
+        this.populateDomains();
+        this.populateCoverageMedians();
+        this.populateBadCoverageCount();
+      }
+      // this.coverageStatsReceived = true;
+    },
+    
+    checkifNoEmptyIndex(arr){
+      var bool = true;
+      for (var i = 0; i < arr.length; i++) {
+        if(arr[i] === undefined){
+          bool = false;
+        }
+      }
+      return bool;
     }
   },
   computed: {

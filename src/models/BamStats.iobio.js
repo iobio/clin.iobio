@@ -401,15 +401,15 @@ var BamStats = Class.extend({
               }
               if (success) {
                 buffer = "";
-                // callback(obj);
+                callback(obj);
               }
             });
           });
 
           cmd.on('end', function () {
-            callback(outputObject)
-            if (options.onEnd != undefined)
-              options.onEnd();
+            // callback(outputObject)
+            // if (options.onEnd != undefined)
+            //   options.onEnd();
           });
 
           cmd.on('exit', function (code) {
