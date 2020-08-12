@@ -223,9 +223,6 @@ import Vue from 'vue';
 
             this.sampleStats = data.coverage_hist;
             this.bamCounter = this.bamCounter+1;
-            // console.log("total stats", data.total_reads);
-            // console.log("sample sets data in review case", data, " and idx is :", idx)
-            // resolve(this.sampleStats)
             this.addCoverageData(data, idx); 
           }
         }.bind(this), options);
@@ -236,66 +233,31 @@ import Vue from 'vue';
           "coverage": stats.coverage_hist,
         }
         this.total_reads = stats.total_reads;
-        // console.log("total_reads in custom page", total_reads);
-        // this.$emit("coverage-reads-count", {
-        //   coverageHistosData: this.coverageHistosData,
-        //   idx: idx,
-        //   total_reads: total_reads
-        // })
+        this.$emit("coverage-histos-data", {
+          coverageHistosData: this.coverageHistosData,
+          idx: idx,
+        })
         
         this.toFormatCoverage(idx)
       },
       
       toFormatCoverage(idx){
         this.formatCoverageData(idx);
-        this.populateDomains();
-
       },
       
       formatCoverageData(idx){
         let self = this;
         self.coverageDataArray = [];
         const coverageArr = self.formatCoverageArray(this.coverageHistosData.coverage);
-        // console.log("coverageArr", coverageArr, " id : ", idx);
         this.$emit("coverage-reads-count", {
           coverageArr,
           idx,
           total_reads: this.total_reads
         })
-        // this.coverageHistosData.forEach(function(d){
-        //   const coverageArr = self.formatCoverageArray(d.coverage);
-        //   self.coverageDataArray.push(coverageArr);
-        // });
       },
       
       getBamStatsFromCustomData: function(modelInfos, idx){
         this.loadBamStats(modelInfos.bam, modelInfos.bai, modelInfos.sample, idx)
-
-        // Promise.all(promises).then((results) => {
-        //   results.forEach(stats => {
-        //     addToCoverageDataArray(stats)
-        //   })
-        //   // toFormatCoverage()
-        // })
-
-        // var addToCoverageDataArray = (stats) => {
-        //   console.log("stats bam - ", stats);
-        //   this.coverageHistosData.push({
-        //     "id":"3261",
-        //     "coverage": stats
-        //   })
-          // this.setCoverageData(this.coverageHistosData);
-          //When coverageData is read from analysis object, it will still need to call the format functions
-        // }
-
-        var toFormatCoverage = () => {
-          this.formatCoverageData();
-          this.populateDomains();
-          this.populateCoverageMedians();
-          this.populateBadCoverageCount();
-          this.coverageStatsReceived = true
-        }
-
       },
       
       formatCoverageArray(d){
@@ -307,33 +269,6 @@ import Vue from 'vue';
         return coverageArr;
       },
       
-
-      
-      populateDomains(){
-        let xMin = Math.min();
-        let xMax = Math.max();
-        let yMin = Math.min();
-        let yMax = Math.max();
-
-        for(let i = 0; i < this.coverageDataArray.length; i++){
-          for(let j = 0; j < this.coverageDataArray[i].length; j++){
-            if(parseInt(this.coverageDataArray[i][j][0]) < xMin){
-              xMin = parseInt(this.coverageDataArray[i][j][0]);
-            }
-            if(parseInt(this.coverageDataArray[i][j][0]) > xMax) {
-              xMax = parseInt(this.coverageDataArray[i][j][0]);
-            }
-            if(this.coverageDataArray[i][j][1] < yMin){
-              yMin = this.coverageDataArray[i][j][1];
-            }
-            if(this.coverageDataArray[i][j][1] > yMax) {
-              yMax = this.coverageDataArray[i][j][1];
-            }
-          }
-        }
-        this.xDomain = [xMin, xMax+1];
-        this.yDomain =  [yMin, yMax];
-      },
     }, 
     mounted(){
       this.bed = this.bedFileData;

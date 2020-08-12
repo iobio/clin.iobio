@@ -8,7 +8,7 @@
 
 
 <script>
-import loadingDots from './loading_dots.gif' 
+import loadingDots from '../../assets/images/loading_dots.gif' 
 
   export default {
     name: 'sampling-loader',

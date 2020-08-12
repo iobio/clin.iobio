@@ -117,7 +117,7 @@
           </div>
       </div>
       
-      <div v-if="customData && modelInfos.length">
+      <div v-if="customData && modelInfos && modelInfos.length && !customSavedAnalysis">
         
         <!-- Header  -->
         <div style=" width: 100%; display: inline-flex; flex-direction: row; justify-content: space-around; padding-bottom: 10px">
@@ -193,7 +193,8 @@
                 </CustomVcfStats>
                 
                 <CustomBamStats v-if="bedDataLoaded" :modelInfos="modelInfo" :idx="idx" :customData="customData" :bedFileData="bed"
-                  @coverage-reads-count="setCustomReadsCount($event)">
+                  @coverage-reads-count="setCustomReadsCount($event)"
+                  @coverage-histos-data="setCoverageHistosData($event)">
                 </CustomBamStats>
               </div>
               <!-- End variant counts  -->
@@ -206,117 +207,10 @@
 
         </div>
         <!-- end container -->
-        
-        
+        <br><br><hr>
 
-        <!-- old code -->
-        <!-- <div v-for="(modelInfo,idx) in modelInfos" :key="idx">
-          <div style=" width: 100%; display: inline-flex; flex-direction: row; justify-content: space-around;">
-            
-            <div style="text-align: center; width: 150px" class="capitalize">
-              {{sampleIdsAndRelationships[idx]}}
-              <PedigreeGraph :data="allPedigreeDataArrays[idx]" :id="sampleUuids[idx]" :width="100" :height="75" :pedigree="pedigree"></PedigreeGraph>
-            </div>
-            
-            <div style="display: inline-flex;">
-              <div v-if="!coverageStatsReceived">
-                <SamplingLoader/>
-              </div>
-              <div v-if="coverageStatsReceived">
-                Total reads: {{ bam_total_reads[idx] }}
-                <BarChart :data="coverageDataArray[idx]" :width="400" :height="150" :x-domain="xDomain" :y-domain="yDomain" :median-coverage="medianCoverages[idx]" :minCutoff="minCutoff"></BarChart>
-
-                <div style="padding-top: 20px" v-show="goodCoverage(idx)">
-                <v-tooltip top class="valign">
-                  <template v-slot:activator="{ on }">
-                    <v-icon class="good-coverage" v-on="on" top color="green"
-                             @click="">check_circle</v-icon>
-                  </template>
-                  <span>Median coverage is above expected coverage threshold of {{minCutoff}}X</span>
-
-                </v-tooltip>
-                  <div v-if="badCoverage" style=" display: inline-flex; width: 120px; line-height: 16px; font-size: 12px; padding-left: 5px;"></div>
-                </div>
-                <div style="padding-top: 20px" v-show="!goodCoverage(idx)">
-                      <v-icon v-on="on"     @click=""
-                              top color="#B33A3A">mdi-alert-circle</v-icon>
-
-
-                  <div v-if="badCoverage" style=" display: inline-flex; width: 120px; line-height: 14px; font-size: 13px; padding-left: 5px;">Median coverage is below expected coverage threshold of {{minCutoff}}X</div>
-
-                </div>
-
-              </div>
-
-            </div>
-            
-            <CustomVcfStats :modelInfos="modelInfo" :idx="idx" :customData="customData"
-              @variants-count="setCustomVariantCounts($event)">
-            </CustomVcfStats>
-            
-            <CustomBamStats v-if="bedDataLoaded" :modelInfos="modelInfo" :idx="idx" :customData="customData" :bedFileData="bed"
-              @coverage-reads-count="setCustomReadsCount($event)">
-            </CustomBamStats>
-
-            
-
-          </div>
-        </div> -->
-        
       </div>
       
-      <br><br><hr>
-    
-
-    <!-- <div v-if="customData && modelInfos.length">
-      <div v-for="(modelInfo,idx) in modelInfos" :key="idx">
-        <CustomVcfStats :modelInfos="modelInfo" :idx="idx" :customData="customData"
-          @variants-count="setCustomVariantCounts($event)">
-        </CustomVcfStats>
-        
-        <CustomBamStats v-if="bedDataLoaded" :modelInfos="modelInfo" :idx="idx" :customData="customData" :bedFileData="bed"
-          @coverage-reads-count="setCustomReadsCount($event)">
-        </CustomBamStats>
-
-      </div>
-    </div> -->
-    
-    
-    <!-- <v-text-field
-            id="minCoverageInput"
-          label="Expected Coverage"
-          outlined
-          dense
-          value="minCutoff"
-          v-model.number="minCutoff"
-            style="width: 150px"
-  ></v-text-field>
-    <div v-if="customData && modelInfos.length && coverageStatsReceived">
-      <div v-for="(modelInfo,idx) in modelInfos" :key="idx">
-        
-        Total reads: {{ bam_total_reads[idx] }}
-        <BarChart :data="coverageDataArray[idx]" :width="400" :height="150" :x-domain="xDomain" :y-domain="yDomain" :median-coverage="medianCoverages[idx]" :minCutoff="minCutoff"></BarChart>
-        <div style="padding-top: 20px" v-show="goodCoverage(idx)">
-        <v-tooltip top class="valign">
-          <template v-slot:activator="{ on }">
-            <v-icon class="good-coverage" v-on="on" top color="green"
-                     @click="">check_circle</v-icon>
-          </template>
-          <span>Median coverage is above expected coverage threshold of {{minCutoff}}X</span>
-
-        </v-tooltip>
-          <div v-if="badCoverage" style=" display: inline-flex; width: 120px; line-height: 16px; font-size: 12px; padding-left: 5px;"></div>
-        </div>
-        <div style="padding-top: 20px" v-show="!goodCoverage(idx)">
-              <v-icon v-on="on"     @click=""
-                      top color="#B33A3A">mdi-alert-circle</v-icon>
-
-
-          <div v-if="badCoverage" style=" display: inline-flex; width: 120px; line-height: 14px; font-size: 13px; padding-left: 5px;">Median coverage is below expected coverage threshold of {{minCutoff}}X</div>
-
-        </div>
-      </div>
-    </div> -->
 
     <div v-if="customSavedAnalysis && statsReceived && coverageStatsReceived">
       <div style=" width: 100%; display: inline-flex; flex-direction: row; justify-content: space-around; padding-bottom: 10px">
@@ -365,17 +259,15 @@
             </div>
 
           </div>
-          <!-- <QualitativeBarChart :data="varCountsArray[i].counts" :customData="customData" :width="300" :height="150" style="padding-top: 0"></QualitativeBarChart> -->
+          <QualitativeBarChart :data="varCountsArray[i].counts" :customData="customData" :width="300" :height="150" style="padding-top: 0"></QualitativeBarChart>
 
         </div>
      </div>
     </div>
-    <div v-if="customData && !coverageStatsReceived">
+    <div v-if="customData && !coverageStatsReceived && customSavedAnalysis">
       <center>
         <SkeletonLoadersReview :rowsLength="modelInfos.length">
         </SkeletonLoadersReview>
-
-
       </center>
     </div>
 
@@ -842,6 +734,7 @@ export default {
       this.variantsArrayForSamples = new Array(this.modelInfos.length); 
       // console.log("this.variantsArrayForSamples", this.variantsArrayForSamples);
       // this.getVarCountFromCustomData(this.modelInfos);
+      this.coverageHistosData = new Array(this.modelInfos.length);
       this.coverageDataArray = new Array(this.modelInfos.length);
       // this.getBamStatsFromCustomData(this.modelInfos);
       this.populateReviewCaseBadges();
@@ -1284,11 +1177,9 @@ export default {
       let self = this;
       self.coverageDataArray = [];
       this.coverageHistosData.forEach(function(d){
-        console.log("d.coverage", d.coverage);
         const coverageArr = self.formatCoverageArray(d.coverage);
         self.coverageDataArray.push(coverageArr);
       });
-      console.log("self.coverageDataArray", self.coverageDataArray);
     },
 
     assignProbandToEachSample(){
@@ -1304,24 +1195,27 @@ export default {
       const { counts, idx } = data; 
       this.variantsArrayForSamples[idx] = counts;
       this.setVariantsCount(this.variantsArrayForSamples);
-      // console.log("getVariantsCount", this.getVariantsCount);
     },
     
     setCustomReadsCount(data){
       const { coverageArr, idx, total_reads } = data
-      // console.log("total_reads received back", total_reads);
-      // this.coverageHistosData[idx] = coverageHistosData;
       this.bam_total_reads[idx] = total_reads;
       // this.formatCoverageData();
       this.coverageDataArray[idx] = coverageArr; 
-      console.log("coverageArr", this.coverageDataArray);
       if(this.checkifNoEmptyIndex(this.coverageDataArray)){
         this.coverageStatsReceived = true;
         this.populateDomains();
         this.populateCoverageMedians();
         this.populateBadCoverageCount();
       }
-      // this.coverageStatsReceived = true;
+    },
+    
+    setCoverageHistosData(data){
+      const { coverageHistosData, idx } = data;
+      this.coverageHistosData[idx] = coverageHistosData;
+      if(this.checkifNoEmptyIndex(this.coverageHistosData)){
+        this.setCoverageData(this.coverageHistosData);
+      }
     },
     
     checkifNoEmptyIndex(arr){
