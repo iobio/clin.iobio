@@ -269,7 +269,6 @@ import Vue from 'vue';
       },
       
       getBamStatsFromCustomData: function(modelInfos, idx){
-        console.log("idx", idx);
         this.loadBamStats(modelInfos.bam, modelInfos.bai, modelInfos.sample, idx)
 
         // Promise.all(promises).then((results) => {
@@ -338,7 +337,6 @@ import Vue from 'vue';
     }, 
     mounted(){
       this.bed = this.bedFileData;
-      console.log("this bed", this.bed);
       this.getBamStatsFromCustomData(this.modelInfos, this.idx);
     },
   }

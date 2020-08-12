@@ -116,6 +116,8 @@
             </div>
           </div>
       </div>
+      
+      <SamplingLoader />
 
     <div v-if="customData && modelInfos.length">
       <div v-for="(modelInfo,idx) in modelInfos" :key="idx">
@@ -300,6 +302,7 @@ import BarChart from './BarChart.vue'
 import SkeletonLoadersReview from '../partials/SkeletonLoadersReview.vue'
 import CustomVcfStats from './CustomVcfStats.vue'
 import CustomBamStats from './CustomBamStats.vue'
+import SamplingLoader from './SamplingLoader.vue'
 
 import Vue from 'vue';
 
@@ -323,6 +326,7 @@ export default {
     SkeletonLoadersReview,
     CustomVcfStats,
     CustomBamStats,
+    SamplingLoader,
   },
   props: {
     workflow:    null,

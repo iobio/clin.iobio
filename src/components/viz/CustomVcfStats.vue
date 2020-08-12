@@ -1,7 +1,13 @@
 <template>
   <div>
-    {{ totalReads }} Variants sampled
+    <center>
+      <span class="sampled-count">{{ totalReads | to-formatLabel}} </span>
+      <span class="light">variants sampled</span>
+    </center>
     <QualitativeBarChart v-if="totalReads>0" :data="varCounts.counts" :customData="customData" :width="300" :height="150" style="padding-top: 0"></QualitativeBarChart>
+    <div v-if="totalReads===0">
+      <SamplingLoader/>
+    </div>
   </div>
 </template>
 
@@ -11,12 +17,14 @@ import QualitativeBarChart from './QualitativeBarChart.vue'
 import BarChart from './BarChart.vue'
 import Vcfiobio from '../../models/Vcf.iobio'
 var vcfiobio = new Vcfiobio();
+import SamplingLoader from './SamplingLoader.vue'
 
   export default {
     name: 'custom-vcf-stats',
     components: {
       QualitativeBarChart,
       BarChart,
+      SamplingLoader,
     },
     props: {
       modelInfos: null,
@@ -89,6 +97,14 @@ var vcfiobio = new Vcfiobio();
 </script>
 
 
-<style>
+<style lang="sass" >
+  
+@import ../../assets/sass/variables
 
+.sampled-count
+  color: $sampling-text-color
+  font-weight: 600
+  font-size: 16px
+  
 </style>
+
