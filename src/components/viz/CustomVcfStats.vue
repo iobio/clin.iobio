@@ -1,9 +1,9 @@
 <template>
   <div>
-    <center>
+    <div v-if="totalReads>0" style="margin-left:70px">
       <span class="sampled-count">{{ totalReads | to-formatLabel}} </span>
       <span class="light">variants sampled</span>
-    </center>
+    </div>
     <QualitativeBarChart v-if="totalReads>0" :data="varCounts.counts" :customData="customData" :width="300" :height="150" style="padding-top: 0"></QualitativeBarChart>
     <div v-if="totalReads===0">
       <SamplingLoader/>

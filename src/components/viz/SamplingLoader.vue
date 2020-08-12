@@ -1,9 +1,9 @@
 <template>
-  <v-card style="height:150px; width:300px">
+  <div style="height:150px; width:450px">
     <div class="samplingloader">
       <center>Sampling <img class="ml-2 samplingloader_img" :src="loadingDots"/></center>
     </div>
-  </v-card>
+  </div>
 </template>
 
 
