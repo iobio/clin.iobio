@@ -893,10 +893,23 @@ export default {
       let obj = {
         ID:true, SAMPLE_ID: true, PATERNAL_ID: true,  MATERNAL_ID:true, SEX:true,
         AFFECTED_STATUS:true, RELATION: true, VCF_URL: true, TBI_URL: true, 
-        BAM_URL:true, BAI_URL:true, BED_URL: true, BUILD: true
+        BAM_URL:true, BAI_URL:true
       }
       let bool = true;
       let lines = data.split('\n');
+      let headers = lines.splice(0,4);
+      if(headers[0].split(':')[0].trim()!=='#PROJECT_NAME'){
+        bool = false;
+      }
+      if(headers[1].split(':')[0].trim()!=='#PROJECT_DESCRIPTION'){
+        bool = false;
+      }
+      if(headers[2].split(':')[0].trim()!=='#BED_URL'){
+        bool = false;
+      }
+      if(headers[3].split(':')[0].trim()!=='#BUILD'){
+        bool = false;
+      }
       let firstLine = lines[0].trim().split(/\s+|\,/g);
       for(let i=0; i<firstLine.length; i++){
         if(!obj.hasOwnProperty(firstLine[i])){
@@ -915,10 +928,23 @@ export default {
         reader.onload = () => {
           let data = reader.result.trim();
           let newLine = data.split('\n');
+          let headers = newLine.splice(0,4)
           let pedData = [];
           let modelInfoData = [];
           let bedFileUrl = 'https://raw.githubusercontent.com/chmille4/bam.iobio.io/vue/client/data/20130108.exome.targets.bed';
           let buildName = 'GRCh37';
+          this.caseTitle = headers[0].split('E:')[1].trim();
+          this.caseDescription = headers[1].split('N:')[1].trim();
+          
+          let bedFile = headers[2].split('L:')[1].trim();
+          if(bedFile !== ''){
+            bedFileUrl = bedFile;
+          }
+          
+          let build = headers[3].split('D:')[1].trim();
+          if(build !== ''){
+            buildName = build;
+          }
           
           let sexMap = {
             "1": "male",
@@ -946,18 +972,15 @@ export default {
             }
             modelInfoData.shift();
             let pedFile = pedData.join('\n');
-            let bedFile = modelInfoData[0][11]; 
-            if(bedFile !== ''){
-              bedFileUrl = bedFile;
-            }
-            let build = modelInfoData[0][12].trim();;
-            if(build !== ''){
-              buildName = build;
-            }
+
             this.formatCustomModelInfo(modelInfoData);
             this.$emit("setBedFileUrl", bedFileUrl);
             this.$emit("set-ped-data", pedFile);
             this.$emit('setBuildForCustomData', buildName);
+            this.$emit("set-custom-case-summary", {
+              name: this.caseTitle,
+              description: this.caseDescription
+            })
           }
           else {
             this.validationErrors.push("Headers do not match with the specified file format. Please check the configuration file and try again.")
