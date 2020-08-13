@@ -1058,6 +1058,8 @@ export default function vcfiobio(theGlobalApp) {
     cmd.run();
 
     var buffer = "";
+    var outputObject = ""
+
     // Use Results
     cmd.on('data', function(results) {
          results.split(';').forEach(function(data) {
@@ -1067,6 +1069,7 @@ export default function vcfiobio(theGlobalApp) {
            var success = true;
            try {
              var obj = JSON.parse(buffer + data);
+             outputObject = obj
            } catch(e) {
              success = false;
              buffer += data;
@@ -1079,7 +1082,7 @@ export default function vcfiobio(theGlobalApp) {
     });
 
     cmd.on('end', function() {
-
+      // callback(outputObject)
     });
 
     cmd.on('error', function(error) {

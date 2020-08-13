@@ -116,9 +116,103 @@
             </div>
           </div>
       </div>
+      
+      <div v-if="customData && modelInfos && modelInfos.length && !customSavedAnalysis">
+        
+        <!-- Header  -->
+        <div style=" width: 100%; display: inline-flex; flex-direction: row; justify-content: space-around; padding-bottom: 10px">
+          <div class="heading" style="margin-right: 90px">Sample</div> <div class="heading" style="margin-right: 90px; display:flex;flex-direction:row;justify-content:space-between">
+          <div style="margin-right: 20px">Read Coverage</div>
+          <v-text-field
+                  id="minCoverageInput"
+                label="Expected Coverage"
+                outlined
+                dense
+                value="minCutoff"
+                v-model.number="minCutoff"
+                  style="width: 150px"
+        ></v-text-field></div>
 
+          <div class="heading" style="margin-right: 100px">Variant Types</div>
+        </div>
+        
+        <!-- Content -->
+        <div class="container">
+          <div style="margin-left:100px; margin-right:20px" class="row">
+            <div style="width:100%" v-for="(modelInfo,idx) in modelInfos" :key="idx">
+              <!-- Pedigree -->
+              <div class="col-md-3 capitalize">
+                {{sampleIdsAndRelationships[idx]}}
+                <PedigreeGraph :data="allPedigreeDataArrays[idx]" :id="sampleUuids[idx]" :width="100" :height="75" :pedigree="pedigree"></PedigreeGraph>
+              </div>
+              <!-- End pedigree -->
+              
+              <!-- Read coverage -->
+              <div class="col-md-5">
+                <div v-if="!coverageStatsReceived">
+                  <SamplingLoader/>
+                </div>
+                <div v-if="coverageStatsReceived">
+                  <div style="margin-left:150px">
+                    <span class="sampled-count">{{ bam_total_reads[idx] | to-formatLabel}} </span>
+                    <span> Reads sampled</span>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-8">
+                      <BarChart :data="coverageDataArray[idx]" :width="400" :height="150" :x-domain="xDomain" :y-domain="yDomain" :median-coverage="medianCoverages[idx]" :minCutoff="minCutoff"></BarChart>
+                    </div>
+                    <div class="col-md-4">
+                      <div style="padding-top: 20px" v-show="goodCoverage(idx)">
+                      <v-tooltip top class="valign">
+                        <template v-slot:activator="{ on }">
+                          <v-icon class="good-coverage" v-on="on" top color="green"
+                            @click="">check_circle
+                          </v-icon>
+                        </template>
+                        <span>Median coverage is above expected coverage threshold of {{minCutoff}}X</span>
 
-    <div v-if="customData && statsReceived && coverageStatsReceived">
+                      </v-tooltip>
+                        <div v-if="badCoverage" style=" display: inline-flex; width: 120px; line-height: 16px; font-size: 12px; padding-left: 5px;"></div>
+                      </div>
+                      <div style="padding-top: 20px" v-show="!goodCoverage(idx)">
+                            <v-icon v-on="on"     @click=""
+                              top color="#B33A3A">mdi-alert-circle
+                            </v-icon>
+                        <div v-if="badCoverage" style=" display: inline-flex; width: 120px; line-height: 14px; font-size: 13px; padding-left: 5px;">Median coverage is below expected coverage threshold of {{minCutoff}}X</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- End read coverage -->
+              
+              <!-- Variants count -->
+              <div class="col-md-4">
+                <CustomVcfStats :modelInfos="modelInfo" :idx="idx" :customData="customData"
+                  @variants-count="setCustomVariantCounts($event)">
+                </CustomVcfStats>
+                
+                <CustomBamStats v-if="bedDataLoaded" :modelInfos="modelInfo" :idx="idx" :customData="customData" :bedFileData="bed"
+                  @coverage-reads-count="setCustomReadsCount($event)"
+                  @coverage-histos-data="setCoverageHistosData($event)">
+                </CustomBamStats>
+              </div>
+              <!-- End variant counts  -->
+
+            </div>
+            <!-- end loop -->
+
+          </div>
+          <!-- end row -->
+
+        </div>
+        <!-- end container -->
+        <br><br><hr>
+
+      </div>
+      
+
+    <div v-if="customSavedAnalysis && statsReceived && coverageStatsReceived">
       <div style=" width: 100%; display: inline-flex; flex-direction: row; justify-content: space-around; padding-bottom: 10px">
         <div class="heading" style="margin-right: 90px">Sample</div> <div class="heading" style="margin-right: 90px; display:flex;flex-direction:row;justify-content:space-between">
         <div style="margin-right: 20px">Read Coverage</div>
@@ -170,12 +264,10 @@
         </div>
      </div>
     </div>
-    <div v-if="customData && !coverageStatsReceived">
+    <div v-if="customData && !coverageStatsReceived && customSavedAnalysis">
       <center>
         <SkeletonLoadersReview :rowsLength="modelInfos.length">
         </SkeletonLoadersReview>
-
-
       </center>
     </div>
 
@@ -246,6 +338,9 @@ import AppIcon       from '../partials/AppIcon.vue';
 import QualitativeBarChart from './QualitativeBarChart.vue'
 import BarChart from './BarChart.vue'
 import SkeletonLoadersReview from '../partials/SkeletonLoadersReview.vue'
+import CustomVcfStats from './CustomVcfStats.vue'
+import CustomBamStats from './CustomBamStats.vue'
+import SamplingLoader from './SamplingLoader.vue'
 
 import Vue from 'vue';
 
@@ -266,7 +361,10 @@ export default {
     PedigreeGraph,
     AppIcon,
     BoxPlot,
-    SkeletonLoadersReview
+    SkeletonLoadersReview,
+    CustomVcfStats,
+    CustomBamStats,
+    SamplingLoader,
   },
   props: {
     workflow:    null,
@@ -362,8 +460,10 @@ export default {
       }),
 
       coverageMean: 0,
-      bamCounter: 0
-
+      bamCounter: 0,
+      variantsArrayForSamples: null,
+      bam_total_reads: [],
+      bedDataLoaded: false,
     }
 
   },
@@ -620,7 +720,8 @@ export default {
     buildCustomPage: function(){
 
       let self = this;
-
+      this.bedDataLoaded = true;
+      
       this.allPedigreeDataArrays = [];
 
       this.modelInfosData = this.modelInfos;
@@ -630,8 +731,12 @@ export default {
       this.populateRelationshipMap();
       this.populateSampleIdsFromCustom(this.pedigree);
       this.populateSampleIdsAndRelationships();
-      this.getVarCountFromCustomData(this.modelInfos);
-      this.getBamStatsFromCustomData(this.modelInfos);
+      this.variantsArrayForSamples = new Array(this.modelInfos.length); 
+      // console.log("this.variantsArrayForSamples", this.variantsArrayForSamples);
+      // this.getVarCountFromCustomData(this.modelInfos);
+      this.coverageHistosData = new Array(this.modelInfos.length);
+      this.coverageDataArray = new Array(this.modelInfos.length);
+      // this.getBamStatsFromCustomData(this.modelInfos);
       this.populateReviewCaseBadges();
 
       this.pedigreeDataArray = this.buildPedFromTxt(this.pedigree);
@@ -1084,6 +1189,43 @@ export default {
       for(let i = 0; i < len; i++){
         this.allPedigreeDataArrays.push(this.pedigreeDataArray);
       }
+    },
+    
+    setCustomVariantCounts(data){
+      const { counts, idx } = data; 
+      this.variantsArrayForSamples[idx] = counts;
+      this.setVariantsCount(this.variantsArrayForSamples);
+    },
+    
+    setCustomReadsCount(data){
+      const { coverageArr, idx, total_reads } = data
+      this.bam_total_reads[idx] = total_reads;
+      // this.formatCoverageData();
+      this.coverageDataArray[idx] = coverageArr; 
+      if(this.checkifNoEmptyIndex(this.coverageDataArray)){
+        this.coverageStatsReceived = true;
+        this.populateDomains();
+        this.populateCoverageMedians();
+        this.populateBadCoverageCount();
+      }
+    },
+    
+    setCoverageHistosData(data){
+      const { coverageHistosData, idx } = data;
+      this.coverageHistosData[idx] = coverageHistosData;
+      if(this.checkifNoEmptyIndex(this.coverageHistosData)){
+        this.setCoverageData(this.coverageHistosData);
+      }
+    },
+    
+    checkifNoEmptyIndex(arr){
+      var bool = true;
+      for (var i = 0; i < arr.length; i++) {
+        if(arr[i] === undefined){
+          bool = false;
+        }
+      }
+      return bool;
     }
   },
   computed: {
