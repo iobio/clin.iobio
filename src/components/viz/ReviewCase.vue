@@ -120,20 +120,37 @@
       <div v-if="customData && modelInfos && modelInfos.length && !customSavedAnalysis">
         
         <!-- Header  -->
-        <div style=" width: 100%; display: inline-flex; flex-direction: row; justify-content: space-around; padding-bottom: 10px">
-          <div class="heading" style="margin-right: 90px">Sample</div> <div class="heading" style="margin-right: 90px; display:flex;flex-direction:row;justify-content:space-between">
-          <div style="margin-right: 20px">Read Coverage</div>
-          <v-text-field
-                  id="minCoverageInput"
-                label="Expected Coverage"
-                outlined
-                dense
-                value="minCutoff"
-                v-model.number="minCutoff"
-                  style="width: 150px"
-        ></v-text-field></div>
-
-          <div class="heading" style="margin-right: 100px">Variant Types</div>
+        <div class="container" style="height:75px">
+          <div class="row" style="margin-left:100px; margin-right:20px">
+            <div class="col-md-3">
+              <div class="heading ml-6">
+                Sample
+              </div>
+            </div>
+            <div class="col-md-5" style="display:flex">
+              <span>
+                <div class="heading mr-4" style="margin-left:90px">
+                  Read Coverage
+                </div>
+              </span>
+              <span>
+                <v-text-field
+                        id="minCoverageInput"
+                      label="Expected Coverage"
+                      outlined
+                      dense
+                      value="minCutoff"
+                      v-model.number="minCutoff"
+                        style="width: 150px"
+                ></v-text-field>
+              </span>
+            </div>
+            <div class="col-md-4">
+              <div class="heading" style="margin-left:90px">
+                Variant Types
+              </div>
+            </div>
+          </div>
         </div>
         
         <!-- Content -->
@@ -1274,7 +1291,7 @@ function filterRef(ref) {
 
   .heading
     font-size: 16px
-    font-weight: 500
+    font-weight: 600
     font-family: $iobio-font
     color: $text-color
 
