@@ -489,7 +489,22 @@
             :pageCounter="pageCounter">
           </CustomDataStepper>
           <v-card-title class="headline">
-            Gene sets/ Variants
+            Genes/Variants
+            <span class="ml-2">
+              <v-tooltip top>
+                <template v-slot:activator="{ on, attrs }">
+                  <v-icon
+                    color="grey"
+                    dark
+                    v-bind="attrs"
+                    v-on="on"
+                  >help</v-icon>
+                </template>
+                <span>
+                  Import genes or variants. <br>
+                  Enter genes as a comma seperated list. Eg: PRX, LMNA, RAI1, SCN8A <br></span>
+              </v-tooltip>
+            </span>
             <v-spacer></v-spacer>
             <span>
               <v-btn text icon @click="closeUploadDataDialogs"><v-icon>close</v-icon></v-btn>
@@ -503,6 +518,10 @@
                 </ValidationErrors>
                 <br>
               </div>
+              <p>
+                Users can enter a list of genes or variants into clin.iobio. 
+                These are the genes and/or variants that will be reviewed in the clinical workflow steps of the app.
+              </p>
               <v-textarea
                 auto-grow
                 rows="1"
