@@ -23,6 +23,7 @@
         urlRules: [
           v => /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/.test(v) || 'URL must be valid',
         ],
+        errMessage: "",
       }
     }, 
     methods: {
@@ -32,9 +33,52 @@
         return url.match(regex); 
       },
       validatePedInput(data){
+        this.errMessage = "";
         let lines = data.split('\n');
         let firstLine = lines[0].trim().split(/\s+|\,/g);
-        return firstLine.length >= 6; 
+        if(firstLine.length >= 6){
+          return this.validateSampleIds(data);
+        }
+        else {
+          this.errMessage = "The file does not contain the number of mandatory columns. Please check the input file and try again";
+          return false;
+        }
+      },
+      validateSampleIds(data){
+        let bool = true;
+        let pedLines = data.split('\n');
+        let sampleIds = [];
+        let maternal_ids = [];
+        let paternal_ids = [];
+        
+        for (let i = 0; i < pedLines.length; i++) {
+          let splitLine = pedLines[i].split(/\s+|\,/g)
+          if(splitLine && splitLine[0] !== "" && !isNaN(parseInt(splitLine[4]))) {
+            sampleIds.push(splitLine[1]);
+            if(splitLine[2] != "0"){
+              paternal_ids.push(splitLine[2]); 
+            }
+            if(splitLine[3] != "0"){
+              maternal_ids.push(splitLine[3]);
+            }
+          }
+        }
+        for(let i=0; i<paternal_ids.length; i++){
+          if(!sampleIds.includes(paternal_ids[i])){
+            bool = false;
+            this.errMessage = "Incorrect sample id's entered for parents. Please correct and try again."
+            return bool;
+          }
+        }
+        
+        for(let i=0; i<maternal_ids.length; i++){
+          if(!sampleIds.includes(maternal_ids[i])){
+            bool = false;
+            this.errMessage = "Incorrect sample id's entered for parents. Please correct and try again."
+            return bool;
+          }
+        }
+        return bool;
       },
       onPedUrlChange: _.debounce(function (url) {
         if(url && url.length > 0 && this.isValidUrl(url)){

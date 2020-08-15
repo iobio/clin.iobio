@@ -9,6 +9,7 @@
         dense dismissible
         elevation="1"
         style="font-size:12px"
+        v-model="alert"
       >
         {{ error }}
       </v-alert>
@@ -29,6 +30,16 @@ export default {
   },
   data () {
     return {
+      alert: true,
+    }
+  },
+  mounted(){
+  },
+  updated(){
+  },
+  watch: {
+    validationErrors(){
+      this.alert = true;
     }
   }
 }
