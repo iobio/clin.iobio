@@ -2344,6 +2344,8 @@ export default {
       this.showSplash = true;
       setTimeout(()=>{
         this.onAuthenticated();
+        this.organizeVariantsByInterpretation();
+        this.setVariantTaskBadges();
       }, 2000)
 
     },
