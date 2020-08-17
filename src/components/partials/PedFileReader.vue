@@ -65,11 +65,19 @@
         let sampleIds = [];
         let maternal_ids = [];
         let paternal_ids = [];
+        let ids_gender_map = {};
         
         for (let i = 0; i < pedLines.length; i++) {
           let splitLine = pedLines[i].split(/\s+|\,/g)
           if(splitLine && splitLine[0] !== "" && !isNaN(parseInt(splitLine[4]))) {
             sampleIds.push(splitLine[1]);
+            ids_gender_map[splitLine[1]] = splitLine[4]; 
+            
+            if(splitLine[2] != "0" && splitLine[3] != "0" && splitLine[2] === splitLine[3]){ //Checks for duplicate sample ids of parents.
+              bool = false;
+              this.errMessage = "Duplicate sample id's entered for parents. Please correct and try again."
+              return bool;
+            }
             if(splitLine[2] != "0"){
               paternal_ids.push(splitLine[2]); 
             }
@@ -78,10 +86,16 @@
             }
           }
         }
+
         for(let i=0; i<paternal_ids.length; i++){
           if(!sampleIds.includes(paternal_ids[i])){
             bool = false;
             this.errMessage = "Incorrect sample id's entered for parents. Please correct and try again."
+            return bool;
+          }
+          if(ids_gender_map[paternal_ids[i]] == "2"){
+            bool = false;
+            this.errMessage = "Sample id's are incorrectly mapped for parents. Please correct and try again."
             return bool;
           }
         }
@@ -92,6 +106,12 @@
             this.errMessage = "Incorrect sample id's entered for parents. Please correct and try again."
             return bool;
           }
+          if(ids_gender_map[maternal_ids[i]] == "1"){
+            bool = false;
+            this.errMessage = "Sample id's are incorrectly mapped for parents. Please correct and try again."
+            return bool;
+          }
+
         }
         return bool;
       },
