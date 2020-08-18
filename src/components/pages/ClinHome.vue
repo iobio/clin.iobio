@@ -529,8 +529,8 @@ export default {
       demoUser: {
         "id": 13,
         "email": "iobioproject@gmail.com",
-        "first_name": "Demo",
-        "last_name": "User",
+        "first_name": "User",
+        "last_name": " ",
         "created_at": "2018-12-14T08:15:12.805Z",
         "updated_at": "2019-04-09T22:09:54.306Z",
         "username": "tonya_lee.disera_6b762afd",

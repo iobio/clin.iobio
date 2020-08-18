@@ -218,6 +218,11 @@
             <div class="container">
               <!-- <v-card> -->
                 <v-card-text>
+                  <p style="text-align: justify">
+                    Users can enter files (.VCF, .BAM) and sample information using a configuration file. 
+                    Please follow <a href="https://drive.google.com/file/d/14v04Ah4-gK_BEs0N-m7XDrFkXRzpFn4c/view?usp=sharing" target="_blank"> this example </a> and 
+                    <a href="https://docs.google.com/spreadsheets/d/1TaxJ9zXisqoBwVqRWU7dQ5RRhtJzOriGYIFE9-8yFdY/edit?usp=sharing" target="_blank"> download the template </a> to add information.
+                  </p>
                   <div class="mb-3" v-if="validationErrors.length">
                     <ValidationErrors
                       :validationErrors="validationErrors">
@@ -240,15 +245,15 @@
                         {{ text }}
                       </v-chip>
                     </template>
-                  </v-file-input>
-                  
-                  <center>
-                    <span> <a href="https://drive.google.com/file/d/1bKaY-TzNTOSbW6MDWJyEnurPbpHc80VA/view?usp=sharing" target="_blank"> Example </a> </span> | 
-                    <span> <a href="https://drive.google.com/file/d/1m0wRDNrqBGHeSLYmYrQknS6XIKpw6Cry/view?usp=sharing" target="_blank"> Template </a> </span>
-                  </center>
+                  </v-file-input>                  
                   <br>
                   <v-divider></v-divider>
                   <br>
+                  <p style="text-align: justify">
+                    Users can enter a list of genes or variants into clin.iobio. 
+                    These are the genes and/or variants that will be reviewed in the clinical workflow steps of the app.
+                  </p>
+
                     <v-textarea
                       auto-grow rows="1"
                       name="input-7-4"
@@ -333,6 +338,9 @@
       >
         <v-card class="full-width" style="height: auto;overflow-y:scroll">
           <v-card-title primary-title>
+            <strong>
+              Saved analysis
+            </strong>
             <v-spacer></v-spacer>
             <span>
               <v-btn text icon @click="importSavedAnalysisDialog=false"><v-icon>close</v-icon></v-btn>
@@ -340,10 +348,14 @@
           </v-card-title>
           <v-card-text>
             <div class="container">
+              <p style="text-align: justify">
+                Users can resume their analysis by uploading the saved JSON file. This file can be downloaded at any point during the analysis by clicking the button "Save analysis" on the navbar.
+              </p>
+              <br>
               <v-file-input
                 @change="importSavedAnalysisConfig"
                 accept=".json,"
-                label="Saved analysis"
+                label="Analysis (.json)"
                 v-model="savedAnalysisConfig"
                 prepend-icon="publish"
                 show-size counter>
