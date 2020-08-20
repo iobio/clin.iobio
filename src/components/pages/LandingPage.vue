@@ -64,27 +64,25 @@
             </v-responsive>
         </v-flex>
       </v-layout>
-      <!-- <v-banner two-line elevation="6" rounded>
-         <v-avatar
-           slot="icon"
-           color="deep-purple accent-4"
-           size="40"
-         >
-           <v-icon
-             icon="mdi-lock"
-             color="white"
-           >
-             mdi-lock
-           </v-icon>
-         </v-avatar>
-     
-         Three line text string example with two actions. One to two lines is preferable. Three lines should be considered the maximum string length on desktop in order to keep messages short and actionable.
-     
-         <template v-slot:actions>
-           <v-btn text color="deep-purple accent-4">Action</v-btn>
-           <v-btn text color="deep-purple accent-4">Action</v-btn>
-         </template>
-       </v-banner> -->
+      <v-layout row wrap style="background:white">
+        <v-banner style="margin:auto" two-line outlined>
+          <v-avatar slot="icon" color="primary" size="40">
+             <v-icon icon="fas fa-bullhorn" color="white">
+              fas fa-bullhorn
+            </v-icon>
+          </v-avatar>
+          <div class="pa-3" style="font-size:16px">
+            We are happy to announce the public, beta release of clin.iobio. Please give it a try and <a href="mailto:iobioproject@gmail.com"> <strong>contact us</strong> </a> with any feedback or questions about integrating with your own data.
+            <br><br>
+            <span class="mt-2"><strong>Try it out? </strong> Click "Run with demo data" to try out the tool with a public dataset</span>
+            <br><br>
+            <span class="mt-4"><strong>Have your own data? </strong> Click "Load your data" and provide URLs to BAM and VCF files</span>
+            <br><br>
+            <strong>Integrate with your own system? </strong> Clin.iobio can be integrated with a data management system for easy launch. <br>For example, launch clin.iobio from the Platinum Exomes project in <a href="https://frameshift.io/mosaic/" target="_blank"> <strong>Frameshift's Mosaic</strong> </a>
+          </div>
+        </v-banner>
+        <br>
+      </v-layout>
       <v-layout row wrap style="background:white">
         <v-container>
           <v-layout row wrap>

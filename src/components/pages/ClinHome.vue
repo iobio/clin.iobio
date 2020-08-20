@@ -818,8 +818,6 @@ export default {
             self.allVarCounts = data.allVarCounts;
             self.variantSet = data.variantSet;
 
-            console.log("data.variantSet:", data.variantSet);
-
             self.mosaicSession.promiseGetProject(self.params.project_id)
             .then(function(project) {
               self.onAuthenticated()
@@ -1216,7 +1214,6 @@ export default {
             self.byPassedGenes.push(gene.toUpperCase());
           }
         })
-        console.log("self.analysis", self.analysis);
         var msgObject = {
             type:                  'set-data',
             sender:                'clin.iobio',
@@ -2175,7 +2172,6 @@ export default {
         "rawPedigree": this.rawPedigree,
         "bedFileUrl": this.bedFileUrl
       }
-      console.log("obj", configObj);
       let configData = JSON.stringify(configObj);
       const jsonBlob = new Blob([configData], { type: "application/json" });
       saveAs(jsonBlob, "clin-input-config.json")
@@ -2184,7 +2180,6 @@ export default {
       const file = ev.target.files[0];
       const reader = new FileReader();
       reader.onload = e => {
-        console.log("e.target.result;", e.target.result);
         return e.target.result;
       }
       reader.readAsText(file);

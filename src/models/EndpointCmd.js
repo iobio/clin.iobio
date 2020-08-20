@@ -17,9 +17,7 @@ export default class EndpointCmd {
       // don't change it here.  Edit the .env file, setting IOBIO_BACKEND to 
       // the dev server.
       var backendUrl = "backend.iobio.io"; 
-      console.log("process.env.IOBIO_BACKEND", process.env.IOBIO_BACKEND)
       this.api = new Client(backendUrl, { secure: this.globalApp.useSSL });
-      console.log("this.api in clin", this.api)
     }
 
     // iobio services
