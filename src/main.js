@@ -10,6 +10,8 @@ import jQuery               from 'jquery'
 global.jQuery = jQuery
 global.$ = jQuery
 
+import VueAnalytics from 'vue-analytics';
+
 
 import VTooltip from 'v-tooltip'
 import './assets/css/v-tooltip.css'
@@ -76,6 +78,13 @@ Vue.mixin({
     this.globalApp.utility = this.utility;
 
   }
+})
+
+
+// Google analytics
+Vue.use(VueAnalytics, {
+  id: 'UA-47481907-13',
+  router
 })
 
 new Vue({

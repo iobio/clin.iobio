@@ -78,7 +78,7 @@
             <br><br>
             <span class="mt-4"><strong>Have your own data? </strong> Click "Load your data" and provide URLs to BAM and VCF files</span>
             <br><br>
-            <strong>Integrate with your own system? </strong> Clin.iobio can be integrated with a data management system for easy launch. <br>For example, launch clin.iobio from the Platinum Exomes project in <a href="https://frameshift.io/mosaic/" target="_blank"> <strong>Frameshift's Mosaic</strong> </a>
+            <strong>Integrate with your own system? </strong> Clin.iobio can be integrated with a data management system for easy launch. <br>For example, launch clin.iobio from the Platinum Exomes project in <a href="https://frameshift.io/" target="_blank"> <strong>Frameshift's Mosaic</strong> </a>
           </div>
         </v-banner>
         <br>
