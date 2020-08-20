@@ -23,7 +23,7 @@
         urlRules: [
           v => /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/.test(v) || 'URL must be valid',
         ],
-        errMessage: "",
+        errMessage: [],
       }
     }, 
     methods: {
@@ -33,14 +33,15 @@
         return url.match(regex); 
       },
       validatePedInput(data){
-        this.errMessage = "";
+        this.errMessage = [];
         let lines = data.split('\n');
         let firstLine = lines[0].trim().split(/\s+|\,/g);
         if(firstLine.length >= 6){
           return this.validateSampleIds(data);
         }
         else {
-          this.errMessage = "The file does not contain the number of mandatory columns. Please check the input file and try again";
+          var error_msg = "The file does not contain the number of mandatory columns. Please check the input file and try again";
+          this.errMessage.push(error_msg);
           return false;
         }
       },
@@ -51,6 +52,7 @@
         let maternal_ids = [];
         let paternal_ids = [];
         let ids_gender_map = {};
+        this.errMessage = [];
         
         for (let i = 0; i < pedLines.length; i++) {
           let splitLine = pedLines[i].split(/\s+|\,/g)
@@ -60,8 +62,8 @@
             
             if(splitLine[2] != "0" && splitLine[3] != "0" && splitLine[2] === splitLine[3]){ //Checks for duplicate sample ids of parents.
               bool = false;
-              this.errMessage = "Duplicate sample id's entered for parents. Please correct and try again."
-              return bool;
+              var error_msg = `Maternal and paternal ids are identical for sample ${splitLine[1]}. Please ensure these ids correctly represent the samples for mother and father.`;
+              this.errMessage.push(error_msg);
             }
             if(splitLine[2] != "0"){
               paternal_ids.push(splitLine[2]); 
@@ -71,33 +73,44 @@
             }
           }
         }
-
-        for(let i=0; i<paternal_ids.length; i++){
-          if(!sampleIds.includes(paternal_ids[i])){
-            bool = false;
-            this.errMessage = "Incorrect sample id's entered for parents. Please correct and try again."
-            return bool;
-          }
-          if(ids_gender_map[paternal_ids[i]] == "2"){
-            bool = false;
-            this.errMessage = "Sample id's are incorrectly mapped for parents. Please correct and try again."
-            return bool;
+        
+        
+        for (let i = 0; i < pedLines.length; i++) {
+          let splitLine = pedLines[i].split(/\s+|\,/g)
+          if(splitLine && splitLine[0] !== "" && !isNaN(parseInt(splitLine[4]))) {
+            var current_sample = splitLine[1];
+            var paternal_id = splitLine[2];
+            var maternal_id = splitLine[3]; 
+            
+            if(paternal_id != "0"){
+              if(!sampleIds.includes(paternal_id)){
+                bool = false;
+                var error_msg = `Sample ${current_sample} has paternal id ${paternal_id}, but this sample is not present in the ped. Please ensure that the paternal id is entered correctly, and if so, that this sample has their own row in the ped file`
+                this.errMessage.push(error_msg)
+              }
+              if(ids_gender_map[paternal_id] == "2"){
+                bool = false;
+                var error_msg = `Sample ${paternal_id} is listed as the father of sample ${current_sample}, but is listed as being female. Please ensure that the paternal id for sample ${current_sample} is correct, and if so, ensure that the sex of sample ${paternal_id} is listed as male.`
+                this.errMessage.push(error_msg)
+              }
+            }
+            
+            if(maternal_id != "0"){
+              if(!sampleIds.includes(maternal_id)){
+                bool = false;
+                var error_msg = `Sample ${current_sample} has maternal id ${maternal_id}, but this sample is not present in the ped. Please ensure that the maternal id is entered correctly, and if so, that this sample has their own row in the ped file`
+                this.errMessage.push(error_msg)
+              }
+              if(ids_gender_map[maternal_id] == "1"){
+                bool = false;
+                var error_msg = `Sample ${maternal_id} is listed as the mother of sample ${current_sample}, but is listed as being male. Please ensure that the maternal id for sample ${current_sample} is correct, and if so, ensure that the sex of sample ${maternal_id} is listed as female.`
+                this.errMessage.push(error_msg)
+              }
+            }
+            
           }
         }
         
-        for(let i=0; i<maternal_ids.length; i++){
-          if(!sampleIds.includes(maternal_ids[i])){
-            bool = false;
-            this.errMessage = "Incorrect sample id's entered for parents. Please correct and try again."
-            return bool;
-          }
-          if(ids_gender_map[maternal_ids[i]] == "1"){
-            bool = false;
-            this.errMessage = "Sample id's are incorrectly mapped for parents. Please correct and try again."
-            return bool;
-          }
-
-        }
         return bool;
       },
       onPedUrlChange: _.debounce(function (url) {

@@ -1082,7 +1082,8 @@ export default {
     },
     pedInputValidationErrors(errMessage){
       this.validationErrors = [];
-      this.validationErrors.push(errMessage);
+      // this.validationErrors.push(errMessage);
+      this.validationErrors = errMessage;
     }
   },
   mounted: function() {

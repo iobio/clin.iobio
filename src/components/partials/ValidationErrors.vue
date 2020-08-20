@@ -1,15 +1,15 @@
 <template>
   <span>
-    <div v-for="(error, idx) in validationErrors" >
+    <div v-for="(error, idx) in errors" >
       <v-alert
         border="left"
         colored-border
         type="error"
         icon="error_outline"
-        dense dismissible
+        dense
         elevation="1"
         style="font-size:12px"
-        v-model="alert"
+        @input=remove(idx)
       >
         {{ error }}
       </v-alert>
@@ -31,15 +31,24 @@ export default {
   data () {
     return {
       alert: true,
+      errors: []
     }
   },
   mounted(){
+    this.errors = [...this.validationErrors]
   },
   updated(){
   },
   watch: {
     validationErrors(){
-      this.alert = true;
+      this.errors = [...this.validationErrors]
+      // this.alert = true;
+    }
+  },
+  methods: {
+    remove(i){
+      this.errors.splice(i,1);
+      this.errors = [...this.errors];
     }
   }
 }
