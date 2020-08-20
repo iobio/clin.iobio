@@ -103,7 +103,7 @@
              </v-card-title>
             <!-- </v-layout> -->
             <v-flex v-if="validationErrors.length">
-              Please correct the following errors:
+              <!-- Please correct the following errors: -->
               <ValidationErrors
                 :validationErrors="validationErrors">
               </ValidationErrors>

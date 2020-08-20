@@ -1,6 +1,8 @@
 <template>
   <span>
-    <div v-for="(error, idx) in errors" >
+    Please correct the following <span v-if="errors.length===1">error</span> <span v-else>errors</span> and try again:
+
+    <div v-for="(error, idx) in errors" class="mt-2">
       <v-alert
         border="left"
         colored-border
