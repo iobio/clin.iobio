@@ -84,8 +84,12 @@
   margin-right: 0;
 }
 
+.tooltip.popover {
+  width: 1000px;
+}
+
 .tooltip.popover .popover-inner {
-  background: black;
+  background: white;
   color: black;
   padding: 24px;
   border-radius: 5px;

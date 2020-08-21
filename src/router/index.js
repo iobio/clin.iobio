@@ -32,6 +32,8 @@ const routes = [
         paramTokenType:             route.query.token_type,
         paramToken:                 route.query.access_token,
         paramSource:                route.query.source,
+        paramGeneSetId:             route.query.gene_set_id,
+        paramGenes:                 route.query.genes,
 
         paramIobioSource:           route.query.iobio_source,
         paramGeneBatchSize:         route.query.gene_batch_size,
@@ -39,7 +41,8 @@ const routes = [
 
         paramBuild:                 route.query.build,
 
-        paramTheme:                 route.query.theme
+        paramTheme:                 route.query.theme,
+        paramVariantSetId:          route.query.variant_set_id
     })
   },
    {

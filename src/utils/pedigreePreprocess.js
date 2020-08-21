@@ -135,12 +135,12 @@ function moralizeGraph(samples) {
 
         const neighbors = [];
 
-        if (mother) {
+        if (mother && mother !== "0") {
             addToNeighbors(nodes, mother, [sample.id]);
             neighbors.push(mother);
         }
 
-        if (father) {
+        if (father &&  father !== "0") {
             addToNeighbors(nodes, father, [sample.id]);
             neighbors.push(father);
         }
@@ -178,6 +178,7 @@ function findConnectedComponents(samples) {
             component.push(node);
 
             const neighbors = graph[node];
+
             neighbors.forEach((neighbor) => {
                 if (!visited[neighbor]) {
                     frontier.push(neighbor);

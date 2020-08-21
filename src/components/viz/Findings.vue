@@ -34,7 +34,7 @@
     padding-top: 5px
 
   .case-summary
-    width: 80%
+    // width: 80%
 
   .clinical-note
     display: flex
@@ -78,7 +78,7 @@
 
       </div>
 
-      <div v-if="clinicalNotes && clinicalNotes.length > 0" style="width:80%;margin-top:40px;margin-bottom:20px">
+      <div v-if="clinicalNotes && clinicalNotes.length > 0" style="width:97%;margin-top:40px;margin-bottom:20px">
         <hr style="border-top:transparent">
         <span class="sub-heading">Phenotypes</span>
         <div class="clinical-note" style="margin-bottom:5px">
@@ -129,7 +129,7 @@
           <template
            v-for="geneObject in geneList.genes">
 
-            <template v-for="(variant, index) in geneObject.variants">
+            <div v-for="(variant, index) in geneObject.variants" :key="variant.variantInspect.geneObject.gene_name">
               <div>
                 <variant-inspect-card
                  :modelInfos="modelInfos"
@@ -140,11 +140,12 @@
                  :info="variant.variantInspect.infoObject"
                  :genePhenotypeHits="variant.variantInspect.genePhenotypeHits"
                  :interpretationMap="interpretationMap"
+                 :drugsObj="drugsObj"
                 >
 
                 </variant-inspect-card>
               </div>
-            </template>
+            </div>
           </template>
 
 
@@ -164,6 +165,7 @@
 import AppIcon       from '../partials/AppIcon.vue';
 import VariantInspectCard   from '../viz/findings/VariantInspectCard.vue';
 import { bus }      from '../../main'
+import { mapGetters, mapActions } from 'vuex'
 
 export default {
   name: 'findings',
@@ -183,11 +185,14 @@ export default {
     return {
       clinicalNotes: null,
       note: null, 
-      variantsInterpreted: false
+      variantsInterpreted: false, 
+      drugsObj: {},
     }
 
   },
   methods: {
+    ...mapActions(['setVariantsByInterpretation']),
+
     vepConsequence: function(variant) {
       return variant.consequence;
     },
@@ -277,14 +282,17 @@ export default {
 
 
   },
+  mounted() {
+  },
   watch: {
     analysis: function() {
       this.initClinicalNotes();
     },
     variantsByInterpretation: function() {
+      this.setVariantsByInterpretation(this.variantsByInterpretation); //Updates the global state in vuex store. 
       this.initClinicalNotes();
       this.checkIfVariantsinterpreted(); 
-    }
+    }, 
   },
 }
 </script>

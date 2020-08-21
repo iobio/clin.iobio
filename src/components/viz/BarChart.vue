@@ -70,11 +70,6 @@
                     };
                 },
             },
-            onBrushEnd: {
-                type: Function,
-                default: () => {
-                },
-            },
             stashDomain: {
                 type: Function,
                 default: () => {
@@ -114,15 +109,11 @@
             },
             minCutoff: null,
             medianCoverage: null,
-            onHover: false,
 
         },
         data() {
             return {
                 clearingFilters: false,
-                brush: null,
-                brushLocation: null,
-                // controls gap between axis and its label
                 labelHeight: 16,
                 xScale: null,
                 yScale: null,
@@ -169,10 +160,15 @@
             minCutoff(){
                 this.plotMin();
             },
-
-            onHover(){
+            
+            data(){
+              this.checkForData(this.drawChart);
+              this.calculateWidthNorm();
+              this.plotMedian();
+              this.plotMin();
               this.update();
-            },
+
+            }
         },
         mounted() {
             this.checkForData(this.drawChart);
@@ -183,75 +179,50 @@
         },
         methods: {
 
-            updateHover(){
-
-                let svg = d3.select(this.$el)
-                    .select('svg');
-
-                if(this.onHover) {
-
-                    svg.select("#minLine").transition().style("stroke", "black").duration(750);
-                    svg.select("#minText").transition().style("fill", "black").duration(750);
-
-                }
-
-                else{
-                    svg.select("#minLine").transition().style("stroke", "transparent").duration(750);
-                    svg.select("#minText").transition().style("fill", "transparent").duration(750);
-
-                }
-            },
-
             calculateWidthNorm(){
-
                 let x = this.xDomain[1] - this.xDomain[0];
                 let xLocal = this.xDomainLocal[1] - this.xDomainLocal[0];
-
                 this.xDiff = x - xLocal;
-
                 this.widthNorm = this.width * (xLocal/x);
             },
 
             plotMin(){
-
                 let svg = d3.select(this.$el)
                     .select('svg');
 
-
                 let minHeight = 0;
+                let minWidth = this.xDomain[0];
+                let maxWidth = this.xDomain[1];
+
 
                 for(let i = 0; i < this.data.length; i++){
                     if(parseInt(this.data[i][0]) === this.minCutoff){
                         minHeight = this.data[i][1];
                     }
                 }
+                minHeight = Math.max(minHeight, 0.005);
 
                 svg.select('#minLine').remove();
                 svg.select('#minText').remove();
 
-                svg.append('line')
-                    .attr("id", "minLine")
-                    .attr("stroke-dasharray", "5 2")
-                    .style("stroke", "none")
-                    .attr('x1', this.xScale(this.minCutoff))
-                    .attr('y1', this.yScale(0))
-                    .attr('x2', this.xScale(this.minCutoff))
-                    .attr('y2', this.yScale(minHeight));
+                if(this.minCutoff >= minWidth && this.minCutoff <= maxWidth) {
+                    svg.append('line')
+                        .attr("id", "minLine")
+                        .attr("stroke-dasharray", "5 2")
+                        .style("stroke", "black")
+                        .attr('x1', this.xScale(this.minCutoff))
+                        .attr('y1', this.yScale(0))
+                        .attr('x2', this.xScale(this.minCutoff))
+                        .attr('y2', this.yScale(minHeight));
 
-
-                svg.append('text')
-                    .attr("id", "minText")
-                    .style("fill", "none")
-                    .attr("font-size", "12px")
-                    .attr('x', d => {
-                        if (this.medianCoverage <= this.minCutoff) {
-                            return this.xScale(this.minCutoff) + 2
-                        } else {
-                            return this.xScale(this.minCutoff) + 2;
-                        }
-                    })
-                    .attr('y', 100)
-                    .text('min. threshold')
+                    svg.append('text')
+                        .attr("id", "minText")
+                        .style("fill", "black")
+                        .attr("font-size", "12px")
+                        .attr('x',this.xScale(this.minCutoff) + 2)
+                        .attr('y', 100)
+                        .text('min. threshold')
+                }
             },
 
             plotMedian(){
@@ -259,13 +230,11 @@
                 let svg = d3.select(this.$el)
                     .select('svg');
 
-                // svg.select("#medianLine").remove();
-                // svg.select("#medianText").remove();
-
-
-                //todo: unhardcode max coverage
                 let max = Math.max.apply(Math, this.data.map(function(a) { return a[1]; }))
                 max = max + 0.1*max;
+                
+                svg.select('#medianLine').remove();
+                svg.select('#medianText').remove();
 
                 svg.append("line")
                     .attr("id", "medianLine")
@@ -296,7 +265,6 @@
                 this.createAxis();
                 this.addLabels();
                 this.drawBars();
-                this.addBrush();
                 this.stashDomain(this.xScale, this.yScale);
             },
             setSvgSize() {
@@ -365,97 +333,12 @@
                     .attr('height', (d) => this.yScale(this.yScale.domain()[0]) - this.yScale(d[1]));
                 dataJoin.exit().remove();
             },
-            addBrush() {
-                if (this.canFilter) {
-                    this.brush = d3.brushX()
-                        .extent([[this.xRange[0], this.yRange[1]], [this.xRange[1], this.yRange[0]]])
-                        .on('brush', this.updateBrush)
-                        .on('end', this.localBrushEnd);
-                    this.gMain.select('.brush')
-                        .call(this.brush);
-                }
-            },
-            updateBrushExtent() {
-                if (this.canFilter) {
-                    const brushEl = this.gMain.select('.brush');
-                    this.brush.extent([[this.xRange[0], this.yRange[1]], [this.xRange[1], this.yRange[0]]]);
-                    brushEl.call(this.brush);
-                    const extentRange = d3.brushSelection(brushEl.node());
-                    // if brush is currently drawn
-                    if (extentRange) {
-                        const [left, right] = this.brushLocation;
-                        const toMove = [left, right].map(this.xScale);
-                        // move the brush
-                        brushEl.call(this.brush.move, toMove);
-                    }
-                }
-            },
-            updateBrush() {
-                // moving the brush with brush.move emits an event
-                // this catches that to prevent an infinite loop
-                if (d3.event.sourceEvent && d3.event.sourceEvent.type === 'brush') {
-                    return;
-                }
-                this.moveBrush();
-            },
-            moveBrush() {
-                const xVals = this.typedData.map((arr) => arr[0]);
-                const brushEl = this.gMain.select('.brush');
-                const extentRange = d3.brushSelection(brushEl.node());
-                const toolTipE = brushEl.select('.extent--e');
-                const toolTipW = brushEl.select('.extent--w');
-                // check if extent is null
-                if (extentRange) {
-                    const extentDomain = extentRange.map(this.xScale.invert);
-                    const left = xVals[d3.bisectLeft(xVals, extentDomain[0])];
-                    // the min is to handle if the bisect gives us a value larger than the array
-                    const right = xVals[Math.min(d3.bisectLeft(xVals, extentDomain[1]), xVals.length - 1)];
-                    this.brushLocation = [left, right];
-                    const toMove = [left, right].map(this.xScale);
-                    // move the brush
-                    brushEl.call(this.brush.move, toMove);
-                    // you can't put a <text> inside a <rect> so i was forced to manually set the location
-                    const eastPos = [this.gMain.select('.handle--e').attr('x'), this.gMain.select('.handle--e').attr('y')];
-                    const westPos = [this.gMain.select('.handle--w').attr('x'), this.gMain.select('.handle--w').attr('y')];
-                    // formats the numbers so they won't be huge if they are a float
-                    const toolTipNumbers = [left, right].map((el) => formatNumber(el));
-                    toolTipE
-                        .attr('x', eastPos[0])
-                        // offset so doesn't interfere with axis
-                        .attr('y', eastPos[1] - 3)
-                        .text(toolTipNumbers[1]);
-                    toolTipW
-                        .attr('x', westPos[0])
-                        .attr('y', westPos[1] - 3)
-                        .text(toolTipNumbers[0]);
-                } else {
-                    // reset tooltips
-                    toolTipE.text('');
-                    toolTipW.text('');
-                }
-            },
-            localBrushEnd() {
-                // check if brush was cleared and clear tooltips if you cleared brush
-                const extentRange = d3.brushSelection(this.gMain.select('.brush').node());
-                if (extentRange === null) {
-                    this.gMain.select('.extent--e').text('');
-                    this.gMain.select('.extent--w').text('');
-                    this.onBrushEnd([]);
-                } else {
-                    this.onBrushEnd(this.brushLocation);
-                }
-            },
             update() {
                 this.setSvgSize();
                 this.createAxis();
                 this.drawBars();
                 this.addLabels();
-                this.updateBrushExtent();
-                this.updateHover();
                 this.stashDomain(this.xScale, this.yScale);
-            },
-            clearFilters() {
-                this.gMain.select('.brush').call(this.brush.move, null);
             },
         },
     };

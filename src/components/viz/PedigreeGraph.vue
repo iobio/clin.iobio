@@ -4,8 +4,8 @@
     class="pedigree-graph"
     id="pedGraph"
     ref="pedigreeGraph"
-    style="margin: auto"
-    :style="{ width: width }"
+    :style="{width: width +'px' }"
+
   />
 </template>
 
@@ -81,7 +81,6 @@ export default {
 
 
     init() {
-
       const self = this;
       const pedigraph = self.$refs.pedigreeGraph;
       const pedigree = this.data;
@@ -101,22 +100,6 @@ export default {
         height: self.height,
         width: self.width,
         strokeWidth: this.strokeWidth,
-        // callbacks: {
-        //   nodeHover(name, extra) {
-        //     self.$emit('update:highlighted', extra.id);
-        //   },
-        //   nodeLeave() {
-        //     self.$emit('update:highlighted', null);
-        //   },
-        //   // nodeClick(name, extra) {
-        //   //   if (self.enableProbandSelect) {
-        //   //     self.$emit('pedigree-graph:select-pedigree-node', extra);
-        //   //   }
-        //   //   if (self.linkNodes) {
-        //   //     self.$router.push(`${self.path}/samples/${extra.id}/pedigree`);
-        //   //   }
-        //   // },
-        // },
       });
       if (this.highlighted !== null) {
         this.applyHighlight();

@@ -15,7 +15,7 @@
         <div v-else>
             <svg class="variant-types-bar-chart">
                 <g
-                        :transform="`translate(${margin.left},${margin.top})`"
+                        :transform="`translate(${margin.left},${margin.top + 10})`"
                         class="g-main"
                 >
                     <g class="axis axis__y"/>
@@ -67,6 +67,7 @@
                 type: Function,
                 default: d3.scaleOrdinal().range(['#0080A8', '#2EB0CE', '#37D4EF', '#97E9F2']),
             },
+            customData: null
         },
         data() {
             return {
@@ -110,7 +111,9 @@
         },
         watch: {
             data() {
+                this.populateMaxCount();
                 this.drawChart();
+                this.drawTotalVarCount();
             },
             width() {
                 this.drawChart();
@@ -146,6 +149,8 @@
                 let indel = parseInt(this.data.indel);
                 let other = parseInt(this.data.other);
                 let snp = parseInt(this.data.SNP);
+                let ins = parseInt(this.data.INS);
+                let del = parseInt(this.data.DEL);
 
                 if(isNaN(indel)){
                     indel = 0;
@@ -156,15 +161,27 @@
                 if(isNaN(other)){
                     other = 0;
                 }
+                if(isNaN(ins)){
+                    ins = 0;
+                }
+                if(isNaN(del)){
+                    del = 0;
+                }
 
-                this.totalVarCount = snp + other + indel;
-                d3.select(this.$el).select('svg')
-                    .append("text")
-                    .attr('y', 10)
-                    .attr('x', this.width / 2)
-                    .attr("fill", "black")
-                    .attr("text-anchor", "middle")
-                    .text("Total: " + this.nFormatter(this.totalVarCount, 1));
+                if(this.customData){
+                  this.totalVarCount = snp + ins + del;
+                }
+                else{
+                  this.totalVarCount = snp + other + indel;
+                  d3.select(this.$el).select('svg')
+                      .append("text")
+                      .attr('y', 12)
+                      .attr('x', this.width / 2)
+                      .attr("fill", "black")
+                      .attr("text-anchor", "middle")
+                      .text("Total: " + this.nFormatter(this.totalVarCount, 1));
+
+                }
             },
 
             formatLabel(count){
@@ -251,12 +268,13 @@
                     .attr('height', (d) => this.innerHeight - this.yScale(d[yColumn]))
                     .attr('fill', (d) => this.colorScale(d[xColumn]));
 
-                let labels = this.gMain
-                    .selectAll(".textLables")
-                    .data(this.dataArray);
-
-                labels
-                    .enter()
+                var labels = this.gMain
+                    .selectAll(".type-label")
+                    .data(this.dataArray)
+                
+                labels.exit().remove();
+                
+                labels.enter()
                     .append('text')
                     .merge(labels)
                     .attr('class', 'type-label')
@@ -264,6 +282,8 @@
                     .attr('x', (d) => this.xScale(d[xColumn]) + (this.xScale.bandwidth() / 2))
                     .attr('y', (d) => this.yScale(d[yColumn]))
                     .text(d => this.formatLabel(d.count));
+                    
+                    
             },
         },
     };
