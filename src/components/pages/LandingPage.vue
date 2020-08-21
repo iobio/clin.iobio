@@ -65,7 +65,7 @@
         </v-flex>
       </v-layout>
       <v-layout row wrap style="background:white">
-        <v-banner style="margin:auto" two-line outlined>
+        <v-banner style="margin:auto" two-line outlined class="mb-5">
           <v-avatar slot="icon" color="primary" size="40">
              <v-icon icon="fas fa-bullhorn" color="white">
               fas fa-bullhorn
