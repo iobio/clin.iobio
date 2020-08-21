@@ -141,7 +141,7 @@
           <v-card-title class="headline"></v-card-title>
 
           <v-card-text v-if="videoDialog">
-            <iframe width="560" height="315" src="https://www.youtube.com/embed/g43CsDVfJIo" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            <iframe width="560" height="315" src="https://www.youtube.com/embed/MVWiTlNY7yM" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
           </v-card-text>
 
           <v-card-actions>
