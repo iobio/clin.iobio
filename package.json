@@ -12,9 +12,6 @@
     "deploystage": "sh deploy.sh stage"
   },
   "dependencies": {
-    "amazon-cognito-identity-js": "^2.0.3",
-    "amazon-cognito-js": "^1.1.0",
-    "aws-sdk": "^2.229.1",
     "axios": "^0.19.0",
     "bootstrap": "^4.3.1",
     "class.extend": "^0.9.2",
@@ -27,7 +24,7 @@
     "file-saver": "^2.0.2",
     "hooper": "^0.3.4",
     "iobio-api-client": "^0.7.1",
-    "iobio-phenotype-extractor-vue": "^2.5.1",
+    "iobio-phenotype-extractor-vue": "^2.6.0",
     "is-number": "^7.0.0",
     "jquery": "^3.4.1",
     "material-design-icons-iconfont": "^5.0.1",
