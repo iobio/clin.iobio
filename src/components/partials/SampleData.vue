@@ -138,7 +138,6 @@ export default {
   methods: {
     onVcfUrlEntered: function(vcfUrl, tbiUrl) {
       let self = this;
-      // console.log("onVcfUrlEntered", vcfUrl);
 
       self.$set(self, "sample", null);
       self.$set(self, "samples", []);

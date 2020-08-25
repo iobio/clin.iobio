@@ -682,7 +682,6 @@ export default {
 
     self.shiftButtons();
 
-    console.log("analysisSteps mounted", this.analysisSteps)
 
   }
 }
