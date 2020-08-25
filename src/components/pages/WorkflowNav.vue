@@ -85,7 +85,6 @@ export default {
     ...mapActions(['fetchAnalysis']),
     getfetchAnalysis: function(){
       this.fetchAnalysis(); //calling action 
-      console.log('allAnalysis', this.allAnalysis); //calling getter
     },
     refresh: function() {
         let self = this;

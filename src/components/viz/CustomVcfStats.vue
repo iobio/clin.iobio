@@ -5,8 +5,11 @@
       <span class="light">variants sampled</span>
     </div>
     <QualitativeBarChart v-if="totalReads>0" :data="varCounts.counts" :customData="customData" :width="300" :height="150" style="padding-top: 0"></QualitativeBarChart>
-    <div v-if="totalReads===0">
+    <div v-if="totalReads===0 && dataReceived===false">
       <SamplingLoader/>
+    </div>
+    <div v-if="totalReads===0 && dataReceived" style="margin-left:-90px">
+      <div class="light container text-md-center">Unable to sample variants for this file. <br>Please try with <a href="https://vcf.iobio.io/?species=Human" target="_blank">vcf.iobio</a> </div>
     </div>
   </div>
 </template>
@@ -42,7 +45,8 @@ import SamplingLoader from './SamplingLoader.vue'
             "INS": 0,
             "DEL": 0
           }
-        }
+        },
+        dataReceived: false,
       }
     },
     methods: {
@@ -64,6 +68,7 @@ import SamplingLoader from './SamplingLoader.vue'
         
         var addToVarCounts = ((varCounts, idx, reads, sample) => {
           this.totalReads = reads;
+          this.dataReceived = true;
           this.varCounts = {
             counts: varCounts, 
             sample: sample,

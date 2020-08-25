@@ -337,7 +337,7 @@ export default {
       }
     },
     buildName: function(){
-      console.log("buildName changing", this.buildName);
+      // console.log("buildName changing", this.buildName);
     }
 
   },
@@ -395,14 +395,12 @@ export default {
           this.validationErrors.push(`Sample ids do not match with the pedigree data. Please check the ped file`)
         }
       }
-      console.log("this.customModelInfos in files dialog", this.customModelInfos); 
+      // console.log("this.customModelInfos in files dialog", this.customModelInfos); 
     },
     onLoad: function() {
       let self = this;
       self.validationErrors = [];
       self.inProgress = true;
-      // console.log("self.modelInfo", self.modelInfo)
-      // console.log("this.modelInfoMap on load", this.modelInfoMap)
 
       // self.$emit("get-modeinfo-map", self.modelInfoMap, self.vcfUrls, self.tbiUrls, self.bamUrls, self.baiUrls); 
       // self.getModelInfoMap(self.modelInfoMap, self.vcfUrls, self.tbiUrls, self.bamUrls, self.baiUrls); 
