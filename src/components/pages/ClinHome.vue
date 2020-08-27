@@ -133,7 +133,7 @@ $horizontal-dashboard-height: 140px
 <template>
 <div id="application-content" :class="{'workflow-new': newWorkflow ? true : false}">
   <landing-page
-    v-if="!launchedFromMosaic && showLandingPage"
+    v-if="(!launchedFromMosaic && showLandingPage) || (launchedFromMosaic && showLandingPage && getAnalysisProgressStatus)"
     :cohortModel="cohortModel"
     :launchedFromMosaic="launchedFromMosaic"
     @custom-model-info="customModelInfo"

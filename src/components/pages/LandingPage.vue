@@ -681,6 +681,7 @@ export default {
   },
   props: {
     cohortModel: null,
+    launchedFromMosaic: null,
   },
   data () {
     let self = this;
@@ -924,7 +925,6 @@ export default {
     },
     getStarted(){
       this.analysisInProgress = true;
-      console.log("this.analysisInProgress", this.analysisInProgress);
       this.setAnalysisInProgressStatus(this.analysisInProgress);
       bus.$emit("initialize-clin")
     },
@@ -1136,6 +1136,9 @@ export default {
       bus.$emit("back-to-analysis");
     },
     startNewAnalysis(){
+      if(this.launchedFromMosaic){
+        window.history.pushState({}, document.title, "/" + "");
+      }
       window.location.reload();
     }
   },
