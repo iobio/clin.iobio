@@ -209,12 +209,12 @@ $horizontal-dashboard-height: 140px
     :class="{'app-content': true}"
     v-show="!showSplash && isAuthenticated " >
       <v-card  class="clin-card"
-        v-if="analysis && workflow && !showLandingPage"
-        v-show="analysis && workflow && currentStep == 1 && !showFindings"
+        v-if="analysis && workflow"
+        v-show="analysis && workflow && currentStep == 1 && !showFindings  && !showLandingPage"
       >
         <review-case
         ref="reviewCaseRef"
-        v-if="analysis && workflow && currentStep == 1 && !showLandingPage"
+        v-if="analysis && workflow && currentStep == 1"
         v-show="analysis && workflow"
         :workflow="workflow"
         :analysis="analysis.payload"
