@@ -652,7 +652,7 @@ import 'hooper/dist/hooper.css';
 
 import review_case_img        from '../../assets/images/landing_page/review_case.png'
 import review_phenotypes_img  from '../../assets/images/landing_page/review_phenotypes.png'
-import review_variants_img    from '../../assets/images/landing_page/review_case.png'
+import review_variants_img    from '../../assets/images/landing_page/review_variants.png'
 import findings_img           from '../../assets/images/landing_page/findings.png'
 
 import { mapGetters, mapActions } from 'vuex'
