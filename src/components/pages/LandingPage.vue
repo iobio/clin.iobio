@@ -42,14 +42,39 @@
                         clin.iobio makes it easy to review sequencing and case metrics, generate a prioritized list of genes associated with the disease/phenotype, review candidate variants, and generate a report of your findings
                       </span>
                       <br>
-                      <v-btn color="white" outlined x-large @click="getStarted" class="mt-8">
+                      <v-btn v-if="!analysisInProgress" color="white" outlined x-large @click="getStarted" class="mt-8">
                         <v-icon>explore</v-icon>
                         <span class="ml-2">Run with demo data</span>
                       </v-btn>
-                      <v-btn color="white" outlined x-large @click="inputOptionsDialog=true" class="mt-8 ml-4">
+                      <v-btn v-if="!analysisInProgress" color="white" outlined x-large @click="inputOptionsDialog=true" class="mt-8 ml-4">
                         <v-icon>fas fa-upload</v-icon>
                         <span class="ml-2">Load your data</span>
                       </v-btn>
+                      <v-btn v-if="analysisInProgress" color="white" outlined x-large @click="backToAnalysis" class="mt-8">
+                        <v-icon>play_circle_outline</v-icon>
+                        <span class="ml-2">Resume analysis</span>
+                      </v-btn>
+                      <v-btn v-if="analysisInProgress" color="white" outlined x-large @click="startNewAnalysis" class="mt-8 ml-4">
+                        <v-icon>refresh</v-icon>
+                        <span class="ml-2">Start new analysis</span>
+                      </v-btn>
+                      <div v-if="analysisInProgress">
+                        <br><br>
+                        <center>
+                          <v-alert
+                            border="left"
+                            colored-border
+                            type="warning"
+                            icon="error_outline"
+                            dense
+                            elevation="1"
+                            dismissible
+                            style="font-size:14px; width:70%"
+                          >
+                            You are in the middle of an analysis
+                          </v-alert>
+                        </center>
+                      </div>
                     </v-flex>
                   </v-flex>
                   <v-flex xs12 md12 sm12 lg1 xl1 ></v-flex>
@@ -627,7 +652,7 @@ import 'hooper/dist/hooper.css';
 
 import review_case_img        from '../../assets/images/landing_page/review_case.png'
 import review_phenotypes_img  from '../../assets/images/landing_page/review_phenotypes.png'
-import review_variants_img    from '../../assets/images/landing_page/review_case.png'
+import review_variants_img    from '../../assets/images/landing_page/review_variants.png'
 import findings_img           from '../../assets/images/landing_page/findings.png'
 
 import { mapGetters, mapActions } from 'vuex'
@@ -656,6 +681,7 @@ export default {
   },
   props: {
     cohortModel: null,
+    launchedFromMosaic: null,
   },
   data () {
     let self = this;
@@ -737,11 +763,12 @@ export default {
       dataInputConfig: null,
       importedVariants: [],
       validationErrors: [],
+      analysisInProgress: false,
     }
   },
-  computed: mapGetters(['allAnalysis']),
+  computed: mapGetters(['allAnalysis', 'getAnalysisProgressStatus']),
   methods:  {
-    ...mapActions(['fetchAnalysis']),
+    ...mapActions(['fetchAnalysis', 'setAnalysisInProgressStatus']),
     getfetchAnalysis: function(){
       this.fetchAnalysis();
     },
@@ -897,6 +924,8 @@ export default {
       this.$emit("setBedFileUrl", bed)
     },
     getStarted(){
+      this.analysisInProgress = true;
+      this.setAnalysisInProgressStatus(this.analysisInProgress);
       bus.$emit("initialize-clin")
     },
     updateCarousel(payload) {
@@ -1102,15 +1131,28 @@ export default {
       this.validationErrors = [];
       // this.validationErrors.push(errMessage);
       this.validationErrors = errMessage;
+    },
+    backToAnalysis(){
+      bus.$emit("back-to-analysis");
+    },
+    startNewAnalysis(){
+      if(this.launchedFromMosaic){
+        window.history.pushState({}, document.title, "/" + "");
+      }
+      window.location.reload();
     }
   },
   mounted: function() {
+    this.analysisInProgress = this.getAnalysisProgressStatus;
     this.fetchAnalysis();
     bus.$on("close_dialog", ()=>{
       this.showTermsOfService = false;
     })
     bus.$on("close-files-dialog", ()=>{
       this.closeUploadDataDialogs();
+    })
+    bus.$on("back-to-analysis", () => {
+      this.analysisInProgress = this.getAnalysisProgressStatus; 
     })
   },
   watch: {
@@ -1125,7 +1167,7 @@ export default {
     },
     passCode(){
       this.passcodeIncorrectAlert = false;
-    }
+    },
   }
 }
 </script>
