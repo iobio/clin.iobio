@@ -18,6 +18,8 @@ export default new Vuex.Store({
     custom_case_Summary: {},
     build_name: 'GRCh37',
     imported_variants: [],
+    analysis_in_progress_status: false,
+    is_launched_from_mosaic: false,
   },
   getters: {
     allAnalysis: state => state.analysis,
@@ -32,6 +34,8 @@ export default new Vuex.Store({
     getCaseSummary: state => state.custom_case_Summary,
     getBuildName: state => state.build_name,
     getImportedVariants: state => state.imported_variants,
+    getAnalysisProgressStatus: state => state.analysis_in_progress_status,
+    getLaunchedFromMosaicFlag: state => state.is_launched_from_mosaic,
   },
   actions: {
     fetchAnalysis({ commit }){
@@ -73,6 +77,12 @@ export default new Vuex.Store({
     setImportedVariantSets({commit}, variants){
       commit('SET_IMPORTED_VARIANTS', variants)
     },
+    setAnalysisInProgressStatus({commit}, status){
+      commit('SET_ANALYSIS_IN_PROGRESS_STATUS', status)
+    },
+    setMosaicLaunchFlag({commit}, flag){
+      commit('SET_MOSAIC_LAUNCH_FLAG', flag)
+    },
   },
   mutations: {
     GET_ANALYSIS: (state) => state.analysis,
@@ -88,7 +98,8 @@ export default new Vuex.Store({
     SET_CASE_SUMMARY: (state, caseSummary) => state.custom_case_Summary = caseSummary,
     SET_BUILD_NAME: (state, build) => state.build_name = build,
     SET_IMPORTED_VARIANTS: (state, variants) => state.imported_variants = variants,
-
+    SET_ANALYSIS_IN_PROGRESS_STATUS: (state, status) => state.analysis_in_progress_status = status,
+    SET_MOSAIC_LAUNCH_FLAG: (state, flag) => state.is_launched_from_mosaic = flag,
   },
   modules: {
   }

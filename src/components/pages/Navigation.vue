@@ -97,10 +97,9 @@ header.theme--dark.v-sheet
   <div>
     <v-toolbar fixed   height="45"   dark  >
 
-
-      <v-toolbar-title v-text="title">
-      </v-toolbar-title>
-
+      <v-btn text @click="onTitleClicked" class="mr-5">
+        <span style="font-size:18px; margin-top:-4px">clin.iobio</span>
+      </v-btn>
 
 
       <v-popover
@@ -233,6 +232,9 @@ export default {
   watch: {
   },
   methods: {
+    onTitleClicked(){
+      bus.$emit("show-landing-page")
+    },
     round(value, places) {
       return +(Math.round(value + "e+" + places)  + "e-" + places);
     },

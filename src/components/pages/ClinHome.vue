@@ -135,6 +135,7 @@ $horizontal-dashboard-height: 140px
   <landing-page
     v-if="!launchedFromMosaic && showLandingPage"
     :cohortModel="cohortModel"
+    :launchedFromMosaic="launchedFromMosaic"
     @custom-model-info="customModelInfo"
     @setGeneSet="setGeneSet($event)"
     @set-ped-data="setPedData($event)"
@@ -208,12 +209,12 @@ $horizontal-dashboard-height: 140px
     :class="{'app-content': true}"
     v-show="!showSplash && isAuthenticated " >
       <v-card  class="clin-card"
-        v-if="analysis && workflow"
+        v-if="analysis && workflow && !showLandingPage"
         v-show="analysis && workflow && currentStep == 1 && !showFindings"
       >
         <review-case
         ref="reviewCaseRef"
-        v-if="analysis && workflow && currentStep == 1"
+        v-if="analysis && workflow && currentStep == 1 && !showLandingPage"
         v-show="analysis && workflow"
         :workflow="workflow"
         :analysis="analysis.payload"
@@ -235,11 +236,11 @@ $horizontal-dashboard-height: 140px
 
       <v-card  class="clin-card"
         v-if="analysis && workflow"
-        v-show="analysis && workflow && currentStep == 2 && !showFindings"
+        v-show="analysis && workflow && currentStep == 2 && !showFindings && !showLandingPage"
       >
         <keep-alive>
           <PhenotypeExtractor
-            v-if="analysis && workflow && currentStep == 2 && !showFindings"
+            v-if="analysis && workflow && currentStep == 2 && !showFindings && !showLandingPage"
             :phenotypes="analysis.payload.phenotypes"
             @summaryGenes="summaryGenes($event)"
             @saveSearchedPhenotypes="saveSearchedPhenotypes($event)"
@@ -257,7 +258,7 @@ $horizontal-dashboard-height: 140px
 
         <keep-alive>
           <GeneList
-            v-if="analysis && workflow && currentStep == 2 && !showFindings"
+            v-if="analysis && workflow && currentStep == 2 && !showFindings && !showLandingPage"
             :summaryGeneList="analysis.payload.genesReport"
             @importedGenes="importedGenes($event)"
             @UpdateListOnDelete="UpdateListOnDelete($event)"
@@ -271,12 +272,12 @@ $horizontal-dashboard-height: 140px
 
 
       <v-card  class="clin-card"
-        v-if="analysis && workflow"
+        v-if="analysis && workflow && !showLandingPage"
         v-show="analysis && workflow && currentStep == 4 || showFindings "
       >
         <findings
         ref="findingsRef"
-        v-if="analysis && workflow && variantsByInterpretation"
+        v-if="analysis && workflow && variantsByInterpretation && !showLandingPage"
         :genomeBuildHelper="genomeBuildHelper"
         :modelInfos="modelInfos"
         :caseSummary="caseSummary"
@@ -286,11 +287,13 @@ $horizontal-dashboard-height: 140px
         </findings>
       </v-card>
 
-      <div id="gene-iframe" style="width:100%;height:1024px" v-show="!isAuthenticated || ((currentStep == 3) && !showFindings)">
-        <iframe
-        :src="apps.genefull.url"
-        style="width:100%;height:100%" frameBorder="0">
-        </iframe>
+      <div v-show="!showLandingPage">
+        <div id="gene-iframe" style="width:100%;height:1024px" v-show="!isAuthenticated || ((currentStep == 3) && !showFindings)">
+          <iframe
+          :src="apps.genefull.url"
+          style="width:100%;height:100%" frameBorder="0">
+          </iframe>
+        </div>
       </div>
 
       <v-snackbar
@@ -615,10 +618,16 @@ export default {
     bus.$on("save-analysis-object", () => {
       this.saveAnalysisJson()
     })
+    bus.$on("show-landing-page", () => {
+      this.showLandingPage = true;
+    })
+    bus.$on("back-to-analysis", () => {
+      this.showLandingPage = false;
+    })
   },
 
   computed: {
-    ...mapGetters(['getPedigreeData', 'getPedigree', 'getVariantsCount', 'getCustomCoverage', 'getReviewCaseBadge', 'getVariantsByInterpretation', 'getModelInfos', 'getGeneSet', 'getCaseSummary', 'getBuildName']),
+    ...mapGetters(['getPedigreeData', 'getPedigree', 'getVariantsCount', 'getCustomCoverage', 'getReviewCaseBadge', 'getVariantsByInterpretation', 'getModelInfos', 'getGeneSet', 'getCaseSummary', 'getBuildName', 'getAnalysisProgressStatus', 'getLaunchedFromMosaicFlag']),
     phenotypeList: function() {
       let self = this;
       let phenotypeList = [];
@@ -716,7 +725,7 @@ export default {
   },
 
   methods: {
-    ...mapActions(['updateAnalysis', 'setModelInfos', 'setCustomGeneSet', 'setCaseSummary', 'setBuildName', 'setImportedVariantSets']),
+    ...mapActions(['updateAnalysis', 'setModelInfos', 'setCustomGeneSet', 'setCaseSummary', 'setBuildName', 'setImportedVariantSets', 'setAnalysisInProgressStatus', 'setMosaicLaunchFlag']),
 
     init: function() {
       let self = this;
@@ -806,6 +815,8 @@ export default {
 
           self.launchedFromMosaic = true;
           self.mosaicSession = new MosaicSession();
+          self.setAnalysisInProgressStatus(true);
+          self.setMosaicLaunchFlag(true);
           // For now, just hardcode is_pedgree = true
           self.mosaicSession.promiseInit(self.params.sample_id, self.params.source,
             true, self.params.project_id, self.params.client_application_id, self.params.gene_set_id, self.params.variant_set_id)
@@ -2319,6 +2330,7 @@ export default {
       }
     },
     loadSavedAnalysisCustomData(analysis){
+      this.setAnalysisInProgressStatus(true);
       this.analysis = analysis;
       this.updateAnalysis(this.analysis);
       this.modelInfos = analysis.custom_model_infos;
