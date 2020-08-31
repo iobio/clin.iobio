@@ -91,7 +91,14 @@ import SamplingLoader from './SamplingLoader.vue'
         }
 
         var refs = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23];
-        this.getVcfStats(refs, options, modelInfos.vcf, modelInfos.tbi, modelInfos.sample, idx, refData);
+        var newRef = []; 
+        for (var j=0; j < refs.length; j++) {
+          var ref = refData[refs[j]];
+          if(ref!==undefined){
+            newRef.push(refs[j])
+          }
+        }
+        this.getVcfStats(newRef, options, modelInfos.vcf, modelInfos.tbi, modelInfos.sample, idx, refData);
       },
     }, 
     mounted(){
