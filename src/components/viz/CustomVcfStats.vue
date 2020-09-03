@@ -50,9 +50,9 @@ import SamplingLoader from './SamplingLoader.vue'
       }
     },
     methods: {
-      getVcfStats(refs, options, vcf, tbi, sample, idx){
+      getVcfStats(refs, options, vcf, tbi, sample, idx, refData){
 
-        vcfiobio.getStats(refs, options, vcf, tbi, sample, function(data) {
+        vcfiobio.getStats(refs, options, vcf, tbi, sample, refData, function(data) {
           var stats = data.var_type; 
           var indels = stats.INS + stats.DEL;
           var varCounts = {};
@@ -81,7 +81,7 @@ import SamplingLoader from './SamplingLoader.vue'
 
       },
       
-      getVarCountFromCustomData(modelInfos, idx){
+      getVarCountFromCustomData(modelInfos, idx, refData){
         var options = {
           "samplingMultiplier": 1,
           "binSize": 80000,
@@ -91,11 +91,24 @@ import SamplingLoader from './SamplingLoader.vue'
         }
 
         var refs = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23];
-        this.getVcfStats(refs, options, modelInfos.vcf, modelInfos.tbi, modelInfos.sample, idx);
+        var newRef = []; 
+        for (var j=0; j < refs.length; j++) {
+          var ref = refData[refs[j]];
+          if(ref!==undefined){
+            newRef.push(refs[j])
+          }
+        }
+        this.getVcfStats(newRef, options, modelInfos.vcf, modelInfos.tbi, modelInfos.sample, idx, refData);
       },
     }, 
     mounted(){
-      this.getVarCountFromCustomData(this.modelInfos, this.idx);
+      vcfiobio.loadRemoteIndex(this.modelInfos.vcf, this.modelInfos.tbi, function(data){
+        getVarCounts(data); 
+      })
+      
+      var getVarCounts = ((data) => {
+        this.getVarCountFromCustomData(this.modelInfos, this.idx, data);
+      })
     }
 
   }

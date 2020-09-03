@@ -149,9 +149,9 @@ export default function vcfiobio(theGlobalApp) {
     ['regulatory_region_variant'  ,'regulatory'],
     ['upstream_gene_variant'  ,'other'],
     ['3_prime_UTR_variant'  ,'utr'],
-    ['3_prime_UTR_truncation +','utr'],
+    ['3_prime_UTR_truncation +','utr'],
     ['5_prime_UTR_variant'  ,'utr'],
-    ['5_prime_UTR_truncation +','utr']
+    ['5_prime_UTR_truncation +','utr']
   ];
 
   exports.isFile = function() {
@@ -555,382 +555,12 @@ export default function vcfiobio(theGlobalApp) {
 
   }
     
-  exports._getRegions = function(refs, options) {
-    // console.log("called getRegions");
+  exports._getRegions = function(refs, options, refData) {
     regionIndex = 0;
     regions.length = 0;
     var me = this;
     var allRegions = [];
 
-    // console.log("refData", refData)
-    refData = [
-  {
-    "name": "1",
-    "value": 249250621,
-    "refLength": 249250621,
-    "calcRefLength": 249233408,
-    "idx": 0,
-    "genomePercent": 0.0805,
-    "width": 106.20188030962638,
-    "offset": 0
-  },
-  {
-    "name": "2",
-    "value": 243199373,
-    "refLength": 243199373,
-    "calcRefLength": 243040256,
-    "idx": 1,
-    "genomePercent": 0.0786,
-    "width": 103.62353601807948,
-    "offset": 106.20188030962638
-  },
-  {
-    "name": "3",
-    "value": 198022430,
-    "refLength": 198022430,
-    "calcRefLength": 197853184,
-    "idx": 2,
-    "genomePercent": 0.064,
-    "width": 84.37433104522282,
-    "offset": 209.82541632770585
-  },
-  {
-    "name": "4",
-    "value": 191154276,
-    "refLength": 191154276,
-    "calcRefLength": 191004672,
-    "idx": 3,
-    "genomePercent": 0.0617,
-    "width": 81.44791559185437,
-    "offset": 294.19974737292864
-  },
-  {
-    "name": "5",
-    "value": 180915260,
-    "refLength": 180915260,
-    "calcRefLength": 180682752,
-    "idx": 4,
-    "genomePercent": 0.0584,
-    "width": 77.08522735718654,
-    "offset": 375.647662964783
-  },
-  {
-    "name": "6",
-    "value": 171115067,
-    "refLength": 171115067,
-    "calcRefLength": 170950656,
-    "idx": 5,
-    "genomePercent": 0.0553,
-    "width": 72.90951489628463,
-    "offset": 452.73289032196953
-  },
-  {
-    "name": "7",
-    "value": 159138663,
-    "refLength": 159138663,
-    "calcRefLength": 158941184,
-    "idx": 6,
-    "genomePercent": 0.0514,
-    "width": 67.8065521873262,
-    "offset": 525.6424052182542
-  },
-  {
-    "name": "8",
-    "value": 146364022,
-    "refLength": 146364022,
-    "calcRefLength": 146292736,
-    "idx": 7,
-    "genomePercent": 0.0473,
-    "width": 62.3634728921278,
-    "offset": 593.4489574055805
-  },
-  {
-    "name": "9",
-    "value": 141213431,
-    "refLength": 141213431,
-    "calcRefLength": 141082624,
-    "idx": 8,
-    "genomePercent": 0.0456,
-    "width": 60.168884783535525,
-    "offset": 655.8124302977083
-  },
-  {
-    "name": "10",
-    "value": 135534747,
-    "refLength": 135534747,
-    "calcRefLength": 135495680,
-    "idx": 9,
-    "genomePercent": 0.0438,
-    "width": 57.749284318491185,
-    "offset": 715.9813150812438
-  },
-  {
-    "name": "11",
-    "value": 135006516,
-    "refLength": 135006516,
-    "calcRefLength": 134266880,
-    "idx": 10,
-    "genomePercent": 0.0436,
-    "width": 57.524213162348175,
-    "offset": 773.730599399735
-  },
-  {
-    "name": "12",
-    "value": 133851895,
-    "refLength": 133851895,
-    "calcRefLength": 133791744,
-    "idx": 11,
-    "genomePercent": 0.0432,
-    "width": 57.032246800326625,
-    "offset": 831.2548125620831
-  },
-  {
-    "name": "13",
-    "value": 115169878,
-    "refLength": 115169878,
-    "calcRefLength": 115064832,
-    "idx": 12,
-    "genomePercent": 0.0372,
-    "width": 49.072124873984855,
-    "offset": 888.2870593624098
-  },
-  {
-    "name": "14",
-    "value": 107349540,
-    "refLength": 107349540,
-    "calcRefLength": 107298816,
-    "idx": 13,
-    "genomePercent": 0.0347,
-    "width": 45.739998370449186,
-    "offset": 937.3591842363946
-  },
-  {
-    "name": "15",
-    "value": 102531392,
-    "refLength": 102531392,
-    "calcRefLength": 102531072,
-    "idx": 14,
-    "genomePercent": 0.0331,
-    "width": 43.687059143428904,
-    "offset": 983.0991826068438
-  },
-  {
-    "name": "16",
-    "value": 90354753,
-    "refLength": 90354753,
-    "calcRefLength": 90177536,
-    "idx": 15,
-    "genomePercent": 0.0292,
-    "width": 38.498779361162974,
-    "offset": 1026.7862417502727
-  },
-  {
-    "name": "17",
-    "value": 81195210,
-    "refLength": 81195210,
-    "calcRefLength": 81068032,
-    "idx": 16,
-    "genomePercent": 0.0262,
-    "width": 34.596038074203946,
-    "offset": 1065.2850211114355
-  },
-  {
-    "name": "18",
-    "value": 78077248,
-    "refLength": 78077248,
-    "calcRefLength": 77971456,
-    "idx": 17,
-    "genomePercent": 0.0252,
-    "width": 33.26752211783262,
-    "offset": 1099.8810591856395
-  },
-  {
-    "name": "19",
-    "value": 59128983,
-    "refLength": 59128983,
-    "calcRefLength": 59113472,
-    "idx": 18,
-    "genomePercent": 0.0191,
-    "width": 25.193955987760337,
-    "offset": 1133.1485813034722
-  },
-  {
-    "name": "20",
-    "value": 63025520,
-    "refLength": 63025520,
-    "calcRefLength": 62914560,
-    "idx": 19,
-    "genomePercent": 0.0204,
-    "width": 26.854210852666093,
-    "offset": 1158.3425372912325
-  },
-  {
-    "name": "21",
-    "value": 48129895,
-    "refLength": 48129895,
-    "calcRefLength": 48087040,
-    "idx": 20,
-    "genomePercent": 0.0155,
-    "width": 20.507412690076645,
-    "offset": 1185.1967481438985
-  },
-  {
-    "name": "22",
-    "value": 51304566,
-    "refLength": 51304566,
-    "calcRefLength": 51249152,
-    "idx": 21,
-    "genomePercent": 0.0166,
-    "width": 21.86009148466405,
-    "offset": 1205.704160833975
-  },
-  {
-    "name": "X",
-    "value": 155270560,
-    "refLength": 155270560,
-    "calcRefLength": 155271168,
-    "idx": 22,
-    "genomePercent": 0.0502,
-    "width": 66.15841261526349,
-    "offset": 1227.564252318639
-  },
-  {
-    "name": "Y",
-    "value": 59373566,
-    "refLength": 59373566,
-    "calcRefLength": 24559616,
-    "idx": 23,
-    "sparsePointData": [
-      {
-        "pos": 2834432,
-        "depth": 1
-      },
-      {
-        "pos": 4964352,
-        "depth": 1
-      },
-      {
-        "pos": 5488640,
-        "depth": 1
-      },
-      {
-        "pos": 6111232,
-        "depth": 1
-      },
-      {
-        "pos": 6127616,
-        "depth": 1
-      },
-      {
-        "pos": 6946816,
-        "depth": 1
-      },
-      {
-        "pos": 7192576,
-        "depth": 1
-      },
-      {
-        "pos": 9175040,
-        "depth": 1
-      },
-      {
-        "pos": 9191424,
-        "depth": 1
-      },
-      {
-        "pos": 9207808,
-        "depth": 1
-      },
-      {
-        "pos": 9289728,
-        "depth": 1
-      },
-      {
-        "pos": 9322496,
-        "depth": 1
-      },
-      {
-        "pos": 9355264,
-        "depth": 1
-      },
-      {
-        "pos": 9732096,
-        "depth": 1
-      },
-      {
-        "pos": 13484032,
-        "depth": 18592
-      },
-      {
-        "pos": 13500416,
-        "depth": 1
-      },
-      {
-        "pos": 14073856,
-        "depth": 1
-      },
-      {
-        "pos": 14106624,
-        "depth": 1
-      },
-      {
-        "pos": 14516224,
-        "depth": 1
-      },
-      {
-        "pos": 14843904,
-        "depth": 1
-      },
-      {
-        "pos": 14893056,
-        "depth": 1
-      },
-      {
-        "pos": 14942208,
-        "depth": 1
-      },
-      {
-        "pos": 14958592,
-        "depth": 1
-      },
-      {
-        "pos": 15024128,
-        "depth": 1
-      },
-      {
-        "pos": 15433728,
-        "depth": 1
-      },
-      {
-        "pos": 15581184,
-        "depth": 1
-      },
-      {
-        "pos": 16941056,
-        "depth": 1
-      },
-      {
-        "pos": 21856256,
-        "depth": 1
-      },
-      {
-        "pos": 21889024,
-        "depth": 1
-      },
-      {
-        "pos": 24313856,
-        "depth": 1
-      },
-      {
-        "pos": 24543232,
-        "depth": 8752
-      }
-    ],
-    "genomePercent": 0.0192,
-    "width": 25.298169066097362,
-    "offset": 1293.7226649339025
-  }
-  ]
     var bedRegions;
     for (var j=0; j < refs.length; j++) {
       var ref      = refData[refs[j]];
@@ -995,16 +625,16 @@ export default function vcfiobio(theGlobalApp) {
 
   }
   
-  exports.getStats = function(refs, options, vcf, tbi, sample, callback) {
+  exports.getStats = function(refs, options, vcf, tbi, sample, refData, callback) {
     this.vcfURL = vcf;
     this.tbiURL = tbi;
-    this._getRemoteStats(refs, options, sample, callback);
+    this._getRemoteStats(refs, options, sample, refData, callback);
   }
   
-  exports._getRemoteStats = function(refs, options, sample, callback) {
+  exports._getRemoteStats = function(refs, options, sample, refData, callback) {
     var me = this;
 
-    me._getRegions(refs, options);
+    me._getRegions(refs, options, refData);
 
     // This is the tabix url.  Here we send the regions as arguments.  tabix
     // output (vcf header+records for the regions) will be piped
@@ -1091,7 +721,249 @@ export default function vcfiobio(theGlobalApp) {
 
 
   };
+  
+  exports.loadRemoteIndex = function(theVcfUrl, theTbiUrl, callbackData, callbackEnd) {
+    var me = this;
+    var refIndex;
+    me.vcfURL = theVcfUrl;
+    me.tbiURL = theTbiUrl;
+    sourceType = "URL";
+    var me = this;
+    var buffer = "";
+    var refName;
 
+    var url;
+    if (me.tbiURL) {
+      url = me.tbiURL;
+    } else {
+      url = me.vcfURL + '.tbi';
+    }
+
+    var cmd = apiClient.streamCommand('vcfReadDepth', {
+      url,
+    });
+
+    cmd = new LineReader(cmd);
+
+    cmd.on('data', function(data) {
+      if (data == undefined) {
+        return;
+      }
+      
+      data = buffer + data;
+      
+      var recs = data.split("\n");
+      if (recs.length > 0) {
+        for (var i=0; i < recs.length; i++)  {
+          if (recs[i] == undefined) {
+            return;
+          }
+      
+          var success = true;
+          if ( recs[i][0] == '#' ) {
+          var tokens = recs[i].substr(1).split("\t");
+            if (tokens.length >= 3) {
+              var refNamePrev = refName;
+              refIndex = tokens[0];
+              refName = tokens[1];
+      
+              var calcRefLength = tokens[2];
+              // var refLength = genomeBuildHelper.getReferenceLength(refName);
+              // if (refLength == null) { uncomment this 
+              //    refLength = calcRefLength;
+              // }
+              var refLength = calcRefLength
+      
+              // Zero fill the previous reference point data and callback with the
+              // data we have loaded so far.
+              if (refData.length > 0) {
+                var refDataPrev = refData[refData.length - 1];
+                me.zeroFillPointData(refDataPrev);
+                if (callbackData) {
+                  // callbackData(refData);
+                }
+              }
+      
+              refData.push({"name": refName, "value": +refLength, "refLength": +refLength, "calcRefLength": +calcRefLength, "idx": +refIndex});
+              refDensity[refName] =  {"idx": refIndex, "points": [], "intervalPoints": []};
+      
+      
+            } else {
+                success = false;
+            }
+          }
+          else {
+             if (recs[i] != "") {
+                if (refDensity[refName] == null) {
+                  console.log("Invalid reference " + refName + " for point data " + recs[i]);
+                  success = false;
+                } else {
+                  var fields = recs[i].split("\t");
+                  if (fields.length >= 2) {
+                    var point = [ parseInt(fields[0]), parseInt(fields[1]) ];
+                    refDensity[refName].points.push(point);
+                    refDensity[refName].intervalPoints.push(point);
+                  } else {
+                    success = false;
+                  }
+                }
+      
+             }
+          }
+          if (success) {
+            buffer = "";
+          } else {
+            buffer += recs[i];
+          }
+        }
+      } else  {
+        buffer += data;
+      }
+
+
+
+    })
+
+    // All data has been streamed.
+    cmd.on('end', function() {
+      // sort refData so references or ordered numerically
+      refData = me.sortRefData(refData);
+
+      // Zero fill the previous reference point data and callback with the
+      // for the last reference that was loaded
+      if (refData.length > 0) {
+        var refDataPrev = refData[refData.length - 1];
+        me.zeroFillPointData(refDataPrev);
+        if (callbackData) {
+          callbackData(refData);
+        }
+      }
+      if (callbackEnd) {
+        callbackEnd(refData);
+      }
+    })
+
+    // Catch error event when fired
+    cmd.on('error', function(error) {
+      console.log("Error occurred in loadRemoteIndex. " +  error);
+    })
+
+    // execute command
+    cmd.run();
+
+
+
+
+  };
+  
+  
+  
+  exports.zeroFillPointData = function(refObject) {
+
+      var refDensityObject = refDensity[refObject.name];
+
+      // If we have sparse data, keep track of these regions
+      var realPointCount = 0;
+      refDensityObject.points.forEach( function (point) {
+        if (point[1] > 0) {
+          realPointCount++;
+        }
+      });
+      if (realPointCount < 100) {
+        refObject.sparsePointData = [];
+        refDensityObject.points.forEach( function (point) {
+        if (point[1] > 0) {
+          refObject.sparsePointData.push( {pos: point[0], depth: point[1]});
+        }
+      });
+      }
+
+
+};
+
+
+exports.sortRefData = function(refData) {
+  var me = this;
+  return refData.sort(function(refa,refb) {
+        var x = me.stripChr(refa.name);
+        var y = me.stripChr(refb.name);
+        if (me.isNumeric(x) && me.isNumeric(y)) {
+          return ((+x < +y) ? -1 : ((+x > +y) ? 1 : 0));
+        } else {
+           if (!me.isNumeric(x) && !me.isNumeric(y)) {
+              return ((+x < +y) ? -1 : ((+x > +y) ? 1 : 0));
+           } else if (!me.isNumeric(x)) {
+              return 1;
+           } else {
+              return -1;
+           }
+        }
+
+    });
+}
+
+exports.isNumeric = function(n) {
+  return !isNaN(parseFloat(n)) && isFinite(n);
+}
+
+  function LineReader(cmd) {
+
+    var remainder = "";
+    var prev = "";
+
+    cmd.on('data', (data) => {
+
+      var lines = data.split('\n');
+
+      if (remainder.length > 0) {
+        lines[0] = remainder + lines[0];
+        remainder = "";
+      }
+
+      if (!lines[lines.length - 1].endsWith('\n')) {
+        remainder = lines.pop();
+      }
+
+      for (var line of lines) {
+        prev = line;
+        this.onData(line);
+      }
+    });
+
+    cmd.on('end', () => {
+      if (remainder.length > 0) {
+        this.onData(remainder);
+      }
+      this.onEnd();
+    });
+
+    cmd.on('error', (e) => {
+      this.onError(e);
+    });
+
+    this._cmd = cmd;
+  }
+
+  LineReader.prototype.run = function() {
+    this._cmd.run();
+  };
+
+  LineReader.prototype.on = function(evt, callback) {
+    switch (evt) {
+      case 'data':
+        this.onData = callback;
+        break;
+      case 'end':
+        this.onEnd = callback;
+        break;
+      case 'error':
+        this.onError = callback;
+        break;
+      default:
+        throw new Error("LineReader: Invalid event", evt);
+        break;
+    }
+  };
 
 
   exports._getRemoteReferenceLengths = function(callback, callbackError) {
@@ -1173,7 +1045,7 @@ export default function vcfiobio(theGlobalApp) {
 
     // Catch error event when fired
     cmd.on('error', function(error) {
-      console.log("Error occurred in loadRemoteIndex. " +  error);
+      // console.log("Error occurred in loadRemoteIndex. " +  error);
       if (callbackError) {
         callbackError("Error occurred in loadRemoteIndex. " +  error);
       }
