@@ -192,6 +192,11 @@ $horizontal-dashboard-height: 140px
    @on-task-completed="onTaskCompleted">
   </workflow-nav>
 
+  <v-btn light tile @click="sendGenes">
+    <v-icon>Send genes</v-icon>
+    Send genes
+  </v-btn>
+
   <div id="clin-container" style="display:flex" :class="{authenticated: isAuthenticated}">
 
     <div id="splash-screen" v-if="showSplash" >
@@ -2421,7 +2426,26 @@ export default {
       })
       self.setImportedVariantSets(self.importedCustomVariants);
       self.setCustomGeneSet(self.customGeneSet);
-    }
+    },
+    sendGenes(){
+      let self = this;
+      var gene_set = self.analysis.payload.genes;
+      self.analysis.payload.genes.push("RAI1")
+      // gene_set.push("TCOF1");
+      var appName = "genefull";
+      var iframeSelector = self.apps[appName].iframeSelector;
+
+      console.log("Sending to gene.iobio")
+
+      var theObject = {
+            type: 'add-new-genes',
+            source: 'all',
+            'genes': gene_set,
+            'new_genes': "RAI1"
+          }
+      $(iframeSelector)[0].contentWindow.postMessage(JSON.stringify(theObject), '*');
+
+    },
   }
 }
 
