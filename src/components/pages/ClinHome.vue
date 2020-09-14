@@ -269,7 +269,8 @@ $horizontal-dashboard-height: 140px
             @UpdateListOnDelete="UpdateListOnDelete($event)"
             :venn_diag_data="venn_diag_data"
             @bus_delete_gene="bus_delete_gene"
-            @gene_to_delete=gene_to_delete($event)>
+            @gene_to_delete="gene_to_delete($event)"
+            @add_to_gene_set="add_to_gene_set($event)">
           </GeneList>
         </keep-alive>
 
@@ -2155,6 +2156,9 @@ export default {
     },
     gene_to_delete(gene){
       this.geneToDelete = gene;
+    },
+    add_to_gene_set(genes){
+      console.log("genes selected", genes);
     },
 
     updateAverageCoverage(cov){
