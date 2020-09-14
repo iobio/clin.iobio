@@ -589,6 +589,7 @@ export default {
       sampleId: null,
       variantsCount: 0,
       deletedGenesList: [],
+      selectedGenesForGeneSet: [],
     }
 
   },
@@ -633,7 +634,7 @@ export default {
   },
 
   computed: {
-    ...mapGetters(['getPedigreeData', 'getPedigree', 'getVariantsCount', 'getCustomCoverage', 'getReviewCaseBadge', 'getVariantsByInterpretation', 'getModelInfos', 'getGeneSet', 'getCaseSummary', 'getBuildName', 'getAnalysisProgressStatus', 'getLaunchedFromMosaicFlag']),
+    ...mapGetters(['getPedigreeData', 'getPedigree', 'getVariantsCount', 'getCustomCoverage', 'getReviewCaseBadge', 'getVariantsByInterpretation', 'getModelInfos', 'getGeneSet', 'getCaseSummary', 'getBuildName', 'getAnalysisProgressStatus', 'getLaunchedFromMosaicFlag', 'getSelectedGenesForVariantsReview']),
     phenotypeList: function() {
       let self = this;
       let phenotypeList = [];
@@ -731,7 +732,7 @@ export default {
   },
 
   methods: {
-    ...mapActions(['updateAnalysis', 'setModelInfos', 'setCustomGeneSet', 'setCaseSummary', 'setBuildName', 'setImportedVariantSets', 'setAnalysisInProgressStatus', 'setMosaicLaunchFlag']),
+    ...mapActions(['updateAnalysis', 'setModelInfos', 'setCustomGeneSet', 'setCaseSummary', 'setBuildName', 'setImportedVariantSets', 'setAnalysisInProgressStatus', 'setMosaicLaunchFlag', 'setSelectedGenesForVariantsReview']),
 
     init: function() {
       let self = this;
@@ -2159,6 +2160,9 @@ export default {
     },
     add_to_gene_set(genes){
       console.log("genes selected", genes);
+      this.selectedGenesForGeneSet = genes;
+      this.setSelectedGenesForVariantsReview(genes);
+      console.log("this.analysis genesReport", this.analysis.payload.genesReport);
     },
 
     updateAverageCoverage(cov){
@@ -2434,7 +2438,14 @@ export default {
     sendGenes(){
       let self = this;
       var gene_set = self.analysis.payload.genes;
-      self.analysis.payload.genes.push("RAI1")
+      if(self.selectedGenesForGeneSet.length){
+        self.selectedGenesForGeneSet.forEach(gene => {
+          if(!gene_set.includes(gene)){
+            gene_set.push(gene)
+          }
+        })
+      }
+      // self.analysis.payload.genes.push("RAI1")
       // gene_set.push("TCOF1");
       var appName = "genefull";
       var iframeSelector = self.apps[appName].iframeSelector;
@@ -2445,7 +2456,7 @@ export default {
             type: 'add-new-genes',
             source: 'all',
             'genes': gene_set,
-            'new_genes': "RAI1"
+            'new_genes': self.selectedGenesForGeneSet
           }
       $(iframeSelector)[0].contentWindow.postMessage(JSON.stringify(theObject), '*');
 
