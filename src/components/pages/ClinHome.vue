@@ -265,7 +265,8 @@ $horizontal-dashboard-height: 140px
             :venn_diag_data="venn_diag_data"
             @bus_delete_gene="bus_delete_gene"
             @gene_to_delete="gene_to_delete($event)"
-            @add_to_gene_set="add_to_gene_set($event)">
+            @add_to_gene_set="add_to_gene_set($event)"
+            :selectedGenesForGeneSet="selectedGenesForGeneSet">
           </GeneList>
         </keep-alive>
 
@@ -2156,10 +2157,8 @@ export default {
       this.geneToDelete = gene;
     },
     add_to_gene_set(genes){
-      console.log("genes selected", genes);
       this.selectedGenesForGeneSet = genes;
       this.setSelectedGenesForVariantsReview(genes);
-      console.log("this.analysis genesReport", this.analysis.payload.genesReport);
     },
 
     updateAverageCoverage(cov){
