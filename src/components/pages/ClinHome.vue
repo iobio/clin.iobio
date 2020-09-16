@@ -192,11 +192,6 @@ $horizontal-dashboard-height: 140px
    @on-task-completed="onTaskCompleted">
   </workflow-nav>
 
-  <v-btn light tile @click="sendGenes">
-    <v-icon>Send genes</v-icon>
-    Send genes
-  </v-btn>
-
   <div id="clin-container" style="display:flex" :class="{authenticated: isAuthenticated}">
 
     <div id="splash-screen" v-if="showSplash" >
@@ -590,6 +585,7 @@ export default {
       variantsCount: 0,
       deletedGenesList: [],
       selectedGenesForGeneSet: [],
+      geneSetAndSelectedGenes: [],
     }
 
   },
@@ -702,7 +698,8 @@ export default {
                 hpoFullList: self.analysis.payload.hpoFullList
               }
           $(iframeSelector)[0].contentWindow.postMessage(JSON.stringify(theObject), '*');
-
+          
+          self.sendGenes();
         }
 
 
@@ -2438,28 +2435,32 @@ export default {
     sendGenes(){
       let self = this;
       var gene_set = self.analysis.payload.genes;
+      if(!self.geneSetAndSelectedGenes.length){
+        self.geneSetAndSelectedGenes = gene_set;
+      }
+      
+      var genes_to_send = [];
       if(self.selectedGenesForGeneSet.length){
         self.selectedGenesForGeneSet.forEach(gene => {
-          if(!gene_set.includes(gene)){
-            gene_set.push(gene)
+          if(!self.geneSetAndSelectedGenes.includes(gene)){
+            self.geneSetAndSelectedGenes.push(gene);
+            genes_to_send.push(gene);
           }
         })
       }
-      // self.analysis.payload.genes.push("RAI1")
-      // gene_set.push("TCOF1");
+      
       var appName = "genefull";
       var iframeSelector = self.apps[appName].iframeSelector;
 
-      console.log("Sending to gene.iobio")
-
-      var theObject = {
-            type: 'add-new-genes',
-            source: 'all',
-            'genes': gene_set,
-            'new_genes': self.selectedGenesForGeneSet
-          }
-      $(iframeSelector)[0].contentWindow.postMessage(JSON.stringify(theObject), '*');
-
+      if(genes_to_send.length){
+        var theObject = {
+              type: 'add-new-genes',
+              source: 'all',
+              'genes': gene_set,
+              'new_genes': genes_to_send
+            }
+        $(iframeSelector)[0].contentWindow.postMessage(JSON.stringify(theObject), '*');
+      }
     },
   }
 }
