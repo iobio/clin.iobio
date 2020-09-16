@@ -105,7 +105,7 @@ export default new Vuex.Store({
     SET_IMPORTED_VARIANTS: (state, variants) => state.imported_variants = variants,
     SET_ANALYSIS_IN_PROGRESS_STATUS: (state, status) => state.analysis_in_progress_status = status,
     SET_MOSAIC_LAUNCH_FLAG: (state, flag) => state.is_launched_from_mosaic = flag,
-    SET_SELECTED_GENES_FOR_VARIANTS_REVIEW: (state, genes) => state.getSelectedGenesForVariantsReview = genes,
+    SET_SELECTED_GENES_FOR_VARIANTS_REVIEW: (state, genes) => state.selected_genes_for_variants_review = genes,
   },
   modules: {
   }

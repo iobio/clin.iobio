@@ -2351,6 +2351,8 @@ export default {
       this.buildName = analysis.build_name;
       this.setBuildName(this.buildName);
       this.genomeBuildHelper.setCurrentBuild(analysis.build_name);
+      this.selectedGenesForGeneSet = analysis.selected_genes_for_variants_review;
+      this.setSelectedGenesForVariantsReview(this.selectedGenesForGeneSet);
       this.rawPedigree = analysis.custom_pedigree;
       this.customSavedAnalysis = true;
       this.customData = true;
@@ -2385,6 +2387,7 @@ export default {
       analysis_obj.custom_gene_set = this.getGeneSet;
       analysis_obj.custom_case_Summary = this.getCaseSummary;
       analysis_obj.build_name = this.getBuildName;
+      analysis_obj.selected_genes_for_variants_review = this.getSelectedGenesForVariantsReview;
       analysis_obj.pass_code = Math.floor(100000 + Math.random() * 900000);
       let analysisObject = JSON.stringify(analysis_obj);
       const jsonBlob = new Blob([analysisObject], { type: "application/json" });
