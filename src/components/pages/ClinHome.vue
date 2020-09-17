@@ -587,6 +587,8 @@ export default {
       deletedGenesList: [],
       selectedGenesForGeneSet: [],
       geneSetAndSelectedGenes: [],
+      selectedGenesChanged:false,
+      selectedGenesSent: [],
     }
 
   },
@@ -699,8 +701,10 @@ export default {
                 hpoFullList: self.analysis.payload.hpoFullList
               }
           $(iframeSelector)[0].contentWindow.postMessage(JSON.stringify(theObject), '*');
-          
-          self.sendGenes();
+
+          if(self.selectedGenesChanged){
+            self.sendGenes();
+          }
         }
 
 
@@ -2158,7 +2162,12 @@ export default {
     },
     add_to_gene_set(genes){
       this.selectedGenesForGeneSet = genes;
+      this.selectedGenesChanged = true;
       this.setSelectedGenesForVariantsReview(genes);
+    },
+    
+    checkIfSelectedGenesArrayChanged(newArr, oldArr){
+      return JSON.stringify(newArr.sort()) == JSON.stringify(oldArr.sort())
     },
 
     updateAverageCoverage(cov){
@@ -2436,32 +2445,55 @@ export default {
     },
     sendGenes(){
       let self = this;
-      var gene_set = self.analysis.payload.genes;
-      if(!self.geneSetAndSelectedGenes.length){
-        self.geneSetAndSelectedGenes = gene_set;
-      }
-      
+      self.geneSetAndSelectedGenes = [];
+      // var gene_set = self.analysis.payload.genes;
+      var gene_set = [];
+      self.analysis.payload.genes.map(x => {
+        gene_set.push(x);
+      })
+      // if(!self.geneSetAndSelectedGenes.length){
+      //   self.geneSetAndSelectedGenes = gene_set;
+      // }
+
       var genes_to_send = [];
       if(self.selectedGenesForGeneSet.length){
         self.selectedGenesForGeneSet.forEach(gene => {
-          if(!self.geneSetAndSelectedGenes.includes(gene)){
-            self.geneSetAndSelectedGenes.push(gene);
+          if(!gene_set.includes(gene)){
+            gene_set.push(gene);
             genes_to_send.push(gene);
           }
         })
       }
-      
+      self.geneSetAndSelectedGenes = gene_set;
+      // if(self.selectedGenesForGeneSet.length){
+      //   self.selectedGenesForGeneSet.forEach(gene => {
+      //     if(!self.geneSetAndSelectedGenes.includes(gene)){
+      //       self.geneSetAndSelectedGenes.push(gene);
+      //       genes_to_send.push(gene);
+      //     }
+      //   })
+      // }
       var appName = "genefull";
       var iframeSelector = self.apps[appName].iframeSelector;
-
-      if(genes_to_send.length){
+      var arrChanged = true;
+      if(self.checkIfSelectedGenesArrayChanged(self.selectedGenesForGeneSet, self.selectedGenesSent)){
+        arrChanged = false;
+      }
+      else{
+        arrChanged = true;
+      }
+      if(arrChanged){
         var theObject = {
               type: 'add-new-genes',
               source: 'all',
               'genes': gene_set,
-              'new_genes': genes_to_send
+              'new_genes': self.geneSetAndSelectedGenes
             }
+        self.selectedGenesForGeneSet.map(x => {
+          self.selectedGenesSent.push(x);
+        })    
         $(iframeSelector)[0].contentWindow.postMessage(JSON.stringify(theObject), '*');
+        self.selectedGenesChanged = false;
       }
     },
   }
