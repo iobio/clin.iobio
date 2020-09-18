@@ -126,6 +126,9 @@ $horizontal-dashboard-height: 140px
   letter-spacing: 4px
   font-size: 42px
 
+.v-application #application-content.workflow-new .accent--text
+  color: #45688e !important
+
 </style>
 
 
