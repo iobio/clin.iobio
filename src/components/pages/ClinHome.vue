@@ -2490,7 +2490,8 @@ export default {
               type: 'add-new-genes',
               source: 'all',
               'genes': gene_set,
-              'new_genes': self.geneSetAndSelectedGenes
+              'new_genes': self.geneSetAndSelectedGenes,
+              'selectedPhenotypeGenes': self.selectedGenesForGeneSet
             }
         self.selectedGenesForGeneSet.map(x => {
           self.selectedGenesSent.push(x);
