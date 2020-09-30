@@ -91,7 +91,6 @@ export default new Vuex.Store({
       commit('SET_SELECTED_GENES_FOR_VARIANTS_REVIEW', genes)
     },
     setGenesSource({commit}, sourceObj){
-      console.log("sourceObj", sourceObj);
       commit('SET_GENES_SOURCE', sourceObj)
     }
   },

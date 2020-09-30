@@ -94,6 +94,9 @@
 
     </div>
 
+    <span id="source-indicator-text" class="chart-label" v-if="selectedGene.gene_name">
+      {{ sourceIndicatorLabel }}
+    </span>
 
 
     <div class="variant-inspect-body">
@@ -360,6 +363,8 @@ import MultiAlignD3             from '../../../d3/findings/MultiAlign.d3.js'
 import MultiAlignModel          from "../../../models/findings/MultiAlignModel.js"
 import { bus }                  from '../../../main'
 
+import { mapGetters, mapActions } from 'vuex'
+
 
 export default {
   name: 'variant-inspect-card',
@@ -452,6 +457,7 @@ export default {
       showMoreGeneAssociationsDialog: false,
       showDrugInformationDialog: false,
       drugsData: [],
+      genesAssociatedWithSource: {},
     }
   },
 
@@ -982,7 +988,8 @@ export default {
 
 
   computed: {
-    
+    ...mapGetters(['getPedigreeData', 'getPedigree', 'getVariantsCount', 'getCustomCoverage', 'getReviewCaseBadge', 'getVariantsByInterpretation', 'getModelInfos', 'getGeneSet', 'getCaseSummary', 'getBuildName', 'getAnalysisProgressStatus', 'getLaunchedFromMosaicFlag', 'getSelectedGenesForVariantsReview', 'getSourceForGenes']),
+
     hgvsLabel: function() {
       if (this.selectedVariant && this.selectedVariant.extraAnnot && this.info.HGVSpAbbrev && this.info.HGVSpAbbrev.length > 0) {
         return this.info.HGVSpAbbrev;
@@ -1094,6 +1101,14 @@ export default {
 
         }
       }
+    },
+    
+    sourceIndicatorLabel: function() {
+      let label = "Variant defined in ";
+      let gene_name = this.selectedGene.gene_name;
+      let source = this.getSourceForGenes[gene_name].source.join(", ");
+      label += source
+      return label;
     }
   },
 
@@ -1415,6 +1430,10 @@ export default {
       text
         font-size: 11px
         text-anchor: middle
+        
+#source-indicator-text
+  font-size: 12px
+  color: #434343        
 </style>
 
 <style lang="css">
