@@ -592,6 +592,7 @@ export default {
       geneSetAndSelectedGenes: [],
       selectedGenesChanged:false,
       selectedGenesSent: [],
+      genesAssociatedWithSource: {},
     }
 
   },
@@ -737,7 +738,7 @@ export default {
   },
 
   methods: {
-    ...mapActions(['updateAnalysis', 'setModelInfos', 'setCustomGeneSet', 'setCaseSummary', 'setBuildName', 'setImportedVariantSets', 'setAnalysisInProgressStatus', 'setMosaicLaunchFlag', 'setSelectedGenesForVariantsReview']),
+    ...mapActions(['updateAnalysis', 'setModelInfos', 'setCustomGeneSet', 'setCaseSummary', 'setBuildName', 'setImportedVariantSets', 'setAnalysisInProgressStatus', 'setMosaicLaunchFlag', 'setSelectedGenesForVariantsReview', 'setGenesSource']),
 
     init: function() {
       let self = this;
@@ -1268,6 +1269,7 @@ export default {
 
 
         self.sendAppMessage(appName, msgObject);
+        self.setSourceForGenes(gene_set, "imported_gene");
 
 
 
@@ -2496,9 +2498,39 @@ export default {
         self.selectedGenesForGeneSet.map(x => {
           self.selectedGenesSent.push(x);
         })    
+        self.setSourceForGenes(self.selectedGenesForGeneSet, "phenotype_gene_list");
+        
         $(iframeSelector)[0].contentWindow.postMessage(JSON.stringify(theObject), '*');
         self.selectedGenesChanged = false;
       }
+    },
+    
+    setSourceForGenes(genes, source) {
+      let self = this;
+      let sourceIndicatorMap = {
+        "imported_gene": 1,
+        "phenotype_gene_list": 2
+      }
+      let sourceMap = {
+        "imported_gene": "imported set",
+        "phenotype_gene_list": "gene list generated from phenotypes"
+      }
+      genes.forEach(gene => {
+        if(self.genesAssociatedWithSource[gene] === undefined){
+          self.genesAssociatedWithSource[gene] = {
+            "source": [sourceMap[source]],
+            "sourceIndicator": [sourceIndicatorMap[source]],
+          }
+        }
+        else {
+          if(!self.genesAssociatedWithSource[gene].source.includes(sourceMap[source])){
+            self.genesAssociatedWithSource[gene].source.push(sourceMap[source])
+            self.genesAssociatedWithSource[gene].sourceIndicator.push(sourceIndicatorMap[source])
+          }
+        }
+      })
+      console.log("genesAssociatedWithSource: ", self.genesAssociatedWithSource);
+      self.setGenesSource(self.genesAssociatedWithSource)
     },
   }
 }
