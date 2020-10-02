@@ -187,6 +187,10 @@ export default {
       note: null, 
       variantsInterpreted: false, 
       drugsObj: {},
+      sources: {
+        source: ["imported set", "genelist"],
+        sourceIndicator: [1, 2]
+      }
     }
 
   },

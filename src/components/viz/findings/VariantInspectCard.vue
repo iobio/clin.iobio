@@ -97,6 +97,27 @@
     <span id="source-indicator-text" class="chart-label" v-if="selectedGene.gene_name">
       {{ sourceIndicatorLabel }}
     </span>
+    
+    <span v-if="selectedGene.gene_name">
+      <div>
+        <span>Source: </span>
+        <span v-for="(source, idx) in getSourceIndicatorBadge" :key="idx">
+          <v-tooltip top>
+            <template v-slot:activator="{ on }">
+              <span
+                v-on="on"
+                class="ml-1 mr-1"
+              >
+              <div left color="grey lighten-1" class="myBadge">
+                <span slot="badge"> {{ source }}</span>
+              </div>
+              </span>
+            </template>
+            <span> {{ selectedGeneSources.source[idx]}}</span>
+          </v-tooltip>
+        </span>
+      </div>
+    </span>
 
 
     <div class="variant-inspect-body">
@@ -458,6 +479,7 @@ export default {
       showDrugInformationDialog: false,
       drugsData: [],
       genesAssociatedWithSource: {},
+      selectedGeneSources: {},
     }
   },
 
@@ -1109,6 +1131,12 @@ export default {
       let source = this.getSourceForGenes[gene_name].source.join(", ");
       label += source
       return label;
+    },
+    
+    getSourceIndicatorBadge: function() {
+      this.selectedGeneSources.source = this.getSourceForGenes[this.selectedGene.gene_name].source;
+      this.selectedGeneSources.sourceIndicator = this.getSourceForGenes[this.selectedGene.gene_name].sourceIndicator;
+      return this.getSourceForGenes[this.selectedGene.gene_name].sourceIndicator;
     }
   },
 
@@ -1433,7 +1461,22 @@ export default {
         
 #source-indicator-text
   font-size: 12px
-  color: #434343        
+  color: #434343
+  
+.myBadge
+  background-color: lightgrey 
+  border-radius: 90px 
+  height: 18px
+  color: white 
+  margin-left: 1px 
+  margin-right: 1px
+  // padding: .5px 3px .5px 3px 
+  text-align: center 
+  vertical-align: middle
+  width: 18px
+  display: inline-block
+  font-size: 12px
+  font-family: raleway
 </style>
 
 <style lang="css">

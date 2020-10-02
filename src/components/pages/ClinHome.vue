@@ -2529,7 +2529,6 @@ export default {
           }
         }
       })
-      console.log("genesAssociatedWithSource: ", self.genesAssociatedWithSource);
       self.setGenesSource(self.genesAssociatedWithSource)
     },
   }
