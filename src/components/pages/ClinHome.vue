@@ -2512,8 +2512,8 @@ export default {
         "phenotype_gene_list": 2
       }
       let sourceMap = {
-        "imported_gene": "imported set",
-        "phenotype_gene_list": "gene list generated from phenotypes"
+        "imported_gene": "Imported set",
+        "phenotype_gene_list": "Gene list generated from phenotypes"
       }
       genes.forEach(gene => {
         if(self.genesAssociatedWithSource[gene] === undefined){

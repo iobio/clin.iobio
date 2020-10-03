@@ -93,14 +93,10 @@
 
 
     </div>
-
-    <span id="source-indicator-text" class="chart-label" v-if="selectedGene.gene_name">
-      {{ sourceIndicatorLabel }}
-    </span>
     
     <span v-if="selectedGene.gene_name">
       <div>
-        <span>Source: </span>
+        <span class="chart-label">Source: </span>
         <span v-for="(source, idx) in getSourceIndicatorBadge" :key="idx">
           <v-tooltip top>
             <template v-slot:activator="{ on }">
@@ -1464,18 +1460,18 @@ export default {
   color: #434343
   
 .myBadge
-  background-color: lightgrey 
+  background-color: #efeeee 
   border-radius: 90px 
-  height: 18px
-  color: white 
+  height: 16px
+  color: #717171 
   margin-left: 1px 
-  margin-right: 1px
+  // margin-right: 1px
   // padding: .5px 3px .5px 3px 
   text-align: center 
   vertical-align: middle
-  width: 18px
+  width: 16px
   display: inline-block
-  font-size: 12px
+  font-size: 11px
   font-family: raleway
 </style>
 
