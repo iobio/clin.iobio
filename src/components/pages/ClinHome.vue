@@ -126,6 +126,9 @@ $horizontal-dashboard-height: 140px
   letter-spacing: 4px
   font-size: 42px
 
+.v-application #application-content.workflow-new .accent--text
+  color: #45688e !important
+
 </style>
 
 
@@ -264,7 +267,11 @@ $horizontal-dashboard-height: 140px
             @UpdateListOnDelete="UpdateListOnDelete($event)"
             :venn_diag_data="venn_diag_data"
             @bus_delete_gene="bus_delete_gene"
-            @gene_to_delete=gene_to_delete($event)>
+            @gene_to_delete="gene_to_delete($event)"
+            @add_to_gene_set="add_to_gene_set($event)"
+            :selectedGenesForGeneSet="selectedGenesForGeneSet"
+            @update_genes_top="update_genes_top($event)"
+            :topGenesSelectedCount="genesTop">
           </GeneList>
         </keep-alive>
 
@@ -583,6 +590,12 @@ export default {
       sampleId: null,
       variantsCount: 0,
       deletedGenesList: [],
+      selectedGenesForGeneSet: [],
+      geneSetAndSelectedGenes: [],
+      selectedGenesChanged:false,
+      selectedGenesSent: [],
+      genesAssociatedWithSource: {},
+      genesTop: 0,
     }
 
   },
@@ -627,7 +640,7 @@ export default {
   },
 
   computed: {
-    ...mapGetters(['getPedigreeData', 'getPedigree', 'getVariantsCount', 'getCustomCoverage', 'getReviewCaseBadge', 'getVariantsByInterpretation', 'getModelInfos', 'getGeneSet', 'getCaseSummary', 'getBuildName', 'getAnalysisProgressStatus', 'getLaunchedFromMosaicFlag']),
+    ...mapGetters(['getPedigreeData', 'getPedigree', 'getVariantsCount', 'getCustomCoverage', 'getReviewCaseBadge', 'getVariantsByInterpretation', 'getModelInfos', 'getGeneSet', 'getCaseSummary', 'getBuildName', 'getAnalysisProgressStatus', 'getLaunchedFromMosaicFlag', 'getSelectedGenesForVariantsReview']),
     phenotypeList: function() {
       let self = this;
       let phenotypeList = [];
@@ -696,6 +709,9 @@ export default {
               }
           $(iframeSelector)[0].contentWindow.postMessage(JSON.stringify(theObject), '*');
 
+          if(self.selectedGenesChanged){
+            self.sendGenes();
+          }
         }
 
 
@@ -725,7 +741,7 @@ export default {
   },
 
   methods: {
-    ...mapActions(['updateAnalysis', 'setModelInfos', 'setCustomGeneSet', 'setCaseSummary', 'setBuildName', 'setImportedVariantSets', 'setAnalysisInProgressStatus', 'setMosaicLaunchFlag']),
+    ...mapActions(['updateAnalysis', 'setModelInfos', 'setCustomGeneSet', 'setCaseSummary', 'setBuildName', 'setImportedVariantSets', 'setAnalysisInProgressStatus', 'setMosaicLaunchFlag', 'setSelectedGenesForVariantsReview', 'setGenesSource']),
 
     init: function() {
       let self = this;
@@ -1256,6 +1272,7 @@ export default {
 
 
         self.sendAppMessage(appName, msgObject);
+        self.setSourceForGenes(gene_set, "imported_gene");
 
 
 
@@ -2151,6 +2168,15 @@ export default {
     gene_to_delete(gene){
       this.geneToDelete = gene;
     },
+    add_to_gene_set(genes){
+      this.selectedGenesForGeneSet = genes;
+      this.selectedGenesChanged = true;
+      this.setSelectedGenesForVariantsReview(genes);
+    },
+    
+    checkIfSelectedGenesArrayChanged(newArr, oldArr){
+      return JSON.stringify(newArr.sort()) == JSON.stringify(oldArr.sort())
+    },
 
     updateAverageCoverage(cov){
       this.averageCoverage = cov;
@@ -2342,6 +2368,8 @@ export default {
       this.buildName = analysis.build_name;
       this.setBuildName(this.buildName);
       this.genomeBuildHelper.setCurrentBuild(analysis.build_name);
+      this.selectedGenesForGeneSet = analysis.selected_genes_for_variants_review;
+      this.setSelectedGenesForVariantsReview(this.selectedGenesForGeneSet);
       this.rawPedigree = analysis.custom_pedigree;
       this.customSavedAnalysis = true;
       this.customData = true;
@@ -2376,6 +2404,7 @@ export default {
       analysis_obj.custom_gene_set = this.getGeneSet;
       analysis_obj.custom_case_Summary = this.getCaseSummary;
       analysis_obj.build_name = this.getBuildName;
+      analysis_obj.selected_genes_for_variants_review = this.getSelectedGenesForVariantsReview;
       analysis_obj.pass_code = Math.floor(100000 + Math.random() * 900000);
       let analysisObject = JSON.stringify(analysis_obj);
       const jsonBlob = new Blob([analysisObject], { type: "application/json" });
@@ -2421,7 +2450,100 @@ export default {
       })
       self.setImportedVariantSets(self.importedCustomVariants);
       self.setCustomGeneSet(self.customGeneSet);
-    }
+    },
+    sendGenes(){
+      let self = this;
+      self.geneSetAndSelectedGenes = [];
+      // var gene_set = self.analysis.payload.genes;
+      var gene_set = [];
+      self.analysis.payload.genes.map(x => {
+        gene_set.push(x);
+      })
+      // if(!self.geneSetAndSelectedGenes.length){
+      //   self.geneSetAndSelectedGenes = gene_set;
+      // }
+
+      var genes_to_send = [];
+      if(self.selectedGenesForGeneSet.length){
+        self.selectedGenesForGeneSet.forEach(gene => {
+          if(!gene_set.includes(gene)){
+            gene_set.push(gene);
+            genes_to_send.push(gene);
+          }
+        })
+      }
+      self.geneSetAndSelectedGenes = gene_set;
+      // if(self.selectedGenesForGeneSet.length){
+      //   self.selectedGenesForGeneSet.forEach(gene => {
+      //     if(!self.geneSetAndSelectedGenes.includes(gene)){
+      //       self.geneSetAndSelectedGenes.push(gene);
+      //       genes_to_send.push(gene);
+      //     }
+      //   })
+      // }
+      var appName = "genefull";
+      var iframeSelector = self.apps[appName].iframeSelector;
+      var arrChanged = true;
+      if(self.checkIfSelectedGenesArrayChanged(self.selectedGenesForGeneSet, self.selectedGenesSent)){
+        arrChanged = false;
+      }
+      else{
+        arrChanged = true;
+      }
+      if(arrChanged){
+        var theObject = {
+              type: 'add-new-genes',
+              source: 'all',
+              'genes': gene_set,
+              'new_genes': self.geneSetAndSelectedGenes,
+              'selectedPhenotypeGenes': self.selectedGenesForGeneSet
+            }
+        self.selectedGenesForGeneSet.map(x => {
+          self.selectedGenesSent.push(x);
+        })    
+        self.setSourceForGenes(self.selectedGenesForGeneSet, "phenotype_gene_list");
+        
+        $(iframeSelector)[0].contentWindow.postMessage(JSON.stringify(theObject), '*');
+        self.selectedGenesChanged = false;
+      }
+    },
+    
+    setSourceForGenes(genes, source) {
+      let self = this;
+      let sourceIndicatorMap = {
+        "imported_gene": 1,
+        "phenotype_gene_list": 2
+      }
+      let sourceMap = {
+        "imported_gene": "Variant is a member of an imported set of potentially interesting variants",
+        "phenotype_gene_list": "Variant is in a gene associated with the patient's clinical note"
+      }
+      let sourceGeneTabMap = {
+        "imported_gene": "Genes contains an imported potentially interesting variant",
+        "phenotype_gene_list": "Gene is associated with the patient's clinical note"
+      }
+      genes.forEach(gene => {
+        if(self.genesAssociatedWithSource[gene] === undefined){
+          self.genesAssociatedWithSource[gene] = {
+            "source": [sourceMap[source]],
+            "sourceIndicator": [sourceIndicatorMap[source]],
+            "source_gene_tab": [sourceGeneTabMap[source]],
+          }
+        }
+        else {
+          if(!self.genesAssociatedWithSource[gene].source.includes(sourceMap[source])){
+            self.genesAssociatedWithSource[gene].source.push(sourceMap[source])
+            self.genesAssociatedWithSource[gene].sourceIndicator.push(sourceIndicatorMap[source])
+            self.genesAssociatedWithSource[gene].source_gene_tab.push(sourceGeneTabMap[source])
+          }
+        }
+      })
+      self.setGenesSource(self.genesAssociatedWithSource)
+    },
+    
+    update_genes_top(number){
+      this.genesTop = number;
+    },
   }
 }
 
