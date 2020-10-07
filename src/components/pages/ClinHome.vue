@@ -269,7 +269,9 @@ $horizontal-dashboard-height: 140px
             @bus_delete_gene="bus_delete_gene"
             @gene_to_delete="gene_to_delete($event)"
             @add_to_gene_set="add_to_gene_set($event)"
-            :selectedGenesForGeneSet="selectedGenesForGeneSet">
+            :selectedGenesForGeneSet="selectedGenesForGeneSet"
+            @update_genes_top="update_genes_top($event)"
+            :topGenesSelectedCount="genesTop">
           </GeneList>
         </keep-alive>
 
@@ -593,6 +595,7 @@ export default {
       selectedGenesChanged:false,
       selectedGenesSent: [],
       genesAssociatedWithSource: {},
+      genesTop: 0,
     }
 
   },
@@ -2530,6 +2533,10 @@ export default {
         }
       })
       self.setGenesSource(self.genesAssociatedWithSource)
+    },
+    
+    update_genes_top(number){
+      this.genesTop = number;
     },
   }
 }
