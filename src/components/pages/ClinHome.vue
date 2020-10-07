@@ -1606,6 +1606,7 @@ export default {
             .then(function(analysis) {
               if (analysis) {
 
+                console.log("saved analysis: ", analysis)
                 self.analysis = analysis;
                 self.idAnalysis = self.analysis.id;
 
@@ -1621,6 +1622,7 @@ export default {
             })
 
           } else {
+            console.log("New analysis");
             var newAnalysis = {};
             newAnalysis.title = "";
             newAnalysis.description = "";
@@ -1759,7 +1761,9 @@ export default {
       analysis.payload.genesPhenolyzer = [];
       analysis.payload.hpoFullList = [];
       analysis.payload.phenolyzerFullList = [];
-      analysis.payload.demoTextNote = ""
+      analysis.payload.demoTextNote = "";
+      analysis.payload.selectedGenesForGeneSet = [];
+      analysis.payload.genesTop = 0;
     },
 
 
@@ -2172,6 +2176,14 @@ export default {
       this.selectedGenesForGeneSet = genes;
       this.selectedGenesChanged = true;
       this.setSelectedGenesForVariantsReview(genes);
+      this.analysis.payload.selectedGenesForGeneSet = this.selectedGenesForGeneSet;
+      this.promiseUpdateSelectedPhenotypesGenes(genes);
+    },
+    promiseUpdateSelectedPhenotypesGenes: function(genes) {
+      let self = this;
+      self.analysis.payload.selectedGenesForGeneSet = genes;
+      self.analysis.payload.datetime_last_modified = self.getCurrentDateTime();
+      return self.promiseAutosaveAnalysis();
     },
     
     checkIfSelectedGenesArrayChanged(newArr, oldArr){
@@ -2543,6 +2555,14 @@ export default {
     
     update_genes_top(number){
       this.genesTop = number;
+      this.analysis.payload.genesTop = number;
+      this.promiseUpdateGenesTopNumber(number);
+    },
+    promiseUpdateGenesTopNumber: function(number) {
+      let self = this;
+      self.analysis.payload.genesTop = number;
+      self.analysis.payload.datetime_last_modified = self.getCurrentDateTime();
+      return self.promiseAutosaveAnalysis();
     },
   }
 }
