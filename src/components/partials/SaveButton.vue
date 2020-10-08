@@ -5,7 +5,7 @@
     class="analysis-save-button"
     @click.prevent="toggleSaveModal"
   >
-    <v-icon>{{ iconName }}</v-icon>
+    <!-- <v-icon>{{ iconName }}</v-icon> -->
     <span>{{ buttonLabel }}</span>
   </a>
 </template>
@@ -24,9 +24,9 @@ export default {
   computed: {
     buttonLabel() {
       if (this.analysis && this.analysis.id) {
-        return "Analysis";
+        return "Save analysis";
       } else{ 
-        return "Add to Mosaic";
+        return "Add analysis";
       }
     },
     iconName() {

@@ -53,7 +53,7 @@
 
       <v-card v-if="analysis" class="save-analysis-content full-width">
         <v-card-title style="justify-content: space-between;padding: 0px;">
-          <span class="info-title"> {{ analysis.id ? 'Name and description of this analysis' : 'Add this analysis to Mosaic' }}</span>
+          <span class="info-title"> {{ analysis.id ? 'Save analysis to Mosaic' : 'Add this analysis to Mosaic' }}</span>
           <v-btn  @click="onClose" text class="close-button">
             <v-icon>close</v-icon>
           </v-btn>
@@ -79,7 +79,7 @@
 
 
               <v-flex class="mt-4" style="display:flex;justify-content:flex-end" xs12>
-                <v-btn class="primary mr-2" @click="onSave">{{ analysis.id ? 'Apply' : 'Save' }}</v-btn>
+                <v-btn class="primary mr-2" @click="onSave">{{ analysis.id ? 'Save' : 'Save' }}</v-btn>
                 <v-btn @click="onClose">Cancel</v-btn>
               </v-flex>
 

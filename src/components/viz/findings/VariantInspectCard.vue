@@ -93,7 +93,27 @@
 
 
     </div>
-
+    
+    <span v-if="selectedGene.gene_name">
+      <div>
+        <span class="chart-label">Source: </span>
+        <span v-for="(source, idx) in getSourceIndicatorBadge" :key="idx">
+          <v-tooltip top>
+            <template v-slot:activator="{ on }">
+              <span
+                v-on="on"
+                class="ml-1 mr-1"
+              >
+              <div left color="grey lighten-1" class="myBadge">
+                <span slot="badge"> {{ source }}</span>
+              </div>
+              </span>
+            </template>
+            <span> {{ selectedGeneSources.source[idx]}}</span>
+          </v-tooltip>
+        </span>
+      </div>
+    </span>
 
 
     <div class="variant-inspect-body">
@@ -360,6 +380,8 @@ import MultiAlignD3             from '../../../d3/findings/MultiAlign.d3.js'
 import MultiAlignModel          from "../../../models/findings/MultiAlignModel.js"
 import { bus }                  from '../../../main'
 
+import { mapGetters, mapActions } from 'vuex'
+
 
 export default {
   name: 'variant-inspect-card',
@@ -452,6 +474,8 @@ export default {
       showMoreGeneAssociationsDialog: false,
       showDrugInformationDialog: false,
       drugsData: [],
+      genesAssociatedWithSource: {},
+      selectedGeneSources: {},
     }
   },
 
@@ -982,7 +1006,8 @@ export default {
 
 
   computed: {
-    
+    ...mapGetters(['getPedigreeData', 'getPedigree', 'getVariantsCount', 'getCustomCoverage', 'getReviewCaseBadge', 'getVariantsByInterpretation', 'getModelInfos', 'getGeneSet', 'getCaseSummary', 'getBuildName', 'getAnalysisProgressStatus', 'getLaunchedFromMosaicFlag', 'getSelectedGenesForVariantsReview', 'getSourceForGenes']),
+
     hgvsLabel: function() {
       if (this.selectedVariant && this.selectedVariant.extraAnnot && this.info.HGVSpAbbrev && this.info.HGVSpAbbrev.length > 0) {
         return this.info.HGVSpAbbrev;
@@ -1094,6 +1119,20 @@ export default {
 
         }
       }
+    },
+    
+    sourceIndicatorLabel: function() {
+      let label = "Variant defined in ";
+      let gene_name = this.selectedGene.gene_name;
+      let source = this.getSourceForGenes[gene_name].source.join(", ");
+      label += source
+      return label;
+    },
+    
+    getSourceIndicatorBadge: function() {
+      this.selectedGeneSources.source = this.getSourceForGenes[this.selectedGene.gene_name].source;
+      this.selectedGeneSources.sourceIndicator = this.getSourceForGenes[this.selectedGene.gene_name].sourceIndicator;
+      return this.getSourceForGenes[this.selectedGene.gene_name].sourceIndicator;
     }
   },
 
@@ -1415,6 +1454,25 @@ export default {
       text
         font-size: 11px
         text-anchor: middle
+        
+#source-indicator-text
+  font-size: 12px
+  color: #434343
+  
+.myBadge
+  background-color: #efeeee 
+  border-radius: 90px 
+  height: 16px
+  color: #717171 
+  margin-left: 1px 
+  // margin-right: 1px
+  // padding: .5px 3px .5px 3px 
+  text-align: center 
+  vertical-align: middle
+  width: 16px
+  display: inline-block
+  font-size: 11px
+  font-family: raleway
 </style>
 
 <style lang="css">
