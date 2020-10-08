@@ -1338,10 +1338,12 @@ export default {
       } else if (messageObject.type == "save-analysis") {
           this.analysis.payload.filters  = messageObject.analysis.payload.filters;
           this.analysis.payload.variants = messageObject.analysis.payload.variants;
+          console.log("save-analysis and variants are: ", this.analysis.payload.variants);
           // this.variantsCount = messageObject.analysis.payload.variantCount
           this.organizeVariantsByInterpretation();
           this.setVariantTaskBadges();
-          this.promiseAutosaveAnalysis({notify: true})
+          this.promiseAutosaveAnalysis({notify: true});
+          this.promiseUpdateVariants(messageObject.analysis.payload.variants)
           .then(function() {
 
           })
@@ -1611,6 +1613,16 @@ export default {
                 self.idAnalysis = self.analysis.id;
 
                 self.setGeneTaskBadges();
+                
+                console.log("self.analysis.payload.genes", self.analysis.payload.genes);
+                console.log("self.analysis.payload.selectedGenesForGeneSet", self.analysis.payload.selectedGenesForGeneSet);
+                self.selectedGenesForGeneSet = self.analysis.payload.selectedGenesForGeneSet;
+                self.genesTop = self.analysis.payload.genesTop;
+                console.log("wait 10 seconds before sending genes ");
+                setTimeout(() => {
+                  console.log("sending genes");
+                  self.sendGenes();
+                }, 10000)
                 resolve();
 
               } else {
@@ -2498,9 +2510,11 @@ export default {
       var arrChanged = true;
       if(self.checkIfSelectedGenesArrayChanged(self.selectedGenesForGeneSet, self.selectedGenesSent)){
         arrChanged = false;
+        console.log("array did not change");
       }
       else{
         arrChanged = true;
+        console.log("array has definitely changed");
       }
       if(arrChanged){
         var theObject = {
@@ -2561,6 +2575,13 @@ export default {
     promiseUpdateGenesTopNumber: function(number) {
       let self = this;
       self.analysis.payload.genesTop = number;
+      self.analysis.payload.datetime_last_modified = self.getCurrentDateTime();
+      return self.promiseAutosaveAnalysis();
+    },
+    
+    promiseUpdateVariants: function(variants) {
+      let self = this;
+      self.analysis.payload.variants = variants;
       self.analysis.payload.datetime_last_modified = self.getCurrentDateTime();
       return self.promiseAutosaveAnalysis();
     },
