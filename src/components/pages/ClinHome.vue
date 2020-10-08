@@ -2189,7 +2189,7 @@ export default {
       this.selectedGenesChanged = true;
       this.setSelectedGenesForVariantsReview(genes);
       this.analysis.payload.selectedGenesForGeneSet = this.selectedGenesForGeneSet;
-      this.promiseUpdateSelectedPhenotypesGenes(genes);
+      // this.promiseUpdateSelectedPhenotypesGenes(genes);
     },
     promiseUpdateSelectedPhenotypesGenes: function(genes) {
       let self = this;
@@ -2570,7 +2570,7 @@ export default {
     update_genes_top(number){
       this.genesTop = number;
       this.analysis.payload.genesTop = number;
-      this.promiseUpdateGenesTopNumber(number);
+      // this.promiseUpdateGenesTopNumber(number);
     },
     promiseUpdateGenesTopNumber: function(number) {
       let self = this;
