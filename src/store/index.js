@@ -21,7 +21,8 @@ export default new Vuex.Store({
     analysis_in_progress_status: false,
     is_launched_from_mosaic: false,
     selected_genes_for_variants_review: [],
-    genesAssociatedWithSource: {}
+    genesAssociatedWithSource: {},
+    genes_top: 20
   },
   getters: {
     allAnalysis: state => state.analysis,
@@ -40,6 +41,7 @@ export default new Vuex.Store({
     getLaunchedFromMosaicFlag: state => state.is_launched_from_mosaic,
     getSelectedGenesForVariantsReview: state => state.selected_genes_for_variants_review,
     getSourceForGenes: state => state.genesAssociatedWithSource,
+    getGenesTop: state => state.genes_top,
   },
   actions: {
     fetchAnalysis({ commit }){
@@ -92,7 +94,11 @@ export default new Vuex.Store({
     },
     setGenesSource({commit}, sourceObj){
       commit('SET_GENES_SOURCE', sourceObj)
-    }
+    },
+    setGenesTop({commit}, number){
+      console.log("setGenesTop number", number);
+      commit('SET_GENES_TOP', number)
+    },
   },
   mutations: {
     GET_ANALYSIS: (state) => state.analysis,
@@ -112,6 +118,7 @@ export default new Vuex.Store({
     SET_MOSAIC_LAUNCH_FLAG: (state, flag) => state.is_launched_from_mosaic = flag,
     SET_SELECTED_GENES_FOR_VARIANTS_REVIEW: (state, genes) => state.selected_genes_for_variants_review = genes,
     SET_GENES_SOURCE: (state, sourceObj) => state.genesAssociatedWithSource = sourceObj,
+    SET_GENES_TOP: (state, number) => state.genes_top = number,
   },
   modules: {
   }
