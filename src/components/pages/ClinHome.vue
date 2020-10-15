@@ -376,6 +376,24 @@ $horizontal-dashboard-height: 140px
       </v-dialog>
       <!--End Bypassed genes dialog -->
 
+      <!-- Bypassed genes dialog -->
+      <v-dialog v-model="noGeneSetWarningDialog" persistent max-width="650">
+        <v-card>
+          <v-card-title class="headline">Warning</v-card-title>
+          <v-card-text>
+            This step requires genes or variants to be reviewed. 
+            Since genes or variants were not added when launching the app, please go to step 2 (Select phenotypes) to generate and select a set of genes.  
+          </v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn style="float:right" @click.native="goToselectPhenotypes">
+              Generate genelist  
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+      <!--End Bypassed genes dialog -->
+
 
     </div>
 
@@ -596,6 +614,7 @@ export default {
       selectedGenesSent: [],
       genesAssociatedWithSource: {},
       genesTop: 20,
+      noGeneSetWarningDialog: false,
     }
 
   },
@@ -695,8 +714,10 @@ export default {
           if(self.byPassedGenes.length){
             self.byPassedGenesDialog = true;
           }
-
-          console.log("Sending genesReport to gene.iobio")
+          
+          if(self.analysis.payload.genes.length === 0 && self.analysis.payload.variants.length === 0 && self.selectedGenesForGeneSet.length === 0){
+            self.noGeneSetWarningDialog = true;
+          }
 
           var theObject = {
                 type: 'apply-genes',
@@ -712,6 +733,9 @@ export default {
           if(self.selectedGenesChanged){
             self.sendGenes();
           }
+        }
+        else {
+          self.noGeneSetWarningDialog = false;
         }
 
 
@@ -2379,7 +2403,6 @@ export default {
       }
     },
     loadSavedAnalysisCustomData(analysis){
-      console.log("analysis", analysis);
       this.setAnalysisInProgressStatus(true);
       this.analysis = analysis;
       this.updateAnalysis(this.analysis);
@@ -2596,6 +2619,14 @@ export default {
       self.analysis.payload.variants = variants;
       self.analysis.payload.datetime_last_modified = self.getCurrentDateTime();
       return self.promiseAutosaveAnalysis();
+    },
+    goToselectPhenotypes: function(){
+      this.noGeneSetWarningDialog = false
+      this.gotoStep(1)
+    },
+    
+    gotoStep: function(stepIndex){
+      bus.$emit('navigate-to-step',stepIndex); 
     },
   }
 }
