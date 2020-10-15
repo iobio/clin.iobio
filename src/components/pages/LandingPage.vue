@@ -609,8 +609,13 @@
             <v-spacer></v-spacer>
             <v-btn color="primary" @click="backToFiles" text>Back</v-btn>
             <!-- <v-btn color="primary" @click="addGeneSet" :disabled="genes.length<3">Next</v-btn> -->
-            <v-btn color="primary" v-if="!importedVariants.length" :disabled="genes.length<3" @click="addGeneSet" >Next</v-btn>
-            <v-btn color="primary" v-if="importedVariants.length" @click="addVariantSet" >Next</v-btn>
+            <span v-if="!importedVariants.length && genes.length<3">
+              <v-btn color="primary" @click="addVariantSet" >Next</v-btn>
+            </span>
+            <span v-else>
+              <v-btn color="primary" v-if="!importedVariants.length" :disabled="genes.length<3" @click="addGeneSet" >Next</v-btn>
+              <v-btn color="primary" v-if="importedVariants.length" @click="addVariantSet" >Next</v-btn>
+            </span>
 
           </v-card-actions>
 
