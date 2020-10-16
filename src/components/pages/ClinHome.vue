@@ -376,6 +376,24 @@ $horizontal-dashboard-height: 140px
       </v-dialog>
       <!--End Bypassed genes dialog -->
 
+      <!-- Bypassed genes dialog -->
+      <v-dialog v-model="noGeneSetWarningDialog" persistent max-width="650">
+        <v-card>
+          <v-card-title class="headline">Warning</v-card-title>
+          <v-card-text>
+            This step requires genes or variants to be reviewed. 
+            Since genes or variants were not added when launching the app, please go to step 2 (Select phenotypes) to generate and select a set of genes.  
+          </v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn style="float:right" @click.native="goToselectPhenotypes">
+              Generate genelist  
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+      <!--End Bypassed genes dialog -->
+
 
     </div>
 
@@ -595,7 +613,8 @@ export default {
       selectedGenesChanged:false,
       selectedGenesSent: [],
       genesAssociatedWithSource: {},
-      genesTop: 0,
+      genesTop: 20,
+      noGeneSetWarningDialog: false,
     }
 
   },
@@ -640,7 +659,7 @@ export default {
   },
 
   computed: {
-    ...mapGetters(['getPedigreeData', 'getPedigree', 'getVariantsCount', 'getCustomCoverage', 'getReviewCaseBadge', 'getVariantsByInterpretation', 'getModelInfos', 'getGeneSet', 'getCaseSummary', 'getBuildName', 'getAnalysisProgressStatus', 'getLaunchedFromMosaicFlag', 'getSelectedGenesForVariantsReview']),
+    ...mapGetters(['getPedigreeData', 'getPedigree', 'getVariantsCount', 'getCustomCoverage', 'getReviewCaseBadge', 'getVariantsByInterpretation', 'getModelInfos', 'getGeneSet', 'getCaseSummary', 'getBuildName', 'getAnalysisProgressStatus', 'getLaunchedFromMosaicFlag', 'getSelectedGenesForVariantsReview', 'getGenesTop', 'getSourceForGenes']),
     phenotypeList: function() {
       let self = this;
       let phenotypeList = [];
@@ -695,8 +714,10 @@ export default {
           if(self.byPassedGenes.length){
             self.byPassedGenesDialog = true;
           }
-
-          console.log("Sending genesReport to gene.iobio")
+          
+          if(self.analysis.payload.genes.length === 0 && self.analysis.payload.variants.length === 0 && self.selectedGenesForGeneSet.length === 0){
+            self.noGeneSetWarningDialog = true;
+          }
 
           var theObject = {
                 type: 'apply-genes',
@@ -712,6 +733,9 @@ export default {
           if(self.selectedGenesChanged){
             self.sendGenes();
           }
+        }
+        else {
+          self.noGeneSetWarningDialog = false;
         }
 
 
@@ -741,7 +765,7 @@ export default {
   },
 
   methods: {
-    ...mapActions(['updateAnalysis', 'setModelInfos', 'setCustomGeneSet', 'setCaseSummary', 'setBuildName', 'setImportedVariantSets', 'setAnalysisInProgressStatus', 'setMosaicLaunchFlag', 'setSelectedGenesForVariantsReview', 'setGenesSource']),
+    ...mapActions(['updateAnalysis', 'setModelInfos', 'setCustomGeneSet', 'setCaseSummary', 'setBuildName', 'setImportedVariantSets', 'setAnalysisInProgressStatus', 'setMosaicLaunchFlag', 'setSelectedGenesForVariantsReview', 'setGenesSource', 'setGenesTop']),
 
     init: function() {
       let self = this;
@@ -2392,7 +2416,16 @@ export default {
       this.setBuildName(this.buildName);
       this.genomeBuildHelper.setCurrentBuild(analysis.build_name);
       this.selectedGenesForGeneSet = analysis.selected_genes_for_variants_review;
+      this.analysis.payload.selectedGenesForGeneSet = this.selectedGenesForGeneSet;
       this.setSelectedGenesForVariantsReview(this.selectedGenesForGeneSet);
+      this.genesTop = analysis.genes_top;
+      this.analysis.payload.genesTop = this.genesTop;
+      this.setGenesTop(this.genesTop);
+      this.genesAssociatedWithSource = analysis.genesAssociatedWithSource;
+      this.setGenesSource(this.genesAssociatedWithSource);
+      setTimeout(() => { //Timeout while the gene.iobio iframe mounts
+        this.sendGenes();
+      }, 10000)
       this.rawPedigree = analysis.custom_pedigree;
       this.customSavedAnalysis = true;
       this.customData = true;
@@ -2428,7 +2461,10 @@ export default {
       analysis_obj.custom_case_Summary = this.getCaseSummary;
       analysis_obj.build_name = this.getBuildName;
       analysis_obj.selected_genes_for_variants_review = this.getSelectedGenesForVariantsReview;
+      analysis_obj.genes_top = this.getGenesTop;
+      analysis_obj.genesAssociatedWithSource = this.getSourceForGenes;
       analysis_obj.pass_code = Math.floor(100000 + Math.random() * 900000);
+      console.log("analysis_obj", analysis_obj);
       let analysisObject = JSON.stringify(analysis_obj);
       const jsonBlob = new Blob([analysisObject], { type: "application/json" });
       saveAs(jsonBlob, "clin-saved-analysis.json");
@@ -2567,6 +2603,8 @@ export default {
     update_genes_top(number){
       this.genesTop = number;
       this.analysis.payload.genesTop = number;
+      console.log("number", number);
+      this.setGenesTop(number);
       // this.promiseUpdateGenesTopNumber(number);
     },
     promiseUpdateGenesTopNumber: function(number) {
@@ -2581,6 +2619,14 @@ export default {
       self.analysis.payload.variants = variants;
       self.analysis.payload.datetime_last_modified = self.getCurrentDateTime();
       return self.promiseAutosaveAnalysis();
+    },
+    goToselectPhenotypes: function(){
+      this.noGeneSetWarningDialog = false
+      this.gotoStep(1)
+    },
+    
+    gotoStep: function(stepIndex){
+      bus.$emit('navigate-to-step',stepIndex); 
     },
   }
 }

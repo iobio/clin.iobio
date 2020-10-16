@@ -365,7 +365,8 @@
             <v-spacer></v-spacer>
             <v-btn color="primary" @click="importConfigurationDialog=false" text>Close</v-btn>
             <v-btn color="primary" v-if="savedInputConfig" @click="loadFromSavedConfigInput" :disabled="!validateSavedConfig && savedInputConfig==null">Load</v-btn>
-            <v-btn color="primary" v-if="savedInputConfig===null" @click="onLoadInputConfig" :disabled="dataInputConfig==null || (genes.length<3 && importedVariants.length==0)">Load</v-btn>
+            <!-- <v-btn color="primary" v-if="savedInputConfig===null" @click="onLoadInputConfig" :disabled="dataInputConfig==null || (genes.length<3 && importedVariants.length==0)">Load</v-btn> -->
+            <v-btn color="primary" v-if="savedInputConfig===null" @click="onLoadInputConfig" :disabled="dataInputConfig==null">Load</v-btn>
 
           </v-card-actions>
         </v-card>
@@ -608,8 +609,13 @@
             <v-spacer></v-spacer>
             <v-btn color="primary" @click="backToFiles" text>Back</v-btn>
             <!-- <v-btn color="primary" @click="addGeneSet" :disabled="genes.length<3">Next</v-btn> -->
-            <v-btn color="primary" v-if="!importedVariants.length" :disabled="genes.length<3" @click="addGeneSet" >Next</v-btn>
-            <v-btn color="primary" v-if="importedVariants.length" @click="addVariantSet" >Next</v-btn>
+            <span v-if="!importedVariants.length && genes.length<3">
+              <v-btn color="primary" @click="addVariantSet" >Next</v-btn>
+            </span>
+            <span v-else>
+              <v-btn color="primary" v-if="!importedVariants.length" :disabled="genes.length<3" @click="addGeneSet" >Next</v-btn>
+              <v-btn color="primary" v-if="importedVariants.length" @click="addVariantSet" >Next</v-btn>
+            </span>
 
           </v-card-actions>
 
