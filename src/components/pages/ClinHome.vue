@@ -376,23 +376,22 @@ $horizontal-dashboard-height: 140px
       </v-dialog>
       <!--End Bypassed genes dialog -->
 
-      <!-- Bypassed genes dialog -->
+      <!-- No genes set warning dialog -->
       <v-dialog v-model="noGeneSetWarningDialog" persistent max-width="650">
         <v-card>
           <v-card-title class="headline">Warning</v-card-title>
           <v-card-text>
-            This step requires genes or variants to be reviewed. 
-            Since genes or variants were not added when launching the app, please go to step 2 (Select phenotypes) to generate and select a set of genes.  
+            No variants were uploaded to this analysis for review. Genes of interest can be added in the <i><b>Select Phenotype</b></i> step, which will allow variants in those genes to be reviewed.          
           </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
             <v-btn style="float:right" @click.native="goToselectPhenotypes">
-              Generate genelist  
+              Generate gene list  
             </v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>
-      <!--End Bypassed genes dialog -->
+      <!--End No genes set warning dialog -->
 
 
     </div>
