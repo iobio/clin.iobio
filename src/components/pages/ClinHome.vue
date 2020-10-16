@@ -381,7 +381,7 @@ $horizontal-dashboard-height: 140px
         <v-card>
           <v-card-title class="headline">Warning</v-card-title>
           <v-card-text>
-            No variants were uploaded to this analysis for review. Genes of interest can be added in the <i><b>Select Phenotype</b></i> step, which will allow variants in those genes to be reviewed          
+            No variants were uploaded to this analysis for review. Genes of interest can be added in the <i><b>Select Phenotype</b></i> step, which will allow variants in those genes to be reviewed.          
           </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
