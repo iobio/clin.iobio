@@ -579,6 +579,8 @@
               <p>
                 Users can enter a list of genes or variants into clin.iobio. 
                 These are the genes and/or variants that will be reviewed in the clinical workflow steps of the app.
+                <br>
+                Variants can be imported from a .CSV file (<a href="https://drive.google.com/file/d/1JYTbDnMvQ3Nq6UbbUzYhda0CZj1h5Q4m/view" target="_blank">example</a>) or from a <a href="https://gene.iobio.io/" target="_blank"> gene.iobio </a> variants (.VCF) file.
               </p>
               <v-textarea
                 auto-grow
