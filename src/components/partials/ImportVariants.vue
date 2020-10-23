@@ -100,7 +100,7 @@ import VariantImporter from '../../models/VariantImporter'
           let variants_data = lines.slice(idx+1); 
           for (var i = 0; i < variants_data.length; i++) {
             let splitLine = variants_data[i].split('\t');
-            if(splitLine[7].includes("IOBIO")){
+            if(this.CheckVcfExportedFromIobio(splitLine)){
               var importRec = {};
               importRec.chrom = splitLine[0];
               importRec.ref = splitLine[3];
@@ -140,6 +140,7 @@ import VariantImporter from '../../models/VariantImporter'
               //Not a gene.iobio exported vcf file
               this.$emit("imported-variants-validation-errors");
               this.variantsData = null;
+              break;
             }
           }
           
@@ -151,6 +152,22 @@ import VariantImporter from '../../models/VariantImporter'
         }
         
 
+      },
+      CheckVcfExportedFromIobio(splitLine){
+        var bool = true;
+        if(splitLine[7].includes("IOBIO")){
+          var info_data = splitLine[7].split("IOBIO=")[1].split("|");
+          if(info_data[2].includes("geneName") || info_data[2].includes("gene")){
+            bool = true;
+          }
+          else{
+            bool = false;
+          }
+        }
+        else {
+          bool = false;
+        }
+        return bool;
       }
     }, 
 
