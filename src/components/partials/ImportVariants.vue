@@ -60,7 +60,7 @@ import VariantImporter from '../../models/VariantImporter'
         }
       },
       validateCsvImport(data){
-        let fields = ['chrom', 'start', 'end', 'ref', 'alt', 'gene', 'transcript']; 
+        let fields = ['chrom', 'start', 'end', 'ref', 'alt', 'geneName', 'transcript']; 
         
         let bool = true; 
         let lines = data.split('\n');
