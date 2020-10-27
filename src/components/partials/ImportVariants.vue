@@ -117,7 +117,7 @@ import VariantImporter from '../../models/VariantImporter'
               end !== '.' ? importRec.end = end : importRec.end = splitLine[1];
 
               var geneName = info_data[2].replace("geneName#", "").trim();
-              importRec.gene = geneName;
+              importRec.geneName = geneName;
 
               var filtersPassed = info_data[5].replace("filtersPassed#", "").trim();
               filtersPassed !== '.' ? importRec.filtersPassed = filtersPassed : importRec.filtersPassed = '';
