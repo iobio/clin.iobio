@@ -2486,8 +2486,8 @@ export default {
       // self.analysis.payload.genes = [];
       variants.forEach(function(variant) {
         let importedVariant = {};
-        if (variant.gene && variant.gene.length > 0) {
-          importedVariant.gene  = variant.gene;
+        if (variant.geneName && variant.geneName.length > 0) {
+          importedVariant.gene  = variant.geneName;
           importedVariant.chrom = variant.chrom;
           importedVariant.start = variant.start;
           importedVariant.end   = variant.end;
