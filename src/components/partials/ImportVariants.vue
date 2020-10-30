@@ -141,7 +141,7 @@ import VariantImporter from '../../models/VariantImporter'
               var interpretation = info_data[7].replace("interpretation#", "").trim();
               interpretation !== '.' ? importRec.interpretation = interpretation : importRec.interpretation = '';
 
-              var notes = info_data[40].replace("notes#", "").trim();
+              var notes = info_data[40].replace("notes#.", "").trim();
               notes !== '.' ? importRec.notes = this.unflattenNotes(notes) : importRec.notes = [];
 
               importRecords.push(importRec);
@@ -184,7 +184,9 @@ import VariantImporter from '../../models/VariantImporter'
         if(notes && notes.length > 1){
           return notes.split("$/$").map( noteRec => {
               let fields = noteRec.split("--");
-              return {author: " ", datetime: `${fields[0]} ${fields[1]}`, note: fields[2] }
+              var author = " ";
+              fields[0].length > 1 ? author = fields[0].split("<>").join(" ") : author = " ";
+              return {author: author, datetime: `${fields[1]} ${fields[2]}`, note: fields[3] }
           })
         }
         else {

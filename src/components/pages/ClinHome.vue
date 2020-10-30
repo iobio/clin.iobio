@@ -2495,7 +2495,7 @@ export default {
           importedVariant.alt   = variant.alt;
           importedVariant.filtersPassed    = variant.filtersPassed;
           importedVariant.inheritance      = variant.inheritance;
-          importedVariant.afgnomAD         = varant.afgnomAD;
+          importedVariant.afgnomAD         = variant.afgnomAD;
           importedVariant.highestImpact    = variant.highestImpact;
           importedVariant.consequence      = variant.consequence;
           importedVariant.isImported       = true;
@@ -2503,7 +2503,6 @@ export default {
           importedVariant.transcript       = variant.transcript;
           importedVariant.interpretation   = variant.interpretation;
           importedVariant.notes            = variant.notes;
-          console.log("variant.notes", variant.notes);
           self.importedCustomVariants.push(importedVariant);
           if (self.customGeneSet.indexOf(importedVariant.gene) < 0) {
             self.customGeneSet.push(importedVariant.gene);
@@ -2606,7 +2605,6 @@ export default {
     update_genes_top(number){
       this.genesTop = number;
       this.analysis.payload.genesTop = number;
-      console.log("number", number);
       this.setGenesTop(number);
       // this.promiseUpdateGenesTopNumber(number);
     },
