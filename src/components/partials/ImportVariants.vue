@@ -107,10 +107,8 @@ import VariantImporter from '../../models/VariantImporter'
               importRec.alt = splitLine[4];
               importRec.variantSet = "notCategorized";
               importRec.isImported = true;
-              console.log("splitLine", splitLine);
               
               var info_data = splitLine[7].split("IOBIO=")[1].split("|");
-              console.log("info_data", info_data);
               var start = info_data[0].replace("start#", "").trim();
               start !== '.' ? importRec.start = start : importRec.start = splitLine[1];
 
