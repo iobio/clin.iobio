@@ -2495,11 +2495,15 @@ export default {
           importedVariant.alt   = variant.alt;
           importedVariant.filtersPassed    = variant.filtersPassed;
           importedVariant.inheritance      = variant.inheritance;
-          importedVariant.afgnomAD         = variant.afgnomAD;
+          importedVariant.afgnomAD         = varant.afgnomAD;
           importedVariant.highestImpact    = variant.highestImpact;
           importedVariant.consequence      = variant.consequence;
           importedVariant.isImported       = true;
           importedVariant.variantSet       = variant.filtersPassed;
+          importedVariant.transcript       = variant.transcript;
+          importedVariant.interpretation   = variant.interpretation;
+          importedVariant.notes            = variant.notes;
+          console.log("variant.notes", variant.notes);
           self.importedCustomVariants.push(importedVariant);
           if (self.customGeneSet.indexOf(importedVariant.gene) < 0) {
             self.customGeneSet.push(importedVariant.gene);

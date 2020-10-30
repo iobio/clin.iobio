@@ -107,9 +107,10 @@ import VariantImporter from '../../models/VariantImporter'
               importRec.alt = splitLine[4];
               importRec.variantSet = "notCategorized";
               importRec.isImported = true;
+              console.log("splitLine", splitLine);
               
               var info_data = splitLine[7].split("IOBIO=")[1].split("|");
-              
+              console.log("info_data", info_data);
               var start = info_data[0].replace("start#", "").trim();
               start !== '.' ? importRec.start = start : importRec.start = splitLine[1];
 
@@ -118,21 +119,30 @@ import VariantImporter from '../../models/VariantImporter'
 
               var geneName = info_data[2].replace("geneName#", "").trim();
               importRec.geneName = geneName;
+              
+              var transcript = info_data[3].replace("transcript#", "").trim();
+              transcript !== '.' ? importRec.transcript = transcript : importRec.transcript = splitLine[1];
 
               var filtersPassed = info_data[5].replace("filtersPassed#", "").trim();
               filtersPassed !== '.' ? importRec.filtersPassed = filtersPassed : importRec.filtersPassed = '';
 
-              var consequence = info_data[11].replace("consequence#", "").trim();
+              var consequence = info_data[12].replace("consequence#", "").trim();
               consequence !== '.' ? importRec.consequence = consequence : importRec.consequence = '';
               
-              var inheritance = info_data[15].replace("inheritance#", "").trim();
+              var inheritance = info_data[16].replace("inheritance#", "").trim();
               inheritance !== '.' ? importRec.inheritance = inheritance : importRec.inheritance = null;
 
-              var afgnomAD = info_data[14].replace("afgnomAD#", "").trim();
+              var afgnomAD = info_data[15].replace("afgnomAD#", "").trim();
               afgnomAD !== '.' ? importRec.afgnomAD = afgnomAD : importRec.afgnomAD = '';
 
-              var impact = info_data[8].replace("impact#", "").trim();
+              var impact = info_data[9].replace("impact#", "").trim();
               impact !== '.' ? importRec.highestImpact = impact : importRec.highestImpact = '';
+
+              var interpretation = info_data[7].replace("interpretation#", "").trim();
+              interpretation !== '.' ? importRec.interpretation = interpretation : importRec.interpretation = '';
+
+              var notes = info_data[40].replace("notes#", "").trim();
+              notes !== '.' ? importRec.notes = this.unflattenNotes(notes) : importRec.notes = [];
 
               importRecords.push(importRec);
             }
@@ -168,6 +178,18 @@ import VariantImporter from '../../models/VariantImporter'
           bool = false;
         }
         return bool;
+      },
+      
+      unflattenNotes(notes){
+        if(notes && notes.length > 1){
+          return notes.split("$/$").map( noteRec => {
+              let fields = noteRec.split("--");
+              return {author: " ", datetime: `${fields[0]} ${fields[1]}`, note: fields[2] }
+          })
+        }
+        else {
+          return [];
+        }
       }
     }, 
 
