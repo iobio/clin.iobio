@@ -988,15 +988,19 @@ export default {
       let headers = lines.splice(0,4);
       if(headers[0].split(':')[0].trim()!=='#PROJECT_NAME'){
         bool = false;
+        return bool;
       }
       if(headers[1].split(':')[0].trim()!=='#PROJECT_DESCRIPTION'){
         bool = false;
+        return bool;
       }
       if(headers[2].split(':')[0].trim()!=='#BED_URL'){
         bool = false;
+        return bool;
       }
       if(headers[3].split(':')[0].trim()!=='#BUILD'){
         bool = false;
+        return bool;
       }
       let firstLine = lines[0].trim().split(/\s+|\,/g);
       for(let i=0; i<firstLine.length; i++){
@@ -1007,6 +1011,29 @@ export default {
       }
       return bool;
     },
+    validateHeadersOfConfigFile(data){
+      var bool = true;
+      let newLine = data.split('\n');
+      let headers = newLine.splice(0,4);
+      if(!headers[0].includes("#PROJECT_NAME")){
+        bool = false;
+        return bool;
+      }
+      if(!headers[1].includes("#PROJECT_DESCRIPTION")){
+        bool = false;
+        return bool;
+      }
+      if(!headers[2].includes("#BED_URL")){
+        bool = false;
+        return bool;
+      }
+      if(!headers[3].includes("#BUILD")){
+        bool = false;
+        return bool;
+      }
+      
+      return bool;
+    },
     onInputConfig(ev) {
       var reader = new FileReader();
       if(this.dataInputConfig){
@@ -1015,66 +1042,71 @@ export default {
         reader.readAsText(this.dataInputConfig);
         reader.onload = () => {
           let data = reader.result.trim();
-          let newLine = data.split('\n');
-          let headers = newLine.splice(0,4)
-          let pedData = [];
-          let modelInfoData = [];
-          let bedFileUrl = 'https://raw.githubusercontent.com/chmille4/bam.iobio.io/vue/client/data/20130108.exome.targets.bed';
-          let buildName = 'GRCh37';
-          this.caseTitle = headers[0].split('E:')[1].trim();
-          this.caseDescription = headers[1].split('N:')[1].trim();
-          
-          let bedFile = headers[2].split('L:')[1].trim();
-          if(bedFile !== ''){
-            bedFileUrl = bedFile;
-          }
-          
-          let build = headers[3].split('D:')[1].trim();
-          if(build !== ''){
-            buildName = build;
-          }
-          
-          let sexMap = {
-            "1": "male",
-            "2": "female",
-            "other": "unknown"
-          }
-          let statusMap = {
-            "0": false,
-            "1": false,
-            "2": true,
-            "-9": false
-          }
-          
-          if(this.validateInputConfig(data)){
-            for (var i = 0; i < newLine.length; i++) {
-              var pedLines = newLine[i].split(/\s+|\,/g).slice(0,6);
-              pedData.push(pedLines.join(' '));
-              
-              var modelInfoLines = newLine[i].split(/\s+|\,/g).slice();
-              if(i!==0){
-                modelInfoLines[4] = sexMap[modelInfoLines[4]]; 
-                modelInfoLines[5] = statusMap[modelInfoLines[5]];
-              }
-              modelInfoData.push(modelInfoLines);
+          if(this.validateHeadersOfConfigFile(data)){
+            let newLine = data.split('\n');
+            let headers = newLine.splice(0,4)
+            let pedData = [];
+            let modelInfoData = [];
+            let bedFileUrl = 'https://raw.githubusercontent.com/chmille4/bam.iobio.io/vue/client/data/20130108.exome.targets.bed';
+            let buildName = 'GRCh37';
+            this.caseTitle = headers[0].split('E:')[1].trim();
+            this.caseDescription = headers[1].split('N:')[1].trim();
+            
+            let bedFile = headers[2].split('L:')[1].trim();
+            if(bedFile !== ''){
+              bedFileUrl = bedFile;
             }
-            modelInfoData.shift();
-            let pedFile = pedData.join('\n');
+            
+            let build = headers[3].split('D:')[1].trim();
+            if(build !== ''){
+              buildName = build;
+            }
+            
+            let sexMap = {
+              "1": "male",
+              "2": "female",
+              "other": "unknown"
+            }
+            let statusMap = {
+              "0": false,
+              "1": false,
+              "2": true,
+              "-9": false
+            }
+            
+            if(this.validateInputConfig(data)){
+              for (var i = 0; i < newLine.length; i++) {
+                var pedLines = newLine[i].split(/\s+|\,/g).slice(0,6);
+                pedData.push(pedLines.join(' '));
+                
+                var modelInfoLines = newLine[i].split(/\s+|\,/g).slice();
+                if(i!==0){
+                  modelInfoLines[4] = sexMap[modelInfoLines[4]]; 
+                  modelInfoLines[5] = statusMap[modelInfoLines[5]];
+                }
+                modelInfoData.push(modelInfoLines);
+              }
+              modelInfoData.shift();
+              let pedFile = pedData.join('\n');
 
-            this.formatCustomModelInfo(modelInfoData);
-            this.$emit("setBedFileUrl", bedFileUrl);
-            this.$emit("set-ped-data", pedFile);
-            this.$emit('setBuildForCustomData', buildName);
-            this.$emit("set-custom-case-summary", {
-              name: this.caseTitle,
-              description: this.caseDescription
-            })
+              this.formatCustomModelInfo(modelInfoData);
+              this.$emit("setBedFileUrl", bedFileUrl);
+              this.$emit("set-ped-data", pedFile);
+              this.$emit('setBuildForCustomData', buildName);
+              this.$emit("set-custom-case-summary", {
+                name: this.caseTitle,
+                description: this.caseDescription
+              })
+            }
+            else {
+              this.validationErrors.push("Headers do not match with the specified file format. Please check the configuration file and try again.")
+              this.dataInputConfig = null;
+            }
           }
-          else {
+          else{
             this.validationErrors.push("Headers do not match with the specified file format. Please check the configuration file and try again.")
             this.dataInputConfig = null;
           }
-
         }
       }
     },
