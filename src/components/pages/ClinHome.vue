@@ -764,14 +764,7 @@ export default {
     variants: function() {
       this.organizeVariantsByInterpretation();
     },
-    
-    selectedGenesChanged: function() {
-      console.log("selectedGenesChanged", this.selectedGenesChanged);
-    },
-    
-    selectedGenesForGeneSet: function(){
-      console.log("selectedGenesForGeneSet changing", this.selectedGenesForGeneSet);
-    }
+
   },
 
   methods: {
@@ -1559,11 +1552,9 @@ export default {
 
     promiseSaveAnalysis: function(options) {
       let self = this;
-      console.log("clicked promiseSaveAnalysis", options);
 
       return new Promise(function(resolve, reject) {
         if (self.analysis.id ) {
-
           let promiseSave = null;
           if (options && !options.autoupdate) {
             promiseSave = self.mosaicSession.promiseUpdateAnalysisTitle(self.analysis)
@@ -1592,7 +1583,6 @@ export default {
           })
 
         } else {
-
           self.mosaicSession.promiseAddAnalysis(self.analysis.project_id, self.analysis)
           .then(function(analysis) {
             console.log("**********  adding mosaic analysis " + self.analysis.id + " " + " **************")
@@ -2219,30 +2209,28 @@ export default {
       this.geneToDelete = gene;
     },
     add_to_gene_set(genes){
-      console.log("add_to_gene_set");
       this.selectedGenesForGeneSet = genes;
       this.selectedGenesChanged = true;
       this.setSelectedGenesForVariantsReview(genes);
       this.analysis.payload.selectedGenesForGeneSet = this.selectedGenesForGeneSet;
-      // this.promiseUpdateSelectedPhenotypesGenes(genes);
+      this.promiseUpdateSelectedPhenotypesGenes(genes);
     },
     promiseUpdateSelectedPhenotypesGenes: function(genes) {
       let self = this;
-      self.analysis.payload.selectedGenesForGeneSet = genes;
+      // self.analysis.payload.selectedGenesForGeneSet = genes;
       self.analysis.payload.datetime_last_modified = self.getCurrentDateTime();
       return self.promiseAutosaveAnalysis();
     },
     
     update_genes_top(number){
-      console.log("update_genes_top");
       this.genesTop = number;
       this.analysis.payload.genesTop = number;
       this.setGenesTop(number);
-      // this.promiseUpdateGenesTopNumber(number);
+      this.promiseUpdateGenesTopNumber(number);
     },
     promiseUpdateGenesTopNumber: function(number) {
       let self = this;
-      self.analysis.payload.genesTop = number;
+      // self.analysis.payload.genesTop = number;
       self.analysis.payload.datetime_last_modified = self.getCurrentDateTime();
       return self.promiseAutosaveAnalysis();
     },
@@ -2645,7 +2633,6 @@ export default {
     },
     
     new_term_searched(flag){
-      console.log("newTermSearched", flag);
       this.newTermSearched = flag;
     },
   }
