@@ -1,6 +1,6 @@
 {
   "name": "clin.iobio.io",
-  "version": "2.2.0",
+  "version": "2.2.1",
   "private": true,
   "scripts": {
     "start": "vue-cli-service serve --host localhost --port 4030",
