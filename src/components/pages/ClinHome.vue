@@ -255,7 +255,8 @@ $horizontal-dashboard-height: 140px
             @vennData="vennData($event)"
             :demoTextNote="analysis.payload.demoTextNote"
             @VennDiagramData="VennDiagramData($event)"
-            :geneToDelete="geneToDelete">
+            :geneToDelete="geneToDelete"
+            @new_term_searched="new_term_searched($event)">
           </PhenotypeExtractor>
         </keep-alive>
 
@@ -271,7 +272,8 @@ $horizontal-dashboard-height: 140px
             @add_to_gene_set="add_to_gene_set($event)"
             :selectedGenesForGeneSet="selectedGenesForGeneSet"
             @update_genes_top="update_genes_top($event)"
-            :topGenesSelectedCount="genesTop">
+            :topGenesSelectedCount="genesTop"
+            :newTermSearched="newTermSearched">
           </GeneList>
         </keep-alive>
 
@@ -614,6 +616,7 @@ export default {
       genesAssociatedWithSource: {},
       genesTop: 20,
       noGeneSetWarningDialog: false,
+      newTermSearched: false
     }
 
   },
@@ -760,7 +763,8 @@ export default {
 
     variants: function() {
       this.organizeVariantsByInterpretation();
-    }
+    },
+
   },
 
   methods: {
@@ -1551,7 +1555,6 @@ export default {
 
       return new Promise(function(resolve, reject) {
         if (self.analysis.id ) {
-
           let promiseSave = null;
           if (options && !options.autoupdate) {
             promiseSave = self.mosaicSession.promiseUpdateAnalysisTitle(self.analysis)
@@ -1580,7 +1583,6 @@ export default {
           })
 
         } else {
-
           self.mosaicSession.promiseAddAnalysis(self.analysis.project_id, self.analysis)
           .then(function(analysis) {
             console.log("**********  adding mosaic analysis " + self.analysis.id + " " + " **************")
@@ -2211,11 +2213,24 @@ export default {
       this.selectedGenesChanged = true;
       this.setSelectedGenesForVariantsReview(genes);
       this.analysis.payload.selectedGenesForGeneSet = this.selectedGenesForGeneSet;
-      // this.promiseUpdateSelectedPhenotypesGenes(genes);
+      this.promiseUpdateSelectedPhenotypesGenes(genes);
     },
     promiseUpdateSelectedPhenotypesGenes: function(genes) {
       let self = this;
-      self.analysis.payload.selectedGenesForGeneSet = genes;
+      // self.analysis.payload.selectedGenesForGeneSet = genes;
+      self.analysis.payload.datetime_last_modified = self.getCurrentDateTime();
+      return self.promiseAutosaveAnalysis();
+    },
+    
+    update_genes_top(number){
+      this.genesTop = number;
+      this.analysis.payload.genesTop = number;
+      this.setGenesTop(number);
+      this.promiseUpdateGenesTopNumber(number);
+    },
+    promiseUpdateGenesTopNumber: function(number) {
+      let self = this;
+      // self.analysis.payload.genesTop = number;
       self.analysis.payload.datetime_last_modified = self.getCurrentDateTime();
       return self.promiseAutosaveAnalysis();
     },
@@ -2601,20 +2616,7 @@ export default {
       })
       self.setGenesSource(self.genesAssociatedWithSource)
     },
-    
-    update_genes_top(number){
-      this.genesTop = number;
-      this.analysis.payload.genesTop = number;
-      this.setGenesTop(number);
-      // this.promiseUpdateGenesTopNumber(number);
-    },
-    promiseUpdateGenesTopNumber: function(number) {
-      let self = this;
-      self.analysis.payload.genesTop = number;
-      self.analysis.payload.datetime_last_modified = self.getCurrentDateTime();
-      return self.promiseAutosaveAnalysis();
-    },
-    
+        
     promiseUpdateVariants: function(variants) {
       let self = this;
       self.analysis.payload.variants = variants;
@@ -2628,6 +2630,10 @@ export default {
     
     gotoStep: function(stepIndex){
       bus.$emit('navigate-to-step',stepIndex); 
+    },
+    
+    new_term_searched(flag){
+      this.newTermSearched = flag;
     },
   }
 }
