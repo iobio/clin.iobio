@@ -299,6 +299,8 @@
                     Variants can be imported from a .CSV file (<a href="https://drive.google.com/file/d/1JYTbDnMvQ3Nq6UbbUzYhda0CZj1h5Q4m/view" target="_blank">example</a>) or from a <a href="https://gene.iobio.io/" target="_blank"> gene.iobio </a> variants (.VCF) file.
                   </p>
 
+
+
                     <v-textarea
                       auto-grow rows="1"
                       name="input-7-4"
@@ -774,6 +776,10 @@ export default {
       importedVariants: [],
       validationErrors: [],
       analysisInProgress: false,
+      autocompleteGenesConfig: [],
+      autocompleteGenesConfigFlag: true,
+      knownGenesData: null,
+      autoCompleteGenesInputSearchConfig: '',
     }
   },
   computed: mapGetters(['allAnalysis', 'getAnalysisProgressStatus']),
@@ -1183,6 +1189,14 @@ export default {
       }
       window.location.reload();
     }
+  },
+  created: function() {
+    fetch('https://s3.amazonaws.com/ped.test.files/known_genes.txt')
+      .then( res => res.text())
+        .then( data => {
+          let lines = data.split('\n');
+          this.knownGenesData = lines;
+        })
   },
   mounted: function() {
     this.analysisInProgress = this.getAnalysisProgressStatus;

@@ -1,355 +1,369 @@
 <template>
 
   <div v-show="selectedVariant" id="variant-inspect" class="app-card full-width">
+    <v-expansion-panels v-model="panel" accordion focusable>
+      <v-expansion-panel>
+        <v-expansion-panel-header style="min-height:50px; padding-top:8px; padding-bottom:8px">
+          <span style="font-size: 18px; font-weight:400">{{ selectedGene.gene_name }} variant</span>
+        </v-expansion-panel-header>
+        <v-expansion-panel-content>
+          <div v-if="selectedGene" style="display:flex;align-items:flex-start;justify-content:flex-start;margin-bottom:10px" class="pt-4">
+            <!-- <span class="mr-4">
+               <span style="font-size: 20px; font-weight:500">{{ selectedGene.gene_name }} variant</span>
+            </span> -->
+            <span class="" style="margin-right:20px">
+              <variant-interpretation-badge
+                 :interpretation="selectedVariant.interpretation"
+                 :interpretationMap="interpretationMap">
+              </variant-interpretation-badge>
 
+            </span>
 
-
-    <div v-if="selectedGene" style="display:flex;align-items:flex-start;justify-content:flex-start;margin-bottom:10px">
-      
-      <variant-interpretation-badge
-         :interpretation="selectedVariant.interpretation"
-         :interpretationMap="interpretationMap">
-      </variant-interpretation-badge>
-
-      <div  id="variant-heading" v-if="selectedVariant" style="margin-left:20px" class="text-xs-left">
-        <span class="pr-1" v-if="selectedVariantRelationship != 'proband'">
-          <span class="rel-header">{{ selectedVariantRelationship | showRelationship }}</span>
-        </span>
-
-        Variant in {{ selectedGene.gene_name }}
-
-
-
-      </div>
-<!--
-      <variant-links-menu
-      v-if="selectedGene && selectedVariant && info"
-      :selectedGene="selectedGene"
-      :selectedVariant="selectedVariant"
-      :geneModel="cohortModel.geneModel"
-      :info="info">
-      </variant-links-menu>
--->
-
-<!-- 
-      <span v-if="!info || (info.HGVSpLoading && info.HGVScLoading)"
-        style="font-size:13px;margin-top:2px;min-width:80px;margin-left:0px;margin-right:0px"
-        v-show="selectedVariantRelationship != 'known-variants'" class=" loader vcfloader" >
-        <img src="../../../assets/images/wheel.gif">
-        HGVS
-      </span>
- -->
-
-
-      <variant-aliases-menu
-      v-show="selectedVariant && (!info.HGVSpLoading || !info.HGVScLoading)"
-      v-if="selectedVariant && selectedVariantRelationship != 'known-variants'"
-      :label="`HGVS`"
-      :info="info">
-      </variant-aliases-menu>
-
-      <v-badge class="info" style="margin-top:2px;margin-right:10px" v-if="selectedVariant && selectedVariant.multiallelic && selectedVariant.multiallelic.length > 0">multiallelic</v-badge>
-
-      <span v-if="info && info.rsId && info.rsId != ''" style="margin-top:2px" class="pr-1 mr-1">{{ info.rsId }}</span>
-
-      <app-icon
-       style="min-width:35px;margin-top:1px;margin-right:5px;padding-top: 2px;margin-right:10px"
-       icon="zygosity" v-if="selectedVariant && selectedVariant.zygosityProband"
-       :type="selectedVariant.zygosityProband.toLowerCase() + '-large'"
-       height="14" width="35">
-      </app-icon>
-
-      <span v-if="selectedVariant" class="variant-header" style="margin-top:2px">
-
-        <span style="vertical-align:top">{{ selectedVariant.type ? selectedVariant.type.toUpperCase() : "" }}</span>
-        <span style="vertical-align:top" class="pl-1">{{ coord }}</span>
-        <span class="pl-1 refalt">{{ refAlt  }}</span>
-
-
-      </span>
-
-
-
-      <span class="pl-3 variant-header aa-change" style="margin-top:2px">{{ aminoAcidChange }}</span>
-
-
-
-
-
-      <v-spacer></v-spacer>
-
-      
-      <div style="margin-left:20px;margin-right:0px; margin-top:10px; margin-right:10px">
-        <v-btn raised id="show-assessment-button" @click='gotoStep(2)'>
-          <v-icon>gavel</v-icon>
-          Review
-        </v-btn>
-      </div>
-   
-
-      <variant-notes-menu
-       :variant="selectedVariant">
-      </variant-notes-menu>
-
-
-    </div>
-    
-    <span v-if="selectedGene.gene_name">
-      <div>
-        <span class="chart-label">Source: </span>
-        <span v-for="(source, idx) in getSourceIndicatorBadge" :key="idx">
-          <v-tooltip top>
-            <template v-slot:activator="{ on }">
-              <span
-                v-on="on"
-                class="ml-1 mr-1"
-              >
-              <div left color="grey lighten-1" class="myBadge">
-                <span slot="badge"> {{ source }}</span>
-              </div>
+            <!-- <div  id="variant-heading" v-if="selectedVariant" style="margin-left:20px" class="text-xs-left">
+              <span class="pr-1" v-if="selectedVariantRelationship != 'proband'">
+                <span class="rel-header">{{ selectedVariantRelationship | showRelationship }}</span>
               </span>
-            </template>
-            <span> {{ selectedGeneSources.source[idx]}}</span>
-          </v-tooltip>
-        </span>
-      </div>
-    </span>
-
-
-    <div class="variant-inspect-body">
-      <div class="variant-inspect-column" v-if="selectedVariant && selectedVariantRelationship != 'known-variants'">
-          <div class="variant-column-header">
-            Quality
-            <v-divider></v-divider>
-          </div>
-          <variant-inspect-quality-row
-            :info="getQualityInfo()"  >
-          </variant-inspect-quality-row>
 
 
 
-      </div>
-      <div class="variant-inspect-column " v-if="selectedVariant" >
-          <div class="variant-column-header">
-            Gene Associations
-            <v-divider></v-divider>
-          </div>
-          <div v-if="genePhenotypeRankings && genePhenotypeRankings!==null && genePhenotypeRankings.length" >
-            <div v-for="(geneHit, index) in genePhenotypeRankings.slice(0,3)" :key="geneHit.key" class="variant-row" style="flex-flow:column">
-              <div v-for="geneRank in geneHit.geneRanks" :key="geneRank.rank">
-                <div>
-                  <v-chip  color="white" v-if="geneRank.rank" class="high">
-                    <span class="mr-1">#{{ geneRank.rank  }}</span>
-                    <span v-if="geneRank.source">{{  geneRank.source }}</span>
-                  </v-chip>
-                  <v-chip  color="white" v-else class="high">
-                    <span v-if="geneRank.source"> {{ geneRank.source }}</span>
-                  </v-chip>
-                  <span v-if="geneHit.searchTerm && geneRank.source!=='HPO'" class="pheno-search-term_clin">
-                    {{ geneHit.searchTerm | to-firstCharacterUppercase }}
-                  </span>
-                  <span v-else-if="geneRank.source==='HPO' && geneRank.hpoPhenotype" class="pheno-search-term_clin">
-                    {{ geneRank.hpoPhenotype | to-firstCharacterUppercase }}
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div v-if="genePhenotypeRankings!==null && genePhenotypeRankings.length>=4">
-            <v-btn id="show-more-gene-association-button"
-              text small color="primary"
-              slot="activator"
-              style="float:right"
-              v-tooltip.bottom-center="`Show all associations for this variant`"
-              @click="showMoreGeneAssociationsDialog=true">
-                <v-icon>zoom_out_map</v-icon>Show more
-            </v-btn>
-          </div>
-          <div>
-            <gene-associations-dialog
-              v-if="showMoreGeneAssociationsDialog"
-              :showDialog="showMoreGeneAssociationsDialog"
-              :genePhenotypeHits="genePhenotypeRankings"
-              :selectedGene="selectedGene.gene_name"
-              @close-gene-association-dialog="onCloseGeneAssociationDialog($event)">
-            </gene-associations-dialog>
-          </div>
-      </div>      
-      <div class="variant-inspect-column" v-if="selectedVariant && info">
-          <div class="variant-column-header">
-            Pathogenicity
-            <v-divider></v-divider>
-          </div>
-          <variant-inspect-row  v-for="clinvar,clinvarIdx in info.clinvarLinks" :key="clinvarIdx"
-            :clazz="getClinvarClass(clinvar.significance)" :value="clinvar.clinsig" :label="`ClinVar`" :link="clinvar.url" >
-          </variant-inspect-row>
 
-          <div v-if="info.clinvarTrait.length > 0" class="variant-row no-icon no-top-margin small-font">
-            <span>{{ info.clinvarTrait }} </span>
-          </div>
+            </div> -->
+      <!--
+            <variant-links-menu
+            v-if="selectedGene && selectedVariant && info"
+            :selectedGene="selectedGene"
+            :selectedVariant="selectedVariant"
+            :geneModel="cohortModel.geneModel"
+            :info="info">
+            </variant-links-menu>
+      -->
 
-          <variant-inspect-row
-            :clazz="getImpactClass(info.vepImpact)" :value="info.vepConsequence"  :label="``"  >
-          </variant-inspect-row>
+      <!-- 
+            <span v-if="!info || (info.HGVSpLoading && info.HGVScLoading)"
+              style="font-size:13px;margin-top:2px;min-width:80px;margin-left:0px;margin-right:0px"
+              v-show="selectedVariantRelationship != 'known-variants'" class=" loader vcfloader" >
+              <img src="../../../assets/images/wheel.gif">
+              HGVS
+            </span>
+       -->
 
-          <variant-inspect-row
-             v-if="info.vepHighestImpactValue.length > 0 && info.vepImpact.toUpperCase() != info.vepHighestImpactValue.toUpperCase()"
-            :clazz="getImpactClass(info.vepHighestImpactValue)" :label=" `Most severe impact in non-canonical transcript`"  >
-          </variant-inspect-row>
 
-          <div v-if="info.vepHighestImpactValue.length > 0 && info.vepImpact.toUpperCase() != info.vepHighestImpactValue.toUpperCase()" class="variant-row no-icon no-top-margin">
+            <variant-aliases-menu
+            v-show="selectedVariant && (!info.HGVSpLoading || !info.HGVScLoading)"
+            v-if="selectedVariant && selectedVariantRelationship != 'known-variants'"
+            :label="`HGVS`"
+            :info="info">
+            </variant-aliases-menu>
 
-                    <span v-for="(impactRec, idx) in info.vepHighestImpactRecs" :key="impactRec.impact">
-                      <div style="padding-top:5px" v-for="(effectRec, idx1) in impactRec.effects" :key="effectRec.key">
-                        {{ getNonCanonicalEffectDisplay(idx1, effectRec) }}
-                        <v-btn class="change-transcript-button" flat v-for="transcriptId in effectRec.transcripts"
-                         :key="transcriptId"
-                          {{ transcriptId }}
-                        </v-btn>
-                      </div>
-                    </span>
+            <v-badge class="info" style="margin-top:2px;margin-right:10px" v-if="selectedVariant && selectedVariant.multiallelic && selectedVariant.multiallelic.length > 0">multiallelic</v-badge>
+
+            <span v-if="info && info.rsId && info.rsId != ''" style="margin-top:2px" class="pr-1 mr-1">{{ info.rsId }}</span>
+
+            <app-icon
+             style="min-width:35px;margin-top:1px;margin-right:5px;padding-top: 2px;margin-right:10px"
+             icon="zygosity" v-if="selectedVariant && selectedVariant.zygosityProband"
+             :type="selectedVariant.zygosityProband.toLowerCase() + '-large'"
+             height="14" width="35">
+            </app-icon>
+
+            <span v-if="selectedVariant" class="variant-header" style="margin-top:2px">
+
+              <span style="vertical-align:top">{{ selectedVariant.type ? selectedVariant.type.toUpperCase() : "" }}</span>
+              <span style="vertical-align:top" class="pl-1">{{ coord }}</span>
+              <span class="pl-1 refalt">{{ refAlt  }}</span>
+
+
+            </span>
+
+
+
+            <span class="pl-3 variant-header aa-change" style="margin-top:2px">{{ aminoAcidChange }}</span>
+
+
+
+
+
+            <v-spacer></v-spacer>
+
             
-          </div>
-
-          <variant-inspect-row v-if="info.revel != '' && info.revel"
-            :clazz="getRevelClass(info)" :value="info.revel"   :label="`REVEL`" >
-          </variant-inspect-row>
-      </div>
-
-     
-      <div class="variant-inspect-column" v-if="selectedVariant && selectedVariantRelationship != 'known-variants'">
-          <div class="variant-column-header">
-            Frequency                     
-            <info-popup name="gnomAD"></info-popup>
-            <v-divider></v-divider>
-          </div>
-          <variant-inspect-row :clazz="afGnomAD.class" :value="afGnomAD.percent" :label="`Allele freq`" :link="afGnomAD.link" >
-          </variant-inspect-row>
-          <variant-inspect-row v-if="afGnomAD.percentPopMax" :clazz="afGnomAD.class" :value="afGnomAD.percentPopMax" :label="`Pop max allele freq`" >
-          </variant-inspect-row>
-          <div v-if="afGnomAD.totalCount > 0" class="variant-row no-icon">
-            <span>{{ afGnomAD.altCount }} alt of {{ afGnomAD.totalCount }} total</span>
-          </div>
-          <div v-if="afGnomAD.homCount > 0"  class="variant-row no-icon">
-            <span>{{ afGnomAD.homCount }} homozygotes</span>
-          </div>
-      </div>
-
-      <div class="variant-inspect-column" style="min-width:90px" v-if="selectedVariant && selectedVariantRelationship != 'known-variants' && selectedVariant.inheritance.length > 0">
-          <div class="variant-column-header">
-            Inheritance
-            <v-divider></v-divider>
-          </div>
-
-          <variant-inspect-inheritance-row :selectedVariant="selectedVariant" >
-          </variant-inspect-inheritance-row>
-
-          <div class="pedigree-chart">
-            <app-icon class="hide" icon="affected"></app-icon>
-            <pedigree-genotype-viz
-             ref="pedigreeGenotypeViz"
-             style="width:139px"
-             :margin="{left: 15, right: 14, top: 30, bottom: 4}"
-             :nodeWidth="30"
-             :nodePadding="40"
-             :nodeVerticalPadding="30"
-             :data="pedigreeGenotypeData">
-            </pedigree-genotype-viz>
-          </div>
-
-
-      </div>
-
-      <div class="variant-inspect-column last" v-if="selectedVariant" style="min-width:320px;max-width:320px">
-          <div class="variant-column-header" >
-            Conservation
-            <v-divider></v-divider>
-          </div>
-          <div id="conservation-track" style="display:flex;min-width:320px;max-width:320px">
-            <div style="display:flex;flex-direction: column;max-width:130px;min-width:130px;margin-right: 10px">
-
-              <variant-inspect-row
-                v-show="multiAlignModel && multiAlignModel.selectedScore && showConservation"
-                :clazz="getConservationClass(conservationExactScore)"
-                :value="getConservationScore(conservationExactScore)"   >
-              </variant-inspect-row>
-
-              <div class="conservation-score-label"
-                v-if="conservationScores && conservationScores.length > 0">
-                phyloP scores
-              </div>
-
-              <conservation-scores-viz class="conservation-scores-barchart exon"
-               :data=conservationScores
-               :options=conservationOptions
-               :exactScore=conservationExactScore
-               :targetScore=conservationTargetScore
-               :margin="{top: 10, right: 2, bottom: 15, left: 4}"
-               :width="130"
-               :height="60">
-              </conservation-scores-viz>
-
-              <gene-viz id="conservation-gene-viz" class="gene-viz"
-                v-if="showConservation"
-                v-show="filteredTranscript && filteredTranscript.features && filteredTranscript.features.length > 0"
-                :data="[filteredTranscript]"
-                :margin="conservationGeneVizMargin"
-                :height="16"
-                :trackHeight="geneVizTrackHeight"
-                :cdsHeight="geneVizCdsHeight"
-                :regionStart="coverageRegionStart"
-                :regionEnd="coverageRegionEnd"
-                :showXAxis="false"
-                :showBrush="false"
-                :featureClass="getExonClass"
-                >
-              </gene-viz>
-
-
+            <div style="margin-left:20px;margin-right:0px; margin-top:10px; margin-right:10px">
+              <v-btn raised id="show-assessment-button" @click='gotoStep(2)'>
+                <v-icon>gavel</v-icon>
+                Review
+              </v-btn>
             </div>
-            <div style="min-width:190px" >
+         
 
+            <variant-notes-menu
+             :variant="selectedVariant">
+            </variant-notes-menu>
+
+
+          </div>
           
-              <toggle-button
-                v-if="false && hasConservationAligns"
-                name1="Nuc"
-                name2="AA"
-                label="Sequence"
-                buttonWidth="90"
-               @click="onToggleConservationNucAA">
-              </toggle-button>
-            
-
-              <span v-if="multialignInProgress" class="pt-4 loader multialign-loader" >
-                  <img src="../../../assets/images/wheel.gif">
-                  Loading sequence
+          <span v-if="selectedGene.gene_name">
+            <div>
+              <span class="chart-label">Source: </span>
+              <span v-for="(source, idx) in getSourceIndicatorBadge" :key="idx">
+                <v-tooltip top>
+                  <template v-slot:activator="{ on }">
+                    <span
+                      v-on="on"
+                      class="ml-1 mr-1"
+                    >
+                    <div left color="grey lighten-1" class="myBadge">
+                      <span slot="badge"> {{ source }}</span>
+                    </div>
+                    </span>
+                  </template>
+                  <span> {{ selectedGeneSources.source[idx]}}</span>
+                </v-tooltip>
               </span>
+            </div>
+          </span>
 
-              <multialign-seq-viz style="margin-top:10px;min-width:190px"
-              :data="multialignSequences"
-              :margin="{top: 15, right: 0, bottom: 0, left: 70}"
-              :selectedBase="multialignSelectedBase">
-              </multialign-seq-viz>
+
+          <div class="variant-inspect-body">
+            <div class="variant-inspect-column" v-if="selectedVariant && selectedVariantRelationship != 'known-variants'">
+                <div class="variant-column-header">
+                  Quality
+                  <v-divider></v-divider>
+                </div>
+                <variant-inspect-quality-row
+                  :info="getQualityInfo()"  >
+                </variant-inspect-quality-row>
+
+
 
             </div>
-          </div>
-      </div>
+            <div class="variant-inspect-column " v-if="selectedVariant" >
+                <div class="variant-column-header">
+                  Gene Associations
+                  <v-divider></v-divider>
+                </div>
+                <div v-if="genePhenotypeRankings && genePhenotypeRankings!==null && genePhenotypeRankings.length" >
+                  <div v-for="(geneHit, index) in genePhenotypeRankings.slice(0,3)" :key="geneHit.key" class="variant-row" style="flex-flow:column">
+                    <div v-for="geneRank in geneHit.geneRanks" :key="geneRank.rank">
+                      <div>
+                        <v-chip  color="white" v-if="geneRank.rank" class="high">
+                          <span class="mr-1">#{{ geneRank.rank  }}</span>
+                          <span v-if="geneRank.source">{{  geneRank.source }}</span>
+                        </v-chip>
+                        <v-chip  color="white" v-else class="high">
+                          <span v-if="geneRank.source"> {{ geneRank.source }}</span>
+                        </v-chip>
+                        <span v-if="geneHit.searchTerm && geneRank.source!=='HPO'" class="pheno-search-term_clin">
+                          {{ geneHit.searchTerm | to-firstCharacterUppercase }}
+                        </span>
+                        <span v-else-if="geneRank.source==='HPO' && geneRank.hpoPhenotype" class="pheno-search-term_clin">
+                          {{ geneRank.hpoPhenotype | to-firstCharacterUppercase }}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div v-if="genePhenotypeRankings!==null && genePhenotypeRankings.length>=4">
+                  <v-btn id="show-more-gene-association-button"
+                    text small color="primary"
+                    slot="activator"
+                    style="float:right"
+                    v-tooltip.bottom-center="`Show all associations for this variant`"
+                    @click="showMoreGeneAssociationsDialog=true">
+                      <v-icon>zoom_out_map</v-icon>Show more
+                  </v-btn>
+                </div>
+                <div>
+                  <gene-associations-dialog
+                    v-if="showMoreGeneAssociationsDialog"
+                    :showDialog="showMoreGeneAssociationsDialog"
+                    :genePhenotypeHits="genePhenotypeRankings"
+                    :selectedGene="selectedGene.gene_name"
+                    @close-gene-association-dialog="onCloseGeneAssociationDialog($event)">
+                  </gene-associations-dialog>
+                </div>
+            </div>      
+            <div class="variant-inspect-column" v-if="selectedVariant && info">
+                <div class="variant-column-header">
+                  Pathogenicity
+                  <v-divider></v-divider>
+                </div>
+                <variant-inspect-row  v-for="clinvar,clinvarIdx in info.clinvarLinks" :key="clinvarIdx"
+                  :clazz="getClinvarClass(clinvar.significance)" :value="clinvar.clinsig" :label="`ClinVar`" :link="clinvar.url" >
+                </variant-inspect-row>
 
-    </div>
-    <v-btn text :disabled="!drugsData.length" color="primary" @click="showDrugInformationDialog=true">
-      <v-icon color="primary" class="mr-2">fas fa-pills</v-icon>
-      <span class="pt-1">Drugs for <strong>{{ selectedGene.gene_name }}</strong></span>
-    </v-btn>
-    
-    <div>
-      <drug-info-dialog
-        v-if="showDrugInformationDialog"
-        :showDialog="showDrugInformationDialog"
-        :gene="selectedGene.gene_name"
-        @close-drug-info-dialog="onCloseDrugInfoDialog"
-        :drugsData="drugsData">
-      </drug-info-dialog>
-    </div>
+                <div v-if="info.clinvarTrait.length > 0" class="variant-row no-icon no-top-margin small-font">
+                  <span>{{ info.clinvarTrait }} </span>
+                </div>
+
+                <variant-inspect-row
+                  :clazz="getImpactClass(info.vepImpact)" :value="info.vepConsequence"  :label="``"  >
+                </variant-inspect-row>
+
+                <variant-inspect-row
+                   v-if="info.vepHighestImpactValue.length > 0 && info.vepImpact.toUpperCase() != info.vepHighestImpactValue.toUpperCase()"
+                  :clazz="getImpactClass(info.vepHighestImpactValue)" :label=" `Most severe impact in non-canonical transcript`"  >
+                </variant-inspect-row>
+
+                <div v-if="info.vepHighestImpactValue.length > 0 && info.vepImpact.toUpperCase() != info.vepHighestImpactValue.toUpperCase()" class="variant-row no-icon no-top-margin">
+
+                          <span v-for="(impactRec, idx) in info.vepHighestImpactRecs" :key="impactRec.impact">
+                            <div style="padding-top:5px" v-for="(effectRec, idx1) in impactRec.effects" :key="effectRec.key">
+                              {{ getNonCanonicalEffectDisplay(idx1, effectRec) }}
+                              <v-btn class="change-transcript-button" flat v-for="transcriptId in effectRec.transcripts"
+                               :key="transcriptId"
+                                {{ transcriptId }}
+                              </v-btn>
+                            </div>
+                          </span>
+                  
+                </div>
+
+                <variant-inspect-row v-if="info.revel != '' && info.revel"
+                  :clazz="getRevelClass(info)" :value="info.revel"   :label="`REVEL`" >
+                </variant-inspect-row>
+            </div>
+
+           
+            <div class="variant-inspect-column" v-if="selectedVariant && selectedVariantRelationship != 'known-variants'">
+                <div class="variant-column-header">
+                  Frequency                     
+                  <info-popup name="gnomAD"></info-popup>
+                  <v-divider></v-divider>
+                </div>
+                <variant-inspect-row :clazz="afGnomAD.class" :value="afGnomAD.percent" :label="`Allele freq`" :link="afGnomAD.link" >
+                </variant-inspect-row>
+                <variant-inspect-row v-if="afGnomAD.percentPopMax" :clazz="afGnomAD.class" :value="afGnomAD.percentPopMax" :label="`Pop max allele freq`" >
+                </variant-inspect-row>
+                <div v-if="afGnomAD.totalCount > 0" class="variant-row no-icon">
+                  <span>{{ afGnomAD.altCount }} alt of {{ afGnomAD.totalCount }} total</span>
+                </div>
+                <div v-if="afGnomAD.homCount > 0"  class="variant-row no-icon">
+                  <span>{{ afGnomAD.homCount }} homozygotes</span>
+                </div>
+            </div>
+
+            <div class="variant-inspect-column" style="min-width:90px" v-if="selectedVariant && selectedVariantRelationship != 'known-variants' && selectedVariant.inheritance.length > 0">
+                <div class="variant-column-header">
+                  Inheritance
+                  <v-divider></v-divider>
+                </div>
+
+                <variant-inspect-inheritance-row :selectedVariant="selectedVariant" >
+                </variant-inspect-inheritance-row>
+
+                <div class="pedigree-chart">
+                  <app-icon class="hide" icon="affected"></app-icon>
+                  <pedigree-genotype-viz
+                   ref="pedigreeGenotypeViz"
+                   style="width:139px"
+                   :margin="{left: 15, right: 14, top: 30, bottom: 4}"
+                   :nodeWidth="30"
+                   :nodePadding="40"
+                   :nodeVerticalPadding="30"
+                   :data="pedigreeGenotypeData">
+                  </pedigree-genotype-viz>
+                </div>
+
+
+            </div>
+
+            <div class="variant-inspect-column last" v-if="selectedVariant" style="min-width:320px;max-width:320px">
+                <div class="variant-column-header" >
+                  Conservation
+                  <v-divider></v-divider>
+                </div>
+                <div id="conservation-track" style="display:flex;min-width:320px;max-width:320px">
+                  <div style="display:flex;flex-direction: column;max-width:130px;min-width:130px;margin-right: 10px">
+
+                    <variant-inspect-row
+                      v-show="multiAlignModel && multiAlignModel.selectedScore && showConservation"
+                      :clazz="getConservationClass(conservationExactScore)"
+                      :value="getConservationScore(conservationExactScore)"   >
+                    </variant-inspect-row>
+
+                    <div class="conservation-score-label"
+                      v-if="conservationScores && conservationScores.length > 0">
+                      phyloP scores
+                    </div>
+
+                    <conservation-scores-viz class="conservation-scores-barchart exon"
+                     :data=conservationScores
+                     :options=conservationOptions
+                     :exactScore=conservationExactScore
+                     :targetScore=conservationTargetScore
+                     :margin="{top: 10, right: 2, bottom: 15, left: 4}"
+                     :width="130"
+                     :height="60">
+                    </conservation-scores-viz>
+
+                    <gene-viz id="conservation-gene-viz" class="gene-viz"
+                      v-if="showConservation"
+                      v-show="filteredTranscript && filteredTranscript.features && filteredTranscript.features.length > 0"
+                      :data="[filteredTranscript]"
+                      :margin="conservationGeneVizMargin"
+                      :height="16"
+                      :trackHeight="geneVizTrackHeight"
+                      :cdsHeight="geneVizCdsHeight"
+                      :regionStart="coverageRegionStart"
+                      :regionEnd="coverageRegionEnd"
+                      :showXAxis="false"
+                      :showBrush="false"
+                      :featureClass="getExonClass"
+                      >
+                    </gene-viz>
+
+
+                  </div>
+                  <div style="min-width:190px" >
+
+                
+                    <toggle-button
+                      v-if="false && hasConservationAligns"
+                      name1="Nuc"
+                      name2="AA"
+                      label="Sequence"
+                      buttonWidth="90"
+                     @click="onToggleConservationNucAA">
+                    </toggle-button>
+                  
+
+                    <span v-if="multialignInProgress" class="pt-4 loader multialign-loader" >
+                        <img src="../../../assets/images/wheel.gif">
+                        Loading sequence
+                    </span>
+
+                    <multialign-seq-viz style="margin-top:10px;min-width:190px"
+                    :data="multialignSequences"
+                    :margin="{top: 15, right: 0, bottom: 0, left: 70}"
+                    :selectedBase="multialignSelectedBase">
+                    </multialign-seq-viz>
+
+                  </div>
+                </div>
+            </div>
+
+          </div>
+          <v-btn text :disabled="!drugsData.length" color="primary" @click="showDrugInformationDialog=true">
+            <v-icon color="primary" class="mr-2">fas fa-pills</v-icon>
+            <span class="pt-1">Drugs for <strong>{{ selectedGene.gene_name }}</strong></span>
+          </v-btn>
+          
+          <div>
+            <drug-info-dialog
+              v-if="showDrugInformationDialog"
+              :showDialog="showDrugInformationDialog"
+              :gene="selectedGene.gene_name"
+              @close-drug-info-dialog="onCloseDrugInfoDialog"
+              :drugsData="drugsData">
+            </drug-info-dialog>
+          </div>
+
+        </v-expansion-panel-content>
+      </v-expansion-panel>
+    </v-expansion-panels>
+
+    <!-- <p><h2>Variant in {{ selectedGene.gene_name }}</h2></p> -->
+
 
   </div>
 
@@ -476,6 +490,7 @@ export default {
       drugsData: [],
       genesAssociatedWithSource: {},
       selectedGeneSources: {},
+      panel: 0
     }
   },
 
@@ -1187,7 +1202,7 @@ export default {
   padding-right: 10px
   padding-bottom: 10px
   margin-bottom: 20px
-  border: thin solid #e4e3e3
+  // border: thin solid #e4e3e3
 
   .multialign-loader
     font-size: 12px
