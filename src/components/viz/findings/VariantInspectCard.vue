@@ -4,7 +4,10 @@
     <v-expansion-panels v-model="panel" accordion focusable>
       <v-expansion-panel>
         <v-expansion-panel-header style="min-height:50px; padding-top:8px; padding-bottom:8px">
-          <span style="font-size: 18px; font-weight:400">{{ selectedGene.gene_name }} variant</span>
+          <v-chip  style="position:absolute; font-size:15px padding:2px" color="primary">
+            <strong class="ml-1 mr-1">{{ selectedGene.gene_name }}</strong> 
+          </v-chip>
+          <!-- <span style="font-size: 18px; font-weight:400">{{ selectedGene.gene_name }} variant</span> -->
         </v-expansion-panel-header>
         <v-expansion-panel-content>
           <div v-if="selectedGene" style="display:flex;align-items:flex-start;justify-content:flex-start;margin-bottom:10px" class="pt-4">
