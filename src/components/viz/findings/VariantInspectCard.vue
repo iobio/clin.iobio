@@ -5,15 +5,30 @@
       <v-expansion-panel>
         <v-expansion-panel-header style="min-height:50px; padding-top:8px; padding-bottom:8px">
           <v-chip  style="position:absolute; font-size:15px padding:2px" color="primary">
-            <strong class="ml-1 mr-1">{{ selectedGene.gene_name }}</strong> 
+            <span v-if="panel!==0" >
+              <span id="badge-interpretation-label"
+                :class="{
+                        'not-reviewed': selectedVariant.interpretation == 'not-reviewed',
+                        'not-sig'     : selectedVariant.interpretation == 'not-sig',
+                        'sig'         : selectedVariant.interpretation == 'sig',
+                        'unknown-sig' : selectedVariant.interpretation == 'unknown-sig',
+                        'poor-qual'   : selectedVariant.interpretation == 'poor-qual'}"
+              >
+                <v-icon class="interpretation sig" v-if="selectedVariant.interpretation == 'sig'">verified_user</v-icon>
+                <v-icon class="interpretation unknown-sig" v-if="selectedVariant.interpretation == 'unknown-sig'">help</v-icon>
+                <v-icon class="interpretation not-sig" v-if="selectedVariant.interpretation == 'not-sig'">thumb_down</v-icon>
+                <v-icon class="interpretation poor-qual" v-if="selectedVariant.interpretation == 'poor-qual'">trending_down</v-icon>
+                <v-icon class="interpretation unknown-sig" v-if="selectedVariant.interpretation == 'not-reviewed'">help</v-icon>
+              </span>
+              <strong class="ml-1 mr-1">{{ selectedGene.gene_name }}</strong> 
+            </span>
+            <span v-else>
+              <strong class="ml-1 mr-1">{{ selectedGene.gene_name }}</strong> 
+            </span>
           </v-chip>
-          <!-- <span style="font-size: 18px; font-weight:400">{{ selectedGene.gene_name }} variant</span> -->
         </v-expansion-panel-header>
         <v-expansion-panel-content>
           <div v-if="selectedGene" style="display:flex;align-items:flex-start;justify-content:flex-start;margin-bottom:10px" class="pt-4">
-            <!-- <span class="mr-4">
-               <span style="font-size: 20px; font-weight:500">{{ selectedGene.gene_name }} variant</span>
-            </span> -->
             <span class="" style="margin-right:20px">
               <variant-interpretation-badge
                  :interpretation="selectedVariant.interpretation"
@@ -1491,6 +1506,45 @@ export default {
   display: inline-block
   font-size: 11px
   font-family: raleway
+  
+#badge-interpretation-label
+  font-family: $app-font
+  // padding-left: 3px
+  padding-right: 3px
+  font-size: 13px
+  color: $workflow-active-color
+  width: auto
+  margin-bottom: 3px
+  padding-top: 2px
+  padding-bottom: 2px
+  border-radius: 4px
+  border: $workflow-active-color
+
+  i.material-icons
+    font-size: 20px !important
+    margin-right: 0px
+    padding-right: 0px
+
+  &.not-reviewed
+    i.material-icons
+      color: $unknown-significance-color !important
+
+  &.sig
+    i.material-icons
+      color: $significant-color !important
+
+  &.not-sig
+    i.material-icons
+      color: $not-significant-color  !important
+
+  &.poor-qual
+    i.material-icons
+      color: $poor-qual-color !important
+
+  &.unknown-sig
+    i.material-icons
+      color: $unknown-significance-color !important
+  
 </style>
 
 <style lang="css">
