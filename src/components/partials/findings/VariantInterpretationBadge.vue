@@ -74,22 +74,24 @@ i.material-icons.interpretation
   padding-left: 4px
 
 .interpretation-label
-  color: white  !important
+  // color: white  !important
+  color: $workflow-active-color !important
   padding-left: 0px
   font-weight: 500
 
 #badge-interpretation
   font-family: $app-font
-  padding-left: 3px
+  // padding-left: 3px
   padding-right: 3px
   font-size: 13px
-  color: white
-  width: 185px
+  color: $workflow-active-color
+  width: auto
   margin-bottom: 3px
   padding-top: 2px
   padding-bottom: 2px
   border-radius: 4px
-  background-color: $workflow-active-color
+  background-color: white
+  border: $workflow-active-color
 
   i.material-icons
     font-size: 18px !important
