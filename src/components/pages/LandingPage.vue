@@ -299,15 +299,71 @@
                     Variants can be imported from a .CSV file (<a href="https://drive.google.com/file/d/1JYTbDnMvQ3Nq6UbbUzYhda0CZj1h5Q4m/view" target="_blank">example</a>) or from a <a href="https://gene.iobio.io/" target="_blank"> gene.iobio </a> variants (.VCF) file.
                   </p>
 
-                    <v-textarea
-                      auto-grow rows="1"
-                      name="input-7-4"
-                      class="mt-2"
-                      label="Enter genes"
-                      prepend-icon="fas fa-dna"
-                      v-model="genes"
-                      :disabled="savedInputConfig!==null || importedVariants.length>0"
-                    ></v-textarea>
+                  <div class="row"
+                    v-if="autocompleteGenesConfigFlag">
+                    <div class="col-md-11">
+                      <v-autocomplete
+                        chips
+                        :items="knownGenesData"
+                        v-model="autocompleteGenesConfig"
+                        clearable
+                        deletable-chips
+                        multiple
+                        small-chips
+                        flat
+                        prepend-icon="fas fa-dna"
+                        label="Select gene(s)"
+                        :search-input.sync="autoCompleteGenesInputSearchConfig"
+                        @change="autoCompleteGenesInputSearchConfig=''"
+                      ></v-autocomplete>
+                    </div>
+                    <div class="col-md-1">
+                      <v-tooltip bottom>
+                        <template v-slot:activator="{ on, attrs }">
+                          <v-icon
+                            v-if="autocompleteGenesConfigFlag"
+                            v-bind="attrs"
+                            v-on="on"
+                            style="margin-top:22px"
+                            @click="autocompleteGenesConfigFlag=false"
+                          >
+                            content_copy
+                          </v-icon>
+                        </template>
+                        <span>Click to enter or paste a list of genes</span>
+                      </v-tooltip>
+                    </div>
+                  </div>
+
+                  <div class="row" v-if="!autocompleteGenesConfigFlag">
+                    <div class="col-md-11">
+                      <v-textarea
+                        v-if="!autocompleteGenesConfigFlag"
+                        auto-grow rows="1"
+                        name="input-7-4"
+                        class="mt-2"
+                        label="Enter genes"
+                        prepend-icon="fas fa-dna"
+                        v-model="genes"
+                        :disabled="savedInputConfig!==null || importedVariants.length>0"
+                      ></v-textarea>
+                    </div>
+                    <div class="col-md-1">
+                      <v-tooltip bottom >
+                        <template v-slot:activator="{ on, attrs }">
+                          <v-icon
+                            v-bind="attrs"
+                            v-on="on"
+                            style="margin-top:22px"
+                            @click="autocompleteGenesConfigFlag=true"
+                          >
+                            text_fields
+                          </v-icon>
+                        </template>
+                        <span>Click to select genes from a dropdown</span>
+                      </v-tooltip>
+                    </div>
+                  </div>
                     
                     <v-spacer></v-spacer>
                     <center>OR </center>
@@ -774,6 +830,10 @@ export default {
       importedVariants: [],
       validationErrors: [],
       analysisInProgress: false,
+      autocompleteGenesConfig: [],
+      autocompleteGenesConfigFlag: true,
+      knownGenesData: null,
+      autoCompleteGenesInputSearchConfig: '',
     }
   },
   computed: mapGetters(['allAnalysis', 'getAnalysisProgressStatus']),
@@ -842,9 +902,13 @@ export default {
     },
     onLoadInputConfig: function(){
       this.importConfigurationDialog = false;
-      if(this.genes.length){
+      if(this.genes.length && this.autocompleteGenesConfigFlag===false){
         this.geneSet = this.genes.trim().split(",").filter(gene => gene.length > 0)
           .map(gene => gene.trim().toUpperCase());
+        this.$emit('setGeneSet', this.geneSet)
+      }
+      else if(this.autocompleteGenesConfig.length && this.autocompleteGenesConfigFlag){
+        this.geneSet = this.autocompleteGenesConfig; 
         this.$emit('setGeneSet', this.geneSet)
       }
       this.$emit("set-custom-case-summary", {
@@ -1183,6 +1247,14 @@ export default {
       }
       window.location.reload();
     }
+  },
+  created: function() {
+    fetch('https://s3.amazonaws.com/ped.test.files/known_genes.txt')
+      .then( res => res.text())
+        .then( data => {
+          let lines = data.split('\n');
+          this.knownGenesData = lines;
+        })
   },
   mounted: function() {
     this.analysisInProgress = this.getAnalysisProgressStatus;

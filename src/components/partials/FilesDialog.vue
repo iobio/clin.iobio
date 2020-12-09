@@ -93,15 +93,13 @@
 
           <v-form id="files-form">
 
-            <!-- <v-layout row nowrap class="mt-0"> -->
-             <v-card-title class="headline">
-                <span style="margin-left: -30px; font-weight:500">Files</span>
-                <v-spacer></v-spacer>
-                <span>
-                  <v-btn text @click="closeFilesDialog" icon><v-icon>close</v-icon></v-btn>
-                </span>
-             </v-card-title>
-            <!-- </v-layout> -->
+            <v-card-title class="headline">
+              <span style="margin-left: -30px; font-weight:500">Files</span>
+              <v-spacer></v-spacer>
+              <span>
+                <v-btn text @click="closeFilesDialog" icon><v-icon>close</v-icon></v-btn>
+              </span>
+            </v-card-title>
             <v-flex v-if="validationErrors.length">
               <!-- Please correct the following errors: -->
               <ValidationErrors
@@ -178,39 +176,6 @@
             </v-layout >
 
             <v-layout row nowrap class="mt-2">
-
-               <!-- <v-flex  class="sample-label mt-3 pl-2 pr-3" >
-                <span v-if="probandSamples && probandSamples.length > 0"
-                 dark small >
-                  siblings
-                </span>
-               </v-flex>
-
-               <v-flex  class=" pl-2 pr-3" >
-                 <v-autocomplete
-                  v-if="probandSamples && probandSamples.length > 0"
-                  v-bind:class="probandSamples == null || probandSamples.length == 0 ? 'hide' : ''"
-                  label="Affected Siblings"
-                  multiple
-                  v-model="affectedSibs"
-                  :items="probandSamples"
-                  hide-details
-                  >
-                </v-autocomplete>
-               </v-flex>
-
-               <v-flex   class="pr-2">
-                 <v-autocomplete
-                  v-if="probandSamples && probandSamples.length > 0"
-                  v-bind:class="probandSamples == null || probandSamples.length == 0 ? 'hide' : ''"
-                  label="Unaffected Siblings"
-                  multiple
-                  v-model="unaffectedSibs"
-                  :items="probandSamples"
-                  hide-details
-                  >
-                </v-autocomplete>
-               </v-flex> -->
             </v-layout>
             
             <v-layout row wrap>
@@ -221,14 +186,11 @@
                 <v-card-actions class="mb-4">
                   <v-spacer></v-spacer>
 
-                  <!-- <v-btn  @click="onCancel">
-                   Cancel
-                 </v-btn> -->
                  <v-btn color="primary" text @click="onCancel"> Back</v-btn>
                  
                  <v-btn class="ml-2" color="primary"
                    @click="onLoad"
-                   :disabled="(!isValid) || (bedFileUrl=='')">
+                   :disabled="(!isValid) || (bedFileUrl=='') || (!buildName)">
                    Next
                  </v-btn>
 
@@ -337,7 +299,6 @@ export default {
       }
     },
     buildName: function(){
-      // console.log("buildName changing", this.buildName);
     }
 
   },
@@ -688,7 +649,7 @@ export default {
     })    
     if (this.cohortModel) {
       this.speciesName =  this.cohortModel.genomeBuildHelper.getCurrentSpeciesName();
-      this.buildName   =  this.cohortModel.genomeBuildHelper.getCurrentBuildName();
+      // this.buildName   =  this.cohortModel.genomeBuildHelper.getCurrentBuildName();
       this.speciesList =  this.cohortModel.genomeBuildHelper.speciesList.map(function(sp) {
         return sp.name;
       }).filter(function(name) {
