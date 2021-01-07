@@ -348,7 +348,6 @@ export default class MosaicSession {
 
 
   parsePedigree(raw_pedigree, sample_id) {
-
     let self = this;
 
     // This assumes only 1 proband. If there are multiple affected samples then
@@ -362,18 +361,21 @@ export default class MosaicSession {
     // If the sample selected doesn't have a mother and father (isn't a proband), find
     // the proband by looking for a child with mother and father filled in and affected status
     if (probandIndex == -1) {
-      probandIndex = raw_pedigree.findIndex(d => ( d.pedigree.affection_status == 2 && d.pedigree.maternal_id && d.pedigree.paternal_id ) );
+      probandIndex = raw_pedigree.findIndex(d => ( d.pedigree.affection_status == 2 && (d.pedigree.maternal_id || d.pedigree.paternal_id )) );
     }
     // If the sample selected doesn't have a mother and father (isn't a proband), find
     // the proband by looking for a child with mother and father filled in and unknown affected status
     if (probandIndex == -1) {
-      probandIndex = raw_pedigree.findIndex(d => ( d.pedigree.affection_status == 0 && d.pedigree.maternal_id && d.pedigree.paternal_id ) );
+      probandIndex = raw_pedigree.findIndex(d => ( d.pedigree.affection_status == 0 && (d.pedigree.maternal_id || d.pedigree.paternal_id ) ));
     }
 
     if (probandIndex == -1) {
       // Assume proband if there is only one sample in the pedigree
       if (raw_pedigree.length == 1) {
         probandIndex = 0;
+      } else {
+        // Assume proband is the sample selected
+        probandIndex = raw_pedigree.findIndex(d => (d.id == sample_id));
       }
     }
 
@@ -387,33 +389,33 @@ export default class MosaicSession {
       const motherIndex = raw_pedigree.findIndex(d => d.id == proband.pedigree.maternal_id)
       if (motherIndex != -1) {
         pedigree['mother'] = raw_pedigree.splice(motherIndex, 1)[0]
+        this.isMother = true;
       }
 
       // Get mother
       const fatherIndex = raw_pedigree.findIndex(d => d.id == proband.pedigree.paternal_id)
       if (fatherIndex != -1) {
         pedigree['father'] = raw_pedigree.splice(fatherIndex, 1)[0]
+        this.isFather = true;
       }
+
+      raw_pedigree.forEach(sample => {
+        if (sample.pedigree.maternal_id != null || sample.pedigree.paternal_id != null
+            && sample.pedigree.id != pedigree.proband.id) {
+          pedigree['siblings'] = (pedigree['siblings'] || [] )
+          pedigree['siblings'].push(sample);
+        } else {
+          pedigree['unparsed'] = (pedigree['siblings'] || []).push(sample)
+        }
+      })
+
+      return pedigree;
+
+
     } else {
-      console.log("Cannot find proband for pedigree of sample " + sample_id);
-      console.log("raw pedigree");
-      console.log(raw_pedigree);
-      alertify.alert("Error", "Could not load the trio.  Unable to identify a proband (offspring) from this pedigree.")
       return null;
     }
 
-    raw_pedigree.forEach(sample => {
-      if (sample.pedigree.maternal_id != null || sample.pedigree.paternal_id != null
-          && sample.pedigree.id != pedigree.proband.id) {
-        pedigree['siblings'] = (pedigree['siblings'] || [] )
-        pedigree['siblings'].push(sample);
-      } else {
-        pedigree['unparsed'] = (pedigree['siblings'] || []).push(sample)
-      }
-    })
-
-
-    return pedigree;
   }
 
   getPedigreeForSample(project_id, sample_id) {
