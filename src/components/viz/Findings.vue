@@ -24,7 +24,7 @@
 
   .sub-heading
     font-size: 16px
-    font-weight: 500
+    font-weight: 600
     color: $text-color
 
   .case-summary, .clinical-note
@@ -70,21 +70,22 @@
 
   <div id="findings-panel" >
     <v-row align="center" justify="space-around">
-      <v-btn text @click="addNew"> <v-icon>add</v-icon> Content </v-btn>
-      <v-btn text @click="addImage"> <v-icon>add</v-icon> Image </v-btn>
-      <v-btn text @click="addEmbed"> <v-icon>add</v-icon> Embed </v-btn>
+      <v-btn text @click="addNew"> <v-icon class="mr-2">description</v-icon>  Add Content </v-btn>
+      <v-btn text @click="addImage"> <v-icon class="mr-2">insert_photo</v-icon> Add Image </v-btn>
+      <v-btn text @click="addEmbed"> <v-icon class="mr-2">link</v-icon> Embed </v-btn>
       <v-btn text @click="addCodeBlock">
-        <v-icon>add</v-icon> Code block
+        <v-icon class="mr-2">code </v-icon> Add Code Block
       </v-btn>
       <v-spacer></v-spacer>
       <v-btn v-if="draftMode" text @click="publish">
         <v-icon>save</v-icon> Publish
       </v-btn>
       <v-btn v-if="!draftMode" text @click="setDraftMode">
-        <v-icon class="mr-2">create</v-icon> Draft
+        <v-icon class="mr-2">create</v-icon> Edit
       </v-btn>
     </v-row>
 
+      <hr>
       <div style="margin-bottom: 20px">
         <span class="sub-heading">Case Summary </span>
         <div class="case-summary">
@@ -92,6 +93,31 @@
         </div>
 
       </div>
+
+      
+      <div style="width:97%;margin-top:20px;margin-bottom:20px" v-if="clinicalNotes && clinicalNotes.length > 0">
+        <span class="sub-heading">Clinical Note </span>
+        <div class="case-summary">
+        <div style="margin-bottom:20px" class="" v-for="clinicalNote in clinicalNotes" :key="note">
+          <div class="note">
+            {{ clinicalNote.note }}
+          </div>
+        </div>
+        </div>
+      </div>
+      
+      <div style="width:97%;margin-top:20px;margin-bottom:20px" v-if="clinicalNotes && clinicalNotes.length > 0">
+        <span class="sub-heading">Phenotype terms </span>
+        <div class="case-summary">
+        <div style="margin-bottom:20px" class="" v-for="clinicalNote in clinicalNotes" :key="note">
+          <div>
+            {{ clinicalNote.phenotypes.join(", ") }}
+          </div>
+        </div>
+        </div>
+      </div>
+
+
 
       <div v-if="clinicalNotes && clinicalNotes.length > 0" style="width:97%;margin-top:40px;margin-bottom:20px">
         <hr style="border-top:transparent">
@@ -168,10 +194,7 @@
 
 
       </div>
-      <hr>
-      Custom blocks
-      <br>
-      <div v-for="(block, idx) in content" :key="idx" class="mt-5">
+      <div v-for="(block, idx) in content" :key="idx" class="mt-1">
         <div
           @mouseover="hoverDiv(idx)"
           @mouseout="mouseOutDiv"
@@ -179,7 +202,7 @@
             draftMode && mouseOverIdx === idx ? 'blockDivHover' : 'blockDiv',
           ]"
         >
-          <div style="padding: 15px; margin: 5px">
+          <div>
             <br />
             <input
               class="titleEditable"
@@ -188,7 +211,7 @@
               v-if="draftMode"
               style="padding:10px"
             />
-            <div v-if="!draftMode" class="titleEditable">
+            <div v-if="!draftMode" class="sub-heading">
               {{ block.title }}
             </div>
             <!-- <vue-editor v-model="content[idx].body"></vue-editor> -->
@@ -456,40 +479,6 @@ export default {
       draftMode: true,
       mouseOverIdx: null,
       content: [
-        {
-          title: "",
-          modelContent: "Write something",
-          editor: new Editor({
-            editable: true,
-            onUpdate: ({ getJSON, getHTML }) => {
-              console.log("getJSON", getJSON());
-            },
-            content: `Write something`,
-            extensions: [
-              new Blockquote(),
-              new BulletList(),
-              new CodeBlock(),
-              new HardBreak(),
-              new Heading({ levels: [1, 2, 3] }),
-              new ListItem(),
-              new OrderedList(),
-              new TodoItem(),
-              new TodoList(),
-              new Link(),
-              new Bold(),
-              new Code(),
-              new Italic(),
-              new Strike(),
-              new Underline(),
-              new History(),
-              new Focus({
-                className: "has-focus",
-              }),
-            ],
-          }),
-          imageContent: false,
-          body: `<p>Lorem ipsum is a placeholder text commonly used to demonstrate the visual form of a document or a typeface without relying on meaningful content.</p><p>Hola</p>`,
-        },
       ],
       content_editor: "<h1>Some initial content</h1>",
     }
@@ -759,12 +748,12 @@ export default {
 }
 
 .fileinput {
-  display: none;
+  display: none !important;
 }
 
 .titleEditable {
-  font-size: 25px;
-  font-weight: 800;
+  font-size: 18px;
+  font-weight: 600;
   width: 100%;
 }
 
