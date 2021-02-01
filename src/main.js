@@ -12,6 +12,9 @@ global.$ = jQuery
 
 import VueAnalytics from 'vue-analytics';
 
+import ImageUploader from "vue-image-upload-resize";
+Vue.use(ImageUploader);
+
 
 import VTooltip from 'v-tooltip'
 import './assets/css/v-tooltip.css'
