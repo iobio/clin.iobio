@@ -256,7 +256,8 @@ $horizontal-dashboard-height: 140px
             :demoTextNote="analysis.payload.demoTextNote"
             @VennDiagramData="VennDiagramData($event)"
             :geneToDelete="geneToDelete"
-            @new_term_searched="new_term_searched($event)">
+            @new_term_searched="new_term_searched($event)"
+            :textNotesLandingPage="textNotesLandingPage">
           </PhenotypeExtractor>
         </keep-alive>
 
@@ -273,7 +274,13 @@ $horizontal-dashboard-height: 140px
             :selectedGenesForGeneSet="selectedGenesForGeneSet"
             @update_genes_top="update_genes_top($event)"
             :topGenesSelectedCount="genesTop"
-            :newTermSearched="newTermSearched">
+            :newTermSearched="newTermSearched"
+            :exportGenesFlag="exportGenesFlag"
+            :gtrResourceUsed="gtrResourceUsed"
+            :hpoResourceUsed="hpoResourceUsed"
+            :PhenolyzerResourceUsed="PhenolyzerResourceUsed"
+            :mosaic_gene_set="mosaic_gene_set"
+            >
           </GeneList>
         </keep-alive>
 
@@ -616,7 +623,13 @@ export default {
       genesAssociatedWithSource: {},
       genesTop: 20,
       noGeneSetWarningDialog: false,
-      newTermSearched: false
+      newTermSearched: false,
+      textNotesLandingPage: "",
+      exportGenesFlag: false,
+      gtrResourceUsed: false,
+      hpoResourceUsed: false,
+      PhenolyzerResourceUsed: false,
+      mosaic_gene_set: "",
     }
 
   },
@@ -2072,6 +2085,11 @@ export default {
 
     GtrGeneList(genes){
       var gtrCompleteLsit = [];
+      if (genes.length === 0) {
+        this.gtrResourceUsed = false;
+      } else if (genes.length > 1) {
+        this.gtrResourceUsed = true;
+      }
       genes.map(gene=>{
         if(!this.deletedGenesList.includes(gene.name)){
           gtrCompleteLsit.push({
@@ -2086,6 +2104,11 @@ export default {
 
     PhenolyzerGeneList(genes){
       var phenolyzerCompleteList = [];
+      if (genes.length === 0) {
+        this.PhenolyzerResourceUsed = false;
+      } else if (genes.length > 1) {
+        this.PhenolyzerResourceUsed = true;
+      }
       genes.map(gene=>{
         if(!this.deletedGenesList.includes(gene.geneName)){
           phenolyzerCompleteList.push({
@@ -2099,6 +2122,11 @@ export default {
 
     HpoGeneList(genes){
       var hpoCompleteList = [];
+      if (genes.length === 0) {
+        this.hpoResourceUsed = false;
+      } else if (genes.length > 1) {
+        this.hpoResourceUsed = true;
+      }
       genes.map(gene=>{
         if(!this.deletedGenesList.includes(gene.gene)){
           hpoCompleteList.push({
