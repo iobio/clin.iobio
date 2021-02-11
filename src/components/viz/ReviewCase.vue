@@ -1081,27 +1081,35 @@ export default {
         tempUuids[i] = this.sampleUuids[index];
         // tempMedianCoverages[i] = this.medianCoverages[index];
         
-        var var_count_idx; 
-        for(var j=0; j<this.varCountsArray.length; j++){
-          if(this.varCountsArray[j].sample === this.sampleIds[index]){
-            var_count_idx = j;
-            // console.log("j", this.varCountsArray[j].sample);
+        if(this.launchedFromMosaic){
+          var var_count_idx; 
+          for(var j=0; j<this.varCountsArray.length; j++){
+            if(this.varCountsArray[j].sample === this.sampleIds[index]){
+              var_count_idx = j;
+              // console.log("j", this.varCountsArray[j].sample);
+            }
           }
-        }
-        tempVarCounts[i] = this.varCountsArray[var_count_idx];
-        tempMedianCoverages[i] = this.varCountsArray[var_count_idx].median;
+          tempVarCounts[i] = this.varCountsArray[var_count_idx];
+          tempMedianCoverages[i] = this.varCountsArray[var_count_idx].median;
 
-        
-        
-        var coverage_idx; 
-        for(var k=0; k<this.varCountsArray.length; k++){
-          if(this.varCountsArray[k].sample === this.sampleIds[index]){
-            coverage_idx = k;
-            // console.log("k", this.varCountsArray[k].sample);
+          
+          
+          var coverage_idx; 
+          for(var k=0; k<this.varCountsArray.length; k++){
+            if(this.varCountsArray[k].sample === this.sampleIds[index]){
+              coverage_idx = k;
+              // console.log("k", this.varCountsArray[k].sample);
+            }
           }
+          tempCoverage[i] = this.coverageDataArray[coverage_idx];
+          console.log("this.medianCoverages[coverage_idx]", this.medianCoverages[coverage_idx]);
         }
-        tempCoverage[i] = this.coverageDataArray[coverage_idx];
-        console.log("this.medianCoverages[coverage_idx]", this.medianCoverages[coverage_idx]);
+        else {
+          tempCoverage[i] = this.coverageDataArray[index];
+          tempVarCounts[i] = this.varCountsArray[index];
+          tempMedianCoverages[i] = this.medianCoverages[index];
+
+        }
 
         
       }
