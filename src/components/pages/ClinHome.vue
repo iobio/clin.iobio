@@ -1019,10 +1019,10 @@ export default {
             // when launching clin.iobio from Mosaic
             if (self.variantSet && self.variantSet.variants) {
               let bypassedCount = 0;
-              self.variantSet.variants.filter(function(variant) {
-                return variant.sample_ids.indexOf(parseInt(self.paramSampleId)) >= 0;
-              })
-              .forEach(function(variant) {
+              // self.variantSet.variants.filter(function(variant) {
+              //   return variant.het_sample_ids.indexOf(parseInt(self.paramSampleId)) >= 0;
+              // })
+              self.variantSet.variants.forEach(function(variant) {
                 let importedVariant = {};
                 if (variant.gene_symbol && variant.gene_symbol.length > 0) {
                   importedVariant.gene  = variant.gene_symbol;
@@ -1049,10 +1049,10 @@ export default {
               })
               if (bypassedCount > 0) {
                 if (bypassedCount == self.variantSet.variants.length) {
-                  alert("Error", "None of the " + bypassedCount + " variants were loaded because the variants were missing gene name.", )
+                  // alert("Error", "None of the " + bypassedCount + " variants were loaded because the variants were missing gene name.", )
 
                 } else {
-                  alert("Warning", bypassedCount + " variants bypassed due to missing gene name")
+                  // alert("Warning", bypassedCount + " variants bypassed due to missing gene name")
 
                 }
               }
