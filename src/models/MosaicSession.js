@@ -95,8 +95,8 @@ export default class MosaicSession {
                     let theSample = data.sample;
                     theSample.files = data.fileMap;
                     var sample_name = theSample.vcf_sample_name
-                    let coverageHisto =  {id: sampleId, coverage: theSample.distributions.coverage_hist_no_outliers, sample: sample_name};
-                    let varCounts = {id: sampleId, sample: sample_name, counts : { SNP: theSample.attributes.var_snp_count, indel : theSample.attributes.var_indel_count, other: theSample.attributes.var_other_count}}
+                    let coverageHisto =  {id: sampleId, coverage: theSample.distributions.coverage_hist_no_outliers, sample: sample_name, median: theSample.attributes.median_read_coverage};
+                    let varCounts = {id: sampleId, sample: sample_name, median: theSample.attributes.median_read_coverage, counts : { SNP: theSample.attributes.var_snp_count, indel : theSample.attributes.var_indel_count, other: theSample.attributes.var_other_count}}
 
 
                     // gene.iobio only supports siblings in same multi-sample vcf as proband.

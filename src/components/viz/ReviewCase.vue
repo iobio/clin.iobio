@@ -1065,6 +1065,7 @@ export default {
       console.log("this.sampleIdsAndRelationships", this.sampleIdsAndRelationships);
       console.log("this.sampleIds", this.sampleIds);
       console.log("this.varCountsArray", this.varCountsArray);
+      console.log("this.coverageDataArray", this.coverageDataArray);
       
       
       for(let i = 0; i < this.sortedIndices.length; i++){
@@ -1088,6 +1089,8 @@ export default {
           }
         }
         tempVarCounts[i] = this.varCountsArray[var_count_idx];
+        tempMedianCoverages[i] = this.varCountsArray[var_count_idx].median;
+
         
         
         var coverage_idx; 
@@ -1098,8 +1101,7 @@ export default {
           }
         }
         tempCoverage[i] = this.coverageDataArray[coverage_idx];
-        tempMedianCoverages[i] = this.medianCoverages[coverage_idx];
-
+        console.log("this.medianCoverages[coverage_idx]", this.medianCoverages[coverage_idx]);
 
         
       }
