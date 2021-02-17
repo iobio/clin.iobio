@@ -602,7 +602,6 @@ export default class MosaicSession {
   return new Promise(function(resolve, reject) {
     self.getVariantSet(projectId, variantSetId)
     .done(response => {
-      console.log("resp", response);
       resolve(response)
     })
     .fail(error => {

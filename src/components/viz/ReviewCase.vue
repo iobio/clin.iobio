@@ -1061,13 +1061,6 @@ export default {
         tempMedianCoverages.push(null);
       }
       
-      console.log("this.sortedIndices", this.sortedIndices);
-      console.log("this.sampleIdsAndRelationships", this.sampleIdsAndRelationships);
-      console.log("this.sampleIds", this.sampleIds);
-      console.log("this.varCountsArray", this.varCountsArray);
-      console.log("this.coverageDataArray", this.coverageDataArray);
-      
-      
       for(let i = 0; i < this.sortedIndices.length; i++){
         let index = this.sortedIndices[i];
         // console.log("index is", index);
@@ -1102,7 +1095,6 @@ export default {
             }
           }
           tempCoverage[i] = this.coverageDataArray[coverage_idx];
-          console.log("this.medianCoverages[coverage_idx]", this.medianCoverages[coverage_idx]);
         }
         else {
           tempCoverage[i] = this.coverageDataArray[index];
