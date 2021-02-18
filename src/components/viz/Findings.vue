@@ -180,6 +180,7 @@ export default {
     caseSummary: null,
     variantsByInterpretation: null,
     interpretationMap: null,
+    noteClinical: null
   },
   data() {
     return {
@@ -290,6 +291,9 @@ export default {
   },
   watch: {
     analysis: function() {
+      this.initClinicalNotes();
+    },
+    noteClinical: function(){
       this.initClinicalNotes();
     },
     variantsByInterpretation: function() {
