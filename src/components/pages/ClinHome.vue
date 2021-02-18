@@ -297,6 +297,7 @@ $horizontal-dashboard-height: 140px
         :genomeBuildHelper="genomeBuildHelper"
         :modelInfos="modelInfos"
         :caseSummary="caseSummary"
+        :noteClinical="analysis.payload.phenotypes[3]"
         :analysis="analysis"
         :variantsByInterpretation="variantsByInterpretation"
         :interpretationMap="interpretationMap">
