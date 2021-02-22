@@ -1863,7 +1863,6 @@ export default {
     },
 
     promiseUpdateGenesReport: function(genes) {
-      console.log("genesReport", genes);
       let self = this;
       self.analysis.payload.genesReport = genes;
       this.setGenePhenotypeHitsFromClin(genes);
@@ -1918,7 +1917,6 @@ export default {
         })
 
       }
-      console.log("this.genePhenotypeHits", this.genePhenotypeHits);
       this.setGlobalgenePhenotypeHits(this.genePhenotypeHits); //Sets this.genePhenotypeHits to global state
     },
 
@@ -2002,7 +2000,6 @@ export default {
         interpretation.genes             = self.getUniqueGenes(interpretation.organizedVariants);
         self.variantsByInterpretation.push(interpretation)
       })
-      console.log("self.variantsByInterpretation", self.variantsByInterpretation);
     },
     organizeVariantsByFilter: function(interpretation) {
       let self = this;
@@ -2565,7 +2562,7 @@ export default {
       analysis_obj.genes_top = this.getGenesTop;
       analysis_obj.genesAssociatedWithSource = this.getSourceForGenes;
       analysis_obj.pass_code = Math.floor(100000 + Math.random() * 900000);
-      console.log("analysis_obj", analysis_obj);
+      // console.log("analysis_obj", analysis_obj);
       let analysisObject = JSON.stringify(analysis_obj);
       const jsonBlob = new Blob([analysisObject], { type: "application/json" });
       saveAs(jsonBlob, "clin-saved-analysis.json");

@@ -121,9 +121,6 @@
           
           <span v-if="selectedGene.gene_name">
             <div>
-              
-              {{ getGlobalgenePhenotypeHit }}
-              
               <span class="chart-label">Source: </span>
               <span v-for="(source, idx) in getSourceIndicatorBadge" :key="idx">
                 <v-tooltip top>
@@ -1177,25 +1174,6 @@ export default {
       return this.getSourceForGenes[this.selectedGene.gene_name].sourceIndicator;
     },
     
-    getGlobalgenePhenotypeHit: function() {
-      console.log("getGlobalgenePhenotypeHits", this.getGlobalgenePhenotypeHits);
-      console.log("this.selectedGene.gene_name", this.selectedGene.gene_name);
-      if (this.getGlobalgenePhenotypeHits) {
-        if (this.getGlobalgenePhenotypeHits[this.selectedGene.gene_name]) {
-          console.log("this.genePhenotypeHits[this.selectedGene.gene_name]", this.getGlobalgenePhenotypeHits[this.selectedGene.gene_name]);
-          return this.getGlobalgenePhenotypeHits[this.selectedGene.gene_name]
-        }
-        else{
-          return "";
-        }
-      } else {
-        return "";
-      }
-
-      // return "Hello"
-    },
-    
-    
     genePhenotypeRankings: function() {
       if (this.getGlobalgenePhenotypeHits) {
         if (this.getGlobalgenePhenotypeHits[this.selectedGene.gene_name]) {
@@ -1208,9 +1186,7 @@ export default {
               genePhenotypeRankings.push( {key: searchTerm, searchTerm: searchTermLabel, geneRanks: rankRecs } );
             }
           }
-          console.log("genePhenotypeRankings", genePhenotypeRankings);
           return genePhenotypeRankings;
-          // return this.getGlobalgenePhenotypeHits[this.selectedGene.gene_name]
         }
         else{
           return "";
@@ -1218,20 +1194,6 @@ export default {
       } else {
         return "";
       }
-    },
-    
-    initGenePhenotypeHitsCop: function() {
-      // console.log("genePhenotypeHits", this.genePhenotypeHits);
-      // console.log("self.selectedGene", self.selectedGene);
-      let self = this;
-      self.genePhenotypeRankings= [];
-      // if (self.selectedGene && self.selectedVariant && self.genePhenotypeHits) {
-        for (var searchTerm in self.genePhenotypeHits) {
-          let searchTermLabel = searchTerm.split("_").join(" ");
-          var rankRecs        = self.genePhenotypeHits[searchTerm];
-          self.genePhenotypeRankings.push( {key: searchTerm, searchTerm: searchTermLabel, geneRanks: rankRecs } );
-        }
-      // }
     },
 
   },
