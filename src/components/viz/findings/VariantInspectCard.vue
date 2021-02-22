@@ -157,9 +157,6 @@
             <div class="variant-inspect-column " v-if="selectedVariant" >
                 <div class="variant-column-header">
                   Gene Associations
-                  <p>
-                    <!-- {{ initGenePhenotypeHitsCop }} -->
-                  </p>
                   <v-divider></v-divider>
                 </div>
                 <div v-if="genePhenotypeRankings && genePhenotypeRankings!==null && genePhenotypeRankings.length" >
@@ -832,7 +829,6 @@ export default {
     },
 
     initGenePhenotypeHits: function() {
-      console.log("genePhenotypeHits", this.genePhenotypeHits);
       let self = this;
       self.genePhenotypeRankings= [];
       if (self.selectedGene && self.selectedVariant && self.genePhenotypeHits) {
