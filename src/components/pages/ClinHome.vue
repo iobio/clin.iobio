@@ -298,6 +298,9 @@ $horizontal-dashboard-height: 140px
         :modelInfos="modelInfos"
         :caseSummary="caseSummary"
         :noteClinical="analysis.payload.phenotypes[3]"
+        :gtrTerms="analysis.payload.phenotypes[0]"
+        :phenolyzerTerms="analysis.payload.phenotypes[1]"
+        :hpoTerms="analysis.payload.phenotypes[2]"
         :analysis="analysis"
         :variantsByInterpretation="variantsByInterpretation"
         :interpretationMap="interpretationMap">
@@ -631,6 +634,7 @@ export default {
       hpoResourceUsed: false,
       PhenolyzerResourceUsed: false,
       mosaic_gene_set: "",
+      genePhenotypeHits: {},
     }
 
   },
@@ -675,7 +679,7 @@ export default {
   },
 
   computed: {
-    ...mapGetters(['getPedigreeData', 'getPedigree', 'getVariantsCount', 'getCustomCoverage', 'getReviewCaseBadge', 'getVariantsByInterpretation', 'getModelInfos', 'getGeneSet', 'getCaseSummary', 'getBuildName', 'getAnalysisProgressStatus', 'getLaunchedFromMosaicFlag', 'getSelectedGenesForVariantsReview', 'getGenesTop', 'getSourceForGenes']),
+    ...mapGetters(['getPedigreeData', 'getPedigree', 'getVariantsCount', 'getCustomCoverage', 'getReviewCaseBadge', 'getVariantsByInterpretation', 'getModelInfos', 'getGeneSet', 'getCaseSummary', 'getBuildName', 'getAnalysisProgressStatus', 'getLaunchedFromMosaicFlag', 'getSelectedGenesForVariantsReview', 'getGenesTop', 'getSourceForGenes', 'getGlobalgenePhenotypeHits']),
     phenotypeList: function() {
       let self = this;
       let phenotypeList = [];
@@ -782,7 +786,7 @@ export default {
   },
 
   methods: {
-    ...mapActions(['updateAnalysis', 'setModelInfos', 'setCustomGeneSet', 'setCaseSummary', 'setBuildName', 'setImportedVariantSets', 'setAnalysisInProgressStatus', 'setMosaicLaunchFlag', 'setSelectedGenesForVariantsReview', 'setGenesSource', 'setGenesTop']),
+    ...mapActions(['updateAnalysis', 'setModelInfos', 'setCustomGeneSet', 'setCaseSummary', 'setBuildName', 'setImportedVariantSets', 'setAnalysisInProgressStatus', 'setMosaicLaunchFlag', 'setSelectedGenesForVariantsReview', 'setGenesSource', 'setGenesTop', 'setGlobalgenePhenotypeHits']),
 
     init: function() {
       let self = this;
@@ -1859,10 +1863,63 @@ export default {
     },
 
     promiseUpdateGenesReport: function(genes) {
+      console.log("genesReport", genes);
       let self = this;
       self.analysis.payload.genesReport = genes;
+      this.setGenePhenotypeHitsFromClin(genes);
       self.analysis.payload.datetime_last_modified = self.getCurrentDateTime();
       return self.promiseAutosaveAnalysis();
+    },
+    
+    setGenePhenotypeHitsFromClin(genesReport) {
+      let self = this;
+      if (genesReport) {
+        this.genePhenotypeHits = {};
+        genesReport.forEach(function(geneEntry) {
+          var searchTerms = self.genePhenotypeHits[geneEntry.name];
+          if (searchTerms == null) {
+            searchTerms = {};
+            self.genePhenotypeHits[geneEntry.name] = searchTerms;
+          }
+          if (geneEntry.searchTermsGtr && geneEntry.searchTermsGtr.length > 0) {
+            geneEntry.searchTermsGtr.forEach(function(searchTermObject) {
+              var searchTerm = searchTermObject.searchTerm.split(" ").join("_");
+              var ranks = searchTerms[searchTerm];
+              if (ranks == null) {
+                ranks = [];
+                searchTerms[searchTerm] = ranks;
+              }
+              ranks.push( {'rank': searchTermObject.rank, 'source': 'GTR'});
+            })
+          }
+          if (geneEntry.searchTermsPhenolyzer && geneEntry.searchTermsPhenolyzer.length > 0) {
+            geneEntry.searchTermsPhenolyzer.forEach(function(searchTermObject) {
+              var searchTerm = searchTermObject.searchTerm.split(" ").join("_");
+              var ranks = searchTerms[searchTerm];
+              if (ranks == null) {
+                ranks = [];
+                searchTerms[searchTerm] = ranks;
+              }
+              ranks.push( {'rank': searchTermObject.rank, 'source': 'Phen.'});
+            })
+          }
+          if (geneEntry.searchTermHpo && geneEntry.searchTermHpo.length > 0) {
+            geneEntry.searchTermHpo.forEach(function(searchTermObject) {
+              var searchTerm = searchTermObject.searchTerm.split(" ").join("_");
+              var ranks = searchTerms[searchTerm];
+              if (ranks == null) {
+                ranks = [];
+                searchTerms[searchTerm] = ranks;
+              }
+              ranks.push( { 'hpoPhenotype': searchTermObject.hpoPhenotype, 'source': 'HPO'});
+            })
+          }
+
+        })
+
+      }
+      console.log("this.genePhenotypeHits", this.genePhenotypeHits);
+      this.setGlobalgenePhenotypeHits(this.genePhenotypeHits); //Sets this.genePhenotypeHits to global state
     },
 
     promiseUpdateAnalysis: function(analysis) {
@@ -1945,6 +2002,7 @@ export default {
         interpretation.genes             = self.getUniqueGenes(interpretation.organizedVariants);
         self.variantsByInterpretation.push(interpretation)
       })
+      console.log("self.variantsByInterpretation", self.variantsByInterpretation);
     },
     organizeVariantsByFilter: function(interpretation) {
       let self = this;

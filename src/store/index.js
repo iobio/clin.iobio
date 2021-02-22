@@ -22,7 +22,8 @@ export default new Vuex.Store({
     is_launched_from_mosaic: false,
     selected_genes_for_variants_review: [],
     genesAssociatedWithSource: {},
-    genes_top: 20
+    genes_top: 20,
+    genePhenotypeHits_global: {},
   },
   getters: {
     allAnalysis: state => state.analysis,
@@ -42,6 +43,7 @@ export default new Vuex.Store({
     getSelectedGenesForVariantsReview: state => state.selected_genes_for_variants_review,
     getSourceForGenes: state => state.genesAssociatedWithSource,
     getGenesTop: state => state.genes_top,
+    getGlobalgenePhenotypeHits: state => state.genePhenotypeHits_global,
   },
   actions: {
     fetchAnalysis({ commit }){
@@ -96,8 +98,10 @@ export default new Vuex.Store({
       commit('SET_GENES_SOURCE', sourceObj)
     },
     setGenesTop({commit}, number){
-      console.log("setGenesTop number", number);
       commit('SET_GENES_TOP', number)
+    },
+    setGlobalgenePhenotypeHits({commit}, genesReport){
+      commit('SET_GENE_PHENOTYPE_HITS', genesReport)
     },
   },
   mutations: {
@@ -119,6 +123,7 @@ export default new Vuex.Store({
     SET_SELECTED_GENES_FOR_VARIANTS_REVIEW: (state, genes) => state.selected_genes_for_variants_review = genes,
     SET_GENES_SOURCE: (state, sourceObj) => state.genesAssociatedWithSource = sourceObj,
     SET_GENES_TOP: (state, number) => state.genes_top = number,
+    SET_GENE_PHENOTYPE_HITS: (state, genesReport) => state.genePhenotypeHits_global = genesReport,
   },
   modules: {
   }

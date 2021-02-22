@@ -141,6 +141,9 @@
                  :genePhenotypeHits="variant.variantInspect.genePhenotypeHits"
                  :interpretationMap="interpretationMap"
                  :drugsObj="drugsObj"
+                 :gtrTerms="gtrTerms"
+                 :phenolyzerTerms="phenolyzerTerms"
+                 :hpoTerms="hpoTerms"
                 >
 
                 </variant-inspect-card>
@@ -180,7 +183,10 @@ export default {
     caseSummary: null,
     variantsByInterpretation: null,
     interpretationMap: null,
-    noteClinical: null
+    noteClinical: null,
+    gtrTerms: null,
+    phenolyzerTerms: null,
+    hpoTerms: null,
   },
   data() {
     return {
@@ -301,6 +307,11 @@ export default {
       this.initClinicalNotes();
       this.checkIfVariantsinterpreted(); 
     }, 
+    hpoTerms: function() {
+    },
+    phenolyzerTerms: function() {
+    }
+
   },
 }
 </script>
