@@ -256,7 +256,8 @@ $horizontal-dashboard-height: 140px
             :demoTextNote="analysis.payload.demoTextNote"
             @VennDiagramData="VennDiagramData($event)"
             :geneToDelete="geneToDelete"
-            @new_term_searched="new_term_searched($event)">
+            @new_term_searched="new_term_searched($event)"
+            :textNotesLandingPage="textNotesLandingPage">
           </PhenotypeExtractor>
         </keep-alive>
 
@@ -273,7 +274,13 @@ $horizontal-dashboard-height: 140px
             :selectedGenesForGeneSet="selectedGenesForGeneSet"
             @update_genes_top="update_genes_top($event)"
             :topGenesSelectedCount="genesTop"
-            :newTermSearched="newTermSearched">
+            :newTermSearched="newTermSearched"
+            :exportGenesFlag="exportGenesFlag"
+            :gtrResourceUsed="gtrResourceUsed"
+            :hpoResourceUsed="hpoResourceUsed"
+            :PhenolyzerResourceUsed="PhenolyzerResourceUsed"
+            :mosaic_gene_set="mosaic_gene_set"
+            >
           </GeneList>
         </keep-alive>
 
@@ -290,6 +297,10 @@ $horizontal-dashboard-height: 140px
         :genomeBuildHelper="genomeBuildHelper"
         :modelInfos="modelInfos"
         :caseSummary="caseSummary"
+        :noteClinical="analysis.payload.phenotypes[3]"
+        :gtrTerms="analysis.payload.phenotypes[0]"
+        :phenolyzerTerms="analysis.payload.phenotypes[1]"
+        :hpoTerms="analysis.payload.phenotypes[2]"
         :analysis="analysis"
         :variantsByInterpretation="variantsByInterpretation"
         :interpretationMap="interpretationMap">
@@ -616,7 +627,14 @@ export default {
       genesAssociatedWithSource: {},
       genesTop: 20,
       noGeneSetWarningDialog: false,
-      newTermSearched: false
+      newTermSearched: false,
+      textNotesLandingPage: "",
+      exportGenesFlag: false,
+      gtrResourceUsed: false,
+      hpoResourceUsed: false,
+      PhenolyzerResourceUsed: false,
+      mosaic_gene_set: "",
+      genePhenotypeHits: {},
     }
 
   },
@@ -661,7 +679,7 @@ export default {
   },
 
   computed: {
-    ...mapGetters(['getPedigreeData', 'getPedigree', 'getVariantsCount', 'getCustomCoverage', 'getReviewCaseBadge', 'getVariantsByInterpretation', 'getModelInfos', 'getGeneSet', 'getCaseSummary', 'getBuildName', 'getAnalysisProgressStatus', 'getLaunchedFromMosaicFlag', 'getSelectedGenesForVariantsReview', 'getGenesTop', 'getSourceForGenes']),
+    ...mapGetters(['getPedigreeData', 'getPedigree', 'getVariantsCount', 'getCustomCoverage', 'getReviewCaseBadge', 'getVariantsByInterpretation', 'getModelInfos', 'getGeneSet', 'getCaseSummary', 'getBuildName', 'getAnalysisProgressStatus', 'getLaunchedFromMosaicFlag', 'getSelectedGenesForVariantsReview', 'getGenesTop', 'getSourceForGenes', 'getGlobalgenePhenotypeHits']),
     phenotypeList: function() {
       let self = this;
       let phenotypeList = [];
@@ -768,7 +786,7 @@ export default {
   },
 
   methods: {
-    ...mapActions(['updateAnalysis', 'setModelInfos', 'setCustomGeneSet', 'setCaseSummary', 'setBuildName', 'setImportedVariantSets', 'setAnalysisInProgressStatus', 'setMosaicLaunchFlag', 'setSelectedGenesForVariantsReview', 'setGenesSource', 'setGenesTop']),
+    ...mapActions(['updateAnalysis', 'setModelInfos', 'setCustomGeneSet', 'setCaseSummary', 'setBuildName', 'setImportedVariantSets', 'setAnalysisInProgressStatus', 'setMosaicLaunchFlag', 'setSelectedGenesForVariantsReview', 'setGenesSource', 'setGenesTop', 'setGlobalgenePhenotypeHits']),
 
     init: function() {
       let self = this;
@@ -1006,10 +1024,10 @@ export default {
             // when launching clin.iobio from Mosaic
             if (self.variantSet && self.variantSet.variants) {
               let bypassedCount = 0;
-              self.variantSet.variants.filter(function(variant) {
-                return variant.sample_ids.indexOf(parseInt(self.paramSampleId)) >= 0;
-              })
-              .forEach(function(variant) {
+              // self.variantSet.variants.filter(function(variant) {
+              //   return variant.het_sample_ids.indexOf(parseInt(self.paramSampleId)) >= 0;
+              // })
+              self.variantSet.variants.forEach(function(variant) {
                 let importedVariant = {};
                 if (variant.gene_symbol && variant.gene_symbol.length > 0) {
                   importedVariant.gene  = variant.gene_symbol;
@@ -1036,10 +1054,10 @@ export default {
               })
               if (bypassedCount > 0) {
                 if (bypassedCount == self.variantSet.variants.length) {
-                  alert("Error", "None of the " + bypassedCount + " variants were loaded because the variants were missing gene name.", )
+                  // alert("Error", "None of the " + bypassedCount + " variants were loaded because the variants were missing gene name.", )
 
                 } else {
-                  alert("Warning", bypassedCount + " variants bypassed due to missing gene name")
+                  // alert("Warning", bypassedCount + " variants bypassed due to missing gene name")
 
                 }
               }
@@ -1847,8 +1865,59 @@ export default {
     promiseUpdateGenesReport: function(genes) {
       let self = this;
       self.analysis.payload.genesReport = genes;
+      this.setGenePhenotypeHitsFromClin(genes);
       self.analysis.payload.datetime_last_modified = self.getCurrentDateTime();
       return self.promiseAutosaveAnalysis();
+    },
+    
+    setGenePhenotypeHitsFromClin(genesReport) {
+      let self = this;
+      if (genesReport) {
+        this.genePhenotypeHits = {};
+        genesReport.forEach(function(geneEntry) {
+          var searchTerms = self.genePhenotypeHits[geneEntry.name];
+          if (searchTerms == null) {
+            searchTerms = {};
+            self.genePhenotypeHits[geneEntry.name] = searchTerms;
+          }
+          if (geneEntry.searchTermsGtr && geneEntry.searchTermsGtr.length > 0) {
+            geneEntry.searchTermsGtr.forEach(function(searchTermObject) {
+              var searchTerm = searchTermObject.searchTerm.split(" ").join("_");
+              var ranks = searchTerms[searchTerm];
+              if (ranks == null) {
+                ranks = [];
+                searchTerms[searchTerm] = ranks;
+              }
+              ranks.push( {'rank': searchTermObject.rank, 'source': 'GTR'});
+            })
+          }
+          if (geneEntry.searchTermsPhenolyzer && geneEntry.searchTermsPhenolyzer.length > 0) {
+            geneEntry.searchTermsPhenolyzer.forEach(function(searchTermObject) {
+              var searchTerm = searchTermObject.searchTerm.split(" ").join("_");
+              var ranks = searchTerms[searchTerm];
+              if (ranks == null) {
+                ranks = [];
+                searchTerms[searchTerm] = ranks;
+              }
+              ranks.push( {'rank': searchTermObject.rank, 'source': 'Phen.'});
+            })
+          }
+          if (geneEntry.searchTermHpo && geneEntry.searchTermHpo.length > 0) {
+            geneEntry.searchTermHpo.forEach(function(searchTermObject) {
+              var searchTerm = searchTermObject.searchTerm.split(" ").join("_");
+              var ranks = searchTerms[searchTerm];
+              if (ranks == null) {
+                ranks = [];
+                searchTerms[searchTerm] = ranks;
+              }
+              ranks.push( { 'hpoPhenotype': searchTermObject.hpoPhenotype, 'source': 'HPO'});
+            })
+          }
+
+        })
+
+      }
+      this.setGlobalgenePhenotypeHits(this.genePhenotypeHits); //Sets this.genePhenotypeHits to global state
     },
 
     promiseUpdateAnalysis: function(analysis) {
@@ -2072,6 +2141,11 @@ export default {
 
     GtrGeneList(genes){
       var gtrCompleteLsit = [];
+      if (genes.length === 0) {
+        this.gtrResourceUsed = false;
+      } else if (genes.length > 1) {
+        this.gtrResourceUsed = true;
+      }
       genes.map(gene=>{
         if(!this.deletedGenesList.includes(gene.name)){
           gtrCompleteLsit.push({
@@ -2086,6 +2160,11 @@ export default {
 
     PhenolyzerGeneList(genes){
       var phenolyzerCompleteList = [];
+      if (genes.length === 0) {
+        this.PhenolyzerResourceUsed = false;
+      } else if (genes.length > 1) {
+        this.PhenolyzerResourceUsed = true;
+      }
       genes.map(gene=>{
         if(!this.deletedGenesList.includes(gene.geneName)){
           phenolyzerCompleteList.push({
@@ -2099,6 +2178,11 @@ export default {
 
     HpoGeneList(genes){
       var hpoCompleteList = [];
+      if (genes.length === 0) {
+        this.hpoResourceUsed = false;
+      } else if (genes.length > 1) {
+        this.hpoResourceUsed = true;
+      }
       genes.map(gene=>{
         if(!this.deletedGenesList.includes(gene.gene)){
           hpoCompleteList.push({
@@ -2478,7 +2562,7 @@ export default {
       analysis_obj.genes_top = this.getGenesTop;
       analysis_obj.genesAssociatedWithSource = this.getSourceForGenes;
       analysis_obj.pass_code = Math.floor(100000 + Math.random() * 900000);
-      console.log("analysis_obj", analysis_obj);
+      // console.log("analysis_obj", analysis_obj);
       let analysisObject = JSON.stringify(analysis_obj);
       const jsonBlob = new Blob([analysisObject], { type: "application/json" });
       saveAs(jsonBlob, "clin-saved-analysis.json");

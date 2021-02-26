@@ -1060,16 +1060,50 @@ export default {
         tempUuids.push(null);
         tempMedianCoverages.push(null);
       }
-
+      
       for(let i = 0; i < this.sortedIndices.length; i++){
         let index = this.sortedIndices[i];
+        // console.log("index is", index);
+        // console.log("relation and id", this.sampleIdsAndRelationships[index]);
+        // console.log("samples", this.sampleIds[index]);
         tempPed[i] = this.pedigreeDataArray[index];
-        tempCoverage[i] = this.coverageDataArray[index];
-        tempVarCounts[i] = this.varCountsArray[index];
+        // tempCoverage[i] = this.coverageDataArray[index];
+        // tempVarCounts[i] = this.varCountsArray[index];
         tempSampleRelationship[i] = this.sampleIdsAndRelationships[index];
         tempSamples[i] = this.sampleIds[index];
         tempUuids[i] = this.sampleUuids[index];
-        tempMedianCoverages[i] = this.medianCoverages[index];
+        // tempMedianCoverages[i] = this.medianCoverages[index];
+        
+        if(this.launchedFromMosaic){
+          var var_count_idx; 
+          for(var j=0; j<this.varCountsArray.length; j++){
+            if(this.varCountsArray[j].sample === this.sampleIds[index]){
+              var_count_idx = j;
+              // console.log("j", this.varCountsArray[j].sample);
+            }
+          }
+          tempVarCounts[i] = this.varCountsArray[var_count_idx];
+          tempMedianCoverages[i] = this.varCountsArray[var_count_idx].median;
+
+          
+          
+          var coverage_idx; 
+          for(var k=0; k<this.varCountsArray.length; k++){
+            if(this.varCountsArray[k].sample === this.sampleIds[index]){
+              coverage_idx = k;
+              // console.log("k", this.varCountsArray[k].sample);
+            }
+          }
+          tempCoverage[i] = this.coverageDataArray[coverage_idx];
+        }
+        else {
+          tempCoverage[i] = this.coverageDataArray[index];
+          tempVarCounts[i] = this.varCountsArray[index];
+          tempMedianCoverages[i] = this.medianCoverages[index];
+
+        }
+
+        
       }
 
       this.pedigreeDataArray = tempPed.filter(function(el) { return el; });

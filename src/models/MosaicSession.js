@@ -94,9 +94,9 @@ export default class MosaicSession {
                   let p =  self.promiseGetFileMapForSample(projectId, s, rel).then(data => {
                     let theSample = data.sample;
                     theSample.files = data.fileMap;
-
-                    let coverageHisto =  {id: sampleId, coverage: theSample.distributions.coverage_hist_no_outliers};
-                    let varCounts = {id: sampleId, counts : { SNP: theSample.attributes.var_snp_count, indel : theSample.attributes.var_indel_count, other: theSample.attributes.var_other_count}}
+                    var sample_name = theSample.vcf_sample_name
+                    let coverageHisto =  {id: sampleId, coverage: theSample.distributions.coverage_hist_no_outliers, sample: sample_name, median: theSample.attributes.median_read_coverage};
+                    let varCounts = {id: sampleId, sample: sample_name, median: theSample.attributes.median_read_coverage, counts : { SNP: theSample.attributes.var_snp_count, indel : theSample.attributes.var_indel_count, other: theSample.attributes.var_other_count}}
 
 
                     // gene.iobio only supports siblings in same multi-sample vcf as proband.
@@ -602,7 +602,6 @@ export default class MosaicSession {
   return new Promise(function(resolve, reject) {
     self.getVariantSet(projectId, variantSetId)
     .done(response => {
-      console.log("resp", response);
       resolve(response)
     })
     .fail(error => {
@@ -768,10 +767,23 @@ export default class MosaicSession {
   
   getVariantSet(projectId, variantSetId) {
     let self = this;
-
+    // let u = self.apiDepricated + '/projects/' + projectId + '/variants?variant_set_id=' + variantSetId + "&include_variant_data=true"; 
+    // let api_val = 'https://mosaic.chpc.utah.edu/api/v1/projects/';
+    // let copied =  "https://mosaic.chpc.utah.edu/api/v1/projects/475/variants/sets/128?include_variant_data=true&include_genotype_data=true"
+    // 
+    // let r = 'https://mosaic.chpc.utah.edu/api/v1/projects/' + projectId + '/variants?variant_set_id=' + variantSetId + "&include_variant_data=true";
+    // console.log("r", r)
+    // console.log("copied", copied);
+    // var old = self.apiDepricated + '/projects/' + projectId + '/variants?variant_set_id=' + variantSetId
+    // console.log("old", old);
+    var newurl = 'https://mosaic.chpc.utah.edu/api/v1/projects/' + projectId + '/variants/sets/' + variantSetId + "?include_variant_data=true&include_genotype_data=true";
+    // console.log("new", newurl);
     return $.ajax({
-      url: self.apiDepricated + '/projects/' + projectId + '/variants?variant_set_id=' + variantSetId + "&include_variant_data=true",
-
+      // url: 'https://mosaic.chpc.utah.edu/api/v1/projects/' + projectId + '/variants/sets/' + variantSetId + "?include_variant_data=true&include_genotype_data=true",
+      url: self.apiDepricated + '/projects/' + projectId + '/variants?variant_set_id=' + variantSetId,
+      data: {
+        annotation_uids: ['gene_symbol'],
+      },
       type: 'GET',
       contentType: 'application/json',
       headers: {

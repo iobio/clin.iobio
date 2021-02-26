@@ -445,13 +445,15 @@ export default {
     genePhenotypeHits: null,
     interpretationMap: null,
     drugsObj: null,
+    phenolyzerTerms: null,
+    hpoTerms: null
   },
   data() {
     return {
       selectedVariantRelationship: 'proband',
 
 
-      genePhenotypeRankings: null,
+      // genePhenotypeRankings: null,
 
       coverageRegionStart: null,
       coverageRegionEnd: null,
@@ -765,7 +767,7 @@ export default {
         }
 
         self.initPedigreeGenotypes();
-        self.initGenePhenotypeHits();
+        // self.initGenePhenotypeHits();
         self.promiseInitCoverage()
         .then(function() {
           self.showMultiAlignments();
@@ -1039,7 +1041,7 @@ export default {
 
 
   computed: {
-    ...mapGetters(['getPedigreeData', 'getPedigree', 'getVariantsCount', 'getCustomCoverage', 'getReviewCaseBadge', 'getVariantsByInterpretation', 'getModelInfos', 'getGeneSet', 'getCaseSummary', 'getBuildName', 'getAnalysisProgressStatus', 'getLaunchedFromMosaicFlag', 'getSelectedGenesForVariantsReview', 'getSourceForGenes']),
+    ...mapGetters(['getPedigreeData', 'getPedigree', 'getVariantsCount', 'getCustomCoverage', 'getReviewCaseBadge', 'getVariantsByInterpretation', 'getModelInfos', 'getGeneSet', 'getCaseSummary', 'getBuildName', 'getAnalysisProgressStatus', 'getLaunchedFromMosaicFlag', 'getSelectedGenesForVariantsReview', 'getSourceForGenes', 'getGlobalgenePhenotypeHits']),
 
     hgvsLabel: function() {
       if (this.selectedVariant && this.selectedVariant.extraAnnot && this.info.HGVSpAbbrev && this.info.HGVSpAbbrev.length > 0) {
@@ -1166,7 +1168,30 @@ export default {
       this.selectedGeneSources.source = this.getSourceForGenes[this.selectedGene.gene_name].source;
       this.selectedGeneSources.sourceIndicator = this.getSourceForGenes[this.selectedGene.gene_name].sourceIndicator;
       return this.getSourceForGenes[this.selectedGene.gene_name].sourceIndicator;
-    }
+    },
+    
+    genePhenotypeRankings: function() {
+      if (this.getGlobalgenePhenotypeHits) {
+        if (this.getGlobalgenePhenotypeHits[this.selectedGene.gene_name]) {
+          var genePhenotypeRankings = []; 
+          var searchTermRecs = this.getGlobalgenePhenotypeHits[this.selectedGene.gene_name];
+          if (searchTermRecs) {
+            for (var searchTerm in searchTermRecs) {
+              let searchTermLabel = searchTerm.split("_").join(" ");
+              var rankRecs        = searchTermRecs[searchTerm];
+              genePhenotypeRankings.push( {key: searchTerm, searchTerm: searchTermLabel, geneRanks: rankRecs } );
+            }
+          }
+          return genePhenotypeRankings;
+        }
+        else{
+          return "";
+        }
+      } else {
+        return "";
+      }
+    },
+
   },
 
   watch: {
@@ -1175,6 +1200,11 @@ export default {
         this.loadData();
       })
     },
+    phenolyzerTerms(){
+    },
+    hpoTerms(){
+    }
+
 
 
   },
