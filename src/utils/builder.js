@@ -135,7 +135,7 @@ export default class TreeBuilder {
             })
             .attr('stroke-width', d => {
                 if (d.data.extra.isMainSample) {
-                    return "4px";
+                    return "5px";
                 }
                 else{
                     return this.strokeWidth
@@ -176,7 +176,7 @@ export default class TreeBuilder {
             })
             .attr('stroke-width', d => {
                 if (d.data.extra.isMainSample){
-                    return "4px";
+                    return "5px";
                 }
                 else{
                     return this.strokeWidth
@@ -227,7 +227,7 @@ export default class TreeBuilder {
             })
             .attr('stroke-width', d => {
                 if (d.data.extra.isMainSample){
-                    return "4px";
+                    return "5px";
                 }
                 else{
                     return this.strokeWidth
@@ -253,7 +253,7 @@ export default class TreeBuilder {
         // account for the phantom first row depth and for box strokes
         const strokeWidth = this.strokeWidth;
         bbox.y -= strokeWidth;
-        bbox.height += strokeWidth * 2;
+        bbox.height += (strokeWidth * 2) + 1;
         bbox.x -= strokeWidth;
         bbox.width += strokeWidth * 2;
         this.base_svg.attr('viewBox', `${bbox.x} ${bbox.y} ${bbox.width} ${bbox.height}`);
