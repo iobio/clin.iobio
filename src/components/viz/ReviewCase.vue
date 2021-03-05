@@ -2,6 +2,7 @@
 
 @import ../../assets/sass/variables
 
+
 #review-case-panel
   padding: 10px 20px 5px 30px
   /*overflow-y: auto*/
@@ -91,6 +92,11 @@
 
   i.material-icons.good-coverage
     color: #9cc231  !important
+    
+  .pedigree-help  
+    i.material-icons
+      font-size: 18px !important
+         
 
 </style>
 
@@ -292,7 +298,27 @@
 
     <div v-if="isSorted">
       <div style=" width: 100%; display: inline-flex; flex-direction: row; justify-content: space-around; padding-bottom: 10px">
-        <div class="heading" style="margin-right: 90px">Sample</div> <div class="heading" style="margin-right: 90px; display:flex;flex-direction:row;justify-content:space-between">
+        <div class="heading" style="margin-right: 90px">
+          <span>Sample</span>
+          <span class="pedigree-help ml-1">
+            <v-tooltip top>
+              <template v-slot:activator="{ on, attrs }">
+                <v-icon
+                  color="grey"
+                  dark
+                  v-bind="attrs"
+                  v-on="on"
+                >
+                  info
+                </v-icon>
+              </template>
+              <span>
+                <img src="../../assets/images/pedigree_tooltip.png" alt="Pedigree help">
+              </span>
+            </v-tooltip>
+          </span>
+        </div> 
+        <div class="heading" style="margin-right: 90px; display:flex;flex-direction:row;justify-content:space-between">
         <div style="margin-right: 20px">Read Coverage</div>
         <v-text-field
                 id="minCoverageInput"
@@ -1339,6 +1365,10 @@ function filterRef(ref) {
     font-family: $iobio-font
 
 
+    
+.v-tooltip__content
+  opacity: 1 !important
+  padding: 2px
 
 </style>
 
