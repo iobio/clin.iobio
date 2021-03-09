@@ -133,8 +133,25 @@
         <div class="container" style="height:75px">
           <div class="row" style="margin-left:100px; margin-right:20px">
             <div class="col-md-3">
-              <div class="heading ml-6">
-                Sample
+              <div class="heading ml-10">
+                <span>Sample</span>
+                <span class="pedigree-help ml-1">
+                  <v-tooltip top>
+                    <template v-slot:activator="{ on, attrs }">
+                      <v-icon
+                        color="grey"
+                        dark
+                        v-bind="attrs"
+                        v-on="on"
+                      >
+                        info
+                      </v-icon>
+                    </template>
+                    <span>
+                      <img width="325px" src="../../assets/images/pedigree_tooltip.png" alt="Pedigree help">
+                    </span>
+                  </v-tooltip>
+                </span>
               </div>
             </div>
             <div class="col-md-5" style="display:flex">
@@ -162,15 +179,20 @@
             </div>
           </div>
         </div>
-        
+
         <!-- Content -->
         <div class="container">
           <div style="margin-left:100px; margin-right:20px" class="row">
             <div style="width:100%" v-for="(modelInfo,idx) in modelInfos" :key="idx">
+              <hr>
               <!-- Pedigree -->
               <div class="col-md-3 capitalize">
-                {{sampleIdsAndRelationships[idx]}}
-                <PedigreeGraph :data="allPedigreeDataArrays[idx]" :id="sampleUuids[idx]" :width="100" :height="75" :pedigree="pedigree"></PedigreeGraph>
+                <div class="capitalize" style="text-align: center; width: 150px">
+                  <strong>{{sampleIdsAndRelationships[idx].split(" ")[1]}}</strong>
+                  <br>
+                  {{sampleIdsAndRelationships[idx].split(" ")[0]}}
+                </div>
+                <PedigreeGraph :data="allPedigreeDataArrays[idx]" :id="sampleUuids[idx]" :width="100" :height="85" :pedigree="pedigree"></PedigreeGraph>
               </div>
               <!-- End pedigree -->
               
@@ -225,7 +247,6 @@
                 </CustomBamStats>
               </div>
               <!-- End variant counts  -->
-
             </div>
             <!-- end loop -->
 
@@ -234,32 +255,57 @@
 
         </div>
         <!-- end container -->
-        <br><br><hr>
+        <hr><br><br>
 
       </div>
       
 
     <div v-if="customSavedAnalysis && statsReceived && coverageStatsReceived">
-      <div style=" width: 100%; display: inline-flex; flex-direction: row; justify-content: space-around; padding-bottom: 10px">
-        <div class="heading" style="margin-right: 90px">Sample</div> <div class="heading" style="margin-right: 90px; display:flex;flex-direction:row;justify-content:space-between">
-        <div style="margin-right: 20px">Read Coverage</div>
-        <v-text-field
-                id="minCoverageInput"
-              label="Expected Coverage"
-              outlined
-              dense
-              value="minCutoff"
-              v-model.number="minCutoff"
-                style="width: 150px"
-      ></v-text-field></div>
+      <div style=" width: 100%; display: inline-flex; flex-direction: row; justify-content: space-around; padding-bottom: 0">
+        <!-- <div class="heading" style="margin-right: 90px">Sample</div>  -->
+        <div class="heading" style="margin-right: 5px">
+          <span>Sample</span>
+          <span class="pedigree-help ml-1">
+            <v-tooltip top>
+              <template v-slot:activator="{ on, attrs }">
+                <v-icon
+                  color="grey"
+                  dark
+                  v-bind="attrs"
+                  v-on="on"
+                >
+                  info
+                </v-icon>
+              </template>
+              <span>
+                <img width="325px" src="../../assets/images/pedigree_tooltip.png" alt="Pedigree help">
+              </span>
+            </v-tooltip>
+          </span>
+        </div> 
+        <div class="heading" style="margin-right: 90px; display:flex;flex-direction:row;justify-content:space-between">
+          <div style="margin-right: 20px">Read Coverage</div>
+          <v-text-field
+                  id="minCoverageInput"
+                label="Expected Coverage"
+                outlined
+                dense
+                value="minCutoff"
+                v-model.number="minCutoff"
+                  style="width: 150px"
+          ></v-text-field>
+        </div>
 
         <div class="heading" style="margin-right: 50px">Variant Types</div>
       </div>
       <div v-for="(d, i) in varCountsArray" >
+        <hr>
         <div style=" width: 100%; display: inline-flex; flex-direction: row; justify-content: space-around;">
             <div style="text-align: center; width: 150px" class="capitalize">
-              {{sampleIdsAndRelationships[i]}}
-              <PedigreeGraph :data="allPedigreeDataArrays[i]" :id="sampleUuids[i]" :width="100" :height="75" :pedigree="pedigree"></PedigreeGraph>
+              <strong>{{sampleIdsAndRelationships[i].split(" ")[1]}}</strong>
+              <br>
+              {{sampleIdsAndRelationships[i].split(" ")[0]}}
+              <PedigreeGraph :data="allPedigreeDataArrays[i]" :id="sampleUuids[i]" :width="100" :height="85" :pedigree="pedigree"></PedigreeGraph>
             </div>
 
           <div style="display: inline-flex;">
@@ -290,6 +336,7 @@
 
         </div>
      </div>
+     <hr>
     </div>
     <div v-if="customData && !coverageStatsReceived && customSavedAnalysis">
       <center>
@@ -302,7 +349,7 @@
 
     <div v-if="isSorted">
       <div style=" width: 100%; display: inline-flex; flex-direction: row; justify-content: space-around; padding-bottom: 0; margin-bottom: -6px">
-        <div class="heading" style="margin-right: 5px">
+        <div class="heading" style="margin-right: 0">
           <span>Sample</span>
           <span class="pedigree-help ml-1">
             <v-tooltip top>
