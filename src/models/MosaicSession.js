@@ -32,7 +32,29 @@ export default class MosaicSession {
     this.variantSet = null;
   }
 
+  // This formats the attributes and distributions to be how they used to be, an object
+  // where the keys are the uids. This is not viable for long term since samples can now
+  // have multiple distributions and attributes due to experiments
+  formatAttributes(sample) {
+    sample.attributes = sample.attributes.reduce((acc, curr) => {
+      const value = curr.values.length ? curr.values[0].value : null;
+      acc[curr.uid] = value
+
+      return acc;
+    }, {});
+
+    sample.distributions = sample.distributions.reduce((acc, curr) => {
+      const value = curr.values.length ? curr.values[0].value : null;
+      acc[curr.uid] = value
+      
+      return acc;
+    }, {});
+
+    return sample;
+  }
+
   promiseInit(sampleId, source, isPedigree, projectId, clientAppId, geneSetId, variantSetId ) {
+    console.log('init')
     let self = this;
     self.api = source + self.apiVersion;
     self.client_application_id = clientAppId;
@@ -92,7 +114,7 @@ export default class MosaicSession {
                 }
                 samples.forEach(s => {
                   let p =  self.promiseGetFileMapForSample(projectId, s, rel).then(data => {
-                    let theSample = data.sample;
+                    let theSample = formatAttributes(data.sample);
                     theSample.files = data.fileMap;
                     var sample_name = theSample.vcf_sample_name
                     let coverageHisto =  {id: sampleId, coverage: theSample.distributions.coverage_hist_no_outliers, sample: sample_name, median: theSample.attributes.median_read_coverage};
@@ -300,7 +322,10 @@ export default class MosaicSession {
     if (isPedigree) {
       return self.promiseGetPedigreeForSample(project_id, sample_id);
     } else {
-      return self.promiseGetSample(project_id, sample_id, 'proband');
+      return self.promiseGetSample(project_id, sample_id, 'proband')
+        .then((sample) => {
+          return self.promiseGetSampleAttributes(project_id, sample)
+        });
     }
   }
 
@@ -321,6 +346,25 @@ export default class MosaicSession {
       })
       .fail(error => {
         reject("Error getting sample " + sample_id + ": " + error);
+      })
+    })
+  }
+
+  promiseGetSampleAttributes(project_id, sample) {
+    let self = this;
+
+    return new Promise(function(resolve, reject) {
+      self.getSampleAttributes(project_id, sample.id)
+      .done(attributes => {
+          const formattedSample = {
+            ...sample,
+            attributes,
+          };
+
+          resolve(formattedSample);
+      })
+      .fail(error => {
+        reject("Error getting sample attributes" + sample_id + ": " + error);
       })
     })
   }
@@ -442,6 +486,17 @@ export default class MosaicSession {
     });
   }
 
+  getSampleAttributes(project_id, sample_id) {
+    let self = this;
+    return $.ajax({
+      url: self.api + '/projects/' + project_id + '/samples/' + sample_id + '/attributes',
+      type: 'GET',
+      contentType: 'application/json',
+      headers: {
+        'Authorization': localStorage.getItem('hub-iobio-tkn')
+      }
+    });
+  }
 
   promiseGetFileMapForSample(project_id, sample, relationship) {
     let self = this;
