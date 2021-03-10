@@ -54,7 +54,6 @@ export default class MosaicSession {
   }
 
   promiseInit(sampleId, source, isPedigree, projectId, clientAppId, geneSetId, variantSetId ) {
-    console.log('init')
     let self = this;
     self.api = source + self.apiVersion;
     self.client_application_id = clientAppId;
