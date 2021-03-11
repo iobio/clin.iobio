@@ -113,7 +113,7 @@ export default class MosaicSession {
                 }
                 samples.forEach(s => {
                   let p =  self.promiseGetFileMapForSample(projectId, s, rel).then(data => {
-                    let theSample = formatAttributes(data.sample);
+                    let theSample = self.formatAttributes(data.sample);
                     theSample.files = data.fileMap;
                     var sample_name = theSample.vcf_sample_name
                     let coverageHisto =  {id: sampleId, coverage: theSample.distributions.coverage_hist_no_outliers, sample: sample_name, median: theSample.attributes.median_read_coverage};
