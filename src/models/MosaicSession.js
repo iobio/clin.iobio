@@ -32,7 +32,7 @@ export default class MosaicSession {
     this.variantSet = null;
   }
 
-  promiseInit(sampleId, source, isPedigree, projectId, clientAppId, geneSetId, variantSetId ) {
+  promiseInit(sampleId, source, isPedigree, projectId, clientAppId, geneSetId, variantSetId, build ) {
     let self = this;
     self.api = source + self.apiVersion;
     self.client_application_id = clientAppId;
@@ -57,7 +57,7 @@ export default class MosaicSession {
         self.geneSet = data;
         
         if (variantSetId) {
-          return self.promiseGetVariantSet(projectId, variantSetId)
+          return self.promiseGetVariantSet(projectId, variantSetId, build)
         } else {
           return Promise.resolve(null);
         }
@@ -597,15 +597,21 @@ export default class MosaicSession {
 
   }
   
-  promiseGetVariantSet(projectId, variantSetId) {
+  promiseGetVariantSet(projectId, variantSetId, build) {
   let self = this;
   return new Promise(function(resolve, reject) {
-    self.getVariantSet(projectId, variantSetId)
+    self.getVariantSet(projectId, variantSetId, build)
     .done(response => {
       resolve(response)
     })
     .fail(error => {
-      reject("Error getting variant set " + variantSetId + ": " + error);
+      self.getVariantSet(projectId, variantSetId, 'old_project')
+      .done(response => {
+        resolve(response)
+      })
+      .fail(error => {
+        reject("Error getting variant set " + variantSetId + ": " + error);
+      })
     })
   })
 
@@ -765,24 +771,23 @@ export default class MosaicSession {
     });
   }
   
-  getVariantSet(projectId, variantSetId) {
+  getVariantSet(projectId, variantSetId, build) {
     let self = this;
-    // let u = self.apiDepricated + '/projects/' + projectId + '/variants?variant_set_id=' + variantSetId + "&include_variant_data=true"; 
-    // let api_val = 'https://mosaic.chpc.utah.edu/api/v1/projects/';
-    // let copied =  "https://mosaic.chpc.utah.edu/api/v1/projects/475/variants/sets/128?include_variant_data=true&include_genotype_data=true"
-    // 
-    // let r = 'https://mosaic.chpc.utah.edu/api/v1/projects/' + projectId + '/variants?variant_set_id=' + variantSetId + "&include_variant_data=true";
-    // console.log("r", r)
-    // console.log("copied", copied);
-    // var old = self.apiDepricated + '/projects/' + projectId + '/variants?variant_set_id=' + variantSetId
-    // console.log("old", old);
-    var newurl = 'https://mosaic.chpc.utah.edu/api/v1/projects/' + projectId + '/variants/sets/' + variantSetId + "?include_variant_data=true&include_genotype_data=true";
-    // console.log("new", newurl);
+    let annotationUids = [];
+    if(build === "GRCh38"){
+      annotationUids.push('gene_symbol_GRCh38');
+    }
+    else if(build === "GRCh37"){
+      annotationUids.push('gene_symbol_GRCh37');
+    }
+    else {
+      annotationUids.push('gene_symbol');
+    }
     return $.ajax({
       // url: 'https://mosaic.chpc.utah.edu/api/v1/projects/' + projectId + '/variants/sets/' + variantSetId + "?include_variant_data=true&include_genotype_data=true",
       url: self.apiDepricated + '/projects/' + projectId + '/variants?variant_set_id=' + variantSetId,
       data: {
-        annotation_uids: ['gene_symbol'],
+        annotation_uids: annotationUids,
       },
       type: 'GET',
       contentType: 'application/json',

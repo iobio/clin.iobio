@@ -584,7 +584,6 @@ export default {
       showSnackbar: false,
       snackbar: {message: '', timeout: 0, left: false, right: false, center: true, top: true, bottom: false},
 
-      // temp workaround until Adit fixes router.js
       params: {},
       rawPedigree: null,
       allVarCounts: null,
@@ -657,7 +656,6 @@ export default {
       this.generatePDF()
     })
     bus.$on("initialize-clin", ()=>{
-      // console.log(this.analysis);
       this.showLandingPage = false;
       this.showSplash = true;
       setTimeout(()=>{
@@ -823,12 +821,6 @@ export default {
         let translator = new Translator(self.globalApp, glyph);
         let genericAnnotation = new GenericAnnotation(glyph);
 
-        // self.geneModel = new GeneModel(self.globalApp, self.forceLocalStorage, self.launchedFromHub);
-        // self.geneModel.geneSource = self.forMyGene2 ? "refseq" : "gencode";
-        // self.geneModel.genomeBuildHelper = self.genomeBuildHelper;
-        // self.geneModel.setAllKnownGenes(self.allGenes);
-        // self.geneModel.translator = translator;
-
 
         // Instantiate helper class than encapsulates IOBIO commands
 
@@ -856,7 +848,7 @@ export default {
           self.showLandingPage = false;
           self.showSplash = true;
           self.showSplashProgress = true;
-          // Temporary workaround until router is fixed to pass paramSampleId, paramSource, etc
+
           self.params.sample_id             = self.paramSampleId
           self.params.analysis_id           = self.paramAnalysisId
           self.params.project_id            = self.paramProjectId
@@ -880,7 +872,7 @@ export default {
           self.setMosaicLaunchFlag(true);
           // For now, just hardcode is_pedgree = true
           self.mosaicSession.promiseInit(self.params.sample_id, self.params.source,
-            true, self.params.project_id, self.params.client_application_id, self.params.gene_set_id, self.params.variant_set_id)
+            true, self.params.project_id, self.params.client_application_id, self.params.gene_set_id, self.params.variant_set_id, self.paramBuild)
           .then(data => {
             self.modelInfos = data.modelInfos;
             self.user       = data.user;
@@ -1022,15 +1014,25 @@ export default {
           .then(function() {
             // Now import the variants from the variant set provided
             // when launching clin.iobio from Mosaic
+
             if (self.variantSet && self.variantSet.variants) {
               let bypassedCount = 0;
+
               // self.variantSet.variants.filter(function(variant) {
-              //   return variant.het_sample_ids.indexOf(parseInt(self.paramSampleId)) >= 0;
+              //   return variant.sample_ids.indexOf(parseInt(self.paramSampleId)) >= 0;
               // })
               self.variantSet.variants.forEach(function(variant) {
                 let importedVariant = {};
-                if (variant.gene_symbol && variant.gene_symbol.length > 0) {
-                  importedVariant.gene  = variant.gene_symbol;
+                if ((variant.gene_symbol_GRCh38 && variant.gene_symbol_GRCh38.length > 0) || (variant.gene_symbol_GRCh37 && variant.gene_symbol_GRCh37.length > 0) || (variant.gene_symbol && variant.gene_symbol.length > 0)) {
+                  if(variant.gene_symbol_GRCh38 && variant.gene_symbol_GRCh38.length > 0){
+                    importedVariant.gene  = variant.gene_symbol_GRCh38;
+                  }
+                  else if(variant.gene_symbol_GRCh37 && variant.gene_symbol_GRCh37.length > 0){
+                    importedVariant.gene  = variant.gene_symbol_GRCh37;
+                  }
+                  else if(variant.gene_symbol && variant.gene_symbol.length > 0) {
+                    importedVariant.gene  = variant.gene_symbol;
+                  }
                   importedVariant.chrom = variant.chr;
                   importedVariant.start = variant.pos;
                   importedVariant.end   = variant.pos;
@@ -1043,6 +1045,7 @@ export default {
                   importedVariant.consequence      = variant.gene_consequence;
                   importedVariant.isImported       = true;
                   importedVariant.variantSet       = "notCategorized";
+
                   self.analysis.payload.variants.push(importedVariant);
                   if (self.analysis.payload.genes.indexOf(importedVariant.gene) < 0) {
                     self.analysis.payload.genes.push(importedVariant.gene);
@@ -1052,6 +1055,7 @@ export default {
                   bypassedCount++;
                 }
               })
+
               if (bypassedCount > 0) {
                 if (bypassedCount == self.variantSet.variants.length) {
                   // alert("Error", "None of the " + bypassedCount + " variants were loaded because the variants were missing gene name.", )
@@ -1692,9 +1696,6 @@ export default {
             newAnalysis.payload.gtrFullList = [];
             newAnalysis.payload.phenolyzerFullList = [];
 
-            // HACK WORKAROUND!!
-            // Workaround until Adit can handle null VennDiagram in his component
-            //
             self.initForPhenotypist(newAnalysis);
 
             // If a gene set was specified, initialize the genes accordingly
@@ -1989,7 +1990,6 @@ export default {
 
     organizeVariantsByInterpretation: function() {
       let self = this;
-      // self.variantsAnalyzedCounted = self.variantsAnalyzedCounted + 1;
 
       self.variantsByInterpretation = [];
 
@@ -2562,11 +2562,9 @@ export default {
       analysis_obj.genes_top = this.getGenesTop;
       analysis_obj.genesAssociatedWithSource = this.getSourceForGenes;
       analysis_obj.pass_code = Math.floor(100000 + Math.random() * 900000);
-      // console.log("analysis_obj", analysis_obj);
       let analysisObject = JSON.stringify(analysis_obj);
       const jsonBlob = new Blob([analysisObject], { type: "application/json" });
       saveAs(jsonBlob, "clin-saved-analysis.json");
-      // this.showPassCodeDialog(analysis_obj.pass_code);
     },
     showPassCodeDialog(pass_code){
       this.showPassCode = true;
@@ -2614,14 +2612,11 @@ export default {
     sendGenes(){
       let self = this;
       self.geneSetAndSelectedGenes = [];
-      // var gene_set = self.analysis.payload.genes;
+
       var gene_set = [];
       self.analysis.payload.genes.map(x => {
         gene_set.push(x);
       })
-      // if(!self.geneSetAndSelectedGenes.length){
-      //   self.geneSetAndSelectedGenes = gene_set;
-      // }
 
       var genes_to_send = [];
       if(self.selectedGenesForGeneSet.length){
@@ -2633,14 +2628,6 @@ export default {
         })
       }
       self.geneSetAndSelectedGenes = gene_set;
-      // if(self.selectedGenesForGeneSet.length){
-      //   self.selectedGenesForGeneSet.forEach(gene => {
-      //     if(!self.geneSetAndSelectedGenes.includes(gene)){
-      //       self.geneSetAndSelectedGenes.push(gene);
-      //       genes_to_send.push(gene);
-      //     }
-      //   })
-      // }
       var appName = "genefull";
       var iframeSelector = self.apps[appName].iframeSelector;
       var arrChanged = true;
