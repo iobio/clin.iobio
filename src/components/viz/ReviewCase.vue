@@ -620,6 +620,9 @@ export default {
               const defaultBed = bed.replace(/chr/g, '');
               this.bed = defaultBed;
               this.buildCustomPage();
+            })
+            .catch(error => {
+              console.log("error", error);
             });
       }
       else if(this.bedFileUrl===undefined){
@@ -1275,11 +1278,11 @@ export default {
       let pedDict ={
         id: d.id,
         pedigree: {
-          affection_status: d.affection_status,
-          maternal_id: d.maternal_id,
-          paternal_id: d.paternal_id,
-          sample_id: d.sample_id,
-          sex: d.sex
+          affection_status: d.pedigree.affection_status,
+          maternal_id: d.pedigree.maternal_id,
+          paternal_id: d.pedigree.paternal_id,
+          sample_id: d.pedigree.sample_id,
+          sex: d.pedigree.sex
         }
       };
       return pedDict;

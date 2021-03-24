@@ -1074,8 +1074,7 @@ export default {
             let buildName = 'GRCh37';
             this.caseTitle = headers[0].split('E:')[1].trim();
             this.caseDescription = headers[1].split('N:')[1].trim();
-            
-            let bedFile = headers[2].split('L:')[1].trim();
+            let bedFile = headers[2].split('L:')[1].trim().split(",")[0];
             if(bedFile !== ''){
               bedFileUrl = bedFile;
             }
