@@ -2,12 +2,16 @@
 
 @import ../../assets/sass/variables
 
+
 #review-case-panel
   padding: 10px 20px 5px 30px
   /*overflow-y: auto*/
   height: -webkit-fill-available
   height: -moz-available
   background-color:  white
+  
+  hr
+    margin-top: 0 !important
 
   svg
     #minTextgetBamStats
@@ -58,7 +62,8 @@
       margin-right: 50px
 
   .pedigree-graph
-    margin-left: -5px !important
+    // margin-left: -5px !important
+    margin-left: 26px !important
     margin-top:  5px !important
 
 
@@ -91,6 +96,11 @@
 
   i.material-icons.good-coverage
     color: #9cc231  !important
+    
+  .pedigree-help  
+    i.material-icons
+      font-size: 18px !important
+         
 
 </style>
 
@@ -123,8 +133,25 @@
         <div class="container" style="height:75px">
           <div class="row" style="margin-left:100px; margin-right:20px">
             <div class="col-md-3">
-              <div class="heading ml-6">
-                Sample
+              <div class="heading ml-10">
+                <span>Sample</span>
+                <span class="pedigree-help ml-1">
+                  <v-tooltip top>
+                    <template v-slot:activator="{ on, attrs }">
+                      <v-icon
+                        color="grey"
+                        dark
+                        v-bind="attrs"
+                        v-on="on"
+                      >
+                        info
+                      </v-icon>
+                    </template>
+                    <span>
+                      <img width="325px" src="../../assets/images/pedigree_tooltip.png" alt="Pedigree help">
+                    </span>
+                  </v-tooltip>
+                </span>
               </div>
             </div>
             <div class="col-md-5" style="display:flex">
@@ -152,15 +179,20 @@
             </div>
           </div>
         </div>
-        
+
         <!-- Content -->
         <div class="container">
           <div style="margin-left:100px; margin-right:20px" class="row">
             <div style="width:100%" v-for="(modelInfo,idx) in modelInfos" :key="idx">
+              <hr>
               <!-- Pedigree -->
               <div class="col-md-3 capitalize">
-                {{sampleIdsAndRelationships[idx]}}
-                <PedigreeGraph :data="allPedigreeDataArrays[idx]" :id="sampleUuids[idx]" :width="100" :height="75" :pedigree="pedigree"></PedigreeGraph>
+                <div class="capitalize" style="text-align: center; width: 150px">
+                  <strong>{{sampleIdsAndRelationships[idx].split(" ")[1]}}</strong>
+                  <br>
+                  {{sampleIdsAndRelationships[idx].split(" ")[0]}}
+                </div>
+                <PedigreeGraph :data="allPedigreeDataArrays[idx]" :id="sampleUuids[idx]" :width="100" :height="85" :pedigree="pedigree"></PedigreeGraph>
               </div>
               <!-- End pedigree -->
               
@@ -215,7 +247,6 @@
                 </CustomBamStats>
               </div>
               <!-- End variant counts  -->
-
             </div>
             <!-- end loop -->
 
@@ -224,32 +255,57 @@
 
         </div>
         <!-- end container -->
-        <br><br><hr>
+        <hr><br><br>
 
       </div>
       
 
     <div v-if="customSavedAnalysis && statsReceived && coverageStatsReceived">
-      <div style=" width: 100%; display: inline-flex; flex-direction: row; justify-content: space-around; padding-bottom: 10px">
-        <div class="heading" style="margin-right: 90px">Sample</div> <div class="heading" style="margin-right: 90px; display:flex;flex-direction:row;justify-content:space-between">
-        <div style="margin-right: 20px">Read Coverage</div>
-        <v-text-field
-                id="minCoverageInput"
-              label="Expected Coverage"
-              outlined
-              dense
-              value="minCutoff"
-              v-model.number="minCutoff"
-                style="width: 150px"
-      ></v-text-field></div>
+      <div style=" width: 100%; display: inline-flex; flex-direction: row; justify-content: space-around; padding-bottom: 0">
+        <!-- <div class="heading" style="margin-right: 90px">Sample</div>  -->
+        <div class="heading" style="margin-right: 5px">
+          <span>Sample</span>
+          <span class="pedigree-help ml-1">
+            <v-tooltip top>
+              <template v-slot:activator="{ on, attrs }">
+                <v-icon
+                  color="grey"
+                  dark
+                  v-bind="attrs"
+                  v-on="on"
+                >
+                  info
+                </v-icon>
+              </template>
+              <span>
+                <img width="325px" src="../../assets/images/pedigree_tooltip.png" alt="Pedigree help">
+              </span>
+            </v-tooltip>
+          </span>
+        </div> 
+        <div class="heading" style="margin-right: 90px; display:flex;flex-direction:row;justify-content:space-between">
+          <div style="margin-right: 20px">Read Coverage</div>
+          <v-text-field
+                  id="minCoverageInput"
+                label="Expected Coverage"
+                outlined
+                dense
+                value="minCutoff"
+                v-model.number="minCutoff"
+                  style="width: 150px"
+          ></v-text-field>
+        </div>
 
         <div class="heading" style="margin-right: 50px">Variant Types</div>
       </div>
       <div v-for="(d, i) in varCountsArray" >
+        <hr>
         <div style=" width: 100%; display: inline-flex; flex-direction: row; justify-content: space-around;">
             <div style="text-align: center; width: 150px" class="capitalize">
-              {{sampleIdsAndRelationships[i]}}
-              <PedigreeGraph :data="allPedigreeDataArrays[i]" :id="sampleUuids[i]" :width="100" :height="75" :pedigree="pedigree"></PedigreeGraph>
+              <strong>{{sampleIdsAndRelationships[i].split(" ")[1]}}</strong>
+              <br>
+              {{sampleIdsAndRelationships[i].split(" ")[0]}}
+              <PedigreeGraph :data="allPedigreeDataArrays[i]" :id="sampleUuids[i]" :width="100" :height="85" :pedigree="pedigree"></PedigreeGraph>
             </div>
 
           <div style="display: inline-flex;">
@@ -280,6 +336,7 @@
 
         </div>
      </div>
+     <hr>
     </div>
     <div v-if="customData && !coverageStatsReceived && customSavedAnalysis">
       <center>
@@ -291,8 +348,28 @@
 
 
     <div v-if="isSorted">
-      <div style=" width: 100%; display: inline-flex; flex-direction: row; justify-content: space-around; padding-bottom: 10px">
-        <div class="heading" style="margin-right: 90px">Sample</div> <div class="heading" style="margin-right: 90px; display:flex;flex-direction:row;justify-content:space-between">
+      <div style=" width: 100%; display: inline-flex; flex-direction: row; justify-content: space-around; padding-bottom: 0; margin-bottom: -6px">
+        <div class="heading" style="margin-right: 0">
+          <span>Sample</span>
+          <span class="pedigree-help ml-1">
+            <v-tooltip top>
+              <template v-slot:activator="{ on, attrs }">
+                <v-icon
+                  color="grey"
+                  dark
+                  v-bind="attrs"
+                  v-on="on"
+                >
+                  info
+                </v-icon>
+              </template>
+              <span>
+                <img width="325px" src="../../assets/images/pedigree_tooltip.png" alt="Pedigree help">
+              </span>
+            </v-tooltip>
+          </span>
+        </div> 
+        <div class="heading" style="margin-right: 75px; display:flex;flex-direction:row;justify-content:space-between">
         <div style="margin-right: 20px">Read Coverage</div>
         <v-text-field
                 id="minCoverageInput"
@@ -306,11 +383,14 @@
 
         <div class="heading" style="margin-right: 50px">Variant Types</div>
       </div>
+      <hr>
       <div v-for="(d, i) in sampleIdsAndRelationships" >
         <div style=" width: 100%; display: inline-flex; flex-direction: row; justify-content: space-around;">
             <div style="text-align: center; width: 150px" class="capitalize">
-              {{sampleIdsAndRelationships[i]}}
-              <PedigreeGraph :data="allPedigreeDataArrays[i]" :id="sampleUuids[i]" :width="100" :height="75" :pedigree="pedigree"></PedigreeGraph>
+              <strong>{{sampleIdsAndRelationships[i].split("\t")[1]}}</strong>
+              <br>
+              {{sampleIdsAndRelationships[i].split("\t")[0]}}
+              <PedigreeGraph :data="allPedigreeDataArrays[i]" :id="sampleUuids[i]" :width="100" :height="85" :pedigree="pedigree"></PedigreeGraph>
             </div>
 
           <div style="display: inline-flex;">
@@ -341,6 +421,7 @@
           <QualitativeBarChart :data="varCountsArray[i].counts" :customData="customData" :width="300" :height="150" style="padding-top: 0"></QualitativeBarChart>
 
         </div>
+        <hr>
      </div>
     </div>
     <div style="height:20px"></div>
@@ -1339,6 +1420,10 @@ function filterRef(ref) {
     font-family: $iobio-font
 
 
+    
+.v-tooltip__content
+  opacity: 1 !important
+  padding: 2px
 
 </style>
 
