@@ -812,9 +812,11 @@ export default {
       .then(function() {
         if (self.paramBuild && self.paramBuild.length > 0) {
           self.genomeBuildHelper.setCurrentBuild(self.paramBuild);
+          self.setBuildName(self.paramBuild);
         } else {
           // TODO - genome build is required
-          self.genomeBuildHelper.setCurrentBuild("GRCh37")
+          self.genomeBuildHelper.setCurrentBuild("GRCh37");
+          self.setBuildName("GRCh37");
         }
 
         let glyph = new Glyph();
