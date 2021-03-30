@@ -42,7 +42,7 @@
                         clin.iobio makes it easy to review sequencing and case metrics, generate a prioritized list of genes associated with the disease/phenotype, review candidate variants, and generate a report of your findings
                       </span>
                       <br>
-                      <v-btn v-if="!analysisInProgress" color="white" outlined x-large @click="getStarted" class="mt-8">
+                      <v-btn v-if="!analysisInProgress" color="white" outlined x-large @click="getStarted('demo')" class="mt-8">
                         <v-icon>explore</v-icon>
                         <span class="ml-2">Run with demo data</span>
                       </v-btn>
@@ -851,12 +851,14 @@ export default {
         this.geneSet = this.genes.trim().split(",").filter(gene => gene.length > 0)
           .map(gene => gene.trim().toUpperCase());
       }
-      this.$emit('setGeneSet', this.geneSet)
+      this.$emit('setGeneSet', this.geneSet);
+      this.$ga.event('data_type', 'Custom Data', 'Files');
       this.getStarted();
     },
     addVariantSet: function(){
       this.pageCounter = 1;
       this.geneSetDiialog = false;
+      this.$ga.event('data_type', 'Custom Data', 'Files');
       this.getStarted();
     },
     onLoadInputConfig: function(){
@@ -874,6 +876,7 @@ export default {
         name: this.caseTitle,
         description: this.caseDescription
       })
+      this.$ga.event('data_type', 'Custom Data', 'Config File');
       this.getStarted();
     },
     backToFiles: function(){
@@ -956,10 +959,13 @@ export default {
     setBedFileUrl: function(bed){
       this.$emit("setBedFileUrl", bed)
     },
-    getStarted(){
+    getStarted(e){
       this.analysisInProgress = true;
       this.setAnalysisInProgressStatus(this.analysisInProgress);
-      bus.$emit("initialize-clin")
+      bus.$emit("initialize-clin");
+      if(e === 'demo'){
+        this.$ga.event('data_type', 'Demo Data', 'Demo dataset');
+      }
     },
     updateCarousel(payload) {
       var currentSlide;
@@ -1170,7 +1176,8 @@ export default {
         this.$emit("load-saved-input-config", this.configCustomData)
     },
     loadFromSavedAnalysis(){
-      this.$emit("load-saved-analysis-custom-data", this.configSavedAnalysisData)    
+      this.$emit("load-saved-analysis-custom-data", this.configSavedAnalysisData);
+      this.$ga.event('data_type', 'Custom Data', 'Saved Analysis');    
     },
     setBuildForCustomData(buildName){
       this.$emit("setBuildForCustomData", buildName)

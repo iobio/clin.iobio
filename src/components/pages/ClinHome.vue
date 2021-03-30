@@ -968,6 +968,7 @@ export default {
       self.showSplash = false;
 
       if(self.customSavedAnalysis){
+        self.$ga.event('launch_type', 'Standalone', 'Saved analysis');
         // Send message to set the data in the iobio apps
         for (var appName in self.apps) {
           let app = self.apps[appName];
@@ -983,6 +984,7 @@ export default {
         }
       }
       else if(self.customData){
+        self.$ga.event('launch_type', 'Standalone', 'Custom data');
         self.analysis = analysisData;
         self.idAnalysis = self.analysis.id;
         if(!self.importedCustomVariants){
@@ -1007,6 +1009,7 @@ export default {
         }
       }
       else if(self.launchedFromMosaic) {
+        self.$ga.event('launch_type', 'Mosaic', 'Mosaic data', self.params.project_id);
         self.promiseGetAnalysis(
           self.params.project_id,
           self.params.analysis_id,
@@ -1095,6 +1098,7 @@ export default {
       }
       else {
         //Load with demo data
+        self.$ga.event('launch_type', 'Standalone', 'Demo data');
         self.analysis = analysisData;
         self.idAnalysis = self.analysis.id;
         self.analysis.payload.genes = ['PRX', 'LMNA', 'SCN8A', 'DLL4', 'ABCA3', 'MROH8', 'DVL3', 'NOTCH4']
