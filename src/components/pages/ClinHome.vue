@@ -1009,7 +1009,7 @@ export default {
         }
       }
       else if(self.launchedFromMosaic) {
-        self.$ga.event('launch_type', 'Mosaic', 'Mosaic data', self.params.project_id);
+        self.$ga.event('launch_type', 'Mosaic', 'Mosaic data');
         self.promiseGetAnalysis(
           self.params.project_id,
           self.params.analysis_id,
