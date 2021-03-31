@@ -2139,6 +2139,10 @@ export default {
     },
 
     saveSearchedPhenotypes(phenotypes){
+      if(phenotypes[3].length){
+        var note = phenotypes[3][phenotypes[3].length-1].note.slice(0, 450);
+        this.$ga.event('select_phenotype_data', 'Clinical note', note);    
+      }
       this.analysis.payload.phenotypes = phenotypes;
       this.promiseUpdatePhenotypes(phenotypes);
     },
