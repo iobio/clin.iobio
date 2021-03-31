@@ -19,7 +19,7 @@ npm run build
 
 
 ## Using clin.iobio
-You can try out clin.iobio now using a demo dataset. Or you can immediately plug in your own data, by providing URLs to your BAM and VCF files.
+You can try out clin.iobio using a demo dataset. Or you can immediately plug in your own data, by providing URLs to your BAM and VCF files.
 
 From the clin.iobio landing page, you can import your data into the app using the provided screen prompts for entering data URLs or a configuration file. Our screencast will help guide you through these options.
 
