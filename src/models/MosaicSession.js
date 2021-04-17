@@ -699,6 +699,7 @@ export default class MosaicSession {
   }
 
   promiseUpdateAnalysis(analysis) {
+    console.log("analysis", analysis);
     let self = this;
     return new Promise(function(resolve, reject) {
       self.updateAnalysis(analysis.project_id, analysis.id, analysis)
@@ -756,6 +757,7 @@ export default class MosaicSession {
   }
 
   updateAnalysisTitle(projectId, analysisId, newAnalysisData) {
+    console.log("called updateAnalysisTitle");
     let self = this;
 
     return $.ajax({
@@ -771,7 +773,12 @@ export default class MosaicSession {
 
 
   updateAnalysis(projectId, analysisId, newAnalysisData) {
+    console.log("newAnalysisData", newAnalysisData);
     let self = this;
+    self.updateAnalysisTitle(projectId, analysisId, newAnalysisData)
+      .then(response => {
+        console.log("updated title", response);
+      })
 
     return $.ajax({
       url: self.api + '/projects/' + projectId + '/analyses/' + analysisId
