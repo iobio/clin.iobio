@@ -1602,13 +1602,10 @@ export default {
 
       return new Promise(function(resolve, reject) {
         if (self.analysis.id ) {
-          console.log("called", self.analysis);
           let promiseSave = null;
           if (options && !options.autoupdate) {
-            console.log("calling promiseUpdateAnalysisTitle");
             promiseSave = self.mosaicSession.promiseUpdateAnalysis(self.analysis)
           } else {
-            console.log("calling promiseUpdateAnalysis");
             promiseSave = self.mosaicSession.promiseUpdateAnalysis(self.analysis)
           }
 
@@ -1622,7 +1619,6 @@ export default {
             if (options && options.notify) {
               self.onShowSnackbar( {message: '\'' + self.analysis.title + '\'  saved.', timeout: 3000, top: true, right: true });
             }
-            console.log("analysis after response", analysis);
             self.analysis = analysis;
             resolve();
           })
