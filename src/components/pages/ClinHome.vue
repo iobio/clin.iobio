@@ -876,6 +876,7 @@ export default {
           self.mosaicSession.promiseInit(self.params.sample_id, self.params.source,
             true, self.params.project_id, self.params.client_application_id, self.params.gene_set_id, self.params.variant_set_id, self.paramBuild)
           .then(data => {
+            console.log("data", data);
             self.modelInfos = data.modelInfos;
             self.user       = data.user;
             self.geneSet    = data.geneSet;
@@ -886,13 +887,16 @@ export default {
 
             self.mosaicSession.promiseGetProject(self.params.project_id)
             .then(function(project) {
+              console.log("project", project);
               self.onAuthenticated()
 
               self.caseSummary = {};
               self.caseSummary.name = project.name;
               self.caseSummary.description = project.description && project.description.length > 0 ? project.description : "A summary of the trio goes here....";
 
-
+              self.mosaicSession.promiseGetProjectAttributes(self.params.project_id)
+              .then(function(attributes) {
+              })
 
             })
           })

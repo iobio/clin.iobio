@@ -314,6 +314,19 @@ export default class MosaicSession {
       });
     });
   }
+  
+  promiseGetProjectAttributes(project_id) {
+    let self = this;
+    return new Promise(function(resolve, reject) {
+      self.getProjectAttributes(project_id)
+      .done(data => {
+          resolve(data);
+      })
+      .fail(error => {
+        reject("Error getting project " + project_id + ": " + error);
+      });
+    });
+  }
 
 
   promiseGetSampleInfo(project_id, sample_id, isPedigree) {
@@ -629,6 +642,20 @@ export default class MosaicSession {
     let self = this;
     return $.ajax({
         url: self.api + '/projects/' + projectId,
+        type: 'GET',
+        contentType: 'application/json',
+        headers: {
+            'Authorization': localStorage.getItem('hub-iobio-tkn')
+        }
+    });
+  }
+  
+  getProjectAttributes(projectId) {
+    let self = this;
+    let u = self.api + '/projects/' + projectId + '/attributes';
+    console.log("url is ", u);
+    return $.ajax({
+        url: self.api + '/projects/' + projectId + '/attributes',
         type: 'GET',
         contentType: 'application/json',
         headers: {
