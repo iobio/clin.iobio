@@ -653,7 +653,6 @@ export default class MosaicSession {
   getProjectAttributes(projectId) {
     let self = this;
     let u = self.api + '/projects/' + projectId + '/attributes';
-    console.log("url is ", u);
     return $.ajax({
         url: self.api + '/projects/' + projectId + '/attributes',
         type: 'GET',
