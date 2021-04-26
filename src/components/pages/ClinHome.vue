@@ -415,6 +415,7 @@ $horizontal-dashboard-height: 140px
     :showIt="showSaveModal"
     :analysis="analysis"
     @on-save-analysis="promiseSaveAnalysis({notify:true})"
+    @on-save-new-analysis="promiseSaveNewAnalysis($event)"
     @on-cancel-analysis="onCancelAnalysis">
   </save-analysis-popup>
 </div>
@@ -1396,14 +1397,14 @@ export default {
           // this.variantsCount = messageObject.analysis.payload.variantCount
           this.organizeVariantsByInterpretation();
           this.setVariantTaskBadges();
-          this.promiseAutosaveAnalysis({notify: true});
-          this.promiseUpdateVariants(messageObject.analysis.payload.variants)
-          .then(function() {
-
-          })
-          .catch(function(error) {
-
-          })
+          // this.promiseAutosaveAnalysis({notify: true});
+          // this.promiseUpdateVariants(messageObject.analysis.payload.variants)
+          // .then(function() {
+          // 
+          // })
+          // .catch(function(error) {
+          // 
+          // })
       } else if (messageObject.type == "update-variant-count"){
         this.variantsCount = messageObject.variantCount;
         this.setVariantTaskBadges();
@@ -1577,6 +1578,24 @@ export default {
     toggleSaveModal(bool) {
       this.showSaveModal = bool;
     },
+    
+    promiseSaveNewAnalysis: function(newAnalysis) {
+      let self = this;
+
+      return new Promise(function(resolve, reject) {
+        self.mosaicSession.promiseAddAnalysis(newAnalysis.project_id, newAnalysis)
+        .then(function(analysis) {
+          console.log("**********  saving as new mosaic analysis " + newAnalysis.id + " " + " **************")
+          self.onShowSnackbar( {message: 'Analysis  \'' + newAnalysis.title + '\'  saved.', timeout: 3000, top: true, right: true});
+          self.analysis = analysis;
+          resolve();
+        })
+        .catch(function(error) {
+          self.onShowSnackbar( {message: 'Unable to add analysis.', timeout: 6000});
+          reject(error);
+        })
+      })
+    },
 
     promiseSaveAnalysis: function(options) {
       let self = this;
@@ -1585,7 +1604,7 @@ export default {
         if (self.analysis.id ) {
           let promiseSave = null;
           if (options && !options.autoupdate) {
-            promiseSave = self.mosaicSession.promiseUpdateAnalysisTitle(self.analysis)
+            promiseSave = self.mosaicSession.promiseUpdateAnalysis(self.analysis)
           } else {
             promiseSave = self.mosaicSession.promiseUpdateAnalysis(self.analysis)
           }
@@ -1642,6 +1661,8 @@ export default {
         let theOptions = options ? options : {};
         theOptions.autoupdate = true;
         return self.promiseSaveAnalysis(theOptions);
+        console.log("analysis", self.analysis);
+        // return Promise.resolve();
       } else {
         return Promise.resolve();
       }
@@ -1849,7 +1870,7 @@ export default {
 
 
       self.analysis.payload.datetime_last_modified = self.getCurrentDateTime();
-      return self.promiseAutosaveAnalysis();
+      // return self.promiseAutosaveAnalysis();
     },
 
 
@@ -1859,14 +1880,14 @@ export default {
       self.setGeneTaskBadges();
       self.analysis.payload.datetime_last_modified = self.getCurrentDateTime();
       self.updateAnalysis(self.analysis);
-      return self.promiseAutosaveAnalysis();
+      // return self.promiseAutosaveAnalysis();
     },
 
     promiseUpdateVennDiagramData: function(data) {
       let self = this;
       self.analysis.payload.VennDiagramData = data;
       self.analysis.payload.datetime_last_modified = self.getCurrentDateTime();
-      return self.promiseAutosaveAnalysis();
+      // return self.promiseAutosaveAnalysis();
     },
 
     promiseUpdateGenesReport: function(genes) {
@@ -1874,7 +1895,7 @@ export default {
       self.analysis.payload.genesReport = genes;
       this.setGenePhenotypeHitsFromClin(genes);
       self.analysis.payload.datetime_last_modified = self.getCurrentDateTime();
-      return self.promiseAutosaveAnalysis();
+      // return self.promiseAutosaveAnalysis();
     },
     
     setGenePhenotypeHitsFromClin(genesReport) {
@@ -1932,14 +1953,14 @@ export default {
       self.analysis.payload.datetime_last_modified = self.getCurrentDateTime();
       self.organizeVariantsByInterpretation();
       self.setVariantTaskBadges();
-      return self.promiseAutosaveAnalysis();
+      // return self.promiseAutosaveAnalysis();
     },
 
 
     promiseUpdateWorkflow: function() {
       let self = this;
       self.analysis.payload.datetime_last_modified = self.getCurrentDateTime();
-      return self.promiseAutosaveAnalysis();
+      // return self.promiseAutosaveAnalysis();
     },
 
 
@@ -2313,7 +2334,7 @@ export default {
       let self = this;
       // self.analysis.payload.selectedGenesForGeneSet = genes;
       self.analysis.payload.datetime_last_modified = self.getCurrentDateTime();
-      return self.promiseAutosaveAnalysis();
+      // return self.promiseAutosaveAnalysis();
     },
     
     update_genes_top(number){
@@ -2326,7 +2347,7 @@ export default {
       let self = this;
       // self.analysis.payload.genesTop = number;
       self.analysis.payload.datetime_last_modified = self.getCurrentDateTime();
-      return self.promiseAutosaveAnalysis();
+      // return self.promiseAutosaveAnalysis();
     },
     
     checkIfSelectedGenesArrayChanged(newArr, oldArr){
@@ -2702,7 +2723,7 @@ export default {
       let self = this;
       self.analysis.payload.variants = variants;
       self.analysis.payload.datetime_last_modified = self.getCurrentDateTime();
-      return self.promiseAutosaveAnalysis();
+      // return self.promiseAutosaveAnalysis();
     },
     goToselectPhenotypes: function(){
       this.noGeneSetWarningDialog = false
