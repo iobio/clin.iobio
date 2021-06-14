@@ -772,6 +772,9 @@ export default class MosaicSession {
 
   updateAnalysis(projectId, analysisId, newAnalysisData) {
     let self = this;
+    self.updateAnalysisTitle(projectId, analysisId, newAnalysisData)
+      .then(response => {
+      })
 
     return $.ajax({
       url: self.api + '/projects/' + projectId + '/analyses/' + analysisId
