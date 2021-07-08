@@ -327,6 +327,28 @@ export default class MosaicSession {
       });
     });
   }
+  
+  promiseAddClinicalSummaryAttribute(project_id) {
+    console.log("addClinicalSummaryAttribute");
+    let self = this; 
+    var summary = {
+      name: "Clinical summary",
+      value_type: "string",
+      is_public: true,
+      value: "Clinical summary for platinum project"
+    }
+        
+    return new Promise(function(resolve, reject) {
+      self.addClinicalSummaryAttribute(project_id, summary)
+      .done(data => {
+          resolve(data);
+      })
+      .fail(error => {
+        reject("Error getting project " + project_id + ": " + error);
+      });
+    });
+    
+  }
 
 
   promiseGetSampleInfo(project_id, sample_id, isPedigree) {
@@ -660,6 +682,21 @@ export default class MosaicSession {
         headers: {
             'Authorization': localStorage.getItem('hub-iobio-tkn')
         }
+    });
+  }
+  
+  addClinicalSummaryAttribute(projectId, summary) {
+    console.log(" in addClinicalSummaryAttribute");
+    let self = this;
+
+    return $.ajax({
+      url: self.api + '/projects/' + projectId + '/attributes',
+      type: 'POST',
+      data: self.stringifyAnalysis(summary),
+      contentType: 'application/json',
+      headers: {
+        Authorization: localStorage.getItem('hub-iobio-tkn'),
+      },
     });
   }
 

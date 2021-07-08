@@ -896,7 +896,14 @@ export default {
 
               self.mosaicSession.promiseGetProjectAttributes(self.params.project_id)
               .then(function(attributes) {
+                console.log("attributes", attributes);
               })
+              // console.log("Adding clinical summary for project");
+              // self.mosaicSession.promiseAddClinicalSummaryAttribute(self.params.project_id)
+              // .then(function(summary) {
+              //   console.log("summary", summary);
+              // })
+
 
             })
           })
