@@ -1085,7 +1085,17 @@
     "datetime_created": 1567199654086,
     "hpoFullList": [],
     "phenolyzerFullList": [],
-    "datetime_last_modified": 1573062574944
+    "datetime_last_modified": 1573062574944,
+    "scaledHpoScores": [],
+    "specificityScoreBrushArea": [],
+    "hpoGenesCountForBarChart": [],
+    "hpoBarChartBrushArea": [],
+    "stateHpoSummaryGenes": [],
+    "stateSummaryGenes": [],
+    "filterTermsIntersectText": "",
+    "filterSpecificityScoreText": "",
+    "setGenesOverlapFlag": false,
+    "setSpecificityScoreFlag": false
   },
   "updated_at": "2019-11-06T15:08:54.647Z",
   "id": 74,
