@@ -27,7 +27,7 @@ export default {
       if (this.analysis && this.analysis.id) {
         return "Save analysis";
       } else{ 
-        return "Add analysis";
+        return "Save analysis";
       }
     },
     iconName() {
