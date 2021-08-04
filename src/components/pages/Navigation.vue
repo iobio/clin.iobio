@@ -184,6 +184,7 @@ header.theme--dark.v-sheet
       <save-button
       v-if="launchedFromMosaic"
         :showing-save-modal="true"
+        :showSaveModal="showSaveModal"
         :analysis="analysis"
         @save-modal:set-visibility="toggleSaveModal"
       />
@@ -218,7 +219,8 @@ export default {
     caseSummary: null,
     analysis: null,
     launchedFromMosaic: null,
-    customData: null
+    customData: null,
+    showSaveModal: null
   },
   data () {
     let self = this;

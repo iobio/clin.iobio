@@ -19,6 +19,7 @@ export default {
       type: Boolean,
       required: true,
     },
+    showSaveModal: null,
     analysis: null
   },
   computed: {
@@ -37,9 +38,29 @@ export default {
       }
     },
   },
+  data () {
+    return {
+      showDialog: false,
+    }
+  },
+  watch : {
+    showSaveModal(){
+      console.log("showSaveModal", this.showSaveModal);
+      this.showDialog = this.showSaveModal;
+    }
+  },
   methods: {
     toggleSaveModal() {
-      this.showingSaveModal ? this.$emit('save-modal:set-visibility', false) : this.$emit('save-modal:set-visibility', true);
+      console.log("this.showDialog", this.showDialog);
+      if(this.showDialog) {
+        this.showDialog = false;
+        this.$emit('save-modal:set-visibility', false)
+      }
+      else {
+        this.showDialog = true;
+        this.$emit('save-modal:set-visibility', true)
+      }
+      // this.showingSaveModal ? this.$emit('save-modal:set-visibility', false) : this.$emit('save-modal:set-visibility', true);
     },
   },
 };

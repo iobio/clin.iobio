@@ -169,7 +169,8 @@ $horizontal-dashboard-height: 140px
    :caseSummary="caseSummary"
    :analysis="analysis"
    :launchedFromMosaic="launchedFromMosaic"
-   @show-save-analysis="toggleSaveModal(true)"
+   :showSaveModal="showSaveModal"
+   @show-save-analysis="toggleSaveModal($event)"
    :customData="customData">
   </navigation>
 
@@ -1623,16 +1624,18 @@ export default {
       })
     },
     
-    promiseUpdateNewSummaryGenes: function(){
-      let self = this; 
-      self.analysis.payload.datetime_last_modified = self.getCurrentDateTime();
-    },
+    // promiseUpdateNewSummaryGenes: function(){
+    //   let self = this; 
+    //   self.analysis.payload.datetime_last_modified = self.getCurrentDateTime();
+    // },
 
     promiseSaveAnalysis: function(options) {
+      console.log("promiseSaveAnalysis");
       this.analysis.payload.newSummary = this.analysis.payload.genesReport;
-      this.promiseUpdateNewSummaryGenes();
+      // this.promiseUpdateNewSummaryGenes();
       console.log("promiseSaveAnalysis on updating analysis", this.analysis);
       let self = this;
+      console.log("self.analysis.id", self.analysis.id);
 
       return new Promise(function(resolve, reject) {
         if (self.analysis.id ) {
@@ -1664,6 +1667,7 @@ export default {
           })
 
         } else {
+          console.log("in update analysis");
           self.mosaicSession.promiseAddAnalysis(self.analysis.project_id, self.analysis)
           .then(function(analysis) {
             console.log("analysis after saving", analysis);
@@ -1671,6 +1675,8 @@ export default {
             if (options && options.notify) {
               self.onShowSnackbar( {message: 'Analysis  \'' + self.analysis.title + '\'  saved.', timeout: 3000, top: true, right: true});
             }
+            self.analysis.id = analysis.id;
+            console.log("self.analysis.id", self.analysis.id);
             // self.analysis = analysis;
             resolve();
           })
