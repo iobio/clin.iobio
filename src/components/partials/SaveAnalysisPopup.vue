@@ -165,6 +165,7 @@ export default {
         }
       },
       onSave: function() {
+        console.log("updating analysis");
         this.analysis.title = this.analysisName;
         this.analysis.description = this.analysisDescription;
         this.$emit("on-save-analysis", this.analysis)
@@ -178,6 +179,7 @@ export default {
         this.showPopup = false;
       },
       onSaveAsNewAnalysis: function() {
+        console.log("saving as new analysis");
         var newAnalysis = {};
         newAnalysis.payload = this.analysis.payload; 
         newAnalysis.project_id = this.analysis.project_id; 

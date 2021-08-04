@@ -676,12 +676,30 @@ export default class MosaicSession {
     return new Promise(function(resolve, reject) {
       self.getAnalysis(projectId, analysisId)
       .done(response => {
+        console.log("get analysis response", response);
         resolve(response)
       })
       .fail(error => {
         reject("Error getting analysis " + analysisId + ": " + error);
       })
     })
+    
+    // return new Promise((resolve, reject) => {
+    //   const myHeaders = new Headers({
+    //       'Content-Type': 'application/json',
+    //       'Authorization': localStorage.getItem('hub-iobio-tkn')
+    //   });
+    // 
+    //   fetch('https://mosaic.chpc.utah.edu/api/v1/projects/478/analyses/649', {
+    //     method: 'GET',
+    //     headers: myHeaders,
+    //   }).then(resp => resp.json()).then(response => {
+    //     console.log("response", response);
+    //     resolve(response)
+    //   })
+    // })
+    
+
 
   }
   promiseAddAnalysis(projectId, analysis) {
@@ -699,10 +717,12 @@ export default class MosaicSession {
   }
 
   promiseUpdateAnalysis(analysis) {
+    console.log("analysis before update api call", analysis);
     let self = this;
     return new Promise(function(resolve, reject) {
       self.updateAnalysis(analysis.project_id, analysis.id, analysis)
       .done(response => {
+        console.log("response after updating analysis", response);
         resolve(response)
       })
       .fail(error => {
@@ -728,6 +748,9 @@ export default class MosaicSession {
 
   getAnalysis(projectId, analysisId) {
     let self = this;
+    var u = self.api + '/projects/' + projectId  + '/analyses/' + analysisId
+    console.log("url", u);
+    console.log("auth", localStorage.getItem('hub-iobio-tkn'));
     return $.ajax({
       url: self.api + '/projects/' + projectId  + '/analyses/' + analysisId,
       type: 'GET',
@@ -736,12 +759,26 @@ export default class MosaicSession {
         Authorization: localStorage.getItem('hub-iobio-tkn'),
       },
     })
+    
+    // const myHeaders = new Headers({
+    //     'Content-Type': 'application/json',
+    //     'Authorization': localStorage.getItem('hub-iobio-tkn')
+    // });
+    // 
+    // return fetch('https://mosaic.chpc.utah.edu/api/v1/projects/478/analyses/649', {
+    //   method: 'GET',
+    //   headers: myHeaders,
+    // }).then(resp => resp.json()).then(response => {
+    //   console.log(response);
+    // })
+
   }
 
 
 
 
   addAnalysis(projectId, newAnalysisData) {
+    console.log("newAnalysisData ", newAnalysisData);
     let self = this;
 
     return $.ajax({

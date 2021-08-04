@@ -1622,8 +1622,16 @@ export default {
         })
       })
     },
+    
+    promiseUpdateNewSummaryGenes: function(){
+      let self = this; 
+      self.analysis.payload.datetime_last_modified = self.getCurrentDateTime();
+    },
 
     promiseSaveAnalysis: function(options) {
+      this.analysis.payload.newSummary = this.analysis.payload.genesReport;
+      this.promiseUpdateNewSummaryGenes();
+      console.log("promiseSaveAnalysis on updating analysis", this.analysis);
       let self = this;
 
       return new Promise(function(resolve, reject) {
@@ -1706,22 +1714,32 @@ export default {
             self.mosaicSession.promiseGetAnalysis(idProject, idAnalysis)
             .then(function(analysis) {
               if (analysis) {
-                if(analysis.payload.stateSummaryGenes){
-                  analysis.payload.genesReport = analysis.payload.stateSummaryGenes;
+                console.log("analysis after launch", analysis);
+                if (analysis.payload.genesReport[0] === null) {
+                  analysis.payload.genesReport = analysis.payload.stateSummaryGenes
                 }
-                
-                //for new update these state variables are required as props. Since they do not exist in earlier version, set to default. 
-                if(!analysis.scaledHpoScores){analysis.scaledHpoScores = []};
-                if(!analysis.specificityScoreBrushArea){analysis.specificityScoreBrushArea = []};
-                if(!analysis.hpoGenesCountForBarChart){analysis.hpoGenesCountForBarChart = []};
-                if(!analysis.hpoBarChartBrushArea){analysis.hpoBarChartBrushArea = []};
-                if(!analysis.stateHpoSummaryGenes){analysis.stateHpoSummaryGenes = []};
-                if(!analysis.stateSummaryGenes){analysis.stateSummaryGenes = []};
-                if(!analysis.filterTermsIntersectText){analysis.filterTermsIntersectText = ""};
-                if(!analysis.filterSpecificityScoreText){analysis.filterSpecificityScoreText = ""};
-                if(!analysis.setGenesOverlapFlag){analysis.setGenesOverlapFlag = false};
-                if(!analysis.setSpecificityScoreFlag){analysis.setSpecificityScoreFlag = false};
-
+                else {
+                  analysis.payload.stateSummaryGenes = analysis.payload.genesReport;
+                }
+                // if(analysis.payload.stateSummaryGenes){
+                //   analysis.payload.genesReport = analysis.payload.stateSummaryGenes;
+                // }
+                // else {
+                //   analysis.payload.stateSummaryGenes = analysis.payload.genesReport;
+                // }
+                // 
+                // //for new update these state variables are required as props. Since they do not exist in earlier version, set to default. 
+                // if(!analysis.payload.scaledHpoScores){analysis.payload.scaledHpoScores = []};
+                // if(!analysis.payload.specificityScoreBrushArea){analysis.payload.specificityScoreBrushArea = []};
+                // if(!analysis.payload.hpoGenesCountForBarChart){analysis.payload.hpoGenesCountForBarChart = []};
+                // if(!analysis.payload.hpoBarChartBrushArea){analysis.payload.hpoBarChartBrushArea = []};
+                // if(!analysis.payload.stateHpoSummaryGenes){analysis.payload.stateHpoSummaryGenes = []};
+                // if(!analysis.payload.stateSummaryGenes){analysis.payload.stateSummaryGenes = []};
+                // if(!analysis.payload.filterTermsIntersectText){analysis.payload.filterTermsIntersectText = ""};
+                // if(!analysis.payload.filterSpecificityScoreText){analysis.payload.filterSpecificityScoreText = ""};
+                // if(!analysis.payload.setGenesOverlapFlag){analysis.payload.setGenesOverlapFlag = false};
+                // if(!analysis.payload.setSpecificityScoreFlag){analysis.payload.setSpecificityScoreFlag = false};
+                // 
                 self.analysis = analysis;
                 self.idAnalysis = self.analysis.id;
 
