@@ -489,6 +489,7 @@ export default {
     paramGeneSetId:       null,
     paramGenes:           null,
     paramVariantSetId:    null,
+    paramExperimentId:    null,
   },
   data() {
     let self = this;
@@ -861,6 +862,7 @@ export default {
           self.params.gene_set_id           = self.paramGeneSetId
           self.params.genes                 = self.paramGenes
           self.params.variant_set_id        = self.paramVariantSetId
+          self.params.experiment_id         = self.paramExperimentId
 
           if (self.params.analysis_id == 'undefined') {
             self.params.analysis_id = null;
@@ -875,7 +877,7 @@ export default {
           self.setMosaicLaunchFlag(true);
           // For now, just hardcode is_pedgree = true
           self.mosaicSession.promiseInit(self.params.sample_id, self.params.source,
-            true, self.params.project_id, self.params.client_application_id, self.params.gene_set_id, self.params.variant_set_id, self.paramBuild)
+            true, self.params.project_id, self.params.client_application_id, self.params.gene_set_id, self.params.variant_set_id, self.paramBuild, self.params.experiment_id)
           .then(data => {
             self.modelInfos = data.modelInfos;
             self.user       = data.user;
