@@ -42,7 +42,8 @@ const routes = [
         paramBuild:                 route.query.build,
 
         paramTheme:                 route.query.theme,
-        paramVariantSetId:          route.query.variant_set_id
+        paramVariantSetId:          route.query.variant_set_id,
+        paramExperimentId:          route.query.experiment_id
     })
   },
    {
