@@ -511,6 +511,9 @@ export default class MosaicSession {
           if(self.experiment_id){
             return file.experiment_ids.includes(Number(self.experiment_id))
           }
+          else {
+            return file
+          }
         }).filter(file => {
           return file.type
         })
