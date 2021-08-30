@@ -1630,12 +1630,9 @@ export default {
     // },
 
     promiseSaveAnalysis: function(options) {
-      console.log("promiseSaveAnalysis");
       this.analysis.payload.newSummary = this.analysis.payload.genesReport;
       // this.promiseUpdateNewSummaryGenes();
-      console.log("promiseSaveAnalysis on updating analysis", this.analysis);
       let self = this;
-      console.log("self.analysis.id", self.analysis.id);
 
       return new Promise(function(resolve, reject) {
         if (self.analysis.id ) {
@@ -1734,17 +1731,17 @@ export default {
                 //   analysis.payload.stateSummaryGenes = analysis.payload.genesReport;
                 // }
                 // 
-                // //for new update these state variables are required as props. Since they do not exist in earlier version, set to default. 
-                // if(!analysis.payload.scaledHpoScores){analysis.payload.scaledHpoScores = []};
-                // if(!analysis.payload.specificityScoreBrushArea){analysis.payload.specificityScoreBrushArea = []};
-                // if(!analysis.payload.hpoGenesCountForBarChart){analysis.payload.hpoGenesCountForBarChart = []};
-                // if(!analysis.payload.hpoBarChartBrushArea){analysis.payload.hpoBarChartBrushArea = []};
-                // if(!analysis.payload.stateHpoSummaryGenes){analysis.payload.stateHpoSummaryGenes = []};
-                // if(!analysis.payload.stateSummaryGenes){analysis.payload.stateSummaryGenes = []};
-                // if(!analysis.payload.filterTermsIntersectText){analysis.payload.filterTermsIntersectText = ""};
-                // if(!analysis.payload.filterSpecificityScoreText){analysis.payload.filterSpecificityScoreText = ""};
-                // if(!analysis.payload.setGenesOverlapFlag){analysis.payload.setGenesOverlapFlag = false};
-                // if(!analysis.payload.setSpecificityScoreFlag){analysis.payload.setSpecificityScoreFlag = false};
+                //for new update these state variables are required as props. Since they do not exist in earlier version, set to default. 
+                if(!analysis.payload.scaledHpoScores){analysis.payload.scaledHpoScores = []};
+                if(!analysis.payload.specificityScoreBrushArea){analysis.payload.specificityScoreBrushArea = []};
+                if(!analysis.payload.hpoGenesCountForBarChart){analysis.payload.hpoGenesCountForBarChart = []};
+                if(!analysis.payload.hpoBarChartBrushArea){analysis.payload.hpoBarChartBrushArea = []};
+                if(!analysis.payload.stateHpoSummaryGenes){analysis.payload.stateHpoSummaryGenes = []};
+                if(!analysis.payload.stateSummaryGenes){analysis.payload.stateSummaryGenes = []};
+                if(!analysis.payload.filterTermsIntersectText){analysis.payload.filterTermsIntersectText = ""};
+                if(!analysis.payload.filterSpecificityScoreText){analysis.payload.filterSpecificityScoreText = ""};
+                if(!analysis.payload.setGenesOverlapFlag){analysis.payload.setGenesOverlapFlag = false};
+                if(!analysis.payload.setSpecificityScoreFlag){analysis.payload.setSpecificityScoreFlag = false};
                 // 
                 self.analysis = analysis;
                 self.idAnalysis = self.analysis.id;
@@ -2223,7 +2220,6 @@ export default {
     },
 
     summaryGenes(genes){
-      console.log("summaryGenes", genes);
       let res = [];
       genes.map(gene => {
         if(!this.deletedGenesList.includes(gene.name)){
@@ -2232,7 +2228,6 @@ export default {
       })
 
       this.summaryGeneList = res;
-      console.log("this.summaryGeneList", this.summaryGeneList);
       this.analysis.payload.genesReport = this.summaryGeneList;
       this.promiseUpdateGenesReport(res);
     },
@@ -2441,7 +2436,6 @@ export default {
       self.analysis.payload.datetime_last_modified = self.getCurrentDateTime();
     },
     specificity_brush_area(area){
-      console.log("specificity_brush_area called", area);
       this.analysis.payload.specificityScoreBrushArea = area;
       this.promiseUpdateSpecificityBrushArea(area)
     },

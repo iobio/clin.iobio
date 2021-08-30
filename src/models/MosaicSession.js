@@ -676,7 +676,6 @@ export default class MosaicSession {
     return new Promise(function(resolve, reject) {
       self.getAnalysis(projectId, analysisId)
       .done(response => {
-        console.log("get analysis response", response);
         resolve(response)
       })
       .fail(error => {
@@ -717,12 +716,10 @@ export default class MosaicSession {
   }
 
   promiseUpdateAnalysis(analysis) {
-    console.log("analysis before update api call", analysis);
     let self = this;
     return new Promise(function(resolve, reject) {
       self.updateAnalysis(analysis.project_id, analysis.id, analysis)
       .done(response => {
-        console.log("response after updating analysis", response);
         resolve(response)
       })
       .fail(error => {
@@ -749,8 +746,6 @@ export default class MosaicSession {
   getAnalysis(projectId, analysisId) {
     let self = this;
     var u = self.api + '/projects/' + projectId  + '/analyses/' + analysisId
-    console.log("url", u);
-    console.log("auth", localStorage.getItem('hub-iobio-tkn'));
     return $.ajax({
       url: self.api + '/projects/' + projectId  + '/analyses/' + analysisId,
       type: 'GET',
@@ -778,7 +773,6 @@ export default class MosaicSession {
 
 
   addAnalysis(projectId, newAnalysisData) {
-    console.log("newAnalysisData ", newAnalysisData);
     let self = this;
 
     return $.ajax({
