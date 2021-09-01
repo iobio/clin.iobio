@@ -1717,7 +1717,6 @@ export default {
             self.mosaicSession.promiseGetAnalysis(idProject, idAnalysis)
             .then(function(analysis) {
               if (analysis) {
-                console.log("analysis after launch", analysis);
                 if (analysis.payload.genesReport[0] === null) {
                   analysis.payload.genesReport = analysis.payload.stateSummaryGenes
                 }

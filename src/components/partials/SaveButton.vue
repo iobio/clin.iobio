@@ -45,13 +45,11 @@ export default {
   },
   watch : {
     showSaveModal(){
-      console.log("showSaveModal", this.showSaveModal);
       this.showDialog = this.showSaveModal;
     }
   },
   methods: {
     toggleSaveModal() {
-      console.log("this.showDialog", this.showDialog);
       if(this.showDialog) {
         this.showDialog = false;
         this.$emit('save-modal:set-visibility', false)
