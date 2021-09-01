@@ -169,7 +169,8 @@ $horizontal-dashboard-height: 140px
    :caseSummary="caseSummary"
    :analysis="analysis"
    :launchedFromMosaic="launchedFromMosaic"
-   @show-save-analysis="toggleSaveModal(true)"
+   :showSaveModal="showSaveModal"
+   @show-save-analysis="toggleSaveModal($event)"
    :customData="customData">
   </navigation>
 
@@ -257,7 +258,17 @@ $horizontal-dashboard-height: 140px
             @VennDiagramData="VennDiagramData($event)"
             :geneToDelete="geneToDelete"
             @new_term_searched="new_term_searched($event)"
-            :textNotesLandingPage="textNotesLandingPage">
+            :textNotesLandingPage="textNotesLandingPage"
+            @close_search_status_dialog="close_search_status_dialog($event)"
+            :launchedFromGenePanel="launchedFromGenePanel"
+            :scaled_hpo_scores_props="analysis.payload.scaledHpoScores"
+            :specificityScoreBrushArea="analysis.payload.specificityScoreBrushArea"
+            :hpo_genes_bar_chart_props="analysis.payload.hpoGenesCountForBarChart"
+            :hpo_bar_chart_brush_area_props="analysis.payload.hpoBarChartBrushArea"
+            @hpo_bar_chart_brush_area="hpo_bar_chart_brush_area($event)"
+            @scaled_hpo_scores="scaled_hpo_scores($event)"
+            @specificity_brush_area="specificity_brush_area($event)"
+            @hpo_genes_bar_chart="hpo_genes_bar_chart($event)">
           </PhenotypeExtractor>
         </keep-alive>
 
@@ -280,6 +291,20 @@ $horizontal-dashboard-height: 140px
             :hpoResourceUsed="hpoResourceUsed"
             :PhenolyzerResourceUsed="PhenolyzerResourceUsed"
             :mosaic_gene_set="mosaic_gene_set"
+            :launchedFromGenePanel="launchedFromGenePanel"
+            :stateHpoSummaryGenesProps="analysis.payload.stateHpoSummaryGenes"
+            :stateSummaryGenesProps="analysis.payload.stateSummaryGenes"
+            :filterTermsIntersectTextProps="analysis.payload.filterTermsIntersectText"
+            :filterSpecificityScoreTextProps="analysis.payload.filterSpecificityScoreText"
+            :setGenesOverlapFlagProps="analysis.payload.setGenesOverlapFlag"
+            :setSpecificityScoreFlagProps="analysis.payload.setSpecificityScoreFlag"
+            @state_hpo_summary_genes="state_hpo_summary_genes($event)"
+            @state_summary_genes="state_summary_genes($event)"
+            @reorder_summary_genes="reorder_summary_genes($event)"
+            @filter_terms_inspect_text="filter_terms_inspect_text($event)"
+            @filter_specificity_score_text="filter_specificity_score_text($event)"
+            @set_genes_overlap_flag="set_genes_overlap_flag($event)"
+            @set_specificity_score_flag="set_specificity_score_flag($event)"
             >
           </GeneList>
         </keep-alive>
@@ -636,6 +661,7 @@ export default {
       PhenolyzerResourceUsed: false,
       mosaic_gene_set: "",
       genePhenotypeHits: {},
+      launchedFromGenePanel: false
     }
 
   },
@@ -1587,6 +1613,7 @@ export default {
       return new Promise(function(resolve, reject) {
         self.mosaicSession.promiseAddAnalysis(newAnalysis.project_id, newAnalysis)
         .then(function(analysis) {
+          console.log("analysis after saving", analysis);
           console.log("**********  saving as new mosaic analysis " + newAnalysis.id + " " + " **************")
           self.onShowSnackbar( {message: 'Analysis  \'' + newAnalysis.title + '\'  saved.', timeout: 3000, top: true, right: true});
           self.analysis = analysis;
@@ -1598,8 +1625,15 @@ export default {
         })
       })
     },
+    
+    // promiseUpdateNewSummaryGenes: function(){
+    //   let self = this; 
+    //   self.analysis.payload.datetime_last_modified = self.getCurrentDateTime();
+    // },
 
     promiseSaveAnalysis: function(options) {
+      this.analysis.payload.newSummary = this.analysis.payload.genesReport;
+      // this.promiseUpdateNewSummaryGenes();
       let self = this;
 
       return new Promise(function(resolve, reject) {
@@ -1632,13 +1666,17 @@ export default {
           })
 
         } else {
+          console.log("in update analysis");
           self.mosaicSession.promiseAddAnalysis(self.analysis.project_id, self.analysis)
           .then(function(analysis) {
+            console.log("analysis after saving", analysis);
             console.log("**********  adding mosaic analysis " + self.analysis.id + " " + " **************")
             if (options && options.notify) {
               self.onShowSnackbar( {message: 'Analysis  \'' + self.analysis.title + '\'  saved.', timeout: 3000, top: true, right: true});
             }
-            self.analysis = analysis;
+            self.analysis.id = analysis.id;
+            console.log("self.analysis.id", self.analysis.id);
+            // self.analysis = analysis;
             resolve();
           })
           .catch(function(error) {
@@ -1663,7 +1701,6 @@ export default {
         let theOptions = options ? options : {};
         theOptions.autoupdate = true;
         return self.promiseSaveAnalysis(theOptions);
-        console.log("analysis", self.analysis);
         // return Promise.resolve();
       } else {
         return Promise.resolve();
@@ -1682,7 +1719,31 @@ export default {
             self.mosaicSession.promiseGetAnalysis(idProject, idAnalysis)
             .then(function(analysis) {
               if (analysis) {
-
+                if (analysis.payload.genesReport[0] === null) {
+                  analysis.payload.genesReport = analysis.payload.stateSummaryGenes
+                }
+                else {
+                  analysis.payload.stateSummaryGenes = analysis.payload.genesReport;
+                }
+                // if(analysis.payload.stateSummaryGenes){
+                //   analysis.payload.genesReport = analysis.payload.stateSummaryGenes;
+                // }
+                // else {
+                //   analysis.payload.stateSummaryGenes = analysis.payload.genesReport;
+                // }
+                // 
+                //for new update these state variables are required as props. Since they do not exist in earlier version, set to default. 
+                if(!analysis.payload.scaledHpoScores){analysis.payload.scaledHpoScores = []};
+                if(!analysis.payload.specificityScoreBrushArea){analysis.payload.specificityScoreBrushArea = []};
+                if(!analysis.payload.hpoGenesCountForBarChart){analysis.payload.hpoGenesCountForBarChart = []};
+                if(!analysis.payload.hpoBarChartBrushArea){analysis.payload.hpoBarChartBrushArea = []};
+                if(!analysis.payload.stateHpoSummaryGenes){analysis.payload.stateHpoSummaryGenes = []};
+                if(!analysis.payload.stateSummaryGenes){analysis.payload.stateSummaryGenes = []};
+                if(!analysis.payload.filterTermsIntersectText){analysis.payload.filterTermsIntersectText = ""};
+                if(!analysis.payload.filterSpecificityScoreText){analysis.payload.filterSpecificityScoreText = ""};
+                if(!analysis.payload.setGenesOverlapFlag){analysis.payload.setGenesOverlapFlag = false};
+                if(!analysis.payload.setSpecificityScoreFlag){analysis.payload.setSpecificityScoreFlag = false};
+                // 
                 self.analysis = analysis;
                 self.idAnalysis = self.analysis.id;
 
@@ -1723,7 +1784,16 @@ export default {
             newAnalysis.payload.genes = [];
             newAnalysis.payload.phenotypes = [];
             newAnalysis.payload.gtrFullList = [];
-            newAnalysis.payload.phenolyzerFullList = [];
+            newAnalysis.payload.scaledHpoScores = [];
+            newAnalysis.payload.specificityScoreBrushArea = [];
+            newAnalysis.payload.hpoGenesCountForBarChart = [];
+            newAnalysis.payload.hpoBarChartBrushArea = [];
+            newAnalysis.payload.stateHpoSummaryGenes = [];
+            newAnalysis.payload.stateSummaryGenes = [];
+            newAnalysis.payload.filterTermsIntersectText = "";
+            newAnalysis.payload.filterSpecificityScoreText = "";
+            newAnalysis.payload.setGenesOverlapFlag = false;
+            newAnalysis.payload.setSpecificityScoreFlag = false;
 
             self.initForPhenotypist(newAnalysis);
 
@@ -1894,7 +1964,7 @@ export default {
 
     promiseUpdateGenesReport: function(genes) {
       let self = this;
-      self.analysis.payload.genesReport = genes;
+      // self.analysis.payload.genesReport = genes;
       this.setGenePhenotypeHitsFromClin(genes);
       self.analysis.payload.datetime_last_modified = self.getCurrentDateTime();
       // return self.promiseAutosaveAnalysis();
@@ -2351,6 +2421,97 @@ export default {
       self.analysis.payload.datetime_last_modified = self.getCurrentDateTime();
       // return self.promiseAutosaveAnalysis();
     },
+    close_search_status_dialog(){
+    },
+    hpo_bar_chart_brush_area(area){
+      console.log("hpo_bar_chart_brush_area called", area);
+      this.analysis.payload.hpoBarChartBrushArea = area;
+      this.promiseUpdateHpoBarChartBrushArea(area);
+    },
+    scaled_hpo_scores(scores){
+      this.analysis.payload.scaledHpoScores = scores;
+      this.promiseUpdateScaledHpoScores(scores);
+    },
+    promiseUpdateScaledHpoScores: function(scores){
+      let self = this; 
+      self.analysis.payload.datetime_last_modified = self.getCurrentDateTime();
+    },
+    specificity_brush_area(area){
+      this.analysis.payload.specificityScoreBrushArea = area;
+      this.promiseUpdateSpecificityBrushArea(area)
+    },
+    promiseUpdateSpecificityBrushArea: function(area){
+      let self = this; 
+      self.analysis.payload.datetime_last_modified = self.getCurrentDateTime();
+    },
+    hpo_genes_bar_chart(count){
+      this.analysis.payload.hpoGenesCountForBarChart = count;
+      this.promiseUpdateHpoGenesBarChart(count); 
+    },
+    promiseUpdateHpoGenesBarChart: function(area){
+      let self = this; 
+      self.analysis.payload.datetime_last_modified = self.getCurrentDateTime();
+    },
+    state_hpo_summary_genes(genes){
+      this.analysis.payload.stateHpoSummaryGenes = genes;
+      this.promiseUpdateStateHpoSummaryGenes(genes);
+    },
+    promiseUpdateStateHpoSummaryGenes: function(genes){
+      let self = this; 
+      self.analysis.payload.datetime_last_modified = self.getCurrentDateTime();
+    },
+    state_summary_genes(genes){
+      this.analysis.payload.stateSummaryGenes = genes;
+      this.promiseUpdateStateSummaryGenes(genes);
+    },
+    promiseUpdateStateSummaryGenes: function(genes){
+      let self = this; 
+      self.analysis.payload.datetime_last_modified = self.getCurrentDateTime();
+    },
+    filter_terms_inspect_text(text){
+      this.analysis.payload.filterTermsIntersectText = text;
+      this.promiseUpdateFilterTermsInspectText(text);
+    },
+    promiseUpdateFilterTermsInspectText: function(text){
+      let self = this; 
+      self.analysis.payload.datetime_last_modified = self.getCurrentDateTime();
+    },
+    filter_specificity_score_text(text){
+      this.analysis.payload.filterSpecificityScoreText = text;
+      this.promiseUpdateFilterSpecificityScoreText(text);
+    },
+    promiseUpdateFilterSpecificityScoreText: function(text){
+      let self = this; 
+      self.analysis.payload.datetime_last_modified = self.getCurrentDateTime();
+    },
+    set_genes_overlap_flag(flag){
+      this.analysis.payload.setGenesOverlapFlag = flag;
+      this.promiseUpdateSetGenesOverlapFlag(flag);
+    },
+    promiseUpdateSetGenesOverlapFlag: function(flag){
+      let self = this; 
+      self.analysis.payload.datetime_last_modified = self.getCurrentDateTime();
+    },
+    set_specificity_score_flag(flag){
+      this.analysis.payload.setSpecificityScoreFlag = flag;
+      this.promiseUpdateSetSpecificityScoreFlag(flag);
+    },
+    promiseUpdateSetSpecificityScoreFlag: function(flag){
+      let self = this; 
+      self.analysis.payload.datetime_last_modified = self.getCurrentDateTime();
+    },
+    reorder_summary_genes(genes){
+      console.log("genes in reorder_summary_genes", genes);
+      if(genes.length){
+        this.analysis.payload.genesReport = genes;
+        // this.summaryGeneList = genes;
+        this.promiseUpdateGenesReport(genes);
+      }
+    },
+    promiseUpdateHpoBarChartBrushArea(area){
+      let self = this; 
+      self.analysis.payload.datetime_last_modified = self.getCurrentDateTime();
+    },
     
     checkIfSelectedGenesArrayChanged(newArr, oldArr){
       return JSON.stringify(newArr.sort()) == JSON.stringify(oldArr.sort())
@@ -2670,6 +2831,7 @@ export default {
       else{
         arrChanged = true;
       }
+      
       if(arrChanged){
         var theObject = {
               type: 'add-new-genes',

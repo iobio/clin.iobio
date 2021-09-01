@@ -74,7 +74,7 @@
             <v-icon>close</v-icon>
           </v-btn>
         </v-card-title>
-        
+                
         <v-layout row wrap class="save-analysis-radios">
           <v-radio-group v-model="radios" mandatory v-if="analysis.id" style="margin-top: 0px !important">
             <v-radio label="Update analysis" value="update-analysis"></v-radio>
