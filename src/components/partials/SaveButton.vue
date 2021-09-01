@@ -19,6 +19,7 @@ export default {
       type: Boolean,
       required: true,
     },
+    showSaveModal: null,
     analysis: null
   },
   computed: {
@@ -26,7 +27,7 @@ export default {
       if (this.analysis && this.analysis.id) {
         return "Save analysis";
       } else{ 
-        return "Add analysis";
+        return "Save analysis";
       }
     },
     iconName() {
@@ -37,9 +38,27 @@ export default {
       }
     },
   },
+  data () {
+    return {
+      showDialog: false,
+    }
+  },
+  watch : {
+    showSaveModal(){
+      this.showDialog = this.showSaveModal;
+    }
+  },
   methods: {
     toggleSaveModal() {
-      this.showingSaveModal ? this.$emit('save-modal:set-visibility', false) : this.$emit('save-modal:set-visibility', true);
+      if(this.showDialog) {
+        this.showDialog = false;
+        this.$emit('save-modal:set-visibility', false)
+      }
+      else {
+        this.showDialog = true;
+        this.$emit('save-modal:set-visibility', true)
+      }
+      // this.showingSaveModal ? this.$emit('save-modal:set-visibility', false) : this.$emit('save-modal:set-visibility', true);
     },
   },
 };

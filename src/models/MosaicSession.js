@@ -691,6 +691,23 @@ export default class MosaicSession {
         reject("Error getting analysis " + analysisId + ": " + error);
       })
     })
+    
+    // return new Promise((resolve, reject) => {
+    //   const myHeaders = new Headers({
+    //       'Content-Type': 'application/json',
+    //       'Authorization': localStorage.getItem('hub-iobio-tkn')
+    //   });
+    // 
+    //   fetch('https://mosaic.chpc.utah.edu/api/v1/projects/478/analyses/649', {
+    //     method: 'GET',
+    //     headers: myHeaders,
+    //   }).then(resp => resp.json()).then(response => {
+    //     console.log("response", response);
+    //     resolve(response)
+    //   })
+    // })
+    
+
 
   }
   promiseAddAnalysis(projectId, analysis) {
@@ -737,6 +754,7 @@ export default class MosaicSession {
 
   getAnalysis(projectId, analysisId) {
     let self = this;
+    var u = self.api + '/projects/' + projectId  + '/analyses/' + analysisId
     return $.ajax({
       url: self.api + '/projects/' + projectId  + '/analyses/' + analysisId,
       type: 'GET',
@@ -745,6 +763,19 @@ export default class MosaicSession {
         Authorization: localStorage.getItem('hub-iobio-tkn'),
       },
     })
+    
+    // const myHeaders = new Headers({
+    //     'Content-Type': 'application/json',
+    //     'Authorization': localStorage.getItem('hub-iobio-tkn')
+    // });
+    // 
+    // return fetch('https://mosaic.chpc.utah.edu/api/v1/projects/478/analyses/649', {
+    //   method: 'GET',
+    //   headers: myHeaders,
+    // }).then(resp => resp.json()).then(response => {
+    //   console.log(response);
+    // })
+
   }
 
 
