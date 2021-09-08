@@ -476,7 +476,9 @@ export default {
     launchedFromMosaic: null,
     customData:   null,
     bedFileUrl: null,
-    customSavedAnalysis: null
+    customSavedAnalysis: null,
+    projectAttributes: null,
+    summaryList: null
   },
   data() {
     return {

@@ -233,7 +233,9 @@ $horizontal-dashboard-height: 140px
         @updateCoverage="updateAverageCoverage"
         :customData=customData
         :bedFileUrl="bedFileUrl"
-        :customSavedAnalysis="customSavedAnalysis">
+        :customSavedAnalysis="customSavedAnalysis"
+        :projectAttributes="projectAttributes"
+        :summaryList="summaryList">
         </review-case>
       </v-card>
 
@@ -661,7 +663,9 @@ export default {
       PhenolyzerResourceUsed: false,
       mosaic_gene_set: "",
       genePhenotypeHits: {},
-      launchedFromGenePanel: false
+      launchedFromGenePanel: false,
+      projectAttributes: [],
+      summaryList: []
     }
 
   },
@@ -905,6 +909,7 @@ export default {
           self.mosaicSession.promiseInit(self.params.sample_id, self.params.source,
             true, self.params.project_id, self.params.client_application_id, self.params.gene_set_id, self.params.variant_set_id, self.paramBuild, self.params.experiment_id)
           .then(data => {
+            console.log("data", data);
             self.modelInfos = data.modelInfos;
             self.user       = data.user;
             self.geneSet    = data.geneSet;
@@ -919,8 +924,40 @@ export default {
 
               self.caseSummary = {};
               self.caseSummary.name = project.name;
-              self.caseSummary.description = project.description && project.description.length > 0 ? project.description : "A summary of the trio goes here....";
 
+
+              
+              self.mosaicSession.promiseGetProjectAttributes(self.params.project_id)
+                .then(function(attributes) {
+                  self.projectAttributes = attributes;
+                  
+                  self.summaryList = [];
+                  attributes.map(attribute => {
+                    var attr = attribute.name.toLowerCase(); 
+                    var str = attr.replace(/[_-]/g, " "); 
+                    if(str == "clinical summary"){
+                      self.summaryList.push(attribute);
+                    }
+                  })
+                  if(self.analysis.clinicalSummary){
+                    self.caseSummary = {};
+                    self.caseSummary.name = project.name;
+                    self.caseSummary.description = self.analysis.clinicalSummary;
+                  }
+                  else {
+                    if(self.summaryList.length == 1){
+                      self.caseSummary = {};
+                      self.caseSummary.name = project.name;
+                      self.caseSummary.description = self.summaryList[0].values[0].value;
+                      self.set_clinical_summary(self.summaryList[0].values[0].value)
+                    }
+                    else {
+                      self.caseSummary = {};
+                      self.caseSummary.name = project.name;
+                      self.caseSummary.description = project.description && project.description.length > 0 ? project.description : "A summary of the trio goes here....";
+                    }
+                  }
+                })
 
 
             })
@@ -1775,6 +1812,7 @@ export default {
             newAnalysis.title = "";
             newAnalysis.description = "";
             newAnalysis.project_id = idProject;
+            newAnalysis.clinicalSummary = "";
             newAnalysis.sample_id = self.params.sample_id;
             newAnalysis.payload = {};
             newAnalysis.payload.project_id = idProject;
@@ -2500,6 +2538,15 @@ export default {
       let self = this; 
       self.analysis.payload.datetime_last_modified = self.getCurrentDateTime();
     },
+    set_clinical_summary(summary){
+      this.analysis.clinicalSummary = summary;
+      this.promiseUpdateClinicalSummary(summary);
+    },
+    promiseUpdateClinicalSummary(summary){
+      let self = this; 
+      self.analysis.payload.datetime_last_modified = self.getCurrentDateTime();
+    },
+    
     reorder_summary_genes(genes){
       console.log("genes in reorder_summary_genes", genes);
       if(genes.length){
