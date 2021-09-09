@@ -1889,8 +1889,8 @@ export default {
       self.summaryList = [];
       attributes.map(attribute => {
         var attr = attribute.name.toLowerCase(); 
-        var str = attr.replace(/[_-]/g, " "); 
-        if(str == "clinical summary"){
+        var str = attr.replace(/[_-\s]/g, "").trim(); 
+        if(str == "clinicalsummary"){
           self.summaryList.push(attribute.values[0].value);
         }
       })
@@ -1901,7 +1901,7 @@ export default {
       else {
         if(self.summaryList.length){
           self.$set(self.caseSummary, 'description', self.summaryList[0])
-          self.set_clinical_summary(self.summaryList[0])
+          self.set_clinical_summary(self.summaryList[0]);
         }
         else {
           let summary = self.MosaicProjectDescription && self.MosaicProjectDescription.length > 0 ? self.MosaicProjectDescription : "A summary of the trio goes here...."
