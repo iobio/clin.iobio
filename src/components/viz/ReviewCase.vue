@@ -621,6 +621,10 @@ export default {
       this.formatVarCountsArray();
       this.convertPropsToData();
       this.buildPage();
+      
+      if (this.analysis.clinicalSummary) {
+        this.selectClinicalSummaryRadios = this.analysis.clinicalSummary;
+      }
 
     }
     else if(this.customSavedAnalysis){

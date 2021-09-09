@@ -928,60 +928,6 @@ export default {
 
               self.onAuthenticated()
 
-              // self.caseSummary = {};
-              // self.caseSummary.name = project.name;
-
-
-              
-              // self.mosaicSession.promiseGetProjectAttributes(self.params.project_id)
-              //   .then(function(attributes) {
-              //     self.projectAttributes = attributes;
-              // 
-              //     self.summaryList = [];
-              //     attributes.map(attribute => {
-              //       var attr = attribute.name.toLowerCase(); 
-              //       var str = attr.replace(/[_-]/g, " "); 
-              //       if(str == "clinical summary"){
-              //         self.summaryList.push(attribute.values[0].value);
-              //       }
-              //     })
-              //     console.log("self.summaryList", self.summaryList);
-              //     console.log("self.analysis", self.analysis);
-              //     console.log("called");
-              //     if(self.analysis.clinicalSummary){
-              //       console.log("am i here?");
-              //       self.caseSummary = {};
-              //       self.$set(self.caseSummary, 'name', project.name)
-              //       self.$set(self.caseSummary, 'description', self.analysis.clinicalSummary)
-              //       // self.caseSummary.name = project.name;
-              //       // self.caseSummary.description = self.analysis.clinicalSummary;
-              //       console.log("self.caseSummary", self.caseSummary);
-              //     }
-              //     else {
-              //       if(self.summaryList.length){
-              //         self.caseSummary = {};
-              //         self.$set(self.caseSummary, 'name', project.name)
-              //         self.$set(self.caseSummary, 'description', self.summaryList[0])
-              // 
-              //         // self.caseSummary.name = project.name;
-              //         // self.caseSummary.description = self.summaryList[0];
-              //         self.set_clinical_summary(self.summaryList[0])
-              //       }
-              //       else {
-              //         let summary = project.description && project.description.length > 0 ? project.description : "A summary of the trio goes here...."
-              //         self.caseSummary = {};
-              //         self.$set(self.caseSummary, 'name', project.name);
-              //         self.$set(self.caseSummary, 'description', summary);
-              //         self.set_clinical_summary(summary)
-              // 
-              // 
-              //         // self.caseSummary.name = project.name;
-              //         // self.caseSummary.description = project.description && project.description.length > 0 ? project.description : "A summary of the trio goes here....";
-              //       }
-              //     }
-              //   })
-
-
             })
           })
           .catch(function(error) {
@@ -1806,13 +1752,8 @@ export default {
                 // 
                 self.analysis = analysis;
                 self.idAnalysis = self.analysis.id;
-                console.log("self.analysis clinicalSummary", self.analysis.payload);
 
-                if(self.analysis.payload.clinicalSummary){
-                  console.log("am i here?");
-                  self.$set(self.caseSummary, 'description', self.analysis.payload.clinicalSummary)
-                  console.log("self.caseSummary", self.caseSummary);
-                }
+                self.promiseGetProjectAttributes();
 
                 self.setGeneTaskBadges();
                 
@@ -1906,34 +1847,7 @@ export default {
             })
             self.analysis = newAnalysis;
             
-            self.mosaicSession.promiseGetProjectAttributes(self.params.project_id)
-              .then(function(attributes) {
-                self.projectAttributes = attributes;
-            
-                self.summaryList = [];
-                attributes.map(attribute => {
-                  var attr = attribute.name.toLowerCase(); 
-                  var str = attr.replace(/[_-]/g, " "); 
-                  if(str == "clinical summary"){
-                    self.summaryList.push(attribute.values[0].value);
-                  }
-                })
-                console.log("self.summaryList", self.summaryList);
-                console.log("called");
-                
-                
-                if(self.summaryList.length){
-                  self.caseSummary = {};
-                  self.$set(self.caseSummary, 'description', self.summaryList[0])
-                  self.set_clinical_summary(self.summaryList[0])
-                }
-                else {
-                  let summary = self.MosaicProjectDescription && self.MosaicProjectDescription.length > 0 ? self.MosaicProjectDescription : "A summary of the trio goes here...."
-                  self.$set(self.caseSummary, 'description', summary);
-                  self.set_clinical_summary(summary)
-                }
-              })
-              console.log("resolve");
+            self.promiseGetProjectAttributes();
 
             resolve();
 
@@ -1958,6 +1872,43 @@ export default {
 
         }
       });
+    },
+    
+    promiseGetProjectAttributes: function(){
+      let self = this;
+      self.mosaicSession.promiseGetProjectAttributes(self.params.project_id)
+        .then(function(attributes) {
+          self.getClinicalSummaryValues(attributes);
+        })
+    },
+    
+    getClinicalSummaryValues(attributes){
+      let self = this;
+      self.projectAttributes = attributes;
+  
+      self.summaryList = [];
+      attributes.map(attribute => {
+        var attr = attribute.name.toLowerCase(); 
+        var str = attr.replace(/[_-]/g, " "); 
+        if(str == "clinical summary"){
+          self.summaryList.push(attribute.values[0].value);
+        }
+      })
+      
+      if(self.analysis.payload.clinicalSummary){
+        self.$set(self.caseSummary, 'description', self.analysis.payload.clinicalSummary)
+      }
+      else {
+        if(self.summaryList.length){
+          self.$set(self.caseSummary, 'description', self.summaryList[0])
+          self.set_clinical_summary(self.summaryList[0])
+        }
+        else {
+          let summary = self.MosaicProjectDescription && self.MosaicProjectDescription.length > 0 ? self.MosaicProjectDescription : "A summary of the trio goes here...."
+          self.$set(self.caseSummary, 'description', summary);
+          self.set_clinical_summary(summary)
+        }
+      }
     },
 
 
@@ -2603,7 +2554,6 @@ export default {
       self.analysis.payload.datetime_last_modified = self.getCurrentDateTime();
     },
     set_clinical_summary(summary){
-      console.log("set_clinical_summary");
       this.analysis.payload.clinicalSummary = summary;
       this.promiseUpdateClinicalSummary(summary);
     },
