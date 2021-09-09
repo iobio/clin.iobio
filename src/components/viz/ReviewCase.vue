@@ -114,11 +114,11 @@
               <div class="container">
                 <span class="heading">
                   <span>Case Summary</span> 
-                  <span v-if="summaryList.length">
-                    <v-btn @click="openSelectSummaryDialog" color="primary" small>Select clinical summary</v-btn>
+                  <span v-if="summaryList.length > 1" class="ml-3">
+                    <v-btn @click="openSelectSummaryDialog" outlined color="primary" x-small>Set summary</v-btn>
                   </span>
                 </span>
-                <div class="reviewCase">
+                <div class="reviewCase mt-1">
                 {{ caseSummary.description }}
                 </div>
               </div>
@@ -437,11 +437,12 @@
       max-width="500"
     >
       <v-card>
-        <v-card-title class="text-h5">
+        <v-card-title class="info-title" style="font-size: 16px; color: black">
           Select Clinical summary
         </v-card-title>
+        <hr style="margin-top: 1px; margin-bottom: 1px">
 
-        <v-card-text>
+        <v-card-text class="save-analysis-radios">
           <v-radio-group v-model="selectClinicalSummaryRadios">
             <v-radio
               v-for="summary in summaryList"
