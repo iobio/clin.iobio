@@ -235,7 +235,8 @@ $horizontal-dashboard-height: 140px
         :bedFileUrl="bedFileUrl"
         :customSavedAnalysis="customSavedAnalysis"
         :projectAttributes="projectAttributes"
-        :summaryList="summaryList">
+        :summaryList="summaryList"
+        @selectClinicalSummary="selectClinicalSummary">
         </review-case>
       </v-card>
 
@@ -936,25 +937,37 @@ export default {
                     var attr = attribute.name.toLowerCase(); 
                     var str = attr.replace(/[_-]/g, " "); 
                     if(str == "clinical summary"){
-                      self.summaryList.push(attribute);
+                      self.summaryList.push(attribute.values[0].value);
                     }
                   })
+                  console.log("self.summaryList", self.summaryList);
                   if(self.analysis.clinicalSummary){
                     self.caseSummary = {};
-                    self.caseSummary.name = project.name;
-                    self.caseSummary.description = self.analysis.clinicalSummary;
+                    self.$set(self.caseSummary, 'name', project.name)
+                    self.$set(self.caseSummary, 'description', self.analysis.clinicalSummary)
+                    // self.caseSummary.name = project.name;
+                    // self.caseSummary.description = self.analysis.clinicalSummary;
                   }
                   else {
-                    if(self.summaryList.length == 1){
+                    if(self.summaryList.length){
                       self.caseSummary = {};
-                      self.caseSummary.name = project.name;
-                      self.caseSummary.description = self.summaryList[0].values[0].value;
-                      self.set_clinical_summary(self.summaryList[0].values[0].value)
+                      self.$set(self.caseSummary, 'name', project.name)
+                      self.$set(self.caseSummary, 'description', self.summaryList[0])
+
+                      // self.caseSummary.name = project.name;
+                      // self.caseSummary.description = self.summaryList[0];
+                      self.set_clinical_summary(self.summaryList[0])
                     }
                     else {
+                      let summary = project.description && project.description.length > 0 ? project.description : "A summary of the trio goes here...."
                       self.caseSummary = {};
-                      self.caseSummary.name = project.name;
-                      self.caseSummary.description = project.description && project.description.length > 0 ? project.description : "A summary of the trio goes here....";
+                      self.$set(self.caseSummary, 'name', project.name);
+                      self.$set(self.caseSummary, 'description', summary);
+                      self.set_clinical_summary(summary)
+
+
+                      // self.caseSummary.name = project.name;
+                      // self.caseSummary.description = project.description && project.description.length > 0 ? project.description : "A summary of the trio goes here....";
                     }
                   }
                 })
@@ -2541,6 +2554,10 @@ export default {
     set_clinical_summary(summary){
       this.analysis.clinicalSummary = summary;
       this.promiseUpdateClinicalSummary(summary);
+    },
+    selectClinicalSummary(summary){
+      this.set_clinical_summary(summary);
+      this.caseSummary.description = summary;
     },
     promiseUpdateClinicalSummary(summary){
       let self = this; 

@@ -112,7 +112,12 @@
 
           <div style="display:flex;flex-direction:row;justify-content:flex-start">
               <div class="container">
-                <span class="heading">Case Summary </span>
+                <span class="heading">
+                  <span>Case Summary</span> 
+                  <span v-if="summaryList.length">
+                    <v-btn @click="openSelectSummaryDialog" color="primary" small>Select clinical summary</v-btn>
+                  </span>
+                </span>
                 <div class="reviewCase">
                 {{ caseSummary.description }}
                 </div>
@@ -425,6 +430,45 @@
      </div>
     </div>
     <div style="height:20px"></div>
+    
+    
+    <v-dialog
+      v-model="selectClinicalSummaryDialog"
+      max-width="500"
+    >
+      <v-card>
+        <v-card-title class="text-h5">
+          Select Clinical summary
+        </v-card-title>
+
+        <v-card-text>
+          <v-radio-group v-model="selectClinicalSummaryRadios">
+            <v-radio
+              v-for="summary in summaryList"
+              :key="summary"
+              :label="`${summary}`"
+              :value="summary"
+            ></v-radio>
+          </v-radio-group>
+        </v-card-text>
+
+        <v-card-actions>
+          <v-spacer></v-spacer>
+
+          <v-btn color="primary darken-1" text
+            @click="setClinicalSummary"
+          >
+            Save
+          </v-btn>
+
+          <v-btn color="primary darken-1" text
+            @click="selectClinicalSummaryDialog = false"
+          >
+            Cancel
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -564,6 +608,8 @@ export default {
       variantsArrayForSamples: null,
       bam_total_reads: [],
       bedDataLoaded: false,
+      selectClinicalSummaryDialog: false,
+      selectClinicalSummaryRadios: null,
     }
 
   },
@@ -1363,6 +1409,19 @@ export default {
         }
       }
       return bool;
+    },
+    
+    setClinicalSummary(){
+      console.log("selectClinicalSummaryRadios", this.selectClinicalSummaryRadios);
+      this.selectClinicalSummaryDialog = false;
+      this.$emit("selectClinicalSummary", this.selectClinicalSummaryRadios)
+    },
+    
+    openSelectSummaryDialog(){
+      if(this.selectClinicalSummaryRadios == null){
+        this.selectClinicalSummaryRadios = this.summaryList[0];
+      }
+      this.selectClinicalSummaryDialog = true;
     }
   },
   computed: {
