@@ -2424,7 +2424,6 @@ export default {
     close_search_status_dialog(){
     },
     hpo_bar_chart_brush_area(area){
-      console.log("hpo_bar_chart_brush_area called", area);
       this.analysis.payload.hpoBarChartBrushArea = area;
       this.promiseUpdateHpoBarChartBrushArea(area);
     },
@@ -2501,7 +2500,6 @@ export default {
       self.analysis.payload.datetime_last_modified = self.getCurrentDateTime();
     },
     reorder_summary_genes(genes){
-      console.log("genes in reorder_summary_genes", genes);
       if(genes.length){
         this.analysis.payload.genesReport = genes;
         // this.summaryGeneList = genes;
@@ -2756,6 +2754,16 @@ export default {
       analysis_obj.genes_top = this.getGenesTop;
       analysis_obj.genesAssociatedWithSource = this.getSourceForGenes;
       analysis_obj.pass_code = Math.floor(100000 + Math.random() * 900000);
+      if (analysis_obj.payload.stateHpoSummaryGenes.length == 0) {
+        var temp = [];
+        analysis_obj.payload.stateSummaryGenes.map(gene => {
+          if(gene.searchTermHpo.length) {
+            temp.push(gene); 
+          }
+        })
+        analysis_obj.payload.stateHpoSummaryGenes = temp;        
+      }
+
       let analysisObject = JSON.stringify(analysis_obj);
       const jsonBlob = new Blob([analysisObject], { type: "application/json" });
       saveAs(jsonBlob, "clin-saved-analysis.json");
