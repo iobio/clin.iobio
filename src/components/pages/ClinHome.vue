@@ -233,7 +233,10 @@ $horizontal-dashboard-height: 140px
         @updateCoverage="updateAverageCoverage"
         :customData=customData
         :bedFileUrl="bedFileUrl"
-        :customSavedAnalysis="customSavedAnalysis">
+        :customSavedAnalysis="customSavedAnalysis"
+        :projectAttributes="projectAttributes"
+        :summaryList="summaryList"
+        @selectClinicalSummary="selectClinicalSummary">
         </review-case>
       </v-card>
 
@@ -661,7 +664,10 @@ export default {
       PhenolyzerResourceUsed: false,
       mosaic_gene_set: "",
       genePhenotypeHits: {},
-      launchedFromGenePanel: false
+      launchedFromGenePanel: false,
+      projectAttributes: [],
+      summaryList: [],
+      MosaicProjectDescription: ""
     }
 
   },
@@ -905,6 +911,7 @@ export default {
           self.mosaicSession.promiseInit(self.params.sample_id, self.params.source,
             true, self.params.project_id, self.params.client_application_id, self.params.gene_set_id, self.params.variant_set_id, self.paramBuild, self.params.experiment_id)
           .then(data => {
+            console.log("data", data);
             self.modelInfos = data.modelInfos;
             self.user       = data.user;
             self.geneSet    = data.geneSet;
@@ -915,13 +922,11 @@ export default {
 
             self.mosaicSession.promiseGetProject(self.params.project_id)
             .then(function(project) {
-              self.onAuthenticated()
-
               self.caseSummary = {};
-              self.caseSummary.name = project.name;
-              self.caseSummary.description = project.description && project.description.length > 0 ? project.description : "A summary of the trio goes here....";
+              self.$set(self.caseSummary, 'name', project.name);
+              self.MosaicProjectDescription = project.description;
 
-
+              self.onAuthenticated()
 
             })
           })
@@ -1718,6 +1723,7 @@ export default {
 
             self.mosaicSession.promiseGetAnalysis(idProject, idAnalysis)
             .then(function(analysis) {
+              console.log("analysis in promiseGetAnalysis", analysis);
               if (analysis) {
                 if (analysis.payload.genesReport[0] === null) {
                   analysis.payload.genesReport = analysis.payload.stateSummaryGenes
@@ -1746,6 +1752,8 @@ export default {
                 // 
                 self.analysis = analysis;
                 self.idAnalysis = self.analysis.id;
+
+                self.promiseGetProjectAttributes();
 
                 self.setGeneTaskBadges();
                 
@@ -1794,8 +1802,13 @@ export default {
             newAnalysis.payload.filterSpecificityScoreText = "";
             newAnalysis.payload.setGenesOverlapFlag = false;
             newAnalysis.payload.setSpecificityScoreFlag = false;
+            newAnalysis.payload.clinicalSummary = "";
+
 
             self.initForPhenotypist(newAnalysis);
+            
+            
+
 
             // If a gene set was specified, initialize the genes accordingly
             if (self.geneSet && self.geneSet.genes) {
@@ -1833,6 +1846,9 @@ export default {
               return stepObject;
             })
             self.analysis = newAnalysis;
+            
+            self.promiseGetProjectAttributes();
+
             resolve();
 
           }
@@ -1856,6 +1872,54 @@ export default {
 
         }
       });
+    },
+    
+    promiseGetProjectAttributes: function(){
+      let self = this;
+      self.mosaicSession.promiseGetProjectAttributes(self.params.project_id)
+        .then(function(attributes) {
+          self.getClinicalSummaryValues(attributes);
+        })
+    },
+    
+    getClinicalSummaryValues(attributes){
+      let self = this;
+      self.projectAttributes = attributes;
+      console.log("attributes", attributes);
+  
+      self.summaryList = [];
+      var clinicalSummaryList = [];
+      attributes.map(attribute => {
+        var attr = attribute.name.toLowerCase(); 
+        self.summaryList.push(attribute.values[0].value);
+
+        // self.summaryList.push({
+        //   value: attribute.values[0].value,
+        //   name: attribute.name
+        // });
+        var str = attr.replace(/[_-\s]/g, "").trim(); 
+        if(str == "clinicalsummary"){
+          // self.summaryList.push(attribute.values[0].value);
+          clinicalSummaryList.push(attribute.values[0].value);
+        }
+      })
+      
+      if(self.analysis.payload.clinicalSummary){
+        self.$set(self.caseSummary, 'description', self.analysis.payload.clinicalSummary)
+      }
+      else {
+        if(clinicalSummaryList.length){
+          self.$set(self.caseSummary, 'description', clinicalSummaryList[0])
+          self.set_clinical_summary(clinicalSummaryList[0]);
+        }
+        else {
+          let summary = self.MosaicProjectDescription && self.MosaicProjectDescription.length > 0 ? self.MosaicProjectDescription : "A summary of the trio goes here...."
+          // self.$set(self.caseSummary, 'description', summary);
+          // self.set_clinical_summary(summary)
+          self.$set(self.caseSummary, 'description', '');
+          self.set_clinical_summary("")
+        }
+      }
     },
 
 
@@ -2499,6 +2563,19 @@ export default {
       let self = this; 
       self.analysis.payload.datetime_last_modified = self.getCurrentDateTime();
     },
+    set_clinical_summary(summary){
+      this.analysis.payload.clinicalSummary = summary;
+      this.promiseUpdateClinicalSummary(summary);
+    },
+    selectClinicalSummary(summary){
+      this.set_clinical_summary(summary);
+      this.caseSummary.description = summary;
+    },
+    promiseUpdateClinicalSummary(summary){
+      let self = this; 
+      self.analysis.payload.datetime_last_modified = self.getCurrentDateTime();
+    },
+    
     reorder_summary_genes(genes){
       if(genes.length){
         this.analysis.payload.genesReport = genes;
