@@ -438,20 +438,43 @@
     >
       <v-card>
         <v-card-title class="info-title" style="font-size: 16px; color: black">
-          Select Clinical summary
+          Edit Clinical summary
         </v-card-title>
-        <hr style="margin-top: 1px; margin-bottom: 1px">
-
+        <!-- <hr style="margin-top: 1px; margin-bottom: 1px"> -->
+        <v-container style="padding-top: 0px;padding-bottom: 0px;margin-top: -25px; margin-bottom: -20px; padding-left: 25px; padding-right: 25px">
+          <v-row>
+            <v-col cols="12" md="12">
+             <v-text-field
+               label="Clinical Summary"
+               v-model="clinicalSummaryInputValue"
+             ></v-text-field>
+           </v-col>
+          </v-row>
+        </v-container>
         <v-card-text class="save-analysis-radios">
           <v-radio-group v-model="selectClinicalSummaryRadios">
             <v-radio
-              v-for="summary in summaryList"
+              v-for="(summary,idx) in summaryList"
               :key="summary"
-              :label="`${summary}`"
+              :label="`${projectAttributes[idx].name}`"
               :value="summary"
             ></v-radio>
+            <v-radio :label="`Custom`" value="custom"></v-radio>
           </v-radio-group>
         </v-card-text>
+        
+        
+        <v-container style="padding-top: 0px;padding-bottom: 0px;margin-top: -25px; margin-bottom: -20px; padding-left: 25px; padding-right: 25px">
+          <v-row>
+            <v-col cols="12" md="12">
+             <v-text-field
+               label="Selected Attribute" readonly
+               :value="clinicalSummaryInputValue"
+             ></v-text-field>
+           </v-col>
+          </v-row>
+        </v-container>
+
 
         <v-card-actions>
           <v-spacer></v-spacer>
@@ -611,6 +634,8 @@ export default {
       bedDataLoaded: false,
       selectClinicalSummaryDialog: false,
       selectClinicalSummaryRadios: null,
+      clinicalSummaryInputValue: "",
+      clinicalSummaryLabelValue: "",
     }
 
   },
@@ -624,7 +649,12 @@ export default {
       this.buildPage();
       
       if (this.analysis.clinicalSummary) {
-        this.selectClinicalSummaryRadios = this.analysis.clinicalSummary;
+        if (!this.summaryList.includes(this.analysis.clinicalSummary)) {
+          this.selectClinicalSummaryRadios = 'custom';
+        }
+        else {
+          this.selectClinicalSummaryRadios = this.analysis.clinicalSummary;
+        }
       }
 
     }
@@ -1417,14 +1447,21 @@ export default {
     },
     
     setClinicalSummary(){
-      console.log("selectClinicalSummaryRadios", this.selectClinicalSummaryRadios);
       this.selectClinicalSummaryDialog = false;
-      this.$emit("selectClinicalSummary", this.selectClinicalSummaryRadios)
+      // this.$emit("selectClinicalSummary", this.selectClinicalSummaryRadios);
+      this.$emit("selectClinicalSummary", this.clinicalSummaryInputValue)
     },
     
     openSelectSummaryDialog(){
       if(this.selectClinicalSummaryRadios == null){
-        this.selectClinicalSummaryRadios = this.summaryList[0];
+        // this.selectClinicalSummaryRadios = this.summaryList[0];
+        this.projectAttributes.map(attribute => {
+          var attr = attribute.name.toLowerCase(); 
+          var str = attr.replace(/[_-\s]/g, "").trim(); 
+          if(str == "clinicalsummary"){
+            this.selectClinicalSummaryRadios = attribute.values[0].value;
+          }
+        })
       }
       this.selectClinicalSummaryDialog = true;
     }
@@ -1436,7 +1473,28 @@ export default {
     minCutoff: function(){
       this.populateBadCoverageCount();
       this.populateReviewCaseBadges();
-    }
+    },
+    selectClinicalSummaryRadios: function(){
+      if (this.selectClinicalSummaryRadios === 'custom') {
+        if (this.clinicalSummaryInputValue.length < 1) {
+          this.clinicalSummaryInputValue = "";
+        }
+        else {
+          this.clinicalSummaryInputValue = this.clinicalSummaryLabelValue;
+        }
+      }
+      else {
+        this.clinicalSummaryInputValue = this.selectClinicalSummaryRadios;
+      }
+    },
+    clinicalSummaryInputValue: function(){
+      if (!this.summaryList.includes(this.clinicalSummaryInputValue)) {
+        this.selectClinicalSummaryRadios = 'custom';
+      }
+      if (this.selectClinicalSummaryRadios === 'custom') {
+        this.clinicalSummaryLabelValue = this.clinicalSummaryInputValue;
+      }
+    },
   },
 }
 
