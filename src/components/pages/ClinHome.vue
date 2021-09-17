@@ -818,7 +818,7 @@ export default {
   },
 
   methods: {
-    ...mapActions(['updateAnalysis', 'setModelInfos', 'setCustomGeneSet', 'setCaseSummary', 'setBuildName', 'setImportedVariantSets', 'setAnalysisInProgressStatus', 'setMosaicLaunchFlag', 'setSelectedGenesForVariantsReview', 'setGenesSource', 'setGenesTop', 'setGlobalgenePhenotypeHits']),
+    ...mapActions(['updateAnalysis', 'setModelInfos', 'setCustomGeneSet', 'setCaseSummary', 'setBuildName', 'setImportedVariantSets', 'setAnalysisInProgressStatus', 'setMosaicLaunchFlag', 'setSelectedGenesForVariantsReview', 'setGenesSource', 'setGenesTop', 'setGlobalgenePhenotypeHits', 'setSearchedPhenotypes']),
 
     init: function() {
       let self = this;
@@ -2298,11 +2298,13 @@ export default {
     },
 
     saveSearchedPhenotypes(phenotypes){
+      console.log("saveSearchedPhenotypes", phenotypes);
       if(phenotypes[3].length){
         var note = phenotypes[3][phenotypes[3].length-1].note.slice(0, 450);
         this.$ga.event('select_phenotype_data', 'Clinical note', note);    
       }
       this.analysis.payload.phenotypes = phenotypes;
+      this.setSearchedPhenotypes(phenotypes);
       this.promiseUpdatePhenotypes(phenotypes);
     },
 

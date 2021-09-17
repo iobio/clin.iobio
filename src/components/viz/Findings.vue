@@ -3,7 +3,7 @@
 @import ../../assets/sass/variables
 
 #findings-panel
-  padding: 15px 20px 5px 20px
+  padding: 15px 80px 5px 80px
   overflow-y: auto
   height: -webkit-fill-available
   height: -moz-available
@@ -77,8 +77,13 @@
         </div>
 
       </div>
+      
+      <div class="mt-7">
+        <span class="sub-heading">Phenotypes</span>
+        <PhenotypesInfo></PhenotypesInfo>
+      </div>
 
-      <div v-if="clinicalNotes && clinicalNotes.length > 0" style="width:97%;margin-top:40px;margin-bottom:20px">
+      <!-- <div v-if="clinicalNotes && clinicalNotes.length > 0" style="width:97%;margin-top:40px;margin-bottom:20px">
         <hr style="border-top:transparent">
         <span class="sub-heading">Phenotypes</span>
         <div class="clinical-note" style="margin-bottom:5px">
@@ -105,7 +110,7 @@
           </div>
         </div>
 
-      </div>
+      </div> -->
 
       <hr style="border-top:transparent">
 
@@ -169,12 +174,14 @@ import AppIcon       from '../partials/AppIcon.vue';
 import VariantInspectCard   from '../viz/findings/VariantInspectCard.vue';
 import { bus }      from '../../main'
 import { mapGetters, mapActions } from 'vuex'
+import PhenotypesInfo from './findings/PhenotypesInfo.vue'
 
 export default {
   name: 'findings',
   components: {
     AppIcon,
-    VariantInspectCard
+    VariantInspectCard,
+    PhenotypesInfo
   },
   props: {
     analysis: null,
