@@ -1914,8 +1914,10 @@ export default {
         }
         else {
           let summary = self.MosaicProjectDescription && self.MosaicProjectDescription.length > 0 ? self.MosaicProjectDescription : "A summary of the trio goes here...."
-          self.$set(self.caseSummary, 'description', summary);
-          self.set_clinical_summary(summary)
+          // self.$set(self.caseSummary, 'description', summary);
+          // self.set_clinical_summary(summary)
+          self.$set(self.caseSummary, 'description', '');
+          self.set_clinical_summary("")
         }
       }
     },

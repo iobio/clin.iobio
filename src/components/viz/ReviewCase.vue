@@ -447,6 +447,7 @@
              <v-text-field
                label="Clinical Summary"
                v-model="clinicalSummaryInputValue"
+               id="clinicalSummaryInputValue"
              ></v-text-field>
            </v-col>
           </v-row>
@@ -468,7 +469,7 @@
           <v-row>
             <v-col cols="12" md="12">
              <v-text-field
-               label="Selected Attribute" readonly
+               label="Selected Attribute" readonly disabled
                :value="clinicalSummaryInputValue"
              ></v-text-field>
            </v-col>
@@ -1475,6 +1476,8 @@ export default {
       this.populateReviewCaseBadges();
     },
     selectClinicalSummaryRadios: function(){
+      document.getElementById("clinicalSummaryInputValue").focus();
+
       if (this.selectClinicalSummaryRadios === 'custom') {
         if (this.clinicalSummaryInputValue.length < 1) {
           this.clinicalSummaryInputValue = "";
