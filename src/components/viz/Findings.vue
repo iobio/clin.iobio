@@ -70,15 +70,20 @@
 
   <div id="findings-panel" >
 
-      <div style="margin-bottom: 20px">
-        <span class="sub-heading">Case Summary </span>
+      <div style="margin-bottom: 60px">
+        <!-- <span class="sub-heading">Case Summary </span>
         <div class="case-summary">
         {{ caseSummary.description }}
-        </div>
+        </div> -->
+        <CaseInformation :caseSummary="caseSummary"></CaseInformation>
 
       </div>
       
-      <div class="mt-7">
+      <div style="height: 120px">
+        
+      </div>
+      
+      <div >
         <span class="sub-heading">Phenotypes</span>
         <PhenotypesInfo></PhenotypesInfo>
       </div>
@@ -175,13 +180,15 @@ import VariantInspectCard   from '../viz/findings/VariantInspectCard.vue';
 import { bus }      from '../../main'
 import { mapGetters, mapActions } from 'vuex'
 import PhenotypesInfo from './findings/PhenotypesInfo.vue'
+import CaseInformation from './findings/CaseInformation'
 
 export default {
   name: 'findings',
   components: {
     AppIcon,
     VariantInspectCard,
-    PhenotypesInfo
+    PhenotypesInfo,
+    CaseInformation
   },
   props: {
     analysis: null,
