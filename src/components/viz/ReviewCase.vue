@@ -644,6 +644,7 @@ export default {
   mounted: function(){
     if(this.launchedFromMosaic) {
       this.varCountsArray = this.allVarCounts;
+      console.log("this.allVarCounts", this.allVarCounts);
 
       this.formatVarCountsArray();
       this.convertPropsToData();
@@ -722,7 +723,7 @@ export default {
   },
 
   methods: {
-    ...mapActions(['setPedigreeData', 'setPedigree', 'setVariantsCount', 'setCoverageData', 'setReviewCaseBadge']),
+    ...mapActions(['setPedigreeData', 'setPedigree', 'setVariantsCount', 'setCoverageData', 'setReviewCaseBadge', 'setBadCoverageCount']),
 
     getBamStatsFromCustomData: function(modelInfos){
       let promises = [];
@@ -1074,7 +1075,7 @@ export default {
         }
         this.reviewCaseBadges = [{label: "samples (" + famName + ")", count: this.modelInfos.length  }];
         if(this.badCoverage){
-          this.reviewCaseBadges.push({label:  "failed QC", count: this.badCoverageCount, class: 'failed'})
+          this.reviewCaseBadges.push({label:  "failed QC", count: this.badCoverageCount, class: 'failed'});
         }
         this.$emit('update', this.reviewCaseBadges);
         this.setReviewCaseBadge(this.reviewCaseBadges)
@@ -1100,7 +1101,10 @@ export default {
         this.reviewCaseBadges = [{label: "samples (" + famName + ")", count: this.sampleIds.length  }];
 
         if(this.badCoverage){
-          this.reviewCaseBadges.push({label:  "failed QC", count: this.badCoverageCount, class: 'failed'})
+          console.log("am i here?");
+
+          this.reviewCaseBadges.push({label:  "failed QC", count: this.badCoverageCount, class: 'failed'});
+          this.setBadCoverageCount(this.badCoverageCount);
         }
         this.$emit('update', this.reviewCaseBadges);
       }

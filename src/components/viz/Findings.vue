@@ -75,12 +75,16 @@
         <div class="case-summary">
         {{ caseSummary.description }}
         </div> -->
-        <CaseInformation :caseSummary="caseSummary"></CaseInformation>
+        <CaseInformation :modelInfos="modelInfos" :caseSummary="caseSummary"></CaseInformation>
 
       </div>
       
       <div style="height: 120px">
         
+      </div>
+      
+      <div>
+        <QualityInfo :sample_attributes="sample_attributes"></QualityInfo>
       </div>
       
       <div >
@@ -181,6 +185,7 @@ import { bus }      from '../../main'
 import { mapGetters, mapActions } from 'vuex'
 import PhenotypesInfo from './findings/PhenotypesInfo.vue'
 import CaseInformation from './findings/CaseInformation'
+import QualityInfo from './findings/QualityInfo.vue'
 
 export default {
   name: 'findings',
@@ -188,7 +193,8 @@ export default {
     AppIcon,
     VariantInspectCard,
     PhenotypesInfo,
-    CaseInformation
+    CaseInformation,
+    QualityInfo
   },
   props: {
     analysis: null,
@@ -211,7 +217,42 @@ export default {
       sources: {
         source: ["imported set", "genelist"],
         sourceIndicator: [1, 2]
-      }
+      },
+      sample_attributes: [
+        {
+          "id": "19863",
+          "sample": "NA12891",
+          "affected_status": "Unaffected",
+          "median_read_coverage": 49,
+          "ts_tv_ratio": 2.03759,
+          "total_reads": 1450429945,
+          "variant_count": 6139915,
+          "mapped_reads": 1447978466,
+          "pedigree": "Pedigree"
+        },
+        {
+          "id": "19863",
+          "sample": "NA12878",
+          "affected_status": "Unaffected",
+          "median_read_coverage": 50,
+          "ts_tv_ratio": 2.03633,
+          "total_reads": 1485576271,
+          "variant_count": 6140615,
+          "mapped_reads": 1482120815,
+          "pedigree": "Pedigree"
+        },
+        {
+          "id": "19863",
+          "sample": "NA12892",
+          "affected_status": "Unaffected",
+          "median_read_coverage": 53,
+          "ts_tv_ratio": 2.0382,
+          "total_reads": 1571450962,
+          "variant_count": 6140444,
+          "mapped_reads": 1569028137,
+          "pedigree": "Pedigree"
+        }
+      ]
     }
 
   },

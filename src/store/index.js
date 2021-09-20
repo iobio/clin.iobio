@@ -25,6 +25,7 @@ export default new Vuex.Store({
     genes_top: 20,
     genePhenotypeHits_global: {},
     searchedPhenotypes: [],
+    badCoverageCount: 0,
   },
   getters: {
     allAnalysis: state => state.analysis,
@@ -46,6 +47,7 @@ export default new Vuex.Store({
     getGenesTop: state => state.genes_top,
     getGlobalgenePhenotypeHits: state => state.genePhenotypeHits_global,
     getSearchedPhenotypes: state => state.searchedPhenotypes,
+    getBadCoverageCount: state => state.badCoverageCount
   },
   actions: {
     fetchAnalysis({ commit }){
@@ -107,7 +109,12 @@ export default new Vuex.Store({
     },
     setSearchedPhenotypes({commit}, phenotypes){
       commit('SET_SEARCHED_PHENOTYPES', phenotypes)
-    }
+    },
+    setBadCoverageCount({commit}, count){
+      console.log("count", count);
+      commit('SET_BAD_COVERAGE_COUNT', count)
+    },
+
   },
   mutations: {
     GET_ANALYSIS: (state) => state.analysis,
@@ -130,6 +137,7 @@ export default new Vuex.Store({
     SET_GENES_TOP: (state, number) => state.genes_top = number,
     SET_GENE_PHENOTYPE_HITS: (state, genesReport) => state.genePhenotypeHits_global = genesReport,
     SET_SEARCHED_PHENOTYPES: (state, phenotypes) => state.searchedPhenotypes = phenotypes,
+    SET_BAD_COVERAGE_COUNT: (state, count) => state.badCoverageCount = count,
   },
   modules: {
   }
