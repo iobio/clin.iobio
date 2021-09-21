@@ -33,9 +33,9 @@
                       <strong class="primary--text">{{ item.sample }}</strong>
                     </td>
                     <td>{{ item.median_read_coverage }}</td>
-                    <td>{{ item.total_reads }}</td>
-                    <td>{{ item.mapped_reads }}</td>
-                    <td>{{ item.variant_count }}</td>
+                    <td>{{ nFormatter(item.total_reads, 1) }}</td>
+                    <td>{{ nFormatter(item.mapped_reads, 1) }}</td>
+                    <td>{{ nFormatter(item.variant_count,1) }}</td>
                     <td>{{ item.ts_tv_ratio }}</td>
 
                   </tr>
@@ -165,6 +165,23 @@ import { mapGetters, mapActions } from 'vuex'
     },
     
     methods: {
+      nFormatter(num, digits) {
+          var si = [
+              {value: 1, symbol: ""},
+              {value: 1E3, symbol: "K"},
+              {value: 1E6, symbol: "M"},
+              {value: 1E9, symbol: "B"},
+              {value: 1E12, symbol: "T"}
+          ];
+          var rx = /\.0+$|(\.[0-9]*[1-9])0+$/;
+          var i;
+          for (i = si.length - 1; i > 0; i--) {
+              if (num >= si[i].value) {
+                  break;
+              }
+          }
+          return (num / si[i].value).toFixed(digits).replace(rx, "$1") + si[i].symbol;
+      },
     },
     
     watch: {

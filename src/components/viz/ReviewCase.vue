@@ -1101,8 +1101,6 @@ export default {
         this.reviewCaseBadges = [{label: "samples (" + famName + ")", count: this.sampleIds.length  }];
 
         if(this.badCoverage){
-          console.log("am i here?");
-
           this.reviewCaseBadges.push({label:  "failed QC", count: this.badCoverageCount, class: 'failed'});
           this.setBadCoverageCount(this.badCoverageCount);
         }
