@@ -84,7 +84,10 @@
       </div>
       
       <div>
-        <QualityInfo :sample_attributes="sample_attributes"></QualityInfo>
+        <QualityInfo 
+          :sample_attributes="sampleAttributes"
+          v-if="launchedFromMosaic">
+        </QualityInfo>
       </div>
       
       <div >
@@ -207,6 +210,8 @@ export default {
     gtrTerms: null,
     phenolyzerTerms: null,
     hpoTerms: null,
+    sampleAttributes: null,
+    launchedFromMosaic: null
   },
   data() {
     return {
@@ -218,41 +223,41 @@ export default {
         source: ["imported set", "genelist"],
         sourceIndicator: [1, 2]
       },
-      sample_attributes: [
-        {
-          "id": "19863",
-          "sample": "NA12891",
-          "affected_status": "Unaffected",
-          "median_read_coverage": 49,
-          "ts_tv_ratio": 2.03759,
-          "total_reads": 1450429945,
-          "variant_count": 6139915,
-          "mapped_reads": 1447978466,
-          "pedigree": "Pedigree"
-        },
-        {
-          "id": "19863",
-          "sample": "NA12878",
-          "affected_status": "Unaffected",
-          "median_read_coverage": 50,
-          "ts_tv_ratio": 2.03633,
-          "total_reads": 1485576271,
-          "variant_count": 6140615,
-          "mapped_reads": 1482120815,
-          "pedigree": "Pedigree"
-        },
-        {
-          "id": "19863",
-          "sample": "NA12892",
-          "affected_status": "Unaffected",
-          "median_read_coverage": 53,
-          "ts_tv_ratio": 2.0382,
-          "total_reads": 1571450962,
-          "variant_count": 6140444,
-          "mapped_reads": 1569028137,
-          "pedigree": "Pedigree"
-        }
-      ]
+      // sampleAttributes: [
+      //   {
+      //     "id": "19863",
+      //     "sample": "NA12891",
+      //     "affected_status": "Unaffected",
+      //     "median_read_coverage": 49,
+      //     "ts_tv_ratio": 2.03759,
+      //     "total_reads": 1450429945,
+      //     "variant_count": 6139915,
+      //     "mapped_reads": 1447978466,
+      //     "pedigree": "Pedigree"
+      //   },
+      //   {
+      //     "id": "19863",
+      //     "sample": "NA12878",
+      //     "affected_status": "Unaffected",
+      //     "median_read_coverage": 50,
+      //     "ts_tv_ratio": 2.03633,
+      //     "total_reads": 1485576271,
+      //     "variant_count": 6140615,
+      //     "mapped_reads": 1482120815,
+      //     "pedigree": "Pedigree"
+      //   },
+      //   {
+      //     "id": "19863",
+      //     "sample": "NA12892",
+      //     "affected_status": "Unaffected",
+      //     "median_read_coverage": 53,
+      //     "ts_tv_ratio": 2.0382,
+      //     "total_reads": 1571450962,
+      //     "variant_count": 6140444,
+      //     "mapped_reads": 1569028137,
+      //     "pedigree": "Pedigree"
+      //   }
+      // ]
     }
 
   },

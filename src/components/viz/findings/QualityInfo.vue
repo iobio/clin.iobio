@@ -174,10 +174,14 @@ import { mapGetters, mapActions } from 'vuex'
           this.qc_check = true;
           this.badCoverageCount = this.getBadCoverageCount;
         }
+      },
+      sample_attributes(){
+        console.log("chaning ", this.sample_attributes);
       }
     },
     
     mounted() {
+      console.log("this.sample_attributes", this.sample_attributes);
       // let ped_data = this.sample_attributes.every( sample => {
       //   console.log("sample.pedigree", sample.pedigree.toLowerCase() == 'Pedigree');
       //   return sample.pedigree.toLowerCase() == "Pedigree";

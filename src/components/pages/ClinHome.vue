@@ -331,6 +331,8 @@ $horizontal-dashboard-height: 140px
         :hpoTerms="analysis.payload.phenotypes[2]"
         :analysis="analysis"
         :variantsByInterpretation="variantsByInterpretation"
+        :sampleAttributes="sampleAttributes"
+        :launchedFromMosaic="launchedFromMosaic"
         :interpretationMap="interpretationMap">
         </findings>
       </v-card>
@@ -617,6 +619,7 @@ export default {
       params: {},
       rawPedigree: null,
       allVarCounts: null,
+      sampleAttributes: null,
       coverageHistos: null,
       venn_diag_data: {},
       geneToDelete: '',
@@ -919,6 +922,8 @@ export default {
             self.rawPedigree = data.rawPedigree;
             self.allVarCounts = data.allVarCounts;
             self.variantSet = data.variantSet;
+            self.sampleAttributes = data.sampleAttributes;
+            console.log("self.sampleAttributes", data.sampleAttributes);
 
             self.mosaicSession.promiseGetProject(self.params.project_id)
             .then(function(project) {

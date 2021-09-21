@@ -65,6 +65,7 @@ export default class MosaicSession {
       let modelInfos = [];
       let coverageHistos = [];
       let allVarCounts = [];
+      let sampleAttributes = [];
 
       self.promiseGetCurrentUser()
       .then(function(data) {
@@ -178,6 +179,7 @@ export default class MosaicSession {
                       modelInfos.push(modelInfo);
                       coverageHistos.push(coverageHisto);
                       allVarCounts.push(varCounts);
+                      sampleAttributes.push(sample_attributes);
                     }
 
                   })
@@ -201,7 +203,7 @@ export default class MosaicSession {
                 alertify.alert("Error", buf)
               }
 
-              resolve({'modelInfos': modelInfos, 'rawPedigree': rawPedigree, 'coverageHistos': coverageHistos, 'allVarCounts': allVarCounts, 'user' : self.user, 'geneSet': self.geneSet, 'variantSet': self.variantSet, });
+              resolve({'modelInfos': modelInfos, 'rawPedigree': rawPedigree, 'coverageHistos': coverageHistos, 'allVarCounts': allVarCounts, 'sampleAttributes': sampleAttributes, 'user' : self.user, 'geneSet': self.geneSet, 'variantSet': self.variantSet, });
             })
             .catch(error => {
               reject(error);
