@@ -39,7 +39,7 @@
                       <v-icon small class="mr-1">mdi-clipboard-account</v-icon>Reference:
                     </strong>
                   </span>
-                  <span>GRCh37</span>
+                  <span>GRCh38</span>
                 </span>
               </v-card-text >
             </div>

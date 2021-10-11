@@ -139,7 +139,7 @@ import { mapGetters, mapActions } from 'vuex'
     components: {
     },
     props: {
-      sample_attributes: null,
+      sampleAttributes: null,
       modelInfos: null
     },
     data(){
@@ -151,11 +151,47 @@ import { mapGetters, mapActions } from 'vuex'
         variant_data: false,
         qc_check: true,
         badCoverageCount: 0,
+        sample_attributes: [],
         items: [
           { text: 'Real-Time', icon: 'mdi-clock' },
           { text: 'Audience', icon: 'mdi-account' },
           { text: 'Conversions', icon: 'mdi-flag' },
         ],
+        sampleAttributesDemo: [
+          {
+            "id": "19863",
+            "sample": "NA12891",
+            "affected_status": "Unaffected",
+            "median_read_coverage": 49,
+            "ts_tv_ratio": 2.03759,
+            "total_reads": 1450429945,
+            "variant_count": 6139915,
+            "mapped_reads": 1447978466,
+            "pedigree": "Pedigree"
+          },
+          {
+            "id": "19863",
+            "sample": "NA12878",
+            "affected_status": "Unaffected",
+            "median_read_coverage": 50,
+            "ts_tv_ratio": 2.03633,
+            "total_reads": 1485576271,
+            "variant_count": 6140615,
+            "mapped_reads": 1482120815,
+            "pedigree": "Pedigree"
+          },
+          {
+            "id": "19863",
+            "sample": "NA12892",
+            "affected_status": "Unaffected",
+            "median_read_coverage": 53,
+            "ts_tv_ratio": 2.0382,
+            "total_reads": 1571450962,
+            "variant_count": 6140444,
+            "mapped_reads": 1569028137,
+            "pedigree": "Pedigree"
+          }
+        ]
       }
     },
     
@@ -186,24 +222,24 @@ import { mapGetters, mapActions } from 'vuex'
     
     watch: {
       getBadCoverageCount(){
-        console.log("getBadCoverageCount changing");
         if(this.getBadCoverageCount > 0) {
           this.qc_check = true;
           this.badCoverageCount = this.getBadCoverageCount;
         }
       },
       sample_attributes(){
-        console.log("chaning ", this.sample_attributes);
       }
     },
     
     mounted() {
-      console.log("this.sample_attributes", this.sample_attributes);
-      // let ped_data = this.sample_attributes.every( sample => {
-      //   console.log("sample.pedigree", sample.pedigree.toLowerCase() == 'Pedigree');
-      //   return sample.pedigree.toLowerCase() == "Pedigree";
-      // })
+      if (this.sampleAttributes) {
+        this.sample_attributes = this.sampleAttributes;
+      }
+      else {
+        this.sample_attributes = this.sampleAttributesDemo;
+      }
       
+      console.log("this.sample_attributes", this.sample_attributes);
       let ped_data = this.sample_attributes.every(sample => sample.pedigree == "Pedigree" )
       this.pedigree_data = ped_data;
       
@@ -215,10 +251,6 @@ import { mapGetters, mapActions } from 'vuex'
 
       let var_data = this.sample_attributes.every(sample => sample.variant_count > 0 )
       this.variant_data = var_data;
-
-
-      
-      console.log("pedigree_data", this.pedigree_data);
     },
 
   };

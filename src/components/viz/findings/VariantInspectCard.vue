@@ -120,7 +120,7 @@
           </div>
           
           <span v-if="selectedGene.gene_name">
-            <div>
+            <!-- <div>
               <span class="chart-label">Source: </span>
               <span v-for="(source, idx) in getSourceIndicatorBadge" :key="idx">
                 <v-tooltip top>
@@ -137,7 +137,7 @@
                   <span> {{ selectedGeneSources.source[idx]}}</span>
                 </v-tooltip>
               </span>
-            </div>
+            </div> -->
           </span>
 
 
@@ -154,7 +154,7 @@
 
 
             </div>
-            <div class="variant-inspect-column " v-if="selectedVariant" >
+            <!-- <div class="variant-inspect-column " v-if="selectedVariant" >
                 <div class="variant-column-header">
                   Gene:Phenotype Associations
                   <v-divider></v-divider>
@@ -199,7 +199,7 @@
                     @close-gene-association-dialog="onCloseGeneAssociationDialog($event)">
                   </gene-associations-dialog>
                 </div>
-            </div>      
+            </div>       -->
             <div class="variant-inspect-column" v-if="selectedVariant && info">
                 <div class="variant-column-header">
                   Pathogenicity

@@ -108,10 +108,10 @@ export default new Vuex.Store({
       commit('SET_GENE_PHENOTYPE_HITS', genesReport)
     },
     setSearchedPhenotypes({commit}, phenotypes){
+      console.log("Set searched phenotypes", phenotypes);
       commit('SET_SEARCHED_PHENOTYPES', phenotypes)
     },
     setBadCoverageCount({commit}, count){
-      console.log("count", count);
       commit('SET_BAD_COVERAGE_COUNT', count)
     },
 

@@ -251,24 +251,28 @@ import { mapGetters, mapActions } from 'vuex'
       }
     },
     
+    mounted(){
+        this.setPhenotypes();
+    },
+    
     computed: {
       ...mapGetters(['getSearchedPhenotypes'])
     },
     
     methods: {
       getInfo(){
-        console.log("getSearchedPhenotypes", this.getSearchedPhenotypes);
       },
-    },
-    
-    watch: {
-      getSearchedPhenotypes(){
-        console.log("changing getSearchedPhenotypes", this.getSearchedPhenotypes);
+      setPhenotypes(){
         this.Gtr_searchTermsObj = this.getSearchedPhenotypes[0];
         this.Phenolyzer_searchTermsObj = this.getSearchedPhenotypes[1];
         this.Hpo_searchTermsObj = this.getSearchedPhenotypes[2];
         this.clinical_note_text = this.getSearchedPhenotypes[3];
-
+      }
+    },
+    
+    watch: {
+      getSearchedPhenotypes(){
+        this.setPhenotypes();
       }
     }
 

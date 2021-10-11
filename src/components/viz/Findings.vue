@@ -23,8 +23,8 @@
 
 
   .sub-heading
-    font-size: 16px
-    font-weight: 500
+    font-size: 18px
+    font-weight: 600
     color: $text-color
 
   .case-summary, .clinical-note
@@ -69,29 +69,84 @@
 <template>
 
   <div id="findings-panel" >
+    
+    <!-- <v-chip-group
+      v-model="report_sections"
+      column
+      multiple
+    >
+      <v-chip
+        filter
+        outlined
+      >
+        Case Information
+      </v-chip>
+      <v-chip
+        filter
+        outlined
+      >
+        Quality Data
+      </v-chip>
+      <v-chip
+        filter
+        outlined
+      >
+        Phenotypes
+      </v-chip>
+      <v-chip
+        filter
+        outlined
+      >
+        Reviewed Variants
+      </v-chip>
 
-      <div style="margin-bottom: 60px">
-        <!-- <span class="sub-heading">Case Summary </span>
-        <div class="case-summary">
-        {{ caseSummary.description }}
-        </div> -->
-        <CaseInformation :modelInfos="modelInfos" :caseSummary="caseSummary"></CaseInformation>
+
+    </v-chip-group> -->
+    
+    <v-chip outlined @click="$vuetify.goTo('#case-information', 'linear')">
+      Case Information
+    </v-chip>
+    
+    <v-chip class="ml-2" outlined @click="$vuetify.goTo('#phenotype-information', 'linear')">
+      Phenotypes
+    </v-chip>
+
+    <v-chip class="ml-2" outlined @click="$vuetify.goTo('#reviewed-variants', 'linear')">
+      Reviewed Variants
+    </v-chip>
+
+    <v-chip class="ml-2" outlined @click="$vuetify.goTo('#quality-data', 'linear')">
+      Quality Data
+    </v-chip>
+
+
+    <hr>
+
+      <div style="margin-bottom: 60px; margin-top: 30px">
+        <div v-if="report_sections.includes(0) || report_sections.length == 0">
+          <div >
+            <span id="case-information" class="sub-heading">Case Information</span>
+          </div>
+
+          <!-- <span class="sub-heading">Case Summary </span>
+          <div class="case-summary">
+          {{ caseSummary.description }}
+          </div> -->
+          <CaseInformation :modelInfos="modelInfos" :caseSummary="caseSummary"></CaseInformation>
+        </div>
 
       </div>
       
-      <div style="height: 120px">
+      
+      <div style="height: 170px"  v-if="report_sections.includes(0) || report_sections.length == 0">
         
       </div>
       
-      <div>
-        <QualityInfo 
-          :sample_attributes="sampleAttributes"
-          v-if="launchedFromMosaic">
-        </QualityInfo>
-      </div>
       
-      <div >
-        <span class="sub-heading">Phenotypes</span>
+
+      
+      <div v-if="report_sections.includes(2) || report_sections.length == 0">
+        <span id="phenotype-information" class="sub-heading">Phenotypes</span>
         <PhenotypesInfo></PhenotypesInfo>
       </div>
 
@@ -123,56 +178,79 @@
         </div>
 
       </div> -->
-
-      <hr style="border-top:transparent">
-
-      <div class="sub-heading" style="margin-top:40px;margin-bottom:0px">Reviewed Variants</div>
-      <div v-if="!variantsInterpreted" class="case-summary">
-        Variants are not currently reviewed. Please review them in the <a @click="gotoStep(2)"><strong>Review Variants</strong></a> step of the workflow
-      </div>
-
-      <div class="findings-section" v-for="interpretation in variantsByInterpretation" :key="interpretation.key" >
+      
 
 
-        <div v-if="interpretation.organizedVariants && interpretation.organizedVariants.length > 0"
-        class="interpretation-list"
-        >
+
+      <div v-if="report_sections.includes(3) || report_sections.length == 0">
+        <hr style="border-top:transparent">
+
+        <div id="reviewed-variants" class="sub-heading" style="margin-top:40px;margin-bottom:0px">Reviewed Variants</div>
+        <div v-if="!variantsInterpreted" class="case-summary">
+          Variants are not currently reviewed. Please review them in the <a @click="gotoStep(2)"><strong>Review Variants</strong></a> step of the workflow
         </div>
 
+        <div class="findings-section" v-for="interpretation in variantsByInterpretation" :key="interpretation.key" >
 
 
-        <template v-for="geneList in interpretation.organizedVariants">
+          <div v-if="interpretation.organizedVariants && interpretation.organizedVariants.length > 0"
+          class="interpretation-list"
+          >
+          </div>
 
-          <template
-           v-for="geneObject in geneList.genes">
 
-            <div v-for="(variant, index) in geneObject.variants" :key="variant.variantInspect.geneObject.gene_name">
-              <div>
-                <variant-inspect-card
-                 :modelInfos="modelInfos"
-                 :genomeBuildHelper="genomeBuildHelper"
-                 :selectedVariant="variant"
-                 :selectedGene="variant.variantInspect.geneObject"
-                 :selectedTranscript="variant.variantInspect.transcriptObject"
-                 :info="variant.variantInspect.infoObject"
-                 :genePhenotypeHits="variant.variantInspect.genePhenotypeHits"
-                 :interpretationMap="interpretationMap"
-                 :drugsObj="drugsObj"
-                 :gtrTerms="gtrTerms"
-                 :phenolyzerTerms="phenolyzerTerms"
-                 :hpoTerms="hpoTerms"
-                >
 
-                </variant-inspect-card>
+          <template v-for="geneList in interpretation.organizedVariants">
+
+            <template
+             v-for="geneObject in geneList.genes">
+
+              <div v-for="(variant, index) in geneObject.variants" :key="variant.variantInspect.geneObject.gene_name">
+                <div>
+                  <variant-inspect-card
+                   :modelInfos="modelInfos"
+                   :genomeBuildHelper="genomeBuildHelper"
+                   :selectedVariant="variant"
+                   :selectedGene="variant.variantInspect.geneObject"
+                   :selectedTranscript="variant.variantInspect.transcriptObject"
+                   :info="variant.variantInspect.infoObject"
+                   :genePhenotypeHits="variant.variantInspect.genePhenotypeHits"
+                   :interpretationMap="interpretationMap"
+                   :drugsObj="drugsObj"
+                   :gtrTerms="gtrTerms"
+                   :phenolyzerTerms="phenolyzerTerms"
+                   :hpoTerms="hpoTerms"
+                  >
+
+                  </variant-inspect-card>
+                </div>
               </div>
-            </div>
+            </template>
+
+
           </template>
 
 
-        </template>
-
-
+        </div>
+        
       </div>
+      
+      <div style="height: 40px" v-if="report_sections.includes(1) || report_sections.length == 0">
+        
+      </div>
+
+      
+      <div  v-if="report_sections.includes(1) || report_sections.length == 0">
+        <div id="quality-data">
+          <span class="sub-heading">Quality Data</span>
+        </div>
+
+        <QualityInfo 
+          :sampleAttributes="sampleAttributes">
+        </QualityInfo>
+      </div>
+
+
 
 
 
@@ -223,41 +301,7 @@ export default {
         source: ["imported set", "genelist"],
         sourceIndicator: [1, 2]
       },
-      // sampleAttributes: [
-      //   {
-      //     "id": "19863",
-      //     "sample": "NA12891",
-      //     "affected_status": "Unaffected",
-      //     "median_read_coverage": 49,
-      //     "ts_tv_ratio": 2.03759,
-      //     "total_reads": 1450429945,
-      //     "variant_count": 6139915,
-      //     "mapped_reads": 1447978466,
-      //     "pedigree": "Pedigree"
-      //   },
-      //   {
-      //     "id": "19863",
-      //     "sample": "NA12878",
-      //     "affected_status": "Unaffected",
-      //     "median_read_coverage": 50,
-      //     "ts_tv_ratio": 2.03633,
-      //     "total_reads": 1485576271,
-      //     "variant_count": 6140615,
-      //     "mapped_reads": 1482120815,
-      //     "pedigree": "Pedigree"
-      //   },
-      //   {
-      //     "id": "19863",
-      //     "sample": "NA12892",
-      //     "affected_status": "Unaffected",
-      //     "median_read_coverage": 53,
-      //     "ts_tv_ratio": 2.0382,
-      //     "total_reads": 1571450962,
-      //     "variant_count": 6140444,
-      //     "mapped_reads": 1569028137,
-      //     "pedigree": "Pedigree"
-      //   }
-      // ]
+      report_sections: [],
     }
 
   },

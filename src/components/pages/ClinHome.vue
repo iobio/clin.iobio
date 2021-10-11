@@ -1757,7 +1757,8 @@ export default {
                 // 
                 self.analysis = analysis;
                 self.idAnalysis = self.analysis.id;
-
+                                
+                self.setSearchedPhenotypes(self.analysis.payload.phenotypes); //Set the global state with the data from previous saved clin analysis
                 self.promiseGetProjectAttributes();
 
                 self.setGeneTaskBadges();
