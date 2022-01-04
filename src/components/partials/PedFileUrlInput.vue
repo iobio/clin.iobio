@@ -136,7 +136,10 @@
                }
                // this.buildPedFromTxt(this.pedData);
              })
-             .catch(error => console.log(error))
+             .catch(error => {
+                console.log(error)
+                this.$emit("ped-input-url-error", error)
+             })
         }
         else {
           this.pedData = null;
