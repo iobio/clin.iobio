@@ -1017,6 +1017,7 @@ export default {
       else if(self.customData){
         self.$ga.event('launch_type', 'Standalone', 'Custom data');
         self.analysis = analysisData;
+        self.analysis.payload.demoTextNote = ""
         self.idAnalysis = self.analysis.id;
         if(!self.importedCustomVariants){
           self.analysis.payload.variants = [];
