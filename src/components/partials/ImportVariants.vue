@@ -1,8 +1,8 @@
 <template>
   <div>
     <v-file-input 
-      label="  Import variants (.csv, .vcf)"
-      accept=".csv, .vcf"
+      label="  Import variants (.csv)"
+      accept=".csv"
       v-model="variantsData" 
       @change="loadVariants"
       show-size counter
