@@ -2397,11 +2397,21 @@ export default {
       this.geneToDelete = gene;
     },
     add_to_gene_set(genes){
-      this.selectedGenesForGeneSet = genes;
+      let theGenes = []
+      // TODO: Replace hard-coding of gene alias with a general gene-alias lookup
+      //       that works across gene.iobio and clin.iobio
+      genes.forEach(function(gene) {
+        if (gene == 'WARS1') {
+          theGenes.push('WARS')
+        } else {
+          theGenes.push(gene)
+        }
+      })
+      this.selectedGenesForGeneSet = theGenes;
       this.selectedGenesChanged = true;
-      this.setSelectedGenesForVariantsReview(genes);
+      this.setSelectedGenesForVariantsReview(theGenes);
       this.analysis.payload.selectedGenesForGeneSet = this.selectedGenesForGeneSet;
-      this.promiseUpdateSelectedPhenotypesGenes(genes);
+      this.promiseUpdateSelectedPhenotypesGenes(theGenes);
     },
     promiseUpdateSelectedPhenotypesGenes: function(genes) {
       let self = this;
@@ -2815,6 +2825,7 @@ export default {
     sendGenes(){
       let self = this;
       self.geneSetAndSelectedGenes = [];
+
 
       var gene_set = [];
       self.analysis.payload.genes.map(x => {
