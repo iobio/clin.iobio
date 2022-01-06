@@ -136,7 +136,12 @@
                }
                // this.buildPedFromTxt(this.pedData);
              })
-             .catch(error => console.log(error))
+             .catch(error => {
+                console.log(error)
+                this.pedData = null
+                alert("Please enter a correct URL or a presigned URL that can be accessed."); 
+                this.$emit("ped-input-url-error", error)
+             })
         }
         else {
           this.pedData = null;

@@ -520,7 +520,8 @@
               <br>
               <PedFileUrlInput 
                 @on-ped-url-change="onPedUrlChange($event)"
-                @ped-input-validation-errors="pedInputValidationErrors($event)">
+                @ped-input-validation-errors="pedInputValidationErrors($event)"
+                @ped-input-url-error="pedInputUrlError($event)">
               </PedFileUrlInput>
             </v-col>
           <v-card-actions>
@@ -1194,14 +1195,19 @@ export default {
         // this.geneSet.push(variant.gene)
       })
     },
-    importedVariantsValidationErrors(){
+    importedVariantsValidationErrors(errorMessage){
       this.validationErrors = [];
-      this.validationErrors.push("Headers do not match for the imported variants. Please check the input file and try again")
+      this.validationErrors.push(errorMessage + " Please check the input file and try again.")
+      //this.validationErrors.push("Headers do not match for the imported variants. Please check the input //file and try again")
     },
     pedInputValidationErrors(errMessage){
       this.validationErrors = [];
       // this.validationErrors.push(errMessage);
       this.validationErrors = errMessage;
+    },
+    pedInputUrlError(errMessage){
+      this.validationErrors = [];
+      this.validationErrors.push(errMessage);
     },
     backToAnalysis(){
       bus.$emit("back-to-analysis");
