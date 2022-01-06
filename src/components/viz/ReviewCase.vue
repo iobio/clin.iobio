@@ -186,7 +186,7 @@
             <div style="width:100%" v-for="(modelInfo,idx) in modelInfos" :key="idx">
               <hr>
               <!-- Pedigree -->
-              <div class="col-md-3 capitalize">
+              <div v-if="sampleIdsAndRelationships != null" class="col-md-3 capitalize" >
                 <div class="capitalize" style="text-align: center; width: 150px">
                   <strong>{{sampleIdsAndRelationships[idx].split(" ")[1]}}</strong>
                   <br>
@@ -298,7 +298,7 @@
 
         <div class="heading" style="margin-right: 50px">Variant Types</div>
       </div>
-      <div v-for="(d, i) in varCountsArray" >
+      <div v-if="sampleIdsAndRelationships != null" v-for="(d, i) in varCountsArray" >
         <hr>
         <div style=" width: 100%; display: inline-flex; flex-direction: row; justify-content: space-around;">
             <div style="text-align: center; width: 150px" class="capitalize">
@@ -384,7 +384,7 @@
         <div class="heading" style="margin-right: 50px">Variant Types</div>
       </div>
       <hr>
-      <div v-for="(d, i) in sampleIdsAndRelationships" >
+      <div v-if="sampleIdsAndRelationships != null" v-for="(d, i) in sampleIdsAndRelationships" >
         <div style=" width: 100%; display: inline-flex; flex-direction: row; justify-content: space-around;">
             <div style="text-align: center; width: 150px" class="capitalize">
               <strong>{{sampleIdsAndRelationships[i].split("\t")[1]}}</strong>
