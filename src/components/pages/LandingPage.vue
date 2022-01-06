@@ -262,9 +262,7 @@
               <!-- <v-card> -->
                 <v-card-text>
                   <p style="text-align: justify">
-                    Users can enter files (.VCF, .BAM) and sample information using a configuration file. 
-                    Please follow <a href="https://drive.google.com/file/d/14v04Ah4-gK_BEs0N-m7XDrFkXRzpFn4c/view?usp=sharing" target="_blank"> this example </a> and 
-                    <a href="https://docs.google.com/spreadsheets/d/1TaxJ9zXisqoBwVqRWU7dQ5RRhtJzOriGYIFE9-8yFdY/edit?usp=sharing" target="_blank"> download the template </a> to add information.
+                    Users can enter files (.VCF, .BAM) and sample information using a configuration file.  <a href="https://iobio.s3.amazonaws.com/examples/clin_iobio_data_input_config_GRCh38.csv" target="_blank" style="font-weight: 500;padding-left:10px">Example configuration file</a>
                   </p>
                   <div class="mb-3" v-if="validationErrors.length">
                     <ValidationErrors
@@ -296,7 +294,7 @@
                     Users can enter a list of genes or variants into clin.iobio. 
                     These are the genes and/or variants that will be reviewed in the clinical workflow steps of the app.
                     <br>
-                    Variants can be imported from a .CSV file (<a href="https://drive.google.com/file/d/1JYTbDnMvQ3Nq6UbbUzYhda0CZj1h5Q4m/view" target="_blank">example</a>) or from a <a href="https://gene.iobio.io/" target="_blank"> gene.iobio </a> variants (.VCF) file.
+                    Variants can be imported from a .CSV file.  <a href="https://iobio.s3.amazonaws.com/examples/clin_iobio_variants_to_import_GRCh38.csv" target="_blank" style="font-weight: 500;padding-left:10px">Example variant file</a>.
                   </p>
 
                   <div class="row"
