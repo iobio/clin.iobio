@@ -1,6 +1,6 @@
 #PROJECT_NAME: demo project GRCh38
 #PROJECT_DESCRIPTION: Exome sequencing project for three samples. 
-#BED_URL: https://raw.githubusercontent.com/adityaekawade/bam.iobio.io/vue/client/data/20130108.exome.targets.bed
+#BED_URL: https://iobio.s3.amazonaws.com/clin.iobio/20130108.exome.targets.grch38.bed
 #BUILD: GRCh38
 ID,SAMPLE_ID,PATERNAL_ID,MATERNAL_ID,SEX,AFFECTED_STATUS,RELATION,VCF_URL,TBI_URL,BAM_URL,BAI_URL
 1,NA12878,NA12891,NA12892,1,2,proband,https://iobio.s3.amazonaws.com/samples/vcf/2021_platinum/2021_platinum_exomes_GRCh38.vcf.gz,,https://iobio.s3.amazonaws.com/samples/cram/2021_platinum/GRCh38_exomes/NA12878.cram,

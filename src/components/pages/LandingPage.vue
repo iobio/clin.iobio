@@ -262,7 +262,7 @@
               <!-- <v-card> -->
                 <v-card-text>
                   <p style="text-align: justify">
-                    Users can enter files (.VCF, .BAM) and sample information using a configuration file.  <a href="https://iobio.s3.amazonaws.com/examples/clin_iobio_data_input_config_GRCh38.csv" target="_blank" style="font-weight: 500;padding-left:10px">Example configuration file</a>
+                    Users can enter files (.VCF, .BAM) and sample information using a configuration file.  <a href="https://iobio.s3.amazonaws.com/clin.iobio/example_file_config_GRCh38.csv" target="_blank" style="font-weight: 500;padding-left:10px">Example configuration file</a>
                   </p>
                   <div class="mb-3" v-if="validationErrors.length">
                     <ValidationErrors
@@ -294,7 +294,7 @@
                     Users can enter a list of genes or variants into clin.iobio. 
                     These are the genes and/or variants that will be reviewed in the clinical workflow steps of the app.
                     <br>
-                    Variants can be imported from a .CSV file.  <a href="https://iobio.s3.amazonaws.com/examples/clin_iobio_variants_to_import_GRCh38.csv" target="_blank" style="font-weight: 500;padding-left:10px">Example variant file</a>.
+                    Variants can be imported from a .CSV file.  <a href="https://iobio.s3.amazonaws.com/clin.iobio/example_imported_variants_GRCh38.csv" target="_blank" style="font-weight: 500;padding-left:10px">Example variant file</a>.
                   </p>
 
                   <div class="row"

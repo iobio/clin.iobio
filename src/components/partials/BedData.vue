@@ -85,9 +85,9 @@
         showUrlField: false,
         bed_url_exome: '', 
         bed_url_genome: '',
-        bedFileUrl: 'https://raw.githubusercontent.com/chmille4/bam.iobio.io/vue/client/data/20130108.exome.targets.bed',
-        bedFile37: 'https://raw.githubusercontent.com/chmille4/bam.iobio.io/vue/client/data/20130108.exome.targets.bed',
-        bedFile38: 'https://raw.githubusercontent.com/adityaekawade/bam.iobio.io/vue/client/data/20130108.exome.targets.grch38.bed',
+        bedFileUrl: 'https://iobio.s3.amazonaws.com/clin.iobio/20130108.exome.targets.bed',
+        bedFile37: 'https://iobio.s3.amazonaws.com/clin.iobio/20130108.exome.targets.bed',
+        bedFile38: 'https://iobio.s3.amazonaws.com/clin.iobio/20130108.exome.targets.grch38.bed',
         urlRules: [
           v => /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/.test(v) || 'URL must be valid',
         ],
