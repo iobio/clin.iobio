@@ -42,7 +42,7 @@
                         clin.iobio makes it easy to review sequencing and case metrics, generate a prioritized list of genes associated with the disease/phenotype, review candidate variants, and generate a report of your findings
                       </span>
                       <br>
-                      <v-btn v-if="!analysisInProgress" color="white" outlined x-large @click="getStarted('demo')" class="mt-8">
+                      <v-btn v-if="!analysisInProgress" color="white" outlined x-large @click="onLoadDemoDataFromConfig()" class="mt-8">
                         <v-icon>explore</v-icon>
                         <span class="ml-2">Run with demo data</span>
                       </v-btn>
@@ -860,6 +860,21 @@ export default {
       this.$ga.event('data_type', 'Custom Data', 'Files');
       this.getStarted();
     },
+    onLoadDemoDataFromConfig: function() {
+      let self = this;
+      this.promiseFetchDemoInputConfig()
+      .then(function() {
+        self.geneSet = ['PRX', 'LMNA', 'SCN8A', 'DLL4', 'ABCA3', 'MROH8', 'DVL3', 'NOTCH4']
+        self.$emit('setGeneSet', self.geneSet)
+        self.$emit("setPhenotypeText", "Charcot-Marie-Tooth disease; demyelination; Dejerine sottas disease possibly; sensory neuropathy; hammertoes; difficulty walking")
+        self.$ga.event('data_type', 'Custom Data', 'Config File');
+        self.getStarted();
+
+      })
+      .catch(function() {
+        alert("Unable to load demo data")
+      })
+    },
     onLoadInputConfig: function(){
       this.importConfigurationDialog = false;
       if(this.genes.length && this.autocompleteGenesConfigFlag===false){
@@ -962,9 +977,6 @@ export default {
       this.analysisInProgress = true;
       this.setAnalysisInProgressStatus(this.analysisInProgress);
       bus.$emit("initialize-clin");
-      if(e === 'demo'){
-        this.$ga.event('data_type', 'Demo Data', 'Demo dataset');
-      }
     },
     updateCarousel(payload) {
       var currentSlide;
@@ -1062,7 +1074,37 @@ export default {
       
       return bool;
     },
+    promiseFetchDemoInputConfig() {
+      let self = this;
+      return new Promise(function(resolve, reject) {
+        let url = "https://iobio.s3.amazonaws.com/clin.iobio/example_file_config_GRCh37.csv"
+        fetch(url)
+        .then(res => {
+          if(!res.ok){
+            console.log("Unable to fetch demo config data file " + url); 
+            reject()
+          }
+          else {
+            return res.text();           
+          }
+        })
+        .then(data => {
+            console.log(data)
+            self.dataInputConfig = data
+            self.parseInputConfig(data)
+            self.validateSavedConfig = true
+            resolve()
+        })
+        .catch(error => {
+          console.log(error)
+          reject()
+        })
+
+    })
+
+    },
     onInputConfig(ev) {
+      let self = this;
       var reader = new FileReader();
       if(this.dataInputConfig){
         this.validationErrors = [];
@@ -1070,71 +1112,74 @@ export default {
         reader.readAsText(this.dataInputConfig);
         reader.onload = () => {
           let data = reader.result.trim();
-          if(this.validateHeadersOfConfigFile(data)){
-            let newLine = data.split('\n');
-            let headers = newLine.splice(0,4)
-            let pedData = [];
-            let modelInfoData = [];
-            let bedFileUrl = 'https://raw.githubusercontent.com/chmille4/bam.iobio.io/vue/client/data/20130108.exome.targets.bed';
-            let buildName = 'GRCh37';
-            this.caseTitle = headers[0].split('E:')[1].trim();
-            this.caseDescription = headers[1].split('N:')[1].trim();
-            let bedFile = headers[2].split('L:')[1].trim().split(",")[0];
-            if(bedFile !== ''){
-              bedFileUrl = bedFile;
-            }
-            
-            let build = headers[3].split('D:')[1].trim();
-            if(build !== ''){
-              buildName = build;
-            }
-            
-            let sexMap = {
-              "1": "male",
-              "2": "female",
-              "other": "unknown"
-            }
-            let statusMap = {
-              "0": false,
-              "1": false,
-              "2": true,
-              "-9": false
-            }
-            
-            if(this.validateInputConfig(data)){
-              for (var i = 0; i < newLine.length; i++) {
-                var pedLines = newLine[i].split(/\s+|\,/g).slice(0,6);
-                pedData.push(pedLines.join(' '));
-                
-                var modelInfoLines = newLine[i].split(/\s+|\,/g).slice();
-                if(i!==0){
-                  modelInfoLines[4] = sexMap[modelInfoLines[4]]; 
-                  modelInfoLines[5] = statusMap[modelInfoLines[5]];
-                }
-                modelInfoData.push(modelInfoLines);
-              }
-              modelInfoData.shift();
-              let pedFile = pedData.join('\n');
-
-              this.formatCustomModelInfo(modelInfoData);
-              this.$emit("setBedFileUrl", bedFileUrl);
-              this.$emit("set-ped-data", pedFile);
-              this.$emit('setBuildForCustomData', buildName);
-              this.$emit("set-custom-case-summary", {
-                name: this.caseTitle,
-                description: this.caseDescription
-              })
-            }
-            else {
-              this.validationErrors.push("Headers do not match with the specified file format. Please check the configuration file and try again.")
-              this.dataInputConfig = null;
-            }
-          }
-          else{
-            this.validationErrors.push("Headers do not match with the specified file format. Please check the configuration file and try again.")
-            this.dataInputConfig = null;
-          }
+          self.parseInputConfig(data)
         }
+      }
+    },
+    parseInputConfig(data) {
+      if(this.validateHeadersOfConfigFile(data)){
+        let newLine = data.split('\n');
+        let headers = newLine.splice(0,4)
+        let pedData = [];
+        let modelInfoData = [];
+        let bedFileUrl = 'https://iobio.s3.amazonaws.com/clin.iobio/20130108.exome.targets.grch38.bed';
+        let buildName = 'GRCh38';
+        this.caseTitle = headers[0].split('E:')[1].trim();
+        this.caseDescription = headers[1].split('N:')[1].trim();
+        let bedFile = headers[2].split('L:')[1].trim().split(",")[0];
+        if(bedFile !== ''){
+          bedFileUrl = bedFile;
+        }
+        
+        let build = headers[3].split('D:')[1].trim();
+        if(build !== ''){
+          buildName = build;
+        }
+        
+        let sexMap = {
+          "1": "male",
+          "2": "female",
+          "other": "unknown"
+        }
+        let statusMap = {
+          "0": false,
+          "1": false,
+          "2": true,
+          "-9": false
+        }
+        
+        if(this.validateInputConfig(data)){
+          for (var i = 0; i < newLine.length; i++) {
+            var pedLines = newLine[i].split(/\s+|\,/g).slice(0,6);
+            pedData.push(pedLines.join(' '));
+            
+            var modelInfoLines = newLine[i].split(/\s+|\,/g).slice();
+            if(i!==0){
+              modelInfoLines[4] = sexMap[modelInfoLines[4]]; 
+              modelInfoLines[5] = statusMap[modelInfoLines[5]];
+            }
+            modelInfoData.push(modelInfoLines);
+          }
+          modelInfoData.shift();
+          let pedFile = pedData.join('\n');
+
+          this.formatCustomModelInfo(modelInfoData);
+          this.$emit("setBedFileUrl", bedFileUrl);
+          this.$emit("set-ped-data", pedFile);
+          this.$emit('setBuildForCustomData', buildName);
+          this.$emit("set-custom-case-summary", {
+            name: this.caseTitle,
+            description: this.caseDescription
+          })
+        }
+        else {
+          this.validationErrors.push("Headers do not match with the specified file format. Please check the configuration file and try again.")
+          this.dataInputConfig = null;
+        }
+      }
+      else{
+        this.validationErrors.push("Headers do not match with the specified file format. Please check the configuration file and try again.")
+        this.dataInputConfig = null;
       }
     },
     formatCustomModelInfo(modelInfoData){
