@@ -140,6 +140,7 @@ $horizontal-dashboard-height: 140px
     :cohortModel="cohortModel"
     :launchedFromMosaic="launchedFromMosaic"
     @custom-model-info="customModelInfo"
+    @setPhenotypeText="setPhenotypeText($event)"
     @setGeneSet="setGeneSet($event)"
     @set-ped-data="setPedData($event)"
     @set-custom-case-summary="setCustomCaseSummary($event)"
@@ -633,12 +634,13 @@ export default {
       cohortModel: null,
       customData: false,
       customGeneSet: [],
+      customPhenotypeText: "",
       bedFileUrl: '',
       variantsAnalyzedCounted: 0,
       customSavedAnalysis: false,
       passcode: '',
       showPassCode: false,
-      buildName: 'GRCh37',
+      buildName: 'GRCh38',
       knownGenesData: null,
       byPassedGenes: [],
       byPassedGenesDialog: false,
@@ -835,7 +837,7 @@ export default {
         self.globalApp.initServices();
 
         self.genomeBuildHelper = new GenomeBuildHelper(self.globalApp);
-        return self.genomeBuildHelper.promiseInit({DEFAULT_BUILD: 'GRCh37'})
+        return self.genomeBuildHelper.promiseInit({DEFAULT_BUILD: 'GRCh38'})
       })
       .then(function() {
         if (self.paramBuild && self.paramBuild.length > 0) {
@@ -843,8 +845,8 @@ export default {
           self.setBuildName(self.paramBuild);
         } else {
           // TODO - genome build is required
-          self.genomeBuildHelper.setCurrentBuild("GRCh37");
-          self.setBuildName("GRCh37");
+          self.genomeBuildHelper.setCurrentBuild("GRCh38");
+          self.setBuildName("GRCh38");
         }
 
         let glyph = new Glyph();
@@ -961,8 +963,8 @@ export default {
     getDemoVcf: function() {
 
       return  {
-        'exome': "https://s3.amazonaws.com/iobio/samples/vcf/platinum-exome.vcf.gz",
-        'genome': "https://s3.amazonaws.com/iobio/gene/wgs_platinum/platinum-trio.vcf.gz"
+        'exome': "https://iobio.s3.amazonaws.com/samples/vcf/2021_platinum/2021_platinum_exomes_GRCh38.vcf.gz",
+        'genome': "https://iobio.s3.amazonaws.com/samples/vcf/2021_platinum/2021_platinum_genomes_GRCh38.vcf.gz"
       }
     },
 
@@ -970,15 +972,15 @@ export default {
 
       return {
         'exome': {
-          'proband': 'https://s3.amazonaws.com/iobio/samples/bam/NA12878.exome.bam',
-          'mother':  'https://s3.amazonaws.com/iobio/samples/bam/NA12892.exome.bam',
-          'father':  'https://s3.amazonaws.com/iobio/samples/bam/NA12891.exome.bam',
-          'sibling': 'https://s3.amazonaws.com/iobio/samples/bam/NA12877.exome.bam'
+          'proband': 'https://iobio.s3.amazonaws.com/samples/cram/2021_platinum/GRCh38_exomes/NA12878.cram',
+          'mother':  'https://iobio.s3.amazonaws.com/samples/cram/2021_platinum/GRCh38_exomes/NA12892.cram',
+          'father':  'https://iobio.s3.amazonaws.com/samples/cram/2021_platinum/GRCh38_exomes/NA12891.cram',
+          'sibling': 'https://iobio.s3.amazonaws.com/samples/cram/2021_platinum/GRCh38_exomes/NA12877.cram'
         },
         'genome': {
-          'proband': 'https://s3.amazonaws.com/iobio/gene/wgs_platinum/NA12878.bam',
-          'mother':  'https://s3.amazonaws.com/iobio/gene/wgs_platinum/NA12892.bam',
-          'father':  'https://s3.amazonaws.com/iobio/gene/wgs_platinum/NA12891.bam'
+          'proband': 'https://iobio.s3.amazonaws.com/samples/cram/2021_platinum/GRCh38_genomes/NA12878.cram',
+          'mother':  'https://iobio.s3.amazonaws.com/samples/cram/2021_platinum/GRCh38_genomes/NA12892.cram',
+          'father':  'https://iobio.s3.amazonaws.com/samples/cram/2021_platinum/GRCh38_genomes/NA12891.cram'
         }
       }
 
@@ -1017,7 +1019,7 @@ export default {
       else if(self.customData){
         self.$ga.event('launch_type', 'Standalone', 'Custom data');
         self.analysis = analysisData;
-        self.analysis.payload.demoTextNote = ""
+        self.analysis.payload.demoTextNote = self.customPhenotypeText
         self.idAnalysis = self.analysis.id;
         if(!self.importedCustomVariants){
           self.analysis.payload.variants = [];
@@ -2539,6 +2541,9 @@ export default {
     setGeneSet(geneSet){
       this.customGeneSet = geneSet;
       this.setCustomGeneSet(this.customGeneSet);
+    },
+    setPhenotypeText(phenotypeText){
+      this.customPhenotypeText = phenotypeText;
     },
     setPedData(pedigree){
       this.rawPedigree = pedigree;
