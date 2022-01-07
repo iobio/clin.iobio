@@ -40,9 +40,7 @@
         <v-list-item @click="onShowIOBIO">
           <v-list-item-title>iobio</v-list-item-title>
         </v-list-item>
-        <v-list-item @click="onSupportIOBIO">
-          <v-list-item-title>Support the iobio project</v-list-item-title>
-        </v-list-item>
+        
       </v-list>
     </v-menu>
     
@@ -119,9 +117,7 @@ export default {
     onShowIOBIO: function() {
       window.open("http://iobio.io", "_iobio");
     },
-    onSupportIOBIO: function() {
-      window.open("http://iobio.io/support.html", "_iobio");
-    },
+    
   },
   mounted(){
     bus.$on("close_dialog", ()=>{
