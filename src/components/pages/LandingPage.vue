@@ -6,19 +6,15 @@
       dense
     >
 
-      <v-toolbar-title>
-        <strong>clin.iobio</strong>
+      <v-toolbar-title style="margin-left:5px">
+        <strong style="color:rgb(47 87 122)">clin.iobio</strong>
       </v-toolbar-title>
 
       <v-spacer></v-spacer>
 
-      <v-btn @click.stop="videoDialog = true" class="ml-2 mr-2" outlined color="rgb(69, 69, 69)">
+      <v-btn @click.stop="videoDialog = true" class="ml-2 mr-2" outlined color="rgb(47 87 122)">
         <v-icon>play_circle_outline</v-icon>
         <span class="ml-1">Watch video</span>
-      </v-btn>
-
-      <v-btn @click="onShowTermsOfService" color="rgb(69, 69, 69)" class="ml-4" icon title="Terms of Service">
-        <v-icon>description</v-icon>
       </v-btn>
 
       <MoreMenu class="ml-4" landingPage="true" />
@@ -77,8 +73,8 @@
                       </div>
                     </v-flex>
                   </v-flex>
-                  <v-flex xs12 md12 sm12 lg1 xl1 ></v-flex>
-                    <v-flex xs12 md12 sm12 lg5 xl5>
+             
+                    <v-flex xs12 md12 sm12 lg6 xl5>
                       <v-flex text-xs-center>
                           <img class="hidden-md-and-down clinical_art" src="../../assets/images/landing_page/clinical_art.svg" alt="Clinical art">
                       </v-flex>
@@ -90,32 +86,42 @@
         </v-flex>
       </v-layout>
       <v-layout row wrap style="background:white">
-        <v-banner style="margin:auto" two-line outlined class="mb-5">
-          <v-avatar slot="icon" color="primary" size="40">
-             <v-icon icon="fas fa-bullhorn" color="white">
-              fas fa-bullhorn
-            </v-icon>
-          </v-avatar>
-          <div class="pa-3" style="font-size:16px">
-            We are happy to announce the public, beta release of clin.iobio. Please give it a try and <a href="mailto:iobioproject@gmail.com"> <strong>contact us</strong> </a> with any feedback or questions about integrating with your own data.
-            <br><br>
-            <span class="mt-2"><strong>Try it out? </strong> Click "Run with demo data" to try out the tool with a public dataset</span>
-            <br><br>
-            <span class="mt-4"><strong>Have your own data? </strong> Click "Load your data" and provide URLs to BAM and VCF files</span>
-            <br><br>
-            <strong>Integrate with your own system? </strong> Clin.iobio can be integrated with a data management system for easy launch. <br>For example, launch clin.iobio from the Platinum Exomes project in <a href="https://frameshift.io/" target="_blank"> <strong>Frameshift's Mosaic</strong> </a>
+        <div style="margin:auto"  class="mb-5">
+          
+          <div class="pa-8" style="font-size:18px;max-width:800px">
+            
+            <div class="banner-info">
+              <span class="banner-tag">Try it out</span>
+              <span class="banner-text">Click "Run with demo data" to try out the tool with a public dataset</span>
+            </div>
+
+            <div class="banner-info">
+              <span class="banner-tag">Run with your data</span> 
+              <span class="banner-text">Click "Load your data" and provide URLs to BAM and VCF files</span>
+            </div>
+
+            <div class="banner-info">
+              <span class="banner-tag">Integrate with your system</span> 
+              <span class="banner-text">Clin.iobio can be integrated with a data management system for easy launch. For example, launch clin.iobio from the Platinum Exomes project in <a href="https://frameshift.io/" target="_blank"> <strong>Frameshift's Mosaic</strong> </a>
+              </span>
+            </div>
+
+            <div class="banner-info">
+              <span class="banner-tag">Contact us</span> 
+              <span class="banner-text"><a href="mailto:iobioproject@gmail.com"> <strong>Email us</strong> </a> with any feedback or questions about integrating with your own data.</span>
+            </div>
           </div>
-        </v-banner>
-        <br>
+        </div>
+
       </v-layout>
-      <v-layout row wrap style="background:white">
-        <v-container>
+      <v-layout row wrap style="background:white;padding-left:20px;justify-content:center">
+        <v-container style="max-width:1440px !important;">
           <v-layout row wrap>
             <v-flex xs12 sm12 md2 lg2 xl2>
 
               <v-list rounded class="hidden-sm-and-down">
                 <v-subheader>
-                  <strong style="font-size:18px">Workflow steps</strong>
+                  <strong style="font-size:18px">The workflow steps</strong>
                 </v-subheader>
                 <v-divider></v-divider>
                 <v-list-item-group v-model="step_number" color="primary">
@@ -1349,6 +1355,34 @@ export default {
   position: absolute
   margin-left: 55px
 
+.banner-info
+  display: flex
+  margin-bottom: 20px
+
+.banner-tag
+  min-width: 240px
+  display: inline-block
+  font-weight: 500
+  color: #2f587c
+
+.banner-text
+  display: inline-block
+
+.i-hopper_text
+  color: #2f587c
+  font-size: 20px
+  padding-top: 10px 
+
+.step-heading-icon
+  fill: #2f587c
+
+.i-hooper_img
+    width: 100%
+
+.i-hooper_subheading
+    font-size: 16px !important
+    color: #666666
+
 @media (min-width: 960px)
   .i-hooper_img
     width: 480px
@@ -1357,7 +1391,9 @@ export default {
     margin-top: 50px !important
 
   .i-hooper_text
-    font-size: 24px !important
+    font-size: 20px !important
+    color: #2f587c !important
+    padding-top: 5px 
     font-family: poppins !important
     font-weight: 300
     position: absolute
@@ -1372,8 +1408,7 @@ export default {
     margin-top: 50px !important
 
   .clinical_art
-    width: 530px
-    right: 0
+    width: 100%
     margin-top: 72px
 
 
@@ -1385,15 +1420,16 @@ export default {
     margin-top: 80px !important
 
   .i-hooper_text
-    font-size: 32px !important
+    font-size: 20px !important
+    color: #2f587c !important
+    padding-top: 5px 
     font-family: poppins !important
     font-weight: 300
     position: absolute
     margin-left: 55px
 
   .clinical_art
-    width: 560px
-    right: 0
+    width: 100%
     margin-top: 72px
 
 
@@ -1405,8 +1441,7 @@ export default {
     margin-top: 80px !important
 
   .clinical_art
-    width: 580px
-    right: 0
+    width: 100%
     margin-top: 72px
 
 @media (min-width: 1550px)
@@ -1417,8 +1452,7 @@ export default {
     margin-top: 80px !important
 
   .clinical_art
-    width: 605px
-    right: 0
+    width: 100%
     margin-top: 72px
 </style>
 
