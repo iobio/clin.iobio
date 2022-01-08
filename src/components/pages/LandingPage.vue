@@ -1083,7 +1083,7 @@ export default {
     promiseFetchDemoInputConfig() {
       let self = this;
       return new Promise(function(resolve, reject) {
-        let url = "https://iobio.s3.amazonaws.com/clin.iobio/example_file_config_GRCh37.csv"
+        let url = "https://iobio.s3.amazonaws.com/clin.iobio/example_file_config_GRCh38.csv"
         fetch(url)
         .then(res => {
           if(!res.ok){
