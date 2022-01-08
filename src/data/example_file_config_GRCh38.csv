@@ -1,5 +1,5 @@
-#PROJECT_NAME: Example project
-#PROJECT_DESCRIPTION: Exome sequencing project for four samples. 
+#PROJECT_NAME: Demo project
+#PROJECT_DESCRIPTION: Exome sequencing project for three samples. 
 #BED_URL: https://iobio.s3.amazonaws.com/clin.iobio/20130108.exome.targets.grch38.bed
 #BUILD: GRCh38
 ID,SAMPLE_ID,PATERNAL_ID,MATERNAL_ID,SEX,AFFECTED_STATUS,RELATION,VCF_URL,TBI_URL,BAM_URL,BAI_URL
