@@ -1,8 +1,8 @@
 <template>
   <div>
     <v-file-input 
-      label="  Import variants (.csv, .vcf)"
-      accept=".csv, .vcf"
+      label="  Import variants (.csv)"
+      accept=".csv"
       v-model="variantsData" 
       @change="loadVariants"
       show-size counter
@@ -46,7 +46,7 @@ import VariantImporter from '../../models/VariantImporter'
                 this.$emit("load-variants", this.importRecords);
               }
               else {
-                this.$emit("imported-variants-validation-errors");
+                this.$emit("imported-variants-validation-errors", "Unable to parse variants csv file.");
                 this.variantsData = null;
               }
             }
@@ -60,7 +60,7 @@ import VariantImporter from '../../models/VariantImporter'
         }
       },
       validateCsvImport(data){
-        let fields = ['chrom', 'start', 'end', 'ref', 'alt', 'geneName', 'transcript']; 
+        let fields = ['chrom', 'start', 'end', 'ref', 'alt', 'geneName']; 
         
         let bool = true; 
         let lines = data.split('\n');
@@ -72,6 +72,7 @@ import VariantImporter from '../../models/VariantImporter'
         
         for(let i=0; i<fields.length; i++){
           if(!firstLine.includes(fields[i])){
+            console.log("Unable to import file. Missing " + fields[i])
             bool = false;
             break;
           }
@@ -146,7 +147,7 @@ import VariantImporter from '../../models/VariantImporter'
             }
             else {
               //Not a gene.iobio exported vcf file
-              this.$emit("imported-variants-validation-errors");
+              this.$emit("imported-variants-validation-errors", "Unable to locate INFO field with gene name in vcf.");
               this.variantsData = null;
               break;
             }
@@ -155,7 +156,7 @@ import VariantImporter from '../../models/VariantImporter'
           this.$emit("load-variants", importRecords);
         }
         else {
-          this.$emit("imported-variants-validation-errors");
+          this.$emit("imported-variants-validation-errors", "Invalid vcf file.");
           this.variantsData = null;
         }
         

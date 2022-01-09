@@ -6,19 +6,15 @@
       dense
     >
 
-      <v-toolbar-title>
-        <strong>clin.iobio</strong>
+      <v-toolbar-title style="margin-left:5px">
+        <strong style="color:rgb(47 87 122)">clin.iobio</strong>
       </v-toolbar-title>
 
       <v-spacer></v-spacer>
 
-      <v-btn @click.stop="videoDialog = true" class="ml-2 mr-2" outlined color="rgb(69, 69, 69)">
+      <v-btn @click.stop="videoDialog = true" class="ml-2 mr-2" outlined color="rgb(47 87 122)">
         <v-icon>play_circle_outline</v-icon>
         <span class="ml-1">Watch video</span>
-      </v-btn>
-
-      <v-btn @click="onShowTermsOfService" color="rgb(69, 69, 69)" class="ml-4" icon title="Terms of Service">
-        <v-icon>description</v-icon>
       </v-btn>
 
       <MoreMenu class="ml-4" landingPage="true" />
@@ -42,7 +38,7 @@
                         clin.iobio makes it easy to review sequencing and case metrics, generate a prioritized list of genes associated with the disease/phenotype, review candidate variants, and generate a report of your findings
                       </span>
                       <br>
-                      <v-btn v-if="!analysisInProgress" color="white" outlined x-large @click="getStarted('demo')" class="mt-8">
+                      <v-btn v-if="!analysisInProgress" color="white" outlined x-large @click="onLoadDemoDataFromConfig()" class="mt-8">
                         <v-icon>explore</v-icon>
                         <span class="ml-2">Run with demo data</span>
                       </v-btn>
@@ -77,8 +73,8 @@
                       </div>
                     </v-flex>
                   </v-flex>
-                  <v-flex xs12 md12 sm12 lg1 xl1 ></v-flex>
-                    <v-flex xs12 md12 sm12 lg5 xl5>
+             
+                    <v-flex xs12 md12 sm12 lg6 xl5>
                       <v-flex text-xs-center>
                           <img class="hidden-md-and-down clinical_art" src="../../assets/images/landing_page/clinical_art.svg" alt="Clinical art">
                       </v-flex>
@@ -90,32 +86,42 @@
         </v-flex>
       </v-layout>
       <v-layout row wrap style="background:white">
-        <v-banner style="margin:auto" two-line outlined class="mb-5">
-          <v-avatar slot="icon" color="primary" size="40">
-             <v-icon icon="fas fa-bullhorn" color="white">
-              fas fa-bullhorn
-            </v-icon>
-          </v-avatar>
-          <div class="pa-3" style="font-size:16px">
-            We are happy to announce the public, beta release of clin.iobio. Please give it a try and <a href="mailto:iobioproject@gmail.com"> <strong>contact us</strong> </a> with any feedback or questions about integrating with your own data.
-            <br><br>
-            <span class="mt-2"><strong>Try it out? </strong> Click "Run with demo data" to try out the tool with a public dataset</span>
-            <br><br>
-            <span class="mt-4"><strong>Have your own data? </strong> Click "Load your data" and provide URLs to BAM and VCF files</span>
-            <br><br>
-            <strong>Integrate with your own system? </strong> Clin.iobio can be integrated with a data management system for easy launch. <br>For example, launch clin.iobio from the Platinum Exomes project in <a href="https://frameshift.io/" target="_blank"> <strong>Frameshift's Mosaic</strong> </a>
+        <div style="margin:auto"  class="mb-5">
+          
+          <div class="pa-8" style="font-size:18px;max-width:800px">
+            
+            <div class="banner-info">
+              <span class="banner-tag">Try it out</span>
+              <span class="banner-text">Click "Run with demo data" to try out the tool with a public dataset</span>
+            </div>
+
+            <div class="banner-info">
+              <span class="banner-tag">Run with your data</span> 
+              <span class="banner-text">Click "Load your data" and provide URLs to BAM and VCF files</span>
+            </div>
+
+            <div class="banner-info">
+              <span class="banner-tag">Integrate with your system</span> 
+              <span class="banner-text">Clin.iobio can be integrated with a data management system for easy launch. For example, launch clin.iobio from the Platinum Exomes project in <a href="https://frameshift.io/" target="_blank"> <strong>Frameshift's Mosaic</strong> </a>
+              </span>
+            </div>
+
+            <div class="banner-info">
+              <span class="banner-tag">Contact us</span> 
+              <span class="banner-text"><a href="mailto:iobioproject@gmail.com"> <strong>Email us</strong> </a> with any feedback or questions about integrating with your own data.</span>
+            </div>
           </div>
-        </v-banner>
-        <br>
+        </div>
+
       </v-layout>
-      <v-layout row wrap style="background:white">
-        <v-container>
+      <v-layout row wrap style="background:white;padding-left:20px;justify-content:center">
+        <v-container style="max-width:1440px !important;">
           <v-layout row wrap>
             <v-flex xs12 sm12 md2 lg2 xl2>
 
               <v-list rounded class="hidden-sm-and-down">
                 <v-subheader>
-                  <strong style="font-size:18px">Workflow steps</strong>
+                  <strong style="font-size:18px">The workflow steps</strong>
                 </v-subheader>
                 <v-divider></v-divider>
                 <v-list-item-group v-model="step_number" color="primary">
@@ -262,9 +268,7 @@
               <!-- <v-card> -->
                 <v-card-text>
                   <p style="text-align: justify">
-                    Users can enter files (.VCF, .BAM) and sample information using a configuration file. 
-                    Please follow <a href="https://drive.google.com/file/d/14v04Ah4-gK_BEs0N-m7XDrFkXRzpFn4c/view?usp=sharing" target="_blank"> this example </a> and 
-                    <a href="https://docs.google.com/spreadsheets/d/1TaxJ9zXisqoBwVqRWU7dQ5RRhtJzOriGYIFE9-8yFdY/edit?usp=sharing" target="_blank"> download the template </a> to add information.
+                    Users can enter files (.VCF, .BAM) and sample information using a configuration file.  <a href="https://iobio.s3.amazonaws.com/clin.iobio/example_file_config_GRCh38.csv" target="_blank" style="font-weight: 500;padding-left:10px">Example configuration file</a>
                   </p>
                   <div class="mb-3" v-if="validationErrors.length">
                     <ValidationErrors
@@ -296,7 +300,7 @@
                     Users can enter a list of genes or variants into clin.iobio. 
                     These are the genes and/or variants that will be reviewed in the clinical workflow steps of the app.
                     <br>
-                    Variants can be imported from a .CSV file (<a href="https://drive.google.com/file/d/1JYTbDnMvQ3Nq6UbbUzYhda0CZj1h5Q4m/view" target="_blank">example</a>) or from a <a href="https://gene.iobio.io/" target="_blank"> gene.iobio </a> variants (.VCF) file.
+                    Variants can be imported from a .CSV file.  <a href="https://iobio.s3.amazonaws.com/clin.iobio/example_imported_variants_GRCh38.csv" target="_blank" style="font-weight: 500;padding-left:10px">Example variant file</a>.
                   </p>
 
                   <div class="row"
@@ -520,7 +524,8 @@
               <br>
               <PedFileUrlInput 
                 @on-ped-url-change="onPedUrlChange($event)"
-                @ped-input-validation-errors="pedInputValidationErrors($event)">
+                @ped-input-validation-errors="pedInputValidationErrors($event)"
+                @ped-input-url-error="pedInputUrlError($event)">
               </PedFileUrlInput>
             </v-col>
           <v-card-actions>
@@ -861,6 +866,21 @@ export default {
       this.$ga.event('data_type', 'Custom Data', 'Files');
       this.getStarted();
     },
+    onLoadDemoDataFromConfig: function() {
+      let self = this;
+      this.promiseFetchDemoInputConfig()
+      .then(function() {
+        self.geneSet = ['PRX', 'LMNA', 'SCN8A', 'DLL4', 'ABCA3', 'MROH8', 'DVL3', 'NOTCH4']
+        self.$emit('setGeneSet', self.geneSet)
+        self.$emit("setPhenotypeText", "Charcot-Marie-Tooth disease; demyelination; Dejerine sottas disease possibly; sensory neuropathy; hammertoes; difficulty walking")
+        self.$ga.event('data_type', 'Custom Data', 'Config File');
+        self.getStarted();
+
+      })
+      .catch(function() {
+        alert("Unable to load demo data")
+      })
+    },
     onLoadInputConfig: function(){
       this.importConfigurationDialog = false;
       if(this.genes.length && this.autocompleteGenesConfigFlag===false){
@@ -963,9 +983,6 @@ export default {
       this.analysisInProgress = true;
       this.setAnalysisInProgressStatus(this.analysisInProgress);
       bus.$emit("initialize-clin");
-      if(e === 'demo'){
-        this.$ga.event('data_type', 'Demo Data', 'Demo dataset');
-      }
     },
     updateCarousel(payload) {
       var currentSlide;
@@ -1063,7 +1080,37 @@ export default {
       
       return bool;
     },
+    promiseFetchDemoInputConfig() {
+      let self = this;
+      return new Promise(function(resolve, reject) {
+        let url = "https://iobio.s3.amazonaws.com/clin.iobio/example_file_config_GRCh38.csv"
+        fetch(url)
+        .then(res => {
+          if(!res.ok){
+            console.log("Unable to fetch demo config data file " + url); 
+            reject()
+          }
+          else {
+            return res.text();           
+          }
+        })
+        .then(data => {
+            console.log(data)
+            self.dataInputConfig = data
+            self.parseInputConfig(data)
+            self.validateSavedConfig = true
+            resolve()
+        })
+        .catch(error => {
+          console.log(error)
+          reject()
+        })
+
+    })
+
+    },
     onInputConfig(ev) {
+      let self = this;
       var reader = new FileReader();
       if(this.dataInputConfig){
         this.validationErrors = [];
@@ -1071,71 +1118,74 @@ export default {
         reader.readAsText(this.dataInputConfig);
         reader.onload = () => {
           let data = reader.result.trim();
-          if(this.validateHeadersOfConfigFile(data)){
-            let newLine = data.split('\n');
-            let headers = newLine.splice(0,4)
-            let pedData = [];
-            let modelInfoData = [];
-            let bedFileUrl = 'https://raw.githubusercontent.com/chmille4/bam.iobio.io/vue/client/data/20130108.exome.targets.bed';
-            let buildName = 'GRCh37';
-            this.caseTitle = headers[0].split('E:')[1].trim();
-            this.caseDescription = headers[1].split('N:')[1].trim();
-            let bedFile = headers[2].split('L:')[1].trim().split(",")[0];
-            if(bedFile !== ''){
-              bedFileUrl = bedFile;
-            }
-            
-            let build = headers[3].split('D:')[1].trim();
-            if(build !== ''){
-              buildName = build;
-            }
-            
-            let sexMap = {
-              "1": "male",
-              "2": "female",
-              "other": "unknown"
-            }
-            let statusMap = {
-              "0": false,
-              "1": false,
-              "2": true,
-              "-9": false
-            }
-            
-            if(this.validateInputConfig(data)){
-              for (var i = 0; i < newLine.length; i++) {
-                var pedLines = newLine[i].split(/\s+|\,/g).slice(0,6);
-                pedData.push(pedLines.join(' '));
-                
-                var modelInfoLines = newLine[i].split(/\s+|\,/g).slice();
-                if(i!==0){
-                  modelInfoLines[4] = sexMap[modelInfoLines[4]]; 
-                  modelInfoLines[5] = statusMap[modelInfoLines[5]];
-                }
-                modelInfoData.push(modelInfoLines);
-              }
-              modelInfoData.shift();
-              let pedFile = pedData.join('\n');
-
-              this.formatCustomModelInfo(modelInfoData);
-              this.$emit("setBedFileUrl", bedFileUrl);
-              this.$emit("set-ped-data", pedFile);
-              this.$emit('setBuildForCustomData', buildName);
-              this.$emit("set-custom-case-summary", {
-                name: this.caseTitle,
-                description: this.caseDescription
-              })
-            }
-            else {
-              this.validationErrors.push("Headers do not match with the specified file format. Please check the configuration file and try again.")
-              this.dataInputConfig = null;
-            }
-          }
-          else{
-            this.validationErrors.push("Headers do not match with the specified file format. Please check the configuration file and try again.")
-            this.dataInputConfig = null;
-          }
+          self.parseInputConfig(data)
         }
+      }
+    },
+    parseInputConfig(data) {
+      if(this.validateHeadersOfConfigFile(data)){
+        let newLine = data.split('\n');
+        let headers = newLine.splice(0,4)
+        let pedData = [];
+        let modelInfoData = [];
+        let bedFileUrl = 'https://iobio.s3.amazonaws.com/clin.iobio/20130108.exome.targets.grch38.bed';
+        let buildName = 'GRCh38';
+        this.caseTitle = headers[0].split('E:')[1].trim();
+        this.caseDescription = headers[1].split('N:')[1].trim();
+        let bedFile = headers[2].split('L:')[1].trim().split(",")[0];
+        if(bedFile !== ''){
+          bedFileUrl = bedFile;
+        }
+        
+        let build = headers[3].split('D:')[1].trim();
+        if(build !== ''){
+          buildName = build;
+        }
+        
+        let sexMap = {
+          "1": "male",
+          "2": "female",
+          "other": "unknown"
+        }
+        let statusMap = {
+          "0": false,
+          "1": false,
+          "2": true,
+          "-9": false
+        }
+        
+        if(this.validateInputConfig(data)){
+          for (var i = 0; i < newLine.length; i++) {
+            var pedLines = newLine[i].split(/\s+|\,/g).slice(0,6);
+            pedData.push(pedLines.join(' '));
+            
+            var modelInfoLines = newLine[i].split(/\s+|\,/g).slice();
+            if(i!==0){
+              modelInfoLines[4] = sexMap[modelInfoLines[4]]; 
+              modelInfoLines[5] = statusMap[modelInfoLines[5]];
+            }
+            modelInfoData.push(modelInfoLines);
+          }
+          modelInfoData.shift();
+          let pedFile = pedData.join('\n');
+
+          this.formatCustomModelInfo(modelInfoData);
+          this.$emit("setBedFileUrl", bedFileUrl);
+          this.$emit("set-ped-data", pedFile);
+          this.$emit('setBuildForCustomData', buildName);
+          this.$emit("set-custom-case-summary", {
+            name: this.caseTitle,
+            description: this.caseDescription
+          })
+        }
+        else {
+          this.validationErrors.push("Headers do not match with the specified file format. Please check the configuration file and try again.")
+          this.dataInputConfig = null;
+        }
+      }
+      else{
+        this.validationErrors.push("Headers do not match with the specified file format. Please check the configuration file and try again.")
+        this.dataInputConfig = null;
       }
     },
     formatCustomModelInfo(modelInfoData){
@@ -1194,14 +1244,19 @@ export default {
         // this.geneSet.push(variant.gene)
       })
     },
-    importedVariantsValidationErrors(){
+    importedVariantsValidationErrors(errorMessage){
       this.validationErrors = [];
-      this.validationErrors.push("Headers do not match for the imported variants. Please check the input file and try again")
+      this.validationErrors.push(errorMessage + " Please check the input file and try again.")
+      //this.validationErrors.push("Headers do not match for the imported variants. Please check the input //file and try again")
     },
     pedInputValidationErrors(errMessage){
       this.validationErrors = [];
       // this.validationErrors.push(errMessage);
       this.validationErrors = errMessage;
+    },
+    pedInputUrlError(errMessage){
+      this.validationErrors = [];
+      this.validationErrors.push(errMessage);
     },
     backToAnalysis(){
       bus.$emit("back-to-analysis");
@@ -1300,6 +1355,34 @@ export default {
   position: absolute
   margin-left: 55px
 
+.banner-info
+  display: flex
+  margin-bottom: 20px
+
+.banner-tag
+  min-width: 240px
+  display: inline-block
+  font-weight: 500
+  color: #2f587c
+
+.banner-text
+  display: inline-block
+
+.i-hopper_text
+  color: #2f587c
+  font-size: 20px
+  padding-top: 10px 
+
+.step-heading-icon
+  fill: #2f587c
+
+.i-hooper_img
+    width: 100%
+
+.i-hooper_subheading
+    font-size: 16px !important
+    color: #666666
+
 @media (min-width: 960px)
   .i-hooper_img
     width: 480px
@@ -1308,7 +1391,9 @@ export default {
     margin-top: 50px !important
 
   .i-hooper_text
-    font-size: 24px !important
+    font-size: 20px !important
+    color: #2f587c !important
+    padding-top: 5px 
     font-family: poppins !important
     font-weight: 300
     position: absolute
@@ -1323,8 +1408,7 @@ export default {
     margin-top: 50px !important
 
   .clinical_art
-    width: 530px
-    right: 0
+    width: 100%
     margin-top: 72px
 
 
@@ -1336,15 +1420,16 @@ export default {
     margin-top: 80px !important
 
   .i-hooper_text
-    font-size: 32px !important
+    font-size: 20px !important
+    color: #2f587c !important
+    padding-top: 5px 
     font-family: poppins !important
     font-weight: 300
     position: absolute
     margin-left: 55px
 
   .clinical_art
-    width: 560px
-    right: 0
+    width: 100%
     margin-top: 72px
 
 
@@ -1356,8 +1441,7 @@ export default {
     margin-top: 80px !important
 
   .clinical_art
-    width: 580px
-    right: 0
+    width: 100%
     margin-top: 72px
 
 @media (min-width: 1550px)
@@ -1368,8 +1452,7 @@ export default {
     margin-top: 80px !important
 
   .clinical_art
-    width: 605px
-    right: 0
+    width: 100%
     margin-top: 72px
 </style>
 
