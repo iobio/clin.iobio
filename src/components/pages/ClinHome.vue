@@ -321,6 +321,7 @@ $horizontal-dashboard-height: 140px
         ref="findingsRef"
         v-if="analysis && workflow && variantsByInterpretation && !showLandingPage"
         :genomeBuildHelper="genomeBuildHelper"
+        :currentStep="currentStep"
         :modelInfos="modelInfos"
         :caseSummary="caseSummary"
         :noteClinical="analysis.payload.phenotypes[3]"

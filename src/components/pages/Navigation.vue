@@ -98,7 +98,9 @@ header.theme--dark.v-sheet
     <v-toolbar fixed   height="45"   dark  >
 
       <v-btn text @click="onTitleClicked" class="mr-5">
-        <span style="font-size:18px; margin-top:-4px">clin.iobio</span>
+        <calypso-icon></calypso-icon>
+        <span style="font-size:18px; margin-top:-4px;margin-left:5px">Calypso</span>
+        <span style="font-size:18px; margin-top:-4px;margin-left:20px">clin.iobio</span>
       </v-btn>
 
 
@@ -202,6 +204,7 @@ header.theme--dark.v-sheet
 <script>
 
 import { bus }     from '../../main';
+import CalypsoIcon from '../partials/icons/calypso-icon.vue'
 import SaveButton  from '../partials/SaveButton.vue'
 import PedigreeGraph from '../viz/PedigreeGraph'
 import MoreMenu    from '../partials/MoreMenu.vue'
@@ -213,7 +216,8 @@ export default {
   components: {
     SaveButton,
     PedigreeGraph,
-    MoreMenu
+    MoreMenu,
+    CalypsoIcon
   },
   props: {
     caseSummary: null,

@@ -230,6 +230,8 @@ export default {
       margin-left: 20px
       margin-bottom: 4px
       background-color: $button-color
+    #save-button
+      background-color: $button-color !important
 
     #workflow-progress
       display: flex
@@ -364,7 +366,7 @@ export default {
         flex-wrap: wrap
         justify-content: center
 
-        margin-top: 20px
+        margin-top: 5px
 
         #failed-icon
           font-size: 20px !important
@@ -378,7 +380,7 @@ export default {
           font-weight: 500
           .v-badge__wrapper
             .v-badge__badge
-              background-color: $wf-badge-color
+              background-color: $wf-badge-color !important
               color: white
               font-weight: 600
               font-size: 12px
