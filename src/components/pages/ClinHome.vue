@@ -13,7 +13,7 @@
   font-size: 20px
 
 .v-snack--right
-  margin-right: 350px !important
+  margin-right: 360px !important
 
 .v-snack
   top: 0px !important
@@ -171,7 +171,7 @@ $horizontal-dashboard-height: 140px
    :analysis="analysis"
    :launchedFromMosaic="launchedFromMosaic"
    :showSaveModal="showSaveModal"
-   @show-save-analysis="toggleSaveModal($event)"
+   @show-save-analysis="toggleSaveModal()"
    :customData="customData">
   </navigation>
 
@@ -323,14 +323,15 @@ $horizontal-dashboard-height: 140px
         :genomeBuildHelper="genomeBuildHelper"
         :currentStep="currentStep"
         :modelInfos="modelInfos"
-        :caseSummary="caseSummary"
+        :caseSummaryDescription="caseSummary.description"
         :noteClinical="analysis.payload.phenotypes[3]"
         :gtrTerms="analysis.payload.phenotypes[0]"
         :phenolyzerTerms="analysis.payload.phenotypes[1]"
         :hpoTerms="analysis.payload.phenotypes[2]"
         :analysis="analysis"
         :variantsByInterpretation="variantsByInterpretation"
-        :interpretationMap="interpretationMap">
+        :interpretationMap="interpretationMap"
+        @on-edit-project="toggleSaveProjectModal">
         </findings>
       </v-card>
 
@@ -445,6 +446,14 @@ $horizontal-dashboard-height: 140px
     @on-save-new-analysis="promiseSaveNewAnalysis($event)"
     @on-cancel-analysis="onCancelAnalysis">
   </save-analysis-popup>
+
+  <save-project-popup
+    :showIt="showSaveProjectModal"
+    :name="caseSummary ? caseSummary.name : ''""
+    :description="caseSummary ? caseSummary.description : ''"
+    @on-save-project="promiseSaveProject($event)"
+    @on-cancel-project="onCancelProject">
+  </save-project-popup>
 </div>
 </template>
 
@@ -471,6 +480,7 @@ import GenericAnnotation  from  '../../models/GenericAnnotation.js'
 import EndpointCmd        from  '../../models/EndpointCmd.js'
 
 import SaveAnalysisPopup  from '../partials/SaveAnalysisPopup.vue'
+import SaveProjectPopup   from '../partials/SaveProjectPopup.vue'
 
 import workflowData  from '../../data/workflows.json'
 import variantData   from '../../data/variants_mosaic_platinum.json'
@@ -496,6 +506,7 @@ export default {
     Findings,
     AppIcon,
     SaveAnalysisPopup,
+    SaveProjectPopup,
     LoadingDialog,
     LandingPage,
     ...NewComponents
@@ -535,6 +546,7 @@ export default {
       launchedFromMosaic: false,
       user: null,
       showSaveModal: false,
+      showSaveProjectModal: false,
 
       genomeBuildHelper: null,
 
@@ -1610,7 +1622,13 @@ export default {
     toggleSaveModal(bool) {
       this.showSaveModal = bool;
     },
-    
+   
+    toggleSaveProjectModal() {
+      this.showSaveProjectModal = !this.showSaveProjectModal;
+    },
+
+
+
     promiseSaveNewAnalysis: function(newAnalysis) {
       let self = this;
 
@@ -2926,6 +2944,27 @@ export default {
     
     new_term_searched(flag){
       this.newTermSearched = flag;
+    },
+
+    promiseSaveProject: function(description) {
+      let self = this;
+      self.showSaveProjectModal = false
+      self.caseSummary.description = description;
+      if (self.mosaicSession) {
+        self.mosaicSession.promiseUpdateProject(self.paramProjectId, self.caseSummary.name, description)
+        .then(function() {
+          self.onShowSnackbar( {message: 'Mosaic project description saved.', timeout: 3000, top: true, right: true});
+        })
+        .catch(function(error) {         
+          console.log(error)
+        })
+      } else {
+        self.onShowSnackbar( {message: 'Case summary updated.', timeout: 3000, top: true, right: true});
+      }
+    },
+    onCancelProject: function() {
+      let self = this;
+      self.showSaveProjectModal = false
     },
   }
 }

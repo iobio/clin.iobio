@@ -9,6 +9,14 @@
   height: -moz-available
   background-color:  white
 
+  #variant-inspect
+    padding-left: 0px
+    padding-top: 0px
+
+  #edit-description-button
+    .material-icons
+      color: $app-button-color
+
   .clinical-note
     .v-card__title
       font-size: 14px
@@ -81,18 +89,23 @@
   <div id="findings-panel" >
 
       <div style="margin-bottom: 20px">
-        <span class="sub-heading">Case Summary </span>
-        <div class="case-summary">
-        {{ caseSummary.description }}
-        </div>
-
+        <span class="sub-heading">Case Summary 
+          <v-btn depressed @click="onEditProject" id="edit-description-button" style="margin-left:20px">
+              <v-icon size="18">edit</v-icon>
+          </v-btn>
+        </span>
+        <v-card style="margin-top:5px">
+          <v-card-text>
+            {{ caseSummaryDescription }}
+          </v-card-text>
+        </v-card>
       </div>
 
       <div v-if="clinicalNotes && clinicalNotes.length > 0" style="width:97%;margin-top:40px;margin-bottom:20px">
         <hr style="border-top:transparent">
         <span class="sub-heading">Phenotypes</span>
 
-        <div style="margin-bottom:20px" class="clinical-note" >
+        <div style="margin-bottom:20px;margin-top:5px" class="clinical-note" >
 
           <v-card style="width:350px;">
             <v-card-title>Inputs</v-card-title>
@@ -317,7 +330,7 @@ export default {
     analysis: null,
     modelInfos:  null,
     genomeBuildHelper: null,
-    caseSummary: null,
+    caseSummaryDescription: null,
     variantsByInterpretation: null,
     interpretationMap: null,
     noteClinical: null,
@@ -437,6 +450,9 @@ export default {
     }, 
     gotoStep: function(stepIndex){
       bus.$emit('navigate-to-step',stepIndex); 
+    },
+    onEditProject: function() {
+      this.$emit("on-edit-project")
     }
   },
   computed: {

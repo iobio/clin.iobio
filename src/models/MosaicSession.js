@@ -646,6 +646,19 @@ export default class MosaicSession {
     });
   }
 
+  promiseUpdateProject(projectId, name, description) {
+    let self = this;
+    return new Promise(function(resolve, reject) {
+      self.updateProject(projectId, name, description)
+      .done(response => {
+        resolve(response)
+      })
+      .fail(error => {
+        reject("Error updating project " + projectId  + ": " + error);
+      })
+    })
+
+  }
   promiseGetGeneSet(projectId, geneSetId) {
     let self = this;
     return new Promise(function(resolve, reject) {
@@ -821,6 +834,20 @@ export default class MosaicSession {
             + '?client_application_id=' + this.client_application_id,
       type: 'PUT',
       data: self.stringifyAnalysis(newAnalysisData),
+      contentType: 'application/json',
+      headers: {
+        Authorization: localStorage.getItem('hub-iobio-tkn'),
+      },
+    });
+  }
+
+  updateProject(projectId, projectName, projectDescription) {
+    let self = this;
+
+    return $.ajax({
+      url: self.api + '/projects/' + projectId  + '?client_application_id=' + this.client_application_id,
+      type: 'PUT',
+      data: JSON.stringify({'name': projectName, 'description': projectDescription}),
       contentType: 'application/json',
       headers: {
         Authorization: localStorage.getItem('hub-iobio-tkn'),
