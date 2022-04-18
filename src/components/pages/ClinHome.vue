@@ -13,18 +13,19 @@
   font-size: 20px
 
 .v-snack--right
-  margin-right: 360px !important
+  margin-right: 380px !important
 
 .v-snack
-  top: 0px !important
+  top: 5px !important
 
   .v-snack__wrapper
     min-width: 200px !important
-    background-color: transparent !important
+    max-width: 200px !important
+    background-color: black !important
 
     .v-snack__content
       min-height: 35px !important
-      padding-top: 10px !important
+      padding-top: 2px !important
       padding-bottom: 2px !important
       font-size: 12px !important
       font-weight: 500 !important
@@ -129,6 +130,12 @@ $horizontal-dashboard-height: 140px
 .v-application #application-content.workflow-new .accent--text
   color: #45688e !important
 
+.col-flex-terms
+  min-height: 285px
+  
+  .search_status_tbody
+    max-height: 235px
+
 </style>
 
 
@@ -230,11 +237,13 @@ $horizontal-dashboard-height: 140px
         :allVarCounts="allVarCounts"
         :coverageHistos="coverageHistos"
         :launchedFromMosaic="launchedFromMosaic"
+        :canEditCaseSummary="mosaicSession == null || isProjectOwnerOrAdmin"
         @update="updateReviewCaseBadges"
         @updateCoverage="updateAverageCoverage"
         :customData=customData
         :bedFileUrl="bedFileUrl"
-        :customSavedAnalysis="customSavedAnalysis">
+        :customSavedAnalysis="customSavedAnalysis"
+        @on-edit-project="toggleSaveProjectModal">
         </review-case>
       </v-card>
 
@@ -329,6 +338,7 @@ $horizontal-dashboard-height: 140px
         :phenolyzerTerms="analysis.payload.phenotypes[1]"
         :hpoTerms="analysis.payload.phenotypes[2]"
         :analysis="analysis"
+        :canEditCaseSummary="mosaicSession == null || isProjectOwnerOrAdmin"
         :variantsByInterpretation="variantsByInterpretation"
         :interpretationMap="interpretationMap"
         @on-edit-project="toggleSaveProjectModal">
@@ -676,7 +686,8 @@ export default {
       PhenolyzerResourceUsed: false,
       mosaic_gene_set: "",
       genePhenotypeHits: {},
-      launchedFromGenePanel: false
+      launchedFromGenePanel: false,
+      isProjectOwnerOrAdmin: false
     }
 
   },
@@ -936,6 +947,10 @@ export default {
               self.caseSummary.name = project.name;
               self.caseSummary.description = project.description && project.description.length > 0 ? project.description : "A summary of the trio goes here....";
 
+              self.mosaicSession.promiseIsProjectOwnerOrAdmin(self.params.project_id)
+              .then(function(isOwnerOrAdmin) {
+                self.isProjectOwnerOrAdmin = isOwnerOrAdmin
+              })
 
 
             })

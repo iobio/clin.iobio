@@ -66,6 +66,7 @@ header.theme--dark.v-sheet
       margin-left: 20px
       margin-bottom: 4px
       background-color: $workflow-active-color
+      border-radius: 4px
 
       .v-btn__content
         color: white

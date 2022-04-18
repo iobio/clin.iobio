@@ -90,7 +90,7 @@
 
       <div style="margin-bottom: 20px">
         <span class="sub-heading">Case Summary 
-          <v-btn small depressed @click="onEditProject" id="edit-description-button" style="margin-left:20px">
+          <v-btn v-if="canEditCaseSummary" small depressed @click="onEditProject" id="edit-description-button" style="margin-left:20px">
               <v-icon size="18">edit</v-icon>
           </v-btn>
         </span>
@@ -350,8 +350,8 @@ export default {
     gtrTerms: null,
     phenolyzerTerms: null,
     hpoTerms: null,
-    addedGenes: [],
-    currentStep: null
+    currentStep: null,
+    canEditCaseSummary: null
   },
   data() {
     return {
@@ -363,7 +363,8 @@ export default {
       sources: {
         source: ["imported set", "genelist"],
         sourceIndicator: [1, 2]
-      }
+      },
+      addedGenes: [],
     }
 
   },

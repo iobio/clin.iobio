@@ -1460,4 +1460,5 @@ export default {
   .v-label
     font-size: 12px
     font-weight: 200
+  
 </style>
