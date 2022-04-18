@@ -112,10 +112,12 @@
 
           <div style="display:flex;flex-direction:row;justify-content:flex-start">
               <div class="container">
-                <span class="heading">Case Summary </span>
-                <div class="reviewCase">
-                {{ caseSummary.description }}
-                </div>
+                <v-card class="reviewCase">
+                  <v-card-title style="font-size: 16px;padding-bottom: 5px;padding-top: 10px;">Case Summary</v-card-title>
+                  <v-card-text>
+                    {{ caseSummary.description }}
+                  </v-card-text>
+                </v-card>
               </div>
 
             <div v-if="false" class="subsection">
@@ -1398,7 +1400,6 @@ function filterRef(ref) {
 
   .heading
     font-size: 16px
-    font-weight: 600
     font-family: $iobio-font
     color: $text-color
 

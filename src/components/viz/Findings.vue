@@ -90,7 +90,7 @@
 
       <div style="margin-bottom: 20px">
         <span class="sub-heading">Case Summary 
-          <v-btn depressed @click="onEditProject" id="edit-description-button" style="margin-left:20px">
+          <v-btn small depressed @click="onEditProject" id="edit-description-button" style="margin-left:20px">
               <v-icon size="18">edit</v-icon>
           </v-btn>
         </span>
@@ -105,7 +105,7 @@
         <hr style="border-top:transparent">
         <span class="sub-heading">Phenotypes</span>
 
-        <div style="margin-bottom:20px;margin-top:5px" class="clinical-note" >
+        <div style="margin-bottom:20px;margin-top:10px" class="clinical-note" >
 
           <v-card style="width:350px;">
             <v-card-title>Inputs</v-card-title>
@@ -259,7 +259,7 @@
 
       <hr style="border-top:transparent">
 
-      <div class="sub-heading" style="margin-top:40px;margin-bottom:0px">Reviewed Variants</div>
+      <div class="sub-heading" style="margin-top:40px;margin-bottom:5px">Reviewed Variants</div>
       <div v-if="!variantsInterpreted" class="case-summary">
         Variants are not currently reviewed. Please review them in the <a @click="gotoStep(2)"><strong>Review Variants</strong></a> step of the workflow
       </div>

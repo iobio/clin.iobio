@@ -2,8 +2,6 @@
 @import ../../assets/sass/variables
 
 .save-project-dialog
-  position: fixed
-  right: 50px
   top: 0
   z-index: 999
 
@@ -60,20 +58,13 @@
                 
         <v-layout row wrap class="save-analysis-radios">
                    
-          <v-flex xs12>
-            <v-text-field :hide-details="true" v-model="projectName" label="Name" type="text">
-            </v-text-field>
-          </v-flex>
-
           <v-flex class="mt-2" xs12>
-            <v-text-field
-              multi-line
-              rows="3"
+            <v-textarea
               :hide-details="true"
               label="Description"
               v-model="projectDescription"
             >
-            </v-text-field>
+            </v-textarea>
           </v-flex>
 
 
