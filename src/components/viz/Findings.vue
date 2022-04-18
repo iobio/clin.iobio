@@ -56,7 +56,7 @@
 
   .clinical-note
     display: flex
-    justify-content: space-between
+    justify-content: flex-start
 
     .note, .note-header
       min-width:  60%
@@ -107,7 +107,7 @@
 
         <div style="margin-bottom:20px;margin-top:10px" class="clinical-note" >
 
-          <v-card style="width:350px;">
+          <v-card style="width:300px;margin-right:15px">
             <v-card-title>Inputs</v-card-title>
             <v-card-text>
               <div style="margin-bottom: 10px" v-for="clinicalNote in clinicalNotes" :key="note">
@@ -116,7 +116,7 @@
             </v-card-text>
           </v-card>
 
-          <v-card style="width:350px">
+          <v-card style="width:300px;margin-right:15px">
             <v-card-title>
               <div>GTR</div>
               <div class="term-count">{{ phenotypeTerms['GTR'].length }} terms</div>
@@ -160,7 +160,7 @@
             </v-card-text>
           </v-card>
 
-          <v-card style="width:350px">
+          <v-card style="width:300px;margin-right:15px">
             <v-card-title>
               <div>Phenolyzer</div>
               <div class="term-count">{{ phenotypeTerms['Phenolyzer'].length }} terms</div>
@@ -204,7 +204,7 @@
             </v-card-text>
           </v-card>
 
-          <v-card style="width:350px">
+          <v-card style="width:300px;margin-right:15px">
             <v-card-title>
               <div>HPO</div>
               <div class="term-count">{{ phenotypeTerms['HPO'].length }} terms</div>
@@ -253,6 +253,19 @@
             </v-card-text>
           </v-card>
 
+          <v-card v-if="addedGenes.length > 0" style="width:200px;">
+            <v-card-title>
+              <div>Added genes</div>
+              <div class="term-count">{{ addedGenes.length }} genes</div>
+            </v-card-title>
+            <v-card-text>
+              <div v-for="gene in addedGenes" class="row" style="margin-bottom: -8px; margin-top: -8px" >
+                <div class="col-md-12" style="padding-top: 5px;">
+                  {{ gene }}
+                </div>
+              </div>
+            </v-card-text>
+          </v-card>
         </div>
 
       </div>
@@ -337,6 +350,7 @@ export default {
     gtrTerms: null,
     phenolyzerTerms: null,
     hpoTerms: null,
+    addedGenes: [],
     currentStep: null
   },
   data() {
@@ -387,6 +401,13 @@ export default {
     },
     initClinicalNotes: function() {
       let self = this;
+
+      self.addedGenes = self.analysis.payload.genesReport.filter(function(geneItem) {
+        return geneItem.isImportedGenes == true
+      }).map(function(geneItem) {
+        return geneItem.name
+      })
+
       self.clinicalNotes = [];
       self.phenotypeTerms = {'GTR': [], 'Phenolyzer': [], 'HPO': []};      
 
