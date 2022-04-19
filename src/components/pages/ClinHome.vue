@@ -1634,8 +1634,8 @@ export default {
       }
     },
 
-    toggleSaveModal(bool) {
-      this.showSaveModal = bool;
+    toggleSaveModal() {
+      this.showSaveModal = !this.showSaveModal
     },
    
     toggleSaveProjectModal() {

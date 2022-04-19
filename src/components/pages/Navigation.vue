@@ -22,6 +22,9 @@ header.theme--dark.v-sheet
     .percent-label
       font-size: 12px
 
+    .analysis-save-button
+      background-color: $button-color !important
+
     #workflow-progress
       display: flex
       padding-bottom: 10px
@@ -189,7 +192,7 @@ header.theme--dark.v-sheet
         :showing-save-modal="true"
         :showSaveModal="showSaveModal"
         :analysis="analysis"
-        @save-modal:set-visibility="toggleSaveModal"
+        @save-modal="toggleSaveModal"
       />
       
       <MoreMenu landingPage="false" />
