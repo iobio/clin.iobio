@@ -1,11 +1,13 @@
 /* Copyright 2017-2018, Frameshift Labs, Inc., All rights reserved. */
 <template>
-  <a
+  <a 
     v-if="analysis"
     class="analysis-save-button"
-    @click.prevent="toggleSaveModal"
+    @click="toggleSaveModal"
   >
     <!-- <v-icon>{{ iconName }}</v-icon> -->
+
+    <img  height="15" style="padding-right:3px" src="../../assets/images/mosaic.png" />
     <span>{{ buttonLabel }}</span>
   </a>
 </template>
@@ -52,11 +54,11 @@ export default {
     toggleSaveModal() {
       if(this.showDialog) {
         this.showDialog = false;
-        this.$emit('save-modal:set-visibility', false)
+        this.$emit('save-modal', false)
       }
       else {
         this.showDialog = true;
-        this.$emit('save-modal:set-visibility', true)
+        this.$emit('save-modal', true)
       }
       // this.showingSaveModal ? this.$emit('save-modal:set-visibility', false) : this.$emit('save-modal:set-visibility', true);
     },
@@ -71,7 +73,7 @@ export default {
   margin-bottom: 4px;  
   width: 140px;
   border-radius: 5px;
-  background-color: #007dd4;
+  background-color: #50a1e4;
   box-shadow: 0 4px 5px 0 rgba(0, 0, 0, .14),
               0 1px 10px 0 rgba(0, 0, 0, .12),
               0 2px 4px -1px rgba(0, 0, 0, .2);
@@ -85,6 +87,7 @@ export default {
     color: white;
     font-weight: 500;
     margin-left: 2px;
+    font-size: 13px;
   }
 
   &:hover {
