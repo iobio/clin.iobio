@@ -9,6 +9,18 @@
   height: -webkit-fill-available
   height: -moz-available
   background-color:  white
+
+  .sub-heading 
+    font-size: 16px
+    font-weight: 500
+    color: #6a6a6a
+    padding-bottom: 10px
+  
+
+  #edit-description-button
+    .material-icons
+      color: $app-button-color
+      font-size: 18px !important
   
   hr
     margin-top: 0 !important
@@ -108,25 +120,46 @@
 
   <div id="review-case-panel" >
 
-        <div class="review-section">
+    <div class="review-section">
 
-          <div style="display:flex;flex-direction:row;justify-content:flex-start">
-              <div class="container">
-                <span class="heading">Case Summary </span>
-                <div class="reviewCase">
-                {{ caseSummary.description }}
-                </div>
-              </div>
-
-            <div v-if="false" class="subsection">
-              <div class="card-subheading">Condition / Phenotype Search Terms</div>
-              <div v-for="(phenotype, index) in phenotypeList" class="phenotype-search-term">
-                {{phenotype}}
-              </div>
+      <div style="display:flex;flex-direction:row;justify-content:flex-start">
+          <div class="container" style="padding:5px">
+            <div class="sub-heading">
+                Case Summary
+                <v-btn  small depressed v-if='canEditCaseSummary'
+                @click='onEditProject'
+                id='edit-description-button' style='margin-left:20px'>
+                </vbtn>
+                <v-icon>edit</v-icon>
+              </v-btn>
             </div>
+
+            <v-card class="reviewCase">
+              <v-card-text>
+                {{ caseSummary.description }}
+              </v-card-text>
+            </v-card>
           </div>
+
+        <div v-if="false" class="subsection">
+          <div class="card-subheading">Condition / Phenotype Search Terms</div>
+          <div v-for="(phenotype, index) in phenotypeList" class="phenotype-search-term">
+            {{phenotype}}
+          </div>
+        </div>
       </div>
-      
+
+     
+    </div>
+
+
+    <div v-if="modelInfos && modelInfos.length" class="sub-heading" style="margin-left:10px">
+                Sample Quality
+    </div>
+
+    <v-card style="margin-left:10px;margin-right:10px">
+
+    
       <div v-if="customData && modelInfos && modelInfos.length && !customSavedAnalysis">
         
         <!-- Header  -->
@@ -260,30 +293,116 @@
       </div>
       
 
-    <div v-if="customSavedAnalysis && statsReceived && coverageStatsReceived">
-      <div style=" width: 100%; display: inline-flex; flex-direction: row; justify-content: space-around; padding-bottom: 0">
-        <!-- <div class="heading" style="margin-right: 90px">Sample</div>  -->
-        <div class="heading" style="margin-right: 5px">
-          <span>Sample</span>
-          <span class="pedigree-help ml-1">
-            <v-tooltip top>
-              <template v-slot:activator="{ on, attrs }">
-                <v-icon
-                  color="grey"
-                  dark
-                  v-bind="attrs"
-                  v-on="on"
-                >
-                  info
-                </v-icon>
-              </template>
-              <span>
-                <img width="325px" src="../../assets/images/pedigree_tooltip.png" alt="Pedigree help">
-              </span>
-            </v-tooltip>
-          </span>
-        </div> 
-        <div class="heading" style="margin-right: 90px; display:flex;flex-direction:row;justify-content:space-between">
+      <div v-if="customSavedAnalysis && statsReceived && coverageStatsReceived">
+        <div style=" width: 100%; display: inline-flex; flex-direction: row; justify-content: space-around; padding-bottom: 0">
+          <!-- <div class="heading" style="margin-right: 90px">Sample</div>  -->
+          <div class="heading" style="margin-right: 5px">
+            <span>Sample</span>
+            <span class="pedigree-help ml-1">
+              <v-tooltip top>
+                <template v-slot:activator="{ on, attrs }">
+                  <v-icon
+                    color="grey"
+                    dark
+                    v-bind="attrs"
+                    v-on="on"
+                  >
+                    info
+                  </v-icon>
+                </template>
+                <span>
+                  <img width="325px" src="../../assets/images/pedigree_tooltip.png" alt="Pedigree help">
+                </span>
+              </v-tooltip>
+            </span>
+          </div> 
+          <div class="heading" style="margin-right: 90px; display:flex;flex-direction:row;justify-content:space-between">
+            <div style="margin-right: 20px">Read Coverage</div>
+            <v-text-field
+                    id="minCoverageInput"
+                  label="Expected Coverage"
+                  outlined
+                  dense
+                  value="minCutoff"
+                  v-model.number="minCutoff"
+                    style="width: 150px"
+            ></v-text-field>
+          </div>
+
+          <div class="heading" style="margin-right: 50px">Variant Types</div>
+        </div>
+        <div v-if="sampleIdsAndRelationships != null" v-for="(d, i) in varCountsArray" >
+          <hr>
+          <div style=" width: 100%; display: inline-flex; flex-direction: row; justify-content: space-around;">
+              <div style="text-align: center; width: 150px" class="capitalize">
+                <strong>{{sampleIdsAndRelationships[i].split(" ")[1]}}</strong>
+                <br>
+                {{sampleIdsAndRelationships[i].split(" ")[0]}}
+                <PedigreeGraph :data="allPedigreeDataArrays[i]" :id="sampleUuids[i]" :width="100" :height="85" :pedigree="pedigree"></PedigreeGraph>
+              </div>
+
+            <div style="display: inline-flex;">
+              <BarChart :data="coverageDataArray[i]" :width="400" :height="150" :x-domain="xDomain" :y-domain="yDomain" :median-coverage="medianCoverages[i]" :minCutoff="minCutoff"></BarChart>
+
+              <div style="padding-top: 20px" v-show="goodCoverage(i)">
+              <v-tooltip top class="valign">
+                <template v-slot:activator="{ on }">
+                  <v-icon class="good-coverage" v-on="on" top color="green"
+                           @click="">check_circle</v-icon>
+                </template>
+                <span>Median coverage is above expected coverage threshold of {{minCutoff}}X</span>
+
+              </v-tooltip>
+                <div v-if="badCoverage" style=" display: inline-flex; width: 120px; line-height: 16px; font-size: 12px; padding-left: 5px;"></div>
+              </div>
+              <div style="padding-top: 20px" v-show="!goodCoverage(i)">
+                    <v-icon v-on="on"     @click=""
+                            top color="#B33A3A">mdi-alert-circle</v-icon>
+
+
+                <div v-if="badCoverage" style=" display: inline-flex; width: 120px; line-height: 14px; font-size: 13px; padding-left: 5px;">Median coverage is below expected coverage threshold of {{minCutoff}}X</div>
+
+              </div>
+
+            </div>
+            <QualitativeBarChart :data="varCountsArray[i].counts" :customData="customData" :width="300" :height="150" style="padding-top: 0"></QualitativeBarChart>
+
+          </div>
+       </div>
+       <hr>
+      </div>
+      <div v-if="customData && !coverageStatsReceived && customSavedAnalysis">
+        <center>
+          <SkeletonLoadersReview :rowsLength="modelInfos.length">
+          </SkeletonLoadersReview>
+        </center>
+      </div>
+
+
+
+      <div v-if="isSorted">
+        <div style=" width: 100%; display: inline-flex; flex-direction: row; justify-content: space-around; padding-bottom: 0; margin-bottom: -6px">
+          <div class="heading" style="margin-right: 0">
+            <span>Sample</span>
+            <span class="pedigree-help ml-1">
+              <v-tooltip top>
+                <template v-slot:activator="{ on, attrs }">
+                  <v-icon
+                    color="grey"
+                    dark
+                    v-bind="attrs"
+                    v-on="on"
+                  >
+                    info
+                  </v-icon>
+                </template>
+                <span>
+                  <img width="325px" src="../../assets/images/pedigree_tooltip.png" alt="Pedigree help">
+                </span>
+              </v-tooltip>
+            </span>
+          </div> 
+          <div class="heading" style="margin-right: 75px; display:flex;flex-direction:row;justify-content:space-between">
           <div style="margin-right: 20px">Read Coverage</div>
           <v-text-field
                   id="minCoverageInput"
@@ -293,138 +412,56 @@
                 value="minCutoff"
                 v-model.number="minCutoff"
                   style="width: 150px"
-          ></v-text-field>
-        </div>
+        ></v-text-field></div>
 
-        <div class="heading" style="margin-right: 50px">Variant Types</div>
-      </div>
-      <div v-if="sampleIdsAndRelationships != null" v-for="(d, i) in varCountsArray" >
-        <hr>
-        <div style=" width: 100%; display: inline-flex; flex-direction: row; justify-content: space-around;">
-            <div style="text-align: center; width: 150px" class="capitalize">
-              <strong>{{sampleIdsAndRelationships[i].split(" ")[1]}}</strong>
-              <br>
-              {{sampleIdsAndRelationships[i].split(" ")[0]}}
-              <PedigreeGraph :data="allPedigreeDataArrays[i]" :id="sampleUuids[i]" :width="100" :height="85" :pedigree="pedigree"></PedigreeGraph>
-            </div>
-
-          <div style="display: inline-flex;">
-            <BarChart :data="coverageDataArray[i]" :width="400" :height="150" :x-domain="xDomain" :y-domain="yDomain" :median-coverage="medianCoverages[i]" :minCutoff="minCutoff"></BarChart>
-
-            <div style="padding-top: 20px" v-show="goodCoverage(i)">
-            <v-tooltip top class="valign">
-              <template v-slot:activator="{ on }">
-                <v-icon class="good-coverage" v-on="on" top color="green"
-                         @click="">check_circle</v-icon>
-              </template>
-              <span>Median coverage is above expected coverage threshold of {{minCutoff}}X</span>
-
-            </v-tooltip>
-              <div v-if="badCoverage" style=" display: inline-flex; width: 120px; line-height: 16px; font-size: 12px; padding-left: 5px;"></div>
-            </div>
-            <div style="padding-top: 20px" v-show="!goodCoverage(i)">
-                  <v-icon v-on="on"     @click=""
-                          top color="#B33A3A">mdi-alert-circle</v-icon>
-
-
-              <div v-if="badCoverage" style=" display: inline-flex; width: 120px; line-height: 14px; font-size: 13px; padding-left: 5px;">Median coverage is below expected coverage threshold of {{minCutoff}}X</div>
-
-            </div>
-
-          </div>
-          <QualitativeBarChart :data="varCountsArray[i].counts" :customData="customData" :width="300" :height="150" style="padding-top: 0"></QualitativeBarChart>
-
-        </div>
-     </div>
-     <hr>
-    </div>
-    <div v-if="customData && !coverageStatsReceived && customSavedAnalysis">
-      <center>
-        <SkeletonLoadersReview :rowsLength="modelInfos.length">
-        </SkeletonLoadersReview>
-      </center>
-    </div>
-
-
-
-    <div v-if="isSorted">
-      <div style=" width: 100%; display: inline-flex; flex-direction: row; justify-content: space-around; padding-bottom: 0; margin-bottom: -6px">
-        <div class="heading" style="margin-right: 0">
-          <span>Sample</span>
-          <span class="pedigree-help ml-1">
-            <v-tooltip top>
-              <template v-slot:activator="{ on, attrs }">
-                <v-icon
-                  color="grey"
-                  dark
-                  v-bind="attrs"
-                  v-on="on"
-                >
-                  info
-                </v-icon>
-              </template>
-              <span>
-                <img width="325px" src="../../assets/images/pedigree_tooltip.png" alt="Pedigree help">
-              </span>
-            </v-tooltip>
-          </span>
-        </div> 
-        <div class="heading" style="margin-right: 75px; display:flex;flex-direction:row;justify-content:space-between">
-        <div style="margin-right: 20px">Read Coverage</div>
-        <v-text-field
-                id="minCoverageInput"
-              label="Expected Coverage"
-              outlined
-              dense
-              value="minCutoff"
-              v-model.number="minCutoff"
-                style="width: 150px"
-      ></v-text-field></div>
-
-        <div class="heading" style="margin-right: 50px">Variant Types</div>
-      </div>
-      <hr>
-      <div v-if="sampleIdsAndRelationships != null" v-for="(d, i) in sampleIdsAndRelationships" >
-        <div style=" width: 100%; display: inline-flex; flex-direction: row; justify-content: space-around;">
-            <div style="text-align: center; width: 150px" class="capitalize">
-              <strong>{{sampleIdsAndRelationships[i].split("\t")[1]}}</strong>
-              <br>
-              {{sampleIdsAndRelationships[i].split("\t")[0]}}
-              <PedigreeGraph :data="allPedigreeDataArrays[i]" :id="sampleUuids[i]" :width="100" :height="85" :pedigree="pedigree"></PedigreeGraph>
-            </div>
-
-          <div style="display: inline-flex;">
-            <BarChart :data="coverageDataArray[i]" :width="400" :height="150" :x-domain="xDomain" :y-domain="yDomain" :median-coverage="medianCoverages[i]" :minCutoff="minCutoff"></BarChart>
-
-            <div style="padding-top: 20px" v-show="goodCoverage(i)">
-            <v-tooltip top class="valign">
-              <template v-slot:activator="{ on }">
-                <v-icon class="good-coverage" v-on="on" top color="green"
-                         @click="">check_circle</v-icon>
-              </template>
-              <span>Median coverage is above expected coverage threshold of {{minCutoff}}X</span>
-
-            </v-tooltip>
-              <div v-if="badCoverage" style=" display: inline-flex; width: 120px; line-height: 16px; font-size: 12px; padding-left: 5px;"></div>
-            </div>
-            <div style="padding-top: 20px" v-show="!goodCoverage(i)">
-                  <v-icon v-on="on"     @click=""
-                          top color="#B33A3A">mdi-alert-circle</v-icon>
-
-
-              <div v-if="badCoverage" style=" display: inline-flex; width: 120px; line-height: 14px; font-size: 13px; padding-left: 5px;">Median coverage is below expected coverage threshold of {{minCutoff}}X</div>
-
-            </div>
-
-          </div>
-          <!--<BoxPlot :width="250" :height="150" :data="exomeMedianCoverageData"></BoxPlot>-->
-          <QualitativeBarChart :data="varCountsArray[i].counts" :customData="customData" :width="300" :height="150" style="padding-top: 0"></QualitativeBarChart>
-
+          <div class="heading" style="margin-right: 50px">Variant Types</div>
         </div>
         <hr>
-     </div>
-    </div>
+        <div v-if="sampleIdsAndRelationships != null" v-for="(d, i) in sampleIdsAndRelationships" >
+          <div style=" width: 100%; display: inline-flex; flex-direction: row; justify-content: space-around;">
+              <div style="text-align: center; width: 150px" class="capitalize">
+                <strong>{{sampleIdsAndRelationships[i].split("\t")[1]}}</strong>
+                <br>
+                {{sampleIdsAndRelationships[i].split("\t")[0]}}
+                <PedigreeGraph :data="allPedigreeDataArrays[i]" :id="sampleUuids[i]" :width="100" :height="85" :pedigree="pedigree"></PedigreeGraph>
+              </div>
+
+            <div style="display: inline-flex;">
+              <BarChart :data="coverageDataArray[i]" :width="400" :height="150" :x-domain="xDomain" :y-domain="yDomain" :median-coverage="medianCoverages[i]" :minCutoff="minCutoff"></BarChart>
+
+              <div style="padding-top: 20px" v-show="goodCoverage(i)">
+              <v-tooltip top class="valign">
+                <template v-slot:activator="{ on }">
+                  <v-icon class="good-coverage" v-on="on" top color="green"
+                           @click="">check_circle</v-icon>
+                </template>
+                <span>Median coverage is above expected coverage threshold of {{minCutoff}}X</span>
+
+              </v-tooltip>
+                <div v-if="badCoverage" style=" display: inline-flex; width: 120px; line-height: 16px; font-size: 12px; padding-left: 5px;"></div>
+              </div>
+              <div style="padding-top: 20px" v-show="!goodCoverage(i)">
+                    <v-icon v-on="on"     @click=""
+                            top color="#B33A3A">mdi-alert-circle</v-icon>
+
+
+                <div v-if="badCoverage" style=" display: inline-flex; width: 120px; line-height: 14px; font-size: 13px; padding-left: 5px;">Median coverage is below expected coverage threshold of {{minCutoff}}X</div>
+
+              </div>
+
+            </div>
+            <!--<BoxPlot :width="250" :height="150" :data="exomeMedianCoverageData"></BoxPlot>-->
+            <QualitativeBarChart :data="varCountsArray[i].counts" :customData="customData" :width="300" :height="150" style="padding-top: 0"></QualitativeBarChart>
+
+          </div>
+          <hr>
+       </div>
+      </div>
+
+    </v-card>
+
     <div style="height:20px"></div>
+
   </div>
 </template>
 
@@ -476,7 +513,8 @@ export default {
     launchedFromMosaic: null,
     customData:   null,
     bedFileUrl: null,
-    customSavedAnalysis: null
+    customSavedAnalysis: null,
+    canEditCaseSummary: null
   },
   data() {
     return {
@@ -1350,6 +1388,11 @@ export default {
         }
       }
       return bool;
+    },
+
+
+    onEditProject: function() {
+      this.$emit("on-edit-project")
     }
   },
   computed: {
@@ -1398,7 +1441,6 @@ function filterRef(ref) {
 
   .heading
     font-size: 16px
-    font-weight: 600
     font-family: $iobio-font
     color: $text-color
 

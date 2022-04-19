@@ -13,18 +13,19 @@
   font-size: 20px
 
 .v-snack--right
-  margin-right: 350px !important
+  margin-right: 380px !important
 
 .v-snack
-  top: 0px !important
+  top: 5px !important
 
   .v-snack__wrapper
     min-width: 200px !important
-    background-color: transparent !important
+    max-width: 200px !important
+    background-color: black !important
 
     .v-snack__content
       min-height: 35px !important
-      padding-top: 10px !important
+      padding-top: 2px !important
       padding-bottom: 2px !important
       font-size: 12px !important
       font-weight: 500 !important
@@ -129,6 +130,12 @@ $horizontal-dashboard-height: 140px
 .v-application #application-content.workflow-new .accent--text
   color: #45688e !important
 
+.col-flex-terms
+  min-height: 285px
+  
+  .search_status_tbody
+    max-height: 235px
+
 </style>
 
 
@@ -171,7 +178,7 @@ $horizontal-dashboard-height: 140px
    :analysis="analysis"
    :launchedFromMosaic="launchedFromMosaic"
    :showSaveModal="showSaveModal"
-   @show-save-analysis="toggleSaveModal($event)"
+   @show-save-analysis="toggleSaveModal()"
    :customData="customData">
   </navigation>
 
@@ -230,11 +237,13 @@ $horizontal-dashboard-height: 140px
         :allVarCounts="allVarCounts"
         :coverageHistos="coverageHistos"
         :launchedFromMosaic="launchedFromMosaic"
+        :canEditCaseSummary="mosaicSession == null || isProjectOwnerOrAdmin"
         @update="updateReviewCaseBadges"
         @updateCoverage="updateAverageCoverage"
         :customData=customData
         :bedFileUrl="bedFileUrl"
-        :customSavedAnalysis="customSavedAnalysis">
+        :customSavedAnalysis="customSavedAnalysis"
+        @on-edit-project="toggleSaveProjectModal">
         </review-case>
       </v-card>
 
@@ -321,15 +330,18 @@ $horizontal-dashboard-height: 140px
         ref="findingsRef"
         v-if="analysis && workflow && variantsByInterpretation && !showLandingPage"
         :genomeBuildHelper="genomeBuildHelper"
+        :currentStep="currentStep"
         :modelInfos="modelInfos"
-        :caseSummary="caseSummary"
+        :caseSummaryDescription="caseSummary.description"
         :noteClinical="analysis.payload.phenotypes[3]"
         :gtrTerms="analysis.payload.phenotypes[0]"
         :phenolyzerTerms="analysis.payload.phenotypes[1]"
         :hpoTerms="analysis.payload.phenotypes[2]"
         :analysis="analysis"
+        :canEditCaseSummary="mosaicSession == null || isProjectOwnerOrAdmin"
         :variantsByInterpretation="variantsByInterpretation"
-        :interpretationMap="interpretationMap">
+        :interpretationMap="interpretationMap"
+        @on-edit-project="toggleSaveProjectModal">
         </findings>
       </v-card>
 
@@ -444,6 +456,14 @@ $horizontal-dashboard-height: 140px
     @on-save-new-analysis="promiseSaveNewAnalysis($event)"
     @on-cancel-analysis="onCancelAnalysis">
   </save-analysis-popup>
+
+  <save-project-popup
+    :showIt="showSaveProjectModal"
+    :name="caseSummary ? caseSummary.name : ''""
+    :description="caseSummary ? caseSummary.description : ''"
+    @on-save-project="promiseSaveProject($event)"
+    @on-cancel-project="onCancelProject">
+  </save-project-popup>
 </div>
 </template>
 
@@ -470,6 +490,7 @@ import GenericAnnotation  from  '../../models/GenericAnnotation.js'
 import EndpointCmd        from  '../../models/EndpointCmd.js'
 
 import SaveAnalysisPopup  from '../partials/SaveAnalysisPopup.vue'
+import SaveProjectPopup   from '../partials/SaveProjectPopup.vue'
 
 import workflowData  from '../../data/workflows.json'
 import variantData   from '../../data/variants_mosaic_platinum.json'
@@ -495,6 +516,7 @@ export default {
     Findings,
     AppIcon,
     SaveAnalysisPopup,
+    SaveProjectPopup,
     LoadingDialog,
     LandingPage,
     ...NewComponents
@@ -534,6 +556,7 @@ export default {
       launchedFromMosaic: false,
       user: null,
       showSaveModal: false,
+      showSaveProjectModal: false,
 
       genomeBuildHelper: null,
 
@@ -663,7 +686,8 @@ export default {
       PhenolyzerResourceUsed: false,
       mosaic_gene_set: "",
       genePhenotypeHits: {},
-      launchedFromGenePanel: false
+      launchedFromGenePanel: false,
+      isProjectOwnerOrAdmin: false
     }
 
   },
@@ -923,6 +947,10 @@ export default {
               self.caseSummary.name = project.name;
               self.caseSummary.description = project.description && project.description.length > 0 ? project.description : "A summary of the trio goes here....";
 
+              self.mosaicSession.promiseIsProjectOwnerOrAdmin(self.params.project_id)
+              .then(function(isOwnerOrAdmin) {
+                self.isProjectOwnerOrAdmin = isOwnerOrAdmin
+              })
 
 
             })
@@ -1609,7 +1637,13 @@ export default {
     toggleSaveModal(bool) {
       this.showSaveModal = bool;
     },
-    
+   
+    toggleSaveProjectModal() {
+      this.showSaveProjectModal = !this.showSaveProjectModal;
+    },
+
+
+
     promiseSaveNewAnalysis: function(newAnalysis) {
       let self = this;
 
@@ -2925,6 +2959,27 @@ export default {
     
     new_term_searched(flag){
       this.newTermSearched = flag;
+    },
+
+    promiseSaveProject: function(description) {
+      let self = this;
+      self.showSaveProjectModal = false
+      self.caseSummary.description = description;
+      if (self.mosaicSession) {
+        self.mosaicSession.promiseUpdateProject(self.paramProjectId, self.caseSummary.name, description)
+        .then(function() {
+          self.onShowSnackbar( {message: 'Mosaic project description saved.', timeout: 3000, top: true, right: true});
+        })
+        .catch(function(error) {         
+          console.log(error)
+        })
+      } else {
+        self.onShowSnackbar( {message: 'Case summary updated.', timeout: 3000, top: true, right: true});
+      }
+    },
+    onCancelProject: function() {
+      let self = this;
+      self.showSaveProjectModal = false
     },
   }
 }

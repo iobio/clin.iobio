@@ -31,6 +31,9 @@ export default class MosaicSession {
     this.geneSet = null;
     this.variantSet = null;
     this.experimentId = null;
+
+    this.OWNER_ROLE = 2;
+    this.ADMIN_ROLE = 3;
   }
 
   // This formats the attributes and distributions to be how they used to be, an object
@@ -316,6 +319,42 @@ export default class MosaicSession {
       });
     });
   }
+
+  promiseIsProjectOwnerOrAdmin(projectId) {
+    let self = this;
+    return new Promise(function(resolve, reject) {
+      if (self.user) {
+        self.promiseGetProjectRoles(projectId)
+        .then(function(roles) {
+          let matchedRoles = roles.filter(function(role) {
+            return role.user_id == self.user.id 
+                   && (role.role_id == self.OWNER_ROLE || role.role_type_id == self.ADMIN_ROLE);
+          })
+          resolve(matchedRoles.length > 0)
+        })      
+      } else {
+        reject("Failed to get project roles because there is no current user")
+      }
+
+    })
+  }
+
+
+  promiseGetProjectRoles(project_id) {
+    let self = this;
+    return new Promise(function(resolve, reject) {
+      self.getProjectRoles(project_id)
+      .done(response => {
+          resolve(response.data);
+      })
+      .fail(error => {
+        reject("Error getting project roles " + project_id + ": " + error);
+      });
+    });
+  }
+
+  
+
 
 
   promiseGetSampleInfo(project_id, sample_id, isPedigree) {
@@ -646,6 +685,32 @@ export default class MosaicSession {
     });
   }
 
+  getProjectRoles(projectId) {
+    let self = this;
+    return $.ajax({
+        url: self.api + '/projects/' + projectId + '/roles',
+        type: 'GET',
+        contentType: 'application/json',
+        headers: {
+            'Authorization': localStorage.getItem('hub-iobio-tkn')
+        }
+    });
+  }
+
+
+  promiseUpdateProject(projectId, name, description) {
+    let self = this;
+    return new Promise(function(resolve, reject) {
+      self.updateProject(projectId, name, description)
+      .done(response => {
+        resolve(response)
+      })
+      .fail(error => {
+        reject("Error updating project " + projectId  + ": " + error);
+      })
+    })
+
+  }
   promiseGetGeneSet(projectId, geneSetId) {
     let self = this;
     return new Promise(function(resolve, reject) {
@@ -821,6 +886,20 @@ export default class MosaicSession {
             + '?client_application_id=' + this.client_application_id,
       type: 'PUT',
       data: self.stringifyAnalysis(newAnalysisData),
+      contentType: 'application/json',
+      headers: {
+        Authorization: localStorage.getItem('hub-iobio-tkn'),
+      },
+    });
+  }
+
+  updateProject(projectId, projectName, projectDescription) {
+    let self = this;
+
+    return $.ajax({
+      url: self.api + '/projects/' + projectId  + '?client_application_id=' + this.client_application_id,
+      type: 'PUT',
+      data: JSON.stringify({'name': projectName, 'description': projectDescription}),
       contentType: 'application/json',
       headers: {
         Authorization: localStorage.getItem('hub-iobio-tkn'),
