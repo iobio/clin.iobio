@@ -961,9 +961,9 @@ export default class MosaicSession {
     }
     return $.ajax({
       // url: 'https://mosaic.chpc.utah.edu/api/v1/projects/' + projectId + '/variants/sets/' + variantSetId + "?include_variant_data=true&include_genotype_data=true",
-      url: self.apiDepricated + '/projects/' + projectId + '/variants?variant_set_id=' + variantSetId,
+      url: self.api + '/projects/' + projectId + '/variants/sets/' + variantSetId + "?include_variant_data=true&include_genotype_data=true",
       data: {
-        annotation_uids: annotationUids,
+        //annotation_uids: annotationUids,
       },
       type: 'GET',
       contentType: 'application/json',

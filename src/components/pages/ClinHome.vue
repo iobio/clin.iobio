@@ -1090,24 +1090,41 @@ export default {
                 let importedVariant = {};
                 if ((variant.gene_symbol_GRCh38 && variant.gene_symbol_GRCh38.length > 0) || (variant.gene_symbol_GRCh37 && variant.gene_symbol_GRCh37.length > 0) || (variant.gene_symbol && variant.gene_symbol.length > 0)) {
                   if(variant.gene_symbol_GRCh38 && variant.gene_symbol_GRCh38.length > 0){
-                    importedVariant.gene  = variant.gene_symbol_GRCh38;
+                    importedVariant.gene  = variant.gene_symbol_GRCh38[0];
+
+                    if (variant.gnomad_allele_frequency_GRCh38 && variant.gnomad_allele_frequency_GRCh38.length > 0) {
+                       importedVariant.afgnomAD         = variant.gnomad_allele_frequency[0];
+                    }
+                    if (variant.gene_impact_GRCh38 && variant.gene_impact_GRCh38.length > 0) {
+                      importedVariant.highestImpact    = variant.gene_impact_GRCh38[0];
+                    }
+                    if (variant.gene_consequence_GRCh38 && variant.gene_consequence_GRCh38.length > 0) {            
+                      importedVariant.consequence      = variant.gene_consequence_GRCh38[0];
+                    }
+                    importedVariant.chrom = variant.chr.indexOf("chr") == 0 ? variant.chr : 'chr' + variant.chr;
                   }
                   else if(variant.gene_symbol_GRCh37 && variant.gene_symbol_GRCh37.length > 0){
-                    importedVariant.gene  = variant.gene_symbol_GRCh37;
+                    importedVariant.gene  = variant.gene_symbol_GRCh37[0];
+                    if (variant.gnomad_allele_frequency_GRCh37 && variant.gnomad_allele_frequency_GRCh37.length > 0) {
+                       importedVariant.afgnomAD         = variant.gnomad_allele_frequency[0];
+                    }
+                    if (variant.gene_impact_GRCh37 && variant.gene_impact_GRCh37.length > 0) {
+                      importedVariant.highestImpact    = variant.gene_impact_GRCh37[0];
+                    }
+                    if (variant.gene_consequence_GRCh37 && variant.gene_consequence_GRCh37.length > 0) {            
+                      importedVariant.consequence      = variant.gene_consequence_GRCh37[0];
+                    }
+                    importedVariant.chrom = variant.chr;
+
                   }
-                  else if(variant.gene_symbol && variant.gene_symbol.length > 0) {
-                    importedVariant.gene  = variant.gene_symbol;
-                  }
-                  importedVariant.chrom = variant.chr;
-                  importedVariant.start = variant.pos;
-                  importedVariant.end   = variant.pos;
+                  
+                  importedVariant.start = variant.r_start;
+                  importedVariant.end   = variant.r_end;
                   importedVariant.ref   = variant.ref;
                   importedVariant.alt   = variant.alt;
                   importedVariant.filtersPassed    = "notCategorized";
                   importedVariant.inheritance      = null;
-                  importedVariant.afgnomAD         = variant.gnomad_allele_frequency;
-                  importedVariant.highestImpact    = variant.gene_impact;
-                  importedVariant.consequence      = variant.gene_consequence;
+                  
                   importedVariant.isImported       = true;
                   importedVariant.variantSet       = "notCategorized";
 
