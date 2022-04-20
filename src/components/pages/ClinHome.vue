@@ -1093,7 +1093,7 @@ export default {
                     importedVariant.gene  = variant.gene_symbol_GRCh38[0];
 
                     if (variant.gnomad_allele_frequency_GRCh38 && variant.gnomad_allele_frequency_GRCh38.length > 0) {
-                       importedVariant.afgnomAD         = variant.gnomad_allele_frequency[0];
+                       importedVariant.afgnomAD         = variant.gnomad_allele_frequency_GRCh38[0];
                     }
                     if (variant.gene_impact_GRCh38 && variant.gene_impact_GRCh38.length > 0) {
                       importedVariant.highestImpact    = variant.gene_impact_GRCh38[0];
@@ -1106,7 +1106,7 @@ export default {
                   else if(variant.gene_symbol_GRCh37 && variant.gene_symbol_GRCh37.length > 0){
                     importedVariant.gene  = variant.gene_symbol_GRCh37[0];
                     if (variant.gnomad_allele_frequency_GRCh37 && variant.gnomad_allele_frequency_GRCh37.length > 0) {
-                       importedVariant.afgnomAD         = variant.gnomad_allele_frequency[0];
+                       importedVariant.afgnomAD         = variant.gnomad_allele_frequency_GRCh37[0];
                     }
                     if (variant.gene_impact_GRCh37 && variant.gene_impact_GRCh37.length > 0) {
                       importedVariant.highestImpact    = variant.gene_impact_GRCh37[0];
