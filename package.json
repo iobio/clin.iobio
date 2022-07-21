@@ -26,7 +26,7 @@
     "iobio-api-client": "^0.7.1",
     "iobio-phenotype-extractor-vue": "^5.54.0",
     "is-number": "^7.0.0",
-    "jquery": "^3.4.1",
+    "jquery": "^3.5.0",
     "material-design-icons-iconfont": "^5.0.1",
     "serve-favicon": "^2.4.3",
     "v-tooltip": "^2.0.0-rc.31",
