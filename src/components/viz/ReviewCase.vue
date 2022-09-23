@@ -270,11 +270,11 @@
               
               <!-- Variants count -->
               <div class="col-md-4">
-                <CustomVcfStats :modelInfos="modelInfo" :idx="idx" :customData="customData"
+                <CustomVcfStats v-if="variantsArrayForSamples" :modelInfos="modelInfo" :idx="idx" :customData="customData"
                   @variants-count="setCustomVariantCounts($event)">
                 </CustomVcfStats>
                 
-                <CustomBamStats v-if="bedDataLoaded" :modelInfos="modelInfo" :idx="idx" :customData="customData" :bedFileData="bed"
+                <CustomBamStats v-if="coverageDataArray && bedDataLoaded" :modelInfos="modelInfo" :idx="idx" :customData="customData" :bedFileData="bed"
                   @coverage-reads-count="setCustomReadsCount($event)"
                   @coverage-histos-data="setCoverageHistosData($event)">
                 </CustomBamStats>
@@ -651,7 +651,7 @@ export default {
 
     }
     else if(this.customData){
-      if(this.bedFileUrl!==undefined){
+      if(this.bedFileUrl!==undefined && this.bedFileUrl){
         fetch(this.bedFileUrl)
             .then(response => response.text())
             .then(bed => {
@@ -663,7 +663,7 @@ export default {
               console.log("error", error);
             });
       }
-      else if(this.bedFileUrl===undefined){
+      else if(this.bedFileUrl===undefined || this.bedFileUrl == null){
         this.bed = undefined;
         this.buildCustomPage();
       }
