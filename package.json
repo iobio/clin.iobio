@@ -19,7 +19,7 @@
     "d3": "^4.13.0",
     "d3-dtree": "^1.3.2",
     "debug": "^2.6.8",
-    "express": "^4.15.3",
+    "express": "^4.17.3",
     "fibridge-host": "^0.16.0",
     "file-saver": "^2.0.2",
     "hooper": "^0.3.4",
