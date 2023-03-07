@@ -38,6 +38,32 @@
                           {{ badge.label | to-firstCharacterUppercase}}
                         </v-badge>
                       </div>
+                      <span v-if="step.number == 3">
+                        <v-btn  class="navbar-icon-button" 
+                          v-if="variantsNotificationCounts && variantsNotificationCounts.total && variantsNotificationCounts.total > 0"  
+                          id="notification-button"  @click="onShowVariantsNotificationsDrawer" 
+                          v-tooltip.bottom-left="{content: 'Notifications (errors, warnings and information). Click to see detailed list.'}">
+                          <v-badge right  >
+                            <v-icon>notifications</v-icon>
+                          </v-badge>
+                        </v-btn>
+                        
+                        <v-icon class="navbar-icon-button" 
+                          v-if="variantsNotificationCounts && variantsNotificationCounts.error && variantsNotificationCounts.error > 0"  
+                          id="error-badge" 
+                          v-tooltip.bottom-left="{content: 'This step has encountered at an error. Click on notifications button (bell) to see details.'}">
+                         error
+                        </v-icon>
+                        <v-icon class="navbar-icon-button" 
+                          v-if="variantsNotificationCounts && variantsNotificationCounts.warning && variantsNotificationCounts.warning> 0"  
+                          id="warning-badge" 
+                          v-tooltip.bottom-left="{content: 'This step has issued a warning. Click on notifications button (bell) to see details.'}">
+                          warning
+                        </v-icon>  
+                                       
+
+                      </span>
+
                     </div>
                  </div>
             </div>
@@ -68,7 +94,9 @@ export default {
   props: {
     caseSummary: null,
     analysisSteps: null,
-    workflow: null
+    workflow: null,
+    variantsNotificationCounts: null
+
   },
   data () {
     let self = this;
@@ -183,6 +211,9 @@ export default {
       }
       self.onStepClicked(self.steps[stepInProgress])
     }, 
+    onShowVariantsNotificationsDrawer() {
+      this.$emit('on-show-variants-notifications')
+    }
 
   },
   mounted: function() {
@@ -421,6 +452,41 @@ export default {
               .v-badge__badge
                 background-color: $not-significant-color !important
                 color: white
+
+      #notification-button
+        box-shadow: none
+        font-size: 20px
+        font-weight: 500
+        background-color: transparent
+        height: 34px
+        padding-left: 5px
+        margin-left: 20px
+        padding-right: 5px
+        margin-right: -12px
+        margin-top: -6px
+        max-width: 30px
+        min-width: 30px
+
+        .v-btn__content
+          padding-top: 2px
+
+        .v-badge__wrapper
+          span  
+            display: none
+
+      #error-badge, #warning-badge
+        padding-left: 0px
+        padding-right: 0px
+        margin-left: -0px
+        margin-top: -24px
+        font-size: 18px
+        min-width: 18px !important
+
+      #error-badge
+        color: red !important
+
+      #warning-badge
+        color: orange !important
 
 </style>
 
