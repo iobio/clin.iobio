@@ -538,6 +538,20 @@ export default {
     paramGenes:           null,
     paramVariantSetId:    null,
     paramExperimentId:    null,
+
+    paramAffectedSibs:     null,
+    paramUnaffectedSibs:   null,
+
+    paramRelationships:    null,
+    paramSexes:            null,
+    paramSamples:          null,
+    paramNames:            null,
+    paramBams:             null,
+    paramBais:             null,
+    paramVcfs:             null,
+    paramTbis:             null,
+    paramAffectedStatuses: null,
+
   },
   data() {
     let self = this;
@@ -554,6 +568,7 @@ export default {
       mosaicSession: null,
       modelInfos: null,
       launchedFromMosaic: false,
+      launchedWithUrlParms: false,
       user: null,
       showSaveModal: false,
       showSaveProjectModal: false,
@@ -960,19 +975,129 @@ export default {
             self.splashMessage = error;
           })
         } else {
-          self.params.source = "";
-          self.showLandingPage = true;
-          self.modelInfos = self.demoModelInfos;
+          if (self.paramRelationships) {
+            self.modelInfos = [];
+            let pedMap = {};
+            let sexMap = {
+              "male": "1",
+              "female": "2",
+              "unknown": "other"
+            }
+            let statusMap = {
+              "unaffected": "1",
+              "affected": "2",
+              "unknown": "-9"
+            }
+            for (var i = 0; i < self.paramRelationships.length; i++) {
+              var rel  = self.paramRelationships[i];
+              if (rel) {
+                var modelInfo            = {'relationship': rel};
+                modelInfo.name           = self.paramNames[i];
+                modelInfo.sex            = self.paramSexes[i];
+                modelInfo.vcf            = self.paramVcfs[i];
+                modelInfo.tbi            = self.paramTbis[i];
+                modelInfo.bam            = self.paramBams[i];
+                modelInfo.bai            = self.paramBais[i];
+                modelInfo.sample         = self.paramSamples[i];
+                modelInfo.affectedStatus = self.paramAffectedStatuses[i];
+                self.modelInfos.push(modelInfo);
+                self.launchedWithUrlParms = true;
+
+                let pedDict ={
+                  id: '1',
+                  pedigree: {
+                    affection_status: statusMap[modelInfo.affectedStatus],
+                    maternal_id: '0',
+                    paternal_id: '0',
+                    sample_id: modelInfo.sample,
+                    sex: sexMap[modelInfo.sex]
+                  }
+                };
+                pedMap[rel] = pedDict
+              }
+              if (pedMap['father']) {
+                pedMap['proband'].pedigree.paternal_id = pedMap['father'].pedigree.sample_id
+              }
+              if (pedMap['mother']) {
+                pedMap['proband'].pedigree.maternal_id = pedMap['mother'].pedigree.sample_id
+              }
+            }
+
+            if (self.launchedWithUrlParms) {
+              if (self.paramUnaffectedSibs && self.paramUnaffectedSibs.length > 0 && modelInfos.length > 0) {
+                self.paramUnaffectedSibs.split(",").forEach(function(sibId) {
+                  var sibModelInfo = $.extend({}, modelInfos[0]);
+                  sibModelInfo.name = sibId;
+                  sibModelInfo.sample = sibId;
+                  sibModelInfo.relationship = 'sibling';
+                  sibModelInfo.affectedStatus = 'unaffected';
+                  sibModelInfo.bam = null;
+                  sibModelInfo.bai = null;
+                  self.modelInfos.push(sibModelInfo);
+                })
+              }
+
+              if (self.paramAffectedSibs && self.paramAffectedSibs.length > 0 && modelInfos.length > 0) {
+                self.paramAffectedSibs.split(",").forEach(function(sibId) {
+                  var sibModelInfo = $.extend({}, modelInfos[0]);
+                  sibModelInfo.name = sibId;
+                  sibModelInfo.sample = sibId;
+                  sibModelInfo.relationship = 'sibling';
+                  sibModelInfo.affectedStatus = 'affected';
+                  sibModelInfo.bam = null;
+                  sibModelInfo.bai = null;
+                  self.modelInfos.push(sibModelInfo);
+                })
+              }
+                    
+              self.rawPedigree = ""
+              self.rawPedigree = "ID SAMPLE_ID PATERNAL_ID MATERNAL_ID SEX AFFECTED_STATUS\n"
+              self.rawPedigree +=  pedMap['proband'].id + " " + 
+                                pedMap['proband'].pedigree.sample_id + " " + 
+                                pedMap['proband'].pedigree.paternal_id + " " + 
+                                pedMap['proband'].pedigree.maternal_id + " " + 
+                                pedMap['proband'].pedigree.sex + " " + 
+                                pedMap['proband'].pedigree.affection_status + "\n" 
+              if (pedMap['father']) {
+                self.rawPedigree +=  pedMap['father'].id + " " + 
+                                pedMap['father'].pedigree.sample_id + " " + 
+                                pedMap['father'].pedigree.paternal_id + " " + 
+                                pedMap['father'].pedigree.maternal_id + " " + 
+                                pedMap['father'].pedigree.sex + " " + 
+                                pedMap['father'].pedigree.affection_status + "\n" 
+              }
+              if (pedMap['mother']) {
+                self.rawPedigree +=  pedMap['mother'].id + " " + 
+                                pedMap['mother'].pedigree.sample_id + " " + 
+                                pedMap['mother'].pedigree.paternal_id + " " + 
+                                pedMap['mother'].pedigree.maternal_id + " " + 
+                                pedMap['mother'].pedigree.sex + " " + 
+                                pedMap['mother'].pedigree.affected_status + "\n" 
+              }
+            }
+          } 
           self.user       = self.demoUser;
-
-          // self.onAuthenticated()
-
           self.caseSummary = {}
-          self.caseSummary.name = "Demo Platinum"
-          self.caseSummary.description = "The platinum data set (NA12878) is high quality exome sequencing data from three individuals. It serves as a truthset and benchmark for genomic tools. The original manuscript was published in 2017 doi: 10.1101/gr.210500.116";
+          if (self.launchedWithUrlParms) {
+            self.caseSummary.name = ""
+            self.caseSummary.description = ""
+            self.showLandingPage = false;
+            self.showSplash = true;
+            self.customData = true;
+            self.bedFileUrl = self.genomeBuildHelper.getCurrentBuildName() == "GRCh38" 
+            ? "https://iobio.s3.amazonaws.com/clin.iobio/20130108.exome.targets.grch38.bed" : "https://iobio.s3.amazonaws.com/clin.iobio/20130108.exome.targets.bed";
+            setTimeout(()=>{
+              self.onAuthenticated();
+            }, 2000)
+          } else {
+            self.caseSummary.name = "Demo Platinum"
+            self.caseSummary.description = "The platinum data set (NA12878) is high quality exome sequencing data from three individuals. It serves as a truthset and benchmark for genomic tools. The original manuscript was published in 2017 doi: 10.1101/gr.210500.116";
 
 
-
+            self.params.source = "";
+            self.showLandingPage = true;
+            self.modelInfos = self.demoModelInfos;
+          }
         }
       })
       .catch(function(error) {
