@@ -199,9 +199,11 @@ $horizontal-dashboard-height: 140px
    :caseSummary="caseSummary"
    :analysisSteps="analysis.payload.steps"
    :workflow="workflow"
+   :variantsNotificationCounts="variantsNotificationCounts"
    @on-step-changed="onStepChanged"
    @on-task-changed="onTaskChanged"
-   @on-task-completed="onTaskCompleted">
+   @on-task-completed="onTaskCompleted"
+   @on-show-variants-notifications="onShowVariantsNotifications">
   </workflow-nav>
 
   <div id="clin-container" style="display:flex" :class="{authenticated: isAuthenticated}">
@@ -580,6 +582,8 @@ export default {
 
       variantSetCounts: {},
       averageCoverage: null,
+
+      variantsNotificationCounts: {},
 
 
       variantsByInterpretationTemplate: [
@@ -1107,6 +1111,15 @@ export default {
 
     },
 
+    onShowVariantsNotifications: function() {
+      var msgObject = {
+            type:                  'show-notifications',
+            sender:                'clin.iobio',
+            receiver:               'genefull',
+      }
+      this.sendAppMessage('genefull', msgObject)
+    },
+
     closeByPassedGenesDialog: function(){
       this.byPassedGenesDialog = false;
       this.byPassedGenes = [];
@@ -1609,6 +1622,8 @@ export default {
       } else if (messageObject.type == "update-variant-count"){
         this.variantsCount = messageObject.variantCount;
         this.setVariantTaskBadges();
+      } else if (messageObject.type == "variants-notifications") {
+        this.variantsNotificationCounts = messageObject.counts
       }
 
 
