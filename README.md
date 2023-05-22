@@ -19,7 +19,7 @@ npm run build
 
 
 ## Using clin.iobio
-[clin.iobio](https://pubmed.ncbi.nlm.nih.gov/35055388/) is developed in the Gabor Marth lab, is free for academic use, and is distributed under the MIT license. For further information, or commercial use inquiries, please contact iobioproject@gmail.com.
+[clin.iobio](https://pubmed.ncbi.nlm.nih.gov/35055388/) is developed in the Gabor Marth lab, is free for academic use. For further information, or commercial use inquiries, please contact info@frameshift.io.
 
 You can try out clin.iobio using a demo dataset. Or you can immediately plug in your own data, by providing URLs to your BAM and VCF files.
 
