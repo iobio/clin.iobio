@@ -533,7 +533,7 @@
         "bamDepthFather": null,
         "bamDepthMother": null,
         "clinvarClinSig": "uncertain significance",
-        "interpretation": "unknown-sig",
+        "interpretation": "uncertain-sig",
         "refCountFather": null,
         "refCountMother": null,
         "zygosityFather": null,

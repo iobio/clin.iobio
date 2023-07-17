@@ -6,15 +6,15 @@
           'not-reviewed': interpretation == 'not-reviewed',
           'not-sig'     : interpretation == 'not-sig',
           'sig'         : interpretation == 'sig',
-          'unknown-sig' : interpretation == 'unknown-sig',
+          'uncertain-sig' : interpretation == 'uncertain-sig',
           'poor-qual'   : interpretation == 'poor-qual'}"
   >
     <v-icon class="interpretation sig" v-if="interpretation == 'sig'">verified_user</v-icon>
-    <v-icon class="interpretation unknown-sig" v-if="interpretation == 'unknown-sig'">help</v-icon>
+    <v-icon class="interpretation uncertain-sig" v-if="interpretation == 'uncertain-sig'">help</v-icon>
     <v-icon class="interpretation not-sig" v-if="interpretation == 'not-sig'">thumb_down</v-icon>
     <v-icon class="interpretation poor-qual" v-if="interpretation == 'poor-qual'">trending_down</v-icon>
-    <v-icon class="interpretation unknown-sig" v-if="interpretation == 'not-reviewed'">help</v-icon>
-    <span v-if="intepretationDisplay === 'Not reviewed'" class="interpretation-label"> Unknown significance </span>
+    <v-icon class="interpretation uncertain-sig" v-if="interpretation == 'not-reviewed'">help</v-icon>
+    <span v-if="intepretationDisplay === 'Not reviewed'" class="interpretation-label"> Uncertain significance </span>
     <span v-else class="interpretation-label"> {{ intepretationDisplay }} </span>
 
   </div>
@@ -114,7 +114,7 @@ i.material-icons.interpretation
     i.material-icons
       color: $poor-qual-color !important
 
-  &.unknown-sig
+  &.uncertain-sig
     i.material-icons
       color: $unknown-significance-color !important
 
