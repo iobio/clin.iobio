@@ -11,14 +11,14 @@
                         'not-reviewed': selectedVariant.interpretation == 'not-reviewed',
                         'not-sig'     : selectedVariant.interpretation == 'not-sig',
                         'sig'         : selectedVariant.interpretation == 'sig',
-                        'unknown-sig' : selectedVariant.interpretation == 'unknown-sig',
+                        'uncertain-sig' : selectedVariant.interpretation == 'uncertain-sig',
                         'poor-qual'   : selectedVariant.interpretation == 'poor-qual'}"
               >
                 <v-icon class="interpretation sig" v-if="selectedVariant.interpretation == 'sig'">verified_user</v-icon>
-                <v-icon class="interpretation unknown-sig" v-if="selectedVariant.interpretation == 'unknown-sig'">help</v-icon>
+                <v-icon class="interpretation uncertain-sig" v-if="selectedVariant.interpretation == 'uncertain-sig'">help</v-icon>
                 <v-icon class="interpretation not-sig" v-if="selectedVariant.interpretation == 'not-sig'">thumb_down</v-icon>
                 <v-icon class="interpretation poor-qual" v-if="selectedVariant.interpretation == 'poor-qual'">trending_down</v-icon>
-                <v-icon class="interpretation unknown-sig" v-if="selectedVariant.interpretation == 'not-reviewed'">help</v-icon>
+                <v-icon class="interpretation uncertain-sig" v-if="selectedVariant.interpretation == 'not-reviewed'">help</v-icon>
               </span>
               <strong class="ml-1 mr-1">{{ selectedGene.gene_name }}</strong> 
             </span>

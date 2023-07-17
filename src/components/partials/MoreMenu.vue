@@ -25,6 +25,9 @@
         </v-btn>
       </template>
       <v-list>
+        <v-list-item @click="onAbout" >
+          <v-list-item-title>About</v-list-item-title>
+        </v-list-item>
         <v-list-item @click="onShowTermsOfService">
           <v-list-item-title>Terms of Service</v-list-item-title>
         </v-list-item>
@@ -57,6 +60,13 @@
       :headline="terms.headline"
       :content="terms.content"
       id="TermsDialog">
+    </NavBarDialog>
+
+    <NavBarDialog
+      v-if="showAbout"
+      headline="clin.iobio"
+      :content="aboutContent"
+      id="AboutDialog">
     </NavBarDialog>
   
   </span>
@@ -98,10 +108,11 @@ export default {
           <br>
           Commercial use of clin.iobio is licensed through Frameshift Genomics. Please contact Frameshift at  <a href="mailto:admin@frameshift.io" target="_top">admin@frameshift.io</a> to discuss any commercial use of this tool.
           `
-      }, 
+      },
       more_menu_icon_color: "rgb(69, 69, 69)", 
       showIconButton: true, 
-      showTextButton: false
+      showTextButton: false,
+      showAbout: false,
     }
   }, 
   methods: {
@@ -117,12 +128,16 @@ export default {
     onShowIOBIO: function() {
       window.open("http://iobio.io", "_iobio");
     },
+    onAbout: function() {
+      this.showAbout = true;
+    }
     
   },
   mounted(){
     bus.$on("close_dialog", ()=>{
       this.showTermsOfService = false; 
       this.showDisclaimer = false; 
+      this.showAbout = false;
     })
     this.landingPage=="true" ? this.more_menu_icon_color = "rgb(69, 69, 69)" : this.more_menu_icon_color = "white"
     if(this.landingPage=="true"){
@@ -136,6 +151,12 @@ export default {
       this.showTextButton = true; 
     }
   }, 
+  computed: {
+    aboutContent: function() {
+      return  "Version      " + this.globalApp.version + "<br>" +
+              "Released on " + this.globalApp.releaseDate
+    }
+  },
   watch: {
     landingPage(){
       if(this.landingPage=="true"){

@@ -435,7 +435,7 @@ export default {
                 background-color: $wf-badge-red-color !important
                 color: white
 
-          &.unknown-sig
+          &.uncertain-sig
             .v-badge__wrapper
               .v-badge__badge
                 background-color: $wf-badge-orange-color !important
