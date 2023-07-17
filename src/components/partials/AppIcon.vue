@@ -13,7 +13,7 @@
 .level-likely-high
   fill:  #FB7737
 
-.level-medium, .level-unknown-significance
+.level-medium, .level-uncertain-significance
   fill: rgba(231, 186, 82, 1)
 
 .level-low
@@ -380,7 +380,7 @@
         verified_user
       </v-icon>
 
-      <v-icon v-if="icon == 'unknown-sig'" :style="materialIconStyle" >
+      <v-icon v-if="icon == 'uncertain-sig'" :style="materialIconStyle" >
         help
       </v-icon>
 

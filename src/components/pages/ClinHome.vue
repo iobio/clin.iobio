@@ -588,7 +588,7 @@ export default {
 
       variantsByInterpretationTemplate: [
        { key: 'sig',         display: 'significant',  abbrev: 'Significant', organizedVariants: []},
-       { key: 'unknown-sig', display: 'unknown significance ', abbrev: 'Unknown Sig', organizedVariants: []},
+       { key: 'uncertain-sig', display: 'uncertain significance ', abbrev: 'Uncertain Sig', organizedVariants: []},
        { key: 'not-reviewed', display: 'Not Reviewed', abbrev: 'Not reviewed', organizedVariants: []},
        { key: 'poor-qual', display: 'poor quality', abbrev: 'Poor qual', organizedVariants: []},
        { key: 'not-sig', display: 'Not Significant', abbrev: 'Not sig', organizedVariants: []},
@@ -665,7 +665,7 @@ export default {
 
       interpretationMap: {
         'sig': 'Significant',
-        'unknown-sig': 'Unknown significance',
+        'uncertain-sig': 'Uncertain significance',
         'not-reviewed': 'Not reviewed',
         'not-sig': 'Not significant',
         'poor-qual': 'Poor quality',
@@ -1735,15 +1735,15 @@ export default {
               let badgeCounts = [];
               let badgeClasses = [];
 
-              //Add the count of variant which is not reviewed (but has comments) to unknown-sig
-              if(self.variantsByInterpretation.length > 2 && self.variantsByInterpretation[2].key ==  'not-reviewed' && self.variantsByInterpretation[1].key == 'unknown-sig'){
+              //Add the count of variant which is not reviewed (but has comments) to uncertain-sig
+              if(self.variantsByInterpretation.length > 2 && self.variantsByInterpretation[2].key ==  'not-reviewed' && self.variantsByInterpretation[1].key == 'uncertain-sig'){
                 if(self.variantsByInterpretation[2].variantCount > 0){
                   self.variantsByInterpretation[1].variantCount += self.variantsByInterpretation[2].variantCount;
                 }
               }
 
               self.variantsByInterpretation.forEach(function(interpretation) {
-                if(interpretation.key == 'sig' || interpretation.key == 'unknown-sig' || interpretation.key == "poor-qual"){
+                if(interpretation.key == 'sig' || interpretation.key == 'uncertain-sig' || interpretation.key == "poor-qual"){
                   if(interpretation.variantCount > 0){
                     badgeLabels.push(interpretation.display);
                     badgeCounts.push(interpretation.variantCount);
@@ -2369,7 +2369,7 @@ export default {
         theVariants.forEach(function(variant) {
           let isReviewed = (variant.notes && variant.notes.length > 0)
                     || (variant.interpretation != null
-                    && (variant.interpretation == "sig" || variant.interpretation == "unknown-sig" || (variant.interpretation == "not-sig" && variant.notes.length>0) || variant.interpretation == "poor-qual" || (variant.interpretation == "not-reviewed" && variant.notes.length>0)));
+                    && (variant.interpretation == "sig" || variant.interpretation == "uncertain-sig" || (variant.interpretation == "not-sig" && variant.notes.length>0) || variant.interpretation == "poor-qual" || (variant.interpretation == "not-reviewed" && variant.notes.length>0)));
 
           if (isReviewed && filterName && filterName == 'reviewed') {
 
@@ -2590,16 +2590,7 @@ export default {
       this.geneToDelete = gene;
     },
     add_to_gene_set(genes){
-      let theGenes = []
-      // TODO: Replace hard-coding of gene alias with a general gene-alias lookup
-      //       that works across gene.iobio and clin.iobio
-      genes.forEach(function(gene) {
-        if (gene == 'WARS1') {
-          theGenes.push('WARS')
-        } else {
-          theGenes.push(gene)
-        }
-      })
+      let theGenes = genes;
       this.selectedGenesForGeneSet = theGenes;
       this.selectedGenesChanged = true;
       this.setSelectedGenesForVariantsReview(theGenes);

@@ -133,7 +133,7 @@ $badge-inactive-color:  #d8d3d3
 
       &.sig
         color: $workflow-badge-red-color !important
-      &.unknown-sig
+      &.uncertain-sig
         color: $workflow-badge-orange-color  !important 
 
 
