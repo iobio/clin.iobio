@@ -10,7 +10,8 @@ class GlobalApp {
     this.completedTour         = "";
 
 
-    this.version               = "3.3 gru";
+    this.version               = "3.3.1";
+    this.releaseDate           = "July 17, 2023"
 
     this.DEV_IOBIO             = "nv-dev-new.iobio.io/";
     this.STAGE_IOBIO           = "nv-green.iobio.io/";
