@@ -603,9 +603,9 @@ export default {
           'gene':      'http://localhost:4026/?launchedFromClin=true&frame_source=' + window.document.URL,
           'genefull':  'http://localhost:4026/?launchedFromClin=true&frame_source=' + window.document.URL,
         },
-        'tony.iobio.io': {
-          'gene':      'http://tony.iobio.io:4026/?launchedFromClin=true&frame_source=' + window.document.URL,
-          'genefull':  'http://tony.iobio.io:4026/?launchedFromClin=true&frame_source=' + window.document.URL,
+        'stage': {
+          'gene':      'https://stage.gene.iobio.io/?launchedFromClin=true&frame_source=' + window.document.URL,
+          'genefull':  'https://stage.gene.iobio.io/?launchedFromClin=true&frame_source=' + window.document.URL,
         },
         'prod': {
             'gene':      'https://gene.iobio.io/?launchedFromClin=true&frame_source=' + window.document.URL,
@@ -864,8 +864,8 @@ export default {
       var appTarget = null;
       if (window.document.URL.indexOf("localhost") > 0) {
         appTarget = "localhost";
-      } else if (window.document.URL.indexOf("tony.iobio.io") > 0) {
-        appTarget = "tony.iobio.io";
+      } else if (window.document.URL.indexOf("stage") > 0) {
+        appTarget = "stage";
       } else {
         appTarget = "prod";
       }
