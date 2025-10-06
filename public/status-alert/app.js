@@ -4,7 +4,7 @@ const config = {
     status: 'deprecated',
     
     // App name
-    appName: 'Clin.iobio', // CHANGE!
+    appName: 'clin.iobio', // CHANGE!
     
     // Maintenance configuration (used if status is 'maintenance')
     maintenance: {
