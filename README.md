@@ -1,3 +1,5 @@
+**This applicaiton is no longer maintained. This repository is kept available for archival purposes only.*
+ 
 # clin.iobio.io
 
 ## Project setup
